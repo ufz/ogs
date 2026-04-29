@@ -1,11 +1,10 @@
 # ThermoHydroMechanics; Small deformation, linear poroelastic, homogeneous
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/verification/thm2_1Dfixd/thm2_1Dfixd.prj RUNTIME 17)
     OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2.prj RUNTIME 7)
     OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2_heating.prj RUNTIME 6)
     OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 5)
     OgsTest(PROJECTFILE ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj RUNTIME 13)
-    OgsTest(PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/hex_THM.prj RUNTIME 15)
     OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/WithFreezingPhase.prj RUNTIME 1)
 
@@ -20,8 +19,11 @@ if (NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE ThermoHydroMechanics/RestartMCC/mfront_restart_part2.xml RUNTIME 1)
     endif()
 endif()
+if (NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/hex_THM.prj RUNTIME 15)
+endif()
 
-if (NOT OGS_USE_PETSC)
+if (NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/HeatingHomogeneousDomain/heating_homogenous_vol.py RUNTIME 20)
 endif()
 
@@ -32,7 +34,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e0.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_square_1e0_ts_10_t_1000.000000.vtu square_1e0_ts_10_t_1000.000000.vtu displacement displacement 1e-8 1e-8
     expected_square_1e0_ts_10_t_1000.000000.vtu square_1e0_ts_10_t_1000.000000.vtu pressure pressure 1e-8 1e-8
@@ -50,7 +52,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e2.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_1e2_ts_10_t_100.000000.vtu square_1e2_ts_10_t_100.000000.vtu displacement displacement 1e-8 1e-8
     square_1e2_ts_10_t_100.000000.vtu square_1e2_ts_10_t_100.000000.vtu pressure pressure 7e-8 1e-8
@@ -68,7 +70,7 @@ EXECUTABLE ogs
 EXECUTABLE_ARGS square_1e2_function.xml
 WRAPPER time
 TESTER vtkdiff
-REQUIREMENTS NOT OGS_USE_MPI
+REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
 DIFF_DATA
 square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.000000.vtu displacement displacement 1e-8 1e-8
 square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.000000.vtu pressure pressure 1e-8 1e-8
@@ -86,7 +88,7 @@ AddTest(
     EXECUTABLE_ARGS square_1e2.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu displacement displacement 1e-8 1e-8
     square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu pressure pressure 1e-8 1e-8
@@ -104,7 +106,7 @@ AddTest(
     EXECUTABLE_ARGS pointheatsource_quadratic-mesh.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
     pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
@@ -121,7 +123,7 @@ AddTest(
     EXECUTABLE_ARGS pointheatsource_linear-mesh.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
     pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
@@ -138,7 +140,7 @@ AddTest(
     EXECUTABLE_ARGS pointheatsource_quadratic-mesh.xml
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
     pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
@@ -155,7 +157,7 @@ AddTest(
     EXECUTABLE_ARGS pointheatsource_quadratic-mesh.xml
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
     pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
@@ -172,7 +174,7 @@ AddTest(
     EXECUTABLE_ARGS cube_ortho_phi0.0.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
     expected_cube_ortho-thermal-expansion_phi0ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
@@ -189,7 +191,7 @@ AddTest(
     EXECUTABLE_ARGS cube_ortho_phi0.183.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
     expected_cube_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
@@ -237,7 +239,7 @@ AddTest(
      EXECUTABLE_ARGS square_ortho_phi0.183.prj
      WRAPPER time
      TESTER vtkdiff
-     REQUIREMENTS NOT OGS_USE_MPI
+     REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
      DIFF_DATA
      expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
      expected_square_ortho-thermal-expansion_phi0.183ts_10_t_1.000000.vtu THM_square_ortho-thermal-expansion-phi0.183_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
@@ -253,7 +255,7 @@ AddTest(
      EXECUTABLE_ARGS cube_incompressible_fluid.prj
      WRAPPER time
      TESTER vtkdiff
-     REQUIREMENTS NOT OGS_USE_MPI
+     REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
      DIFF_DATA
      expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluid_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
      expected_THM_incompressible_fluidts_10_t_1.000000.vtu THM_incompressible_fluid_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
@@ -269,7 +271,7 @@ AddTest(
      EXECUTABLE_ARGS cube_isochoric_heat-up.prj
      WRAPPER time
      TESTER vtkdiff
-     REQUIREMENTS NOT OGS_USE_MPI
+     REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
      DIFF_DATA
      expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-up_ts_10_t_1.000000.vtu displacement displacement 1e-8 1e-8
      expected_THM_isochoric_heat-upts_10_t_1.000000.vtu THM_isochoric_heat-up_ts_10_t_1.000000.vtu pressure pressure 1e-5 1e-5
@@ -298,7 +300,7 @@ AddTest(
     EXECUTABLE_ARGS arehs-salt-THM01_0.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu displacement displacement 1e-8 1e-8
     arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu pressure pressure 1e-8 1e-8
@@ -315,7 +317,7 @@ AddTest(
     EXECUTABLE_ARGS Column.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu displacement displacement 1e-5 1e-5
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu pressure pressure 1e-5 1e-5

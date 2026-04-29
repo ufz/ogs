@@ -81,10 +81,14 @@ void LisMatrix::setZero()
 int LisMatrix::setValue(IndexType rowId, IndexType colId, double v)
 {
     if (v == 0.0)
+    {
         return 0;
+    }
     lis_matrix_set_value(LIS_INS_VALUE, rowId, colId, v, AA_);
     if (rowId == colId)
+    {
         lis_vector_set_value(LIS_INS_VALUE, rowId, v, diag_);
+    }
     is_assembled_ = false;
     return 0;
 }
@@ -92,10 +96,14 @@ int LisMatrix::setValue(IndexType rowId, IndexType colId, double v)
 int LisMatrix::add(IndexType rowId, IndexType colId, double v)
 {
     if (v == 0.0)
+    {
         return 0;
+    }
     lis_matrix_set_value(LIS_ADD_VALUE, rowId, colId, v, AA_);
     if (rowId == colId)
+    {
         lis_vector_set_value(LIS_ADD_VALUE, rowId, v, diag_);
+    }
     is_assembled_ = false;
     return 0;
 }

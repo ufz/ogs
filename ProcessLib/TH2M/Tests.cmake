@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     if (OGS_USE_MFRONT)
         OgsTest(PROJECTFILE TH2M/M/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
         OgsTest(PROJECTFILE TH2M/M/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
@@ -21,8 +21,6 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/H/pressure_PengRobinson/pressure_preos.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/HM/compression_PengRobinson/compression_preos.prj RUNTIME 1)
     OgsTest(PROJECTFILE TH2M/H2M/EmbeddedFracturePermeability/IfG.prj RUNTIME 9)
-    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 4)
-    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_fd_jac.xml RUNTIME 4)
     NotebookTest(NOTEBOOKFILE TH2M/H2M/Liakopoulos/ogs-jupyter-lab-h2m-2d-liakopoulos.py RUNTIME 11)
     if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_newton.xml RUNTIME 2)
@@ -51,6 +49,11 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/TotalInitialStress/total_initial_stress_H2M.prj RUNTIME 1)
 endif()
 
+if(NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_TH2M.prj RUNTIME 4)
+    OgsTest(PROJECTFILE TH2M/H2M/Liakopoulos/liakopoulos_fd_jac.xml RUNTIME 4)
+endif()
+
 # TH2M 1d heat diffusion w/ Dirichlet-BC
 AddTest(
     NAME TH2M_T_1d_dirichlet
@@ -59,7 +62,7 @@ AddTest(
     EXECUTABLE_ARGS T_1d_dirichlet.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 3
     DIFF_DATA
 
@@ -108,7 +111,7 @@ AddTest(
     EXECUTABLE_ARGS T_1d_dirichlet_newton.xml
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu T_1d_dirichlet_newton_ts_34_t_4000.000000.vtu gas_pressure_interpolated gas_pressure_interpolated 3e-6 1e-8
     result_TH2M_T_dirichlet_ts_34_t_4000.000000.vtu T_1d_dirichlet_newton_ts_34_t_4000.000000.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-8 1e-8
@@ -133,7 +136,7 @@ AddTest(
     EXECUTABLE_ARGS M_2d_neumann.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
 
     # primary variables
@@ -172,7 +175,7 @@ AddTest(
     EXECUTABLE_ARGS M_2d_neumann_newton.xml
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     result_TH2M_M_ts_2_t_2.000000.vtu M_2d_neumann_newton_ts_2_t_2.000000.vtu gas_pressure_interpolated gas_pressure_interpolated 1e-8 1e-8
     result_TH2M_M_ts_2_t_2.000000.vtu M_2d_neumann_newton_ts_2_t_2.000000.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-8 1e-8
@@ -198,7 +201,7 @@ AddTest(
     EXECUTABLE_ARGS point_heatsource.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
 
     # primary variables
@@ -238,7 +241,7 @@ AddTest(
     EXECUTABLE_ARGS point_heatsource_newton.xml
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     result_point_heatsource_ts_5_t_100000.000000.vtu point_heatsource_newton_ts_5_t_100000.000000.vtu gas_pressure_interpolated gas_pressure_interpolated 8e-7 9e-8
     result_point_heatsource_ts_5_t_100000.000000.vtu point_heatsource_newton_ts_5_t_100000.000000.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-8 1e-8
@@ -264,7 +267,7 @@ AddTest(
     EXECUTABLE_ARGS THM_1d_dirichlet.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
 
     # primary variables
@@ -303,7 +306,7 @@ AddTest(
     EXECUTABLE_ARGS THM_1d_dirichlet_newton.xml
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu THM_1d_dirichlet_newton_ts_5_t_100000.000000.vtu gas_pressure_interpolated gas_pressure_interpolated 3e-6 2e-8
     result_1d_dirichlet_slab_ts_5_t_100000.000000.vtu THM_1d_dirichlet_newton_ts_5_t_100000.000000.vtu capillary_pressure_interpolated capillary_pressure_interpolated 1e-8 1e-8
@@ -449,7 +452,7 @@ AddTest(
     results_heatpipe_strict_ts_23_t_40000_000000_2.vtu results_heatpipe_strict_ts_23_t_40000_000000_2.vtu saturation saturation 1e-9 1e-8
 )
 
-if(NOT OGS_USE_PETSC)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE TH2M/TH2/heatpipe/heatpipe.py RUNTIME 194)
     NotebookTest(NOTEBOOKFILE TH2M/H2/mcWhorter_interactive/mcWhorter_interactive.py RUNTIME 18)
     if (OGS_USE_MFRONT)

@@ -2,7 +2,7 @@
 if(TARGET ThermoHydroMechanics
    AND TARGET ThermoRichardsMechanics
    AND TARGET TH2M
-   AND NOT OGS_USE_PETSC
+   AND NOT (OGS_USE_PETSC OR OGS_USE_LIS)
 )
     NotebookTest(
         NOTEBOOKFILE

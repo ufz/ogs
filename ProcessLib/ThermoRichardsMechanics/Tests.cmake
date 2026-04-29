@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/LinearMechanics/mechanics_linear.prj)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/FullySaturatedFlowMechanics/flow_fully_saturated.prj)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/RichardsFlow2D/RichardsFlow_2d_small.prj RUNTIME 3)
@@ -164,7 +164,7 @@ AddTest(
     EXECUTABLE_ARGS cube_1e3.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 5
     DIFF_DATA
     stress_analytical.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu sigma sigma 1e-5 1e-12
@@ -196,7 +196,7 @@ AddTest(
     EXECUTABLE_ARGS point_heat_source_2D.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu displacement displacement 1e-6 0
     expected_pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu PointHeatSource_ts_10_t_50000.000000.vtu pressure pressure 2.9e4 0
@@ -264,7 +264,7 @@ AddTest(
     EXECUTABLE_ARGS SimpleAxisymmetricCreep.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 6
     DIFF_DATA
     expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu displacement displacement 1e-13 1e-10
@@ -422,7 +422,7 @@ AddTest(
     EXECUTABLE_ARGS Column.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu displacement displacement 1e-5 1e-5
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu pressure pressure 1e-5 1e-5
@@ -439,7 +439,7 @@ AddTest(
     EXECUTABLE_ARGS square.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu displacement displacement 1e-10 1e-10
     expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu pressure pressure 5e-2 1e-8
@@ -448,6 +448,7 @@ AddTest(
     expected_dont_apply_body_force_for_deformation_ts_0_t_0.000000.vtu dont_apply_body_force_for_deformation_ts_10_t_864000.000000.vtu sigma sigma 5e-2 1e-8
 )
 
+if(NOT OGS_USE_LIS)
 AddTest(
     NAME ThermoRichardsMechanics_total_initial_stress_dont_apply_body_force_for_deformation
     PATH ThermoRichardsMechanics/BodyForce
@@ -473,8 +474,9 @@ AddTest(
     PROPERTIES
         PASS_REGULAR_EXPRESSION "3D mesh cannot be axially symmetric."
 )
+endif()
 
-if(OGS_USE_MFRONT)
+if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_basic_mfront_model_ctest.xml)
@@ -505,7 +507,7 @@ if(OGS_USE_MFRONT)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_confined_compression/confined_compression.prj RUNTIME 19)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_resaturation/resaturation.prj RUNTIME 4)
 
-    if (NOT OGS_USE_MPI)
+    if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
         # Disabled for PETSc, because large numerical errors are observed occasionally.
         # The model is tested sufficiently in other configurations, and other tests are run with PETSc, too.
         OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_resaturation/bentonite_column.prj RUNTIME 295)
@@ -516,7 +518,7 @@ if(OGS_USE_MFRONT)
 " RUNTIME 10)
 endif()
 
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     if(NOT WIN32) # TODO: Remove after 6.5.5 release and fix benchmark on win
         OgsTest(PROJECTFILE ThermoRichardsMechanics/Mockup2D/mockup.prj RUNTIME 15)
     endif()

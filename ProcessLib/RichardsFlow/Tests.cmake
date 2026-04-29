@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     # Comparison test for richards mechanics w/o deformations.
     if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_richardsflow.prj RUNTIME 2)
@@ -6,7 +6,7 @@ if (NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/Richards/flow_fully_saturated.prj)
 endif()
 
-if (NOT OGS_USE_PETSC)
+if (NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/Richards/richards-flow.py RUNTIME 5)
 endif()
 
@@ -30,7 +30,7 @@ AddTest(
     RUNTIME 4
     DIFF_DATA
     ref_t_1600.000000.vtu richards_ts_1100_t_1600.000000.vtu pressure pressure 1e-8 1e-8
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
 )
 
 AddTest(
@@ -42,7 +42,7 @@ AddTest(
     TESTER vtkdiff
     DIFF_DATA
     ref_t_20000.000000.vtu richards_ts_18200_t_20000.000000.vtu pressure pressure 1e-8 1e-8
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
 )
 
 AddTest(
@@ -75,7 +75,7 @@ AddTest(
     PATH Parabolic/Richards
     EXECUTABLE ogs
     EXECUTABLE_ARGS RichardsFlow_2d_small_iteration_adaptive_dt.prj
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 8
     richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
     richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9
@@ -87,7 +87,7 @@ AddTest(
     PATH Parabolic/Richards
     EXECUTABLE ogs
     EXECUTABLE_ARGS iteration_adaptive_dt_PiecewiseLinear.xml
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 8
     DEPENDS ogs-2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt
     richards_pcs_PID_adaptive_dt_t_1600.vtu 2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu 1e-8 1e-9

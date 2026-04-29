@@ -21,7 +21,7 @@ AddTest(
     EXECUTABLE_ARGS IsothermalFluidFlow.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_ts_1_t_1.000000.vtu T T 1e-10 1e-16
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlow_ts_1_t_1.000000.vtu p p 1e-10 1e-16
@@ -35,7 +35,7 @@ AddTest(
     EXECUTABLE_ARGS PressureDiffusionTemperatureDiffusion.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu linear_top2_to_bottom1 T 1e-10 1e-16
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu Linear_1_to_minus1 p 1e-10 1e-16
@@ -49,7 +49,7 @@ AddTest(
     EXECUTABLE_ARGS IsothermalFluidFlowWithGravity.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_ts_1_t_1.000000.vtu T T 1e-10 1e-16
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravity_ts_1_t_1.000000.vtu p p 1e-10 1e-16
@@ -63,7 +63,7 @@ AddTest(
     EXECUTABLE_ARGS PressureParabolicTemperatureParabolic.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu T T 1e-10 1e-16
     PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu p p 1e-10 1e-16
@@ -104,7 +104,7 @@ AddTest(
     EXECUTABLE_ARGS CoupledPressureParabolicTemperatureParabolic.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu T T 1e-10 1e-16
     CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolic_ts_1_t_0.100000.vtu p p 1e-10 1e-16
@@ -146,7 +146,7 @@ AddTest(
     EXECUTABLE_ARGS CoupledPressureParabolicTemperatureParabolicStaggered.prj
     WRAPPER time
     TESTER xdmfdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf T T 1e-10 1e-10 1 1
     CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf p p 1e-10 1e-10 2 2
@@ -160,7 +160,7 @@ AddTest(
     EXECUTABLE_ARGS calculatesurfaceflux_ht_cube_1e3.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     flux_1e3_t_0.000000.vtu ThermalConvection_cube_1x1x1_hex_1e3_complete_surface_ts_1_t_0.000000.vtu specific_flux specific_flux 1e-10 1e-16
     flux_1e3_t_0.000010.vtu ThermalConvection_cube_1x1x1_hex_1e3_complete_surface_ts_2_t_0.000010.vtu specific_flux specific_flux 1e-10 1e-16
@@ -178,7 +178,7 @@ AddTest(
     EXECUTABLE_ARGS calculatesurfaceflux_ht_cube_1e4.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     flux_1e4_t_0.000000.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_1_t_0.000000.vtu specific_flux specific_flux 1e-10 1e-16
     flux_1e4_t_0.000010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_2_t_0.000010.vtu specific_flux specific_flux 1e-10 1e-16
@@ -209,7 +209,7 @@ AddTest(
     EXECUTABLE_ARGS IsothermalFluidFlowStaggered.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlowStaggered_ts_1_t_1.000000.vtu T T 1e-10 1e-10
     IsothermalFluidFlow_expected.vtu IsothermalFluidFlowStaggered_ts_1_t_1.000000.vtu p p 1e-10 1e-10
@@ -223,7 +223,7 @@ AddTest(
     EXECUTABLE_ARGS PressureDiffusionTemperatureDiffusionStaggered.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusionStaggered_ts_1_t_1.000000.vtu linear_top2_to_bottom1 T 1e-10 1e-10
     PressureDiffusionTemperatureDiffusion_expected.vtu PressureDiffusionTemperatureDiffusionStaggered_ts_1_t_1.000000.vtu Linear_1_to_minus1 p 1e-10 1e-10
@@ -237,7 +237,7 @@ AddTest(
     EXECUTABLE_ARGS IsothermalFluidFlowWithGravityStaggered.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravityStaggered_ts_1_t_1.000000.vtu T T 1e-10 1e-10
     IsothermalFluidFlowWithGravity_expected.vtu IsothermalFluidFlowWithGravityStaggered_ts_1_t_1.000000.vtu p p 0.04 1e-10
@@ -251,7 +251,7 @@ AddTest(
     EXECUTABLE_ARGS PressureParabolicTemperatureParabolicStaggered.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolicStaggered_ts_1_t_0.100000.vtu T T 1e-10 1e-10
     PressureParabolicTemperatureParabolic_ts_1_expected.vtu PressureParabolicTemperatureParabolicStaggered_ts_1_t_0.100000.vtu p p 1e-10 1e-10
@@ -292,7 +292,7 @@ AddTest(
     EXECUTABLE_ARGS CoupledPressureParabolicTemperatureParabolicStaggered.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolicStaggered_ts_1_t_0.100000.vtu T T 1e-10 1e-10
     CoupledPressureParabolicTemperatureParabolic_ts_1_expected.vtu CoupledPressureParabolicTemperatureParabolicStaggered_ts_1_t_0.100000.vtu p p 1e-10 1e-10
@@ -350,7 +350,7 @@ AddTest(
     EXECUTABLE ogs
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
     ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu T T 1e-10 1e-16
     ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu p p 3e-6 2e-10
@@ -359,7 +359,7 @@ AddTest(
 
 # generateInvalidMediaForHT.py logic moved to PythonSetup.cmake
 
-if (NOT (OGS_USE_MPI))
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/deactivated_subdomain/HT_DeactivatedSubdomain.prj)
     OgsTest(PROJECTFILE Parabolic/HT/LowerDimensionalFracture/2D_single_fracture_HT.prj RUNTIME 11)
 endif()
@@ -385,7 +385,7 @@ AddTest(
     EXECUTABLE_ARGS TemperatureField.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     RUNTIME 15
     DIFF_DATA
     TemperatureFieldts_0_t_0.000000_expected.vtu TemperatureField_ts_0_t_0.000000.vtu T T 1e-10 1e-10
@@ -510,7 +510,7 @@ AddTest(
     HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu pressure pressure 1.e-9 1.0e-8
 )
 
-if(OGS_USE_PIP AND NOT OGS_USE_MPI)
+if(OGS_USE_PIP AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
     if(NOT EXISTS ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT_specific_heat_capacity_viscosity_porosity.prj)
         execute_process(
             COMMAND

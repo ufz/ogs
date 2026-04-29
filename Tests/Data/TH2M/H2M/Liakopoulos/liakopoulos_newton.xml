@@ -2,5 +2,6 @@
 <OpenGeoSysProjectDiff base_file="liakopoulos_TH2M.prj">
     <remove msel="/*/*/process/jacobian_assembler"/>
     <replace sel="/*/time_loop/output/prefix/text()">liakopoulos_newton</replace>
+    <replace sel="/*/linear_solvers/linear_solver/lis/text()">-i bicrstab -p ilut -ilut_drop 1e-4 -ilut_rate 10 -tol 1e-10 -maxiter 3000</replace>
     <replace msel="/*/test_definition/vtkdiff/regex/text()">liakopoulos_newton_.*.vtu</replace>
 </OpenGeoSysProjectDiff>

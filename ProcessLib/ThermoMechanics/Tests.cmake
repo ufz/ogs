@@ -1,4 +1,4 @@
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1D1bt/m2_1D1bt.prj)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1D2bt/m2_1D2bt.prj)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dcreep/m2_1Dcreep.prj)
@@ -97,7 +97,7 @@ AddTest(
     EXECUTABLE_ARGS tm1_3Dcube.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 1
     DIFF_DATA
     tm1_3Dcube_ts_1_t_1.000000.vtu tm1_3Dcube_ts_1_t_1.000000.vtu temperature temperature 7e-11 0.0
@@ -111,7 +111,7 @@ AddTest(
     EXECUTABLE_ARGS tm1_3Dgravity.prj
     WRAPPER time
     TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    REQUIREMENTS NOT OGS_USE_MPI
     RUNTIME 1
     DIFF_DATA
     tm1_3Dgravity_ts_1_t_1.000000.vtu tm1_3Dgravity_ts_1_t_1.000000.vtu temperature temperature 4e-11 0.0

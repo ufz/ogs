@@ -37,7 +37,7 @@ def create_and_wait_and_close(prj_path: Path, output_dir: Path):
 
 @pytest.mark.xfail(
     ogs.OGS_USE_PETSC == "ON",
-    reason="requires multiple MPI setups (not possible in OGS)",
+    reason="PETSc and Lis parse commandline arguments. Therefore, we exclude them for the time being",
     # code will trigger OGS_FATAL, which throws a std::runtime_error, which in
     # turn is converted to a RuntimeError by pybind11.
     raises=RuntimeError,
@@ -59,8 +59,8 @@ def test_subsequent_runs(tmp_path, ogs_src_dir):
 
 
 @pytest.mark.xfail(
-    ogs.OGS_USE_PETSC == "ON",
-    reason="requires multiple MPI setups (not possible in OGS)",
+    ogs.OGS_USE_PETSC == "ON" or ogs.OGS_USE_LIS == "ON",
+    reason="PETSc and Lis parse commandline arguments. Therefore, we exclude them for the time being",
     # code will trigger OGS_FATAL, which throws a std::runtime_error, which in
     # turn is converted to a RuntimeError by pybind11.
     raises=RuntimeError,
@@ -97,8 +97,8 @@ class ThreadStoringException(threading.Thread):
 
 
 @pytest.mark.xfail(
-    ogs.OGS_USE_PETSC == "ON",
-    reason="requires multiple MPI setups (not possible in OGS)",
+    ogs.OGS_USE_PETSC == "ON" or ogs.OGS_USE_LIS == "ON",
+    reason="PETSc and Lis parse commandline arguments. Therefore, we exclude them for the time being",
     raises=AssertionError,
     strict=True,
 )

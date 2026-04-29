@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!--units: kg, m, s, K and derived units: N, Pa=N/m², Da=m² -->
+<!--units: kg, m, s, K and derived units: N, Pa=N/m^2, Da=m^2 -->
 <!--DESCRIPTION: 
         * simple ground model
         * hydrostatic conditions
@@ -89,7 +89,7 @@
               <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>1.25e-9</value> <!--m²-->
+                    <value>1.25e-9</value> <!--m^2-->
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -114,7 +114,7 @@
         <parameter>
             <name>DensitySolid</name>
             <type>Constant</type>
-            <value>3000</value> <!--kg/m³-->
+            <value>3000</value> <!--kg/m^3-->
         </parameter>
         <parameter>
             <name>ViscosityWater</name>
@@ -124,7 +124,7 @@
         <parameter>
             <name>DensityWater</name>
             <type>Constant</type>
-            <value>1000</value> <!--kg/m³-->
+            <value>1000</value> <!--kg/m^3-->
         </parameter>
         <!-- Initial and boundary values -->
         <parameter>
@@ -295,6 +295,7 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
+            <lis>-i bicg -p ilut -ilut_drop 1e-4 -ilut_rate 10 -tol 1e-10 -maxiter 3000</lis>
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <precon_type>DIAGONAL</precon_type>

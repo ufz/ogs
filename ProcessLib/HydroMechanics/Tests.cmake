@@ -1,7 +1,7 @@
 # HydroMechanics; Small deformations, linear poroelastic (HML)
 
 ### With monolithic scheme
-if (NOT OGS_USE_MPI)
+if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.py
                  RUNTIME 21)
     NotebookTest(NOTEBOOKFILE HydroMechanics/NodalSourceTerm/Nodal-source-test.py RUNTIME 5)

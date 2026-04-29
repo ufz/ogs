@@ -1,3 +1,4 @@
+## Run time takes longer if OGS_USE_LIS is set
 AddTest(
     NAME 2D_TwoPhase_PP_Lia_quad_short
     PATH Parabolic/TwoPhaseFlowPP/Liakopoulos

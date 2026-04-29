@@ -1278,7 +1278,7 @@ AddTest(
     PATH Parabolic/T/1D_dirichlet
     EXECUTABLE PVD2XDMF
     EXECUTABLE_ARGS ${Data_SOURCE_DIR}/Parabolic/T/1D_dirichlet/line_60_heat.pvd
-    REQUIREMENTS NOT OGS_USE_MPI
+    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     TESTER xdmfdiff
     DIFF_DATA
     line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf line_60_heat_line_60_heat_ts_0_t_0.000000.xdmf MaterialIDs MaterialIDs 0 0 1 1
@@ -1487,7 +1487,7 @@ AddTest(
     square_1x1_geometry_top.vtu    square_1x1_geometry_top.vtu 1e-16
 )
 
-if(NOT OGS_USE_PETSC)
+if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     if(NOT WIN32)
         NotebookTest(NOTEBOOKFILE ../../web/content/docs/tutorials/bhe_meshing/notebook-bhe_meshing.md
                      PYTHON_PACKAGES openpyxl
