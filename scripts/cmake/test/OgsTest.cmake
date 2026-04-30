@@ -54,12 +54,16 @@ function(OgsTest)
 
     set(OgsTest_SOURCE_DIR "${Data_SOURCE_DIR}/${OgsTest_DIR}")
     set(TEST_NAME "ogs-${OgsTest_DIR}/${OgsTest_NAME_WE}")
+    set(_processors 1)
     # Add wrapper postfix (-mpi for mpirun).
     if(OgsTest_WRAPPER)
         string(REGEX MATCH "^[^ ]+" WRAPPER ${OgsTest_WRAPPER})
         if(WRAPPER STREQUAL "mpirun")
             set(TEST_NAME "${TEST_NAME}-mpi")
             list(APPEND OgsTest_WRAPPER --bind-to none)
+            if("${OgsTest_WRAPPER}" MATCHES "-np;([0-9]*)")
+                set(_processors ${CMAKE_MATCH_1})
+            endif()
         endif()
     endif()
 
@@ -154,6 +158,8 @@ macro(_ogs_add_test TEST_NAME)
                    ${OgsTest_DISABLED}
                    LABELS
                    "${labels}"
+                   PROCESSORS
+                   ${_processors}
                    ${timeout}
     )
 endmacro()
