@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 # SPDX-License-Identifier: BSD-3-Clause
 
+import os
 import platform
 import runpy
 import shutil
 import subprocess
-from contextlib import chdir
 
 import ogs
 import ogs._internal.provide_ogs_cli_tools_via_wheel as ogs_cli_wheel
@@ -38,12 +38,12 @@ def test_glacier_tutorial(tmp_path, ogs_src_dir, monkeypatch):
     for filename in ("mesh_basin.py", "OGSinput_basin.prj", "timeBCs_glacier.py"):
         shutil.copy(tutorial_dir / filename, tmp_path / filename)
 
-    with chdir(tmp_path):
-        runpy.run_path("mesh_basin.py", run_name="__main__")
-        subprocess.run(
-            ["msh2vtu", "mesh_basin.msh", "--reindex", "-o", tmp_path], check=True
-        )
-        _run("ogs", ["OGSinput_basin.prj"])
+    os.chdir(tmp_path)
+    runpy.run_path("mesh_basin.py", run_name="__main__")
+    subprocess.run(
+        ["msh2vtu", "mesh_basin.msh", "--reindex", "-o", tmp_path], check=True
+    )
+    _run("ogs", ["OGSinput_basin.prj"])
 
     assert (tmp_path / "mesh_basin_domain.vtu").exists()
     assert (tmp_path / "OGSoutput_basin.pvd").exists()
