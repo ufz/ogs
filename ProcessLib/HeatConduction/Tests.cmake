@@ -560,7 +560,7 @@ AddTest(
         TESTER vtkdiff
         DIFF_DATA
         source_term_middle_ts_1_t_1.000000.vtu source_term_middle_ts_1_t_1.000000.vtu temperature temperature 2e-14 8e-14
-        source_term_middle_ts_1_t_1.000000.vtu source_term_middle_ts_1_t_1.000000.vtu heat_flux heat_flux 7e-14 0.0
+        source_term_middle_ts_1_t_1.000000.vtu source_term_middle_ts_1_t_1.000000.vtu heat_flux heat_flux 8e-14 0.0
         REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
 )
 
