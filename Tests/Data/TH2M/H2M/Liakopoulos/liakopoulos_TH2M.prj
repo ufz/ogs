@@ -422,7 +422,7 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicgstab -p ilut -ilut_drop 1e-4 -ilut_rate 10  -tol 1e-10 -maxiter 3000</lis>
+            <lis>-i bicrstab -p ilut -ilut_drop 1e-4 -ilut_rate 10  -tol 1e-12 -maxiter 3000</lis>
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>
