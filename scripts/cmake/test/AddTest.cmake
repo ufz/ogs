@@ -148,6 +148,7 @@ function(AddTest)
     endif()
 
     # --- Implement wrappers ---
+    set(_processors 1)
     if(AddTest_WRAPPER STREQUAL "time")
         if(TIME_TOOL_PATH)
             set(WRAPPER_COMMAND time)
@@ -162,7 +163,7 @@ function(AddTest)
             list(APPEND AddTest_WRAPPER_ARGS --bind-to none)
             set(WRAPPER_COMMAND ${MPIRUN_TOOL_PATH})
             if("${AddTest_WRAPPER_ARGS}" MATCHES "-np;([0-9]*)")
-                set(MPI_PROCESSORS ${CMAKE_MATCH_1})
+                set(_processors ${CMAKE_MATCH_1})
             endif()
         else()
             message(
@@ -278,7 +279,8 @@ function(AddTest)
     list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
-    if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+    if(";${labels};" MATCHES ";${match_parallel_asm_processes};"
+        AND NOT "${labels}" MATCHES petsc-mumps)
         set(_has_omp_variant TRUE)
     endif()
 
@@ -370,11 +372,6 @@ macro(_add_test TEST_NAME)
         endif()
         set_tests_properties(${TEST_NAME} PROPERTIES DEPENDS ${_depends})
     endif()
-    if(DEFINED MPI_PROCESSORS)
-        set_tests_properties(
-            ${TEST_NAME} PROPERTIES PROCESSORS ${MPI_PROCESSORS}
-        )
-    endif()
 
     set_tests_properties(
         ${TEST_NAME}
@@ -385,11 +382,16 @@ macro(_add_test TEST_NAME)
                    ${AddTest_DISABLED}
                    LABELS
                    "${labels}"
+                   PROCESSORS
+                   ${_processors}
                    ${timeout}
                    ENVIRONMENT
                    "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}"
     )
 endmacro()
+
+set(OGS_CTEST_OMP_THREADS 4 CACHE STRING
+    "Number of threads used by OpenMP ctest variants.")
 
 # Sets number of threads, adds label 'omp'
 macro(_set_omp_test_properties)
@@ -397,9 +399,14 @@ macro(_set_omp_test_properties)
     if(NOT _environment)
         set(_environment "")
     endif()
+    math(EXPR _overall_processors "${OGS_CTEST_OMP_THREADS} * ${_processors}")
+    message(STATUS "Setting processors to ${OGS_CTEST_OMP_THREADS} * ${_processors} = ${_overall_processors} | ${TEST_NAME}-omp")
     set_tests_properties(
         ${TEST_NAME}-omp
-        PROPERTIES ENVIRONMENT "OGS_ASM_THREADS=4;${_environment}" PROCESSORS 4
+        PROPERTIES ENVIRONMENT
+                   "OGS_ASM_THREADS=${OGS_CTEST_OMP_THREADS};${_environment}"
+                   PROCESSORS
+                   ${_overall_processors}
                    LABELS "${labels};omp"
     )
 endmacro()
