@@ -5,11 +5,11 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
-#     display_name: Python (.venv)
+#     display_name: Python 3 (ipykernel)
 #     language: python
-#     name: venv
+#     name: python3
 # ---
 
 # %% [raw] magic_args="[raw]"
@@ -32,9 +32,9 @@ from subprocess import run
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import meshio
 import numpy as np
 import ogstools as ot
-import pyvista as pv
 from matplotlib import colormaps
 
 mechanics_path = Path(
@@ -45,6 +45,7 @@ sys.path.insert(0, str(mechanics_path))
 from mesh_generator import (  # noqa: E402
     mesh_GreatCell_intact,
     mesh_GreatCell_VPF,
+    plot_contourf_with_annotations,
 )
 from ogs_model_runner import SingleOGSModel  # noqa: E402
 from Plotter import Plotter  # noqa: E402
@@ -105,17 +106,17 @@ if not out_dir.exists():
 #    cmake -S ogs-source -B build-folder --preset release-petsc \
 #      -DOGS_USE_PIP=ON
 #    ```
-
+#
 # 2. **Run the benchmark**
-
+#
 #    ```bash
 #    cd build-folder/release-petsc
 #    ninja # OR make -j
 #    ctest -R nb-HMPhaseField/GreatCell
 #    ```
-
+#
 # 3. **Verify output files**
-
+#
 #    ```bash
 #    ls build-folder/release-petsc/Tests/Data/HMPhaseField/GreatCell/GreatCell
 #    ```
@@ -437,7 +438,7 @@ print(mesh_path)
 # #### Gmsh
 
 # %% vscode={"languageId": "python"}
-msh_file = mesh_GreatCell_intact(
+msh_bc = mesh_GreatCell_intact(
     lc=0.005,
     lc2=h,
     r0=0.097,
@@ -448,56 +449,16 @@ msh_file = mesh_GreatCell_intact(
     meshname=meshname,
     mode="BC",
 )
-
-# %% [markdown]
-# #### Convert .msh to an OGS-compatible mesh
-
-# %% vscode={"languageId": "python"}
-msh_path = Path(mesh_path, f"{meshname}.msh")
-meshes = ot.Meshes.from_gmsh(filename=msh_path, dim=[1], reindex=True, log=False)
-
-for name, mesh in meshes.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(Path(mesh_path, f"{name}.vtu"), mesh)
-
-# %% [markdown]
-# #### Visualization of boundary meshes
-
-# %% vscode={"languageId": "python"}
-plotter = pv.Plotter()
-for name, mesh in meshes.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="tab20",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
+ot.Meshes.from_gmsh(msh_bc, dim=[0, 1], reindex=True, log=False).save(
+    mesh_path, overwrite=True
+)
 
 # %% [markdown]
 # ### Computational domain mesh
 # #### Gmsh
 
 # %% vscode={"languageId": "python"}
-msh_file = mesh_GreatCell_intact(
+msh_domain = mesh_GreatCell_intact(
     lc=0.005,
     lc2=h,
     r0=0.097,
@@ -508,51 +469,11 @@ msh_file = mesh_GreatCell_intact(
     meshname=meshname,
     mode="domain",
 )
+meshes_intact = ot.Meshes.from_gmsh(msh_domain, dim=[1, 2], reindex=True, log=False)
+meshes_intact.save(mesh_path, overwrite=True)
 
-# %% [markdown]
-# #### Convert .msh to an OGS-compatible mesh
-
-# %% vscode={"languageId": "python"}
-msh_path = Path(mesh_path, f"{meshname}.msh")
-meshes_volume = ot.Meshes.from_gmsh(
-    filename=msh_path, dim=[1, 2], reindex=True, log=False
-)
-
-for name, mesh in meshes_volume.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(Path(mesh_path, f"{name}.vtu"), mesh)
-
-# %% [markdown]
-# #### Visualization of computational domain mesh
-
-# %% vscode={"languageId": "python"}
-plotter = pv.Plotter()
-for name, mesh in meshes_volume.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="Set1",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
+# %%
+plot_contourf_with_annotations(meshes_intact)
 
 # %% vscode={"languageId": "python"}
 mesh_dir = Path(mesh_path).resolve()
@@ -570,44 +491,51 @@ run(
 )
 
 physical_groups = [
-    "physical_group_DSS1.vtu",
-    "physical_group_DSS1a.vtu",
-    "physical_group_DSS2.vtu",
-    "physical_group_DSS2a.vtu",
-    "physical_group_DSS3.vtu",
-    "physical_group_DSS3a.vtu",
-    "physical_group_DSS4.vtu",
-    "physical_group_DSS4a.vtu",
-    "physical_group_DSS5.vtu",
-    "physical_group_DSS5a.vtu",
-    "physical_group_DSS6.vtu",
-    "physical_group_DSS6a.vtu",
-    "physical_group_DSS7.vtu",
-    "physical_group_DSS7a.vtu",
-    "physical_group_DSS8.vtu",
-    "physical_group_DSS8a.vtu",
-    "physical_group_PEE1.vtu",
-    "physical_group_PEE1a.vtu",
-    "physical_group_PEE2.vtu",
-    "physical_group_PEE2a.vtu",
-    "physical_group_PEE3.vtu",
-    "physical_group_PEE3a.vtu",
-    "physical_group_PEE4.vtu",
-    "physical_group_PEE4a.vtu",
-    "physical_group_PEE5.vtu",
-    "physical_group_PEE5a.vtu",
-    "physical_group_PEE6.vtu",
-    "physical_group_PEE6a.vtu",
-    "physical_group_PEE7.vtu",
-    "physical_group_PEE7a.vtu",
-    "physical_group_PEE8.vtu",
-    "physical_group_PEE8a.vtu",
-    "physical_group_p_bottom.vtu",
-    "physical_group_p_left.vtu",
-    "physical_group_p_right.vtu",
-    "physical_group_p_top.vtu",
-    "physical_group_Inlet.vtu",
+    "DSS1.vtu",
+    "DSS1a.vtu",
+    "DSS2.vtu",
+    "DSS2a.vtu",
+    "DSS3.vtu",
+    "DSS3a.vtu",
+    "DSS4.vtu",
+    "DSS4a.vtu",
+    "DSS5.vtu",
+    "DSS5a.vtu",
+    "DSS6.vtu",
+    "DSS6a.vtu",
+    "DSS7.vtu",
+    "DSS7a.vtu",
+    "DSS8.vtu",
+    "DSS8a.vtu",
+    "PEE1.vtu",
+    "PEE1a.vtu",
+    "PEE2.vtu",
+    "PEE2a.vtu",
+    "PEE3.vtu",
+    "PEE3a.vtu",
+    "PEE4.vtu",
+    "PEE4a.vtu",
+    "PEE5.vtu",
+    "PEE5a.vtu",
+    "PEE6.vtu",
+    "PEE6a.vtu",
+    "PEE7.vtu",
+    "PEE7a.vtu",
+    "PEE8.vtu",
+    "PEE8a.vtu",
+    "p_bottom.vtu",
+    "p_left.vtu",
+    "p_right.vtu",
+    "p_top.vtu",
+    "Inlet.vtu",
 ]
+
+# Strip cell-type bulk_element_ids from 0D point meshes before identifySubdomains
+for name in ["Inlet.vtu"]:
+    p = mesh_dir / name
+    m = meshio.read(str(p))
+    m.cell_data.pop("bulk_element_ids", None)
+    meshio.write(str(p), m)
 
 group_paths = [str(mesh_dir.joinpath(name)) for name in physical_groups]
 
@@ -737,7 +665,7 @@ plotter.plot_volumetric_strain_vs_angle(
 # #### Profiles
 
 # %% vscode={"languageId": "python"}
-plotter.plot_field_variables(vtu_files_dict)
+plotter.plot_field_variables(vtu_files_dict, show_phasefield=False, show_pressure=False)
 
 # %% [markdown]
 # ---
@@ -842,7 +770,7 @@ plotter.plot_volumetric_strain_vs_angle(
 # %% [markdown]
 # ### Profiles
 # %% vscode={"languageId": "python"}
-plotter.plot_field_variables(vtu_files_dict_HM)
+plotter.plot_field_variables(vtu_files_dict_HM, show_phasefield=False)
 
 # %% [markdown]
 # ---
@@ -863,7 +791,7 @@ mesh_path_VPF = Path(out_dir, "mesh_GreatCell_VPF").resolve()
 # #### Gmsh
 
 # %% vscode={"languageId": "python"}
-msh_file_VPF = mesh_GreatCell_VPF(
+msh_bc_VPF = mesh_GreatCell_VPF(
     lc2=h,
     lc=20 * h,
     r0=0.097,
@@ -874,59 +802,16 @@ msh_file_VPF = mesh_GreatCell_VPF(
     meshname=meshname,
     mode="BC",
 )
-
-# %% [markdown]
-# #### Convert .msh to an OGS-compatible mesh
-
-# %% vscode={"languageId": "python"}
-msh_path_VPF = mesh_path_VPF.joinpath(f"{meshname}.msh")
-meshes_volume_VPF = ot.Meshes.from_gmsh(
-    filename=msh_path_VPF, dim=[0, 1], reindex=True, log=False
+ot.Meshes.from_gmsh(msh_bc_VPF, dim=[0, 1], reindex=True, log=False).save(
+    mesh_path_VPF, overwrite=True
 )
-
-for name, mesh in meshes_volume_VPF.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(mesh_path_VPF / f"{name}.vtu", mesh)
-
-# %% [markdown]
-# #### Visualization of boundary meshes
-
-# %% vscode={"languageId": "python"}
-plotter = pv.Plotter()
-for name, mesh in meshes_volume_VPF.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="tab20",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
-
 
 # %% [markdown]
 # ### Computational domain mesh
 # #### Gmsh
 
 # %% vscode={"languageId": "python"}
-msh_file_VPF = mesh_GreatCell_VPF(
+msh_domain_VPF = mesh_GreatCell_VPF(
     lc2=h,
     lc=20 * h,
     r0=0.097,
@@ -937,52 +822,11 @@ msh_file_VPF = mesh_GreatCell_VPF(
     meshname=meshname,
     mode="domain",
 )
+meshes_VPF = ot.Meshes.from_gmsh(msh_domain_VPF, dim=[2], reindex=True, log=False)
+meshes_VPF.save(mesh_path_VPF, overwrite=True)
 
-# %% [markdown]
-# #### Convert .msh to an OGS-compatible mesh
-
-# %% vscode={"languageId": "python"}
-msh_path_VPF = mesh_path_VPF.joinpath(f"{meshname}.msh")
-meshes_volume_VPF = ot.Meshes.from_gmsh(
-    filename=msh_path_VPF, dim=[2], reindex=True, log=False
-)
-
-for name, mesh in meshes_volume_VPF.items():
-    print(f"{name}: {mesh.n_cells} cells")
-    pv.save_meshio(mesh_path_VPF.joinpath(f"{name}.vtu"), mesh)
-
-# %% [markdown]
-# #### Visualization of computational domain mesh
-
-# %% vscode={"languageId": "python"}
-plotter = pv.Plotter()
-for name, mesh in meshes_volume_VPF.items():
-    if mesh.active_scalars is not None:
-        plotter.add_mesh(
-            mesh,
-            scalars=mesh.active_scalars_name,
-            cmap="Set1",
-            show_edges=False,
-            opacity=0.7,
-        )
-    else:
-        plotter.add_mesh(mesh, show_edges=False, opacity=0.7, label=name)
-
-    clean_name = name.replace("physical_group_", "")
-
-    center = mesh.center
-    direction = np.array(center) - np.array([0, 0, 0])
-    direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-    offset = center + 0.025 * direction
-
-    plotter.add_point_labels(
-        [offset], [clean_name], font_size=12, point_size=0, text_color="black"
-    )
-
-plotter.view_xy()
-plotter.enable_parallel_projection()
-plotter.show()
-
+# %%
+plot_contourf_with_annotations(meshes_VPF)
 
 # %% vscode={"languageId": "python"}
 mesh_dir = Path(mesh_path_VPF).resolve()
@@ -1000,47 +844,59 @@ run(
 )
 
 physical_groups = [
-    "physical_group_DSS1.vtu",
-    "physical_group_DSS1a.vtu",
-    "physical_group_DSS2.vtu",
-    "physical_group_DSS2a.vtu",
-    "physical_group_DSS3.vtu",
-    "physical_group_DSS3a.vtu",
-    "physical_group_DSS4.vtu",
-    "physical_group_DSS4a.vtu",
-    "physical_group_DSS5.vtu",
-    "physical_group_DSS5a.vtu",
-    "physical_group_DSS6.vtu",
-    "physical_group_DSS6a.vtu",
-    "physical_group_DSS7.vtu",
-    "physical_group_DSS7a.vtu",
-    "physical_group_DSS8.vtu",
-    "physical_group_DSS8a.vtu",
-    "physical_group_PEE1.vtu",
-    "physical_group_PEE1a.vtu",
-    "physical_group_PEE2.vtu",
-    "physical_group_PEE2a.vtu",
-    "physical_group_PEE3.vtu",
-    "physical_group_PEE3a.vtu",
-    "physical_group_PEE4.vtu",
-    "physical_group_PEE4a.vtu",
-    "physical_group_PEE5.vtu",
-    "physical_group_PEE5a.vtu",
-    "physical_group_PEE6.vtu",
-    "physical_group_PEE6a.vtu",
-    "physical_group_PEE7.vtu",
-    "physical_group_PEE7a.vtu",
-    "physical_group_PEE8.vtu",
-    "physical_group_PEE8a.vtu",
-    "physical_group_p_bottom.vtu",
-    "physical_group_p_left.vtu",
-    "physical_group_p_right.vtu",
-    "physical_group_p_top.vtu",
-    "physical_group_Inlet.vtu",
-    "physical_group_Outlet_R_embeddedFracture.vtu",
-    "physical_group_Outlet_R_fullFracture.vtu",
-    "physical_group_Outlet_L_fullFracture.vtu",
+    "DSS1.vtu",
+    "DSS1a.vtu",
+    "DSS2.vtu",
+    "DSS2a.vtu",
+    "DSS3.vtu",
+    "DSS3a.vtu",
+    "DSS4.vtu",
+    "DSS4a.vtu",
+    "DSS5.vtu",
+    "DSS5a.vtu",
+    "DSS6.vtu",
+    "DSS6a.vtu",
+    "DSS7.vtu",
+    "DSS7a.vtu",
+    "DSS8.vtu",
+    "DSS8a.vtu",
+    "PEE1.vtu",
+    "PEE1a.vtu",
+    "PEE2.vtu",
+    "PEE2a.vtu",
+    "PEE3.vtu",
+    "PEE3a.vtu",
+    "PEE4.vtu",
+    "PEE4a.vtu",
+    "PEE5.vtu",
+    "PEE5a.vtu",
+    "PEE6.vtu",
+    "PEE6a.vtu",
+    "PEE7.vtu",
+    "PEE7a.vtu",
+    "PEE8.vtu",
+    "PEE8a.vtu",
+    "p_bottom.vtu",
+    "p_left.vtu",
+    "p_right.vtu",
+    "p_top.vtu",
+    "Inlet.vtu",
+    "Outlet_R_embeddedFracture.vtu",
+    "Outlet_R_fullFracture.vtu",
+    "Outlet_L_fullFracture.vtu",
 ]
+
+# Strip cell-type bulk_element_ids from 0D point meshes before identifySubdomains
+for name in [
+    "Inlet.vtu",
+    "Outlet_R_embeddedFracture.vtu",
+    "Outlet_R_fullFracture.vtu",
+    "Outlet_L_fullFracture.vtu",
+]:
+    p = mesh_dir / name
+    m = meshio.read(str(p))
+    m.cell_data.pop("bulk_element_ids", None)
+    meshio.write(str(p), m)
 
 group_paths = [str(mesh_dir.joinpath(name)) for name in physical_groups]
 
@@ -1141,7 +997,7 @@ plotter.plot_volumetric_strain_vs_angle(
     external_data=external_data["strain"],
 )
 
-plotter.plot_field_variables(vtu_files_dict_embedded)
+plotter.plot_field_variables(vtu_files_dict_embedded, show_pressure=False)
 
 
 # %% [markdown]
@@ -1231,7 +1087,7 @@ plotter.plot_volumetric_strain_vs_angle(
 )
 
 # %% vscode={"languageId": "python"}
-plotter.plot_field_variables(vtu_files_dict_full)
+plotter.plot_field_variables(vtu_files_dict_full, show_pressure=False)
 
 # %% [markdown]
 # ---
@@ -1340,7 +1196,7 @@ plotter.plot_avg_width_vs_stress(
     methods_to_include=["VPF"],
     pee_load_values=PEE_load_values,
     external_data=external_data["average"],
-    ylim_range=(0, 10e-6),
+    w0=next(iter(materials.values()))["w_init"],
 )
 
 plotter.plot_avg_width_vs_stress(
@@ -1349,7 +1205,7 @@ plotter.plot_avg_width_vs_stress(
     methods_to_include=["VPF"],
     pee_load_values=PEE_load_values,
     external_data=external_data["average"],
-    ylim_range=(0, 5e-12),
+    w0=next(iter(materials.values()))["w_init"],
 )
 
 # %% vscode={"languageId": "python"}
@@ -1484,7 +1340,7 @@ plotter.plot_avg_width_vs_stress(
     methods_to_include=["VPF"],
     pee_load_values=PEE_load_values,
     external_data=external_data["average"],
-    ylim_range=(0, 5.0e-5),
+    w0=next(iter(materials.values()))["w_init"],
 )
 
 plotter.plot_avg_width_vs_stress(
@@ -1493,7 +1349,7 @@ plotter.plot_avg_width_vs_stress(
     methods_to_include=["VPF"],
     pee_load_values=PEE_load_values,
     external_data=external_data["average"],
-    ylim_range=(0, 2.5e-10),
+    w0=next(iter(materials.values()))["w_init"],
 )
 
 # %% vscode={"languageId": "python"}
@@ -1551,4 +1407,3 @@ for case, label in pairs_to_check.items():
 # 2. Mollaali, M., Kolditz, O., Hu, M., Park, C.H., Park, J.W., McDermott, C.I., Chittenden, N., Bond, A., Yoon, J.S., Zhou, J. and Pan, P.Z., Liu H., Hou W.,  Lei H., Zhang L., Nagel T., Barsch M., Wang W., Nguyen S., Kwon S. and Yoshioka K., 2023. Comparative verification of hydro-mechanical fracture behavior: Task G of international research project DECOVALEX–2023. *International Journal of Rock Mechanics and Mining Sciences*, 170, p.105530.
 #
 # 3. Mollaali, M., Wang, W., You, T., Nagel, T., Fraser-Harris, A., McDermott, C., and Kolditz, O., 2025. Numerical benchmarking of GREAT cell experiments: Poly-axial stress effects on fluid flow in fractured rock using smeared and discrete methods.
-#

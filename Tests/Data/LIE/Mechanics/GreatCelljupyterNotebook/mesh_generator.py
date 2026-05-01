@@ -1,63 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 # SPDX-License-Identifier: BSD-3-Clause
 
+from __future__ import annotations
+
 import math
 from pathlib import Path
 
 import gmsh
 import numpy as np
 import ogstools as ot
-import pyvista as pv
-
-
-def _post_process_mesh(
-    meshes: ot.Meshes,
-    *,
-    dimensions: list | None = None,
-    plot: bool = True,
-    cmap: str = "tab20",
-    labels: bool = True,
-    opacity: float = 0.7,
-    **kwargs,
-) -> dict[str, pv.UnstructuredGrid]:
-    if dimensions is None:
-        dimensions = [1]
-
-    if plot:
-        pv.set_jupyter_backend("static")
-        plotter = pv.Plotter()
-        for name, mesh in meshes.items():
-            scalars = (
-                mesh.active_scalars_name if mesh.active_scalars is not None else None
-            )
-            plotter.add_mesh(
-                mesh,
-                scalars=scalars,
-                cmap=cmap,
-                show_edges=False,
-                opacity=opacity,
-                **kwargs,
-            )
-
-            if labels:
-                clean_name = name.replace("physical_group_", "")
-                center = mesh.center
-                direction = np.array(center) - np.array([0, 0, 0])
-                direction[:2] = direction[:2] / (np.linalg.norm(direction[:2]) + 1e-8)
-                offset = center + 0.025 * direction
-                plotter.add_point_labels(
-                    [offset],
-                    [clean_name],
-                    font_size=12,
-                    point_size=0,
-                    text_color="black",
-                )
-
-        plotter.view_xy()
-        plotter.enable_parallel_projection()
-        plotter.show()
-
-    return meshes
 
 
 def plot_contourf_with_annotations(meshes: ot.Meshes):
@@ -691,8 +642,6 @@ def mesh_GreatCell_VPF(
     out_dir=".",
     meshname="GreatCell_mesh",
     mode="domain",
-    post_process: bool = True,
-    **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
@@ -1099,14 +1048,6 @@ def mesh_GreatCell_VPF(
         gmsh.write(str(msh_file))
     finally:
         gmsh.finalize()
-    if post_process:
-        dims = [1] if mode == "BC" else [1, 2]
-        _post_process_mesh(
-            msh_path=msh_file,
-            output_dir=out_path,
-            dimensions=dims,
-            **post_process_kwargs,
-        )
     return msh_file
 
 
@@ -1122,8 +1063,6 @@ def mesh_GreatCell_Borehole_VPF(
     out_dir=".",
     meshname="GreatCell_mesh",
     mode="domain",
-    post_process: bool = True,
-    **post_process_kwargs,
 ) -> Path:
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
@@ -1292,14 +1231,6 @@ def mesh_GreatCell_Borehole_VPF(
         gmsh.write(str(msh_file))
     finally:
         gmsh.finalize()
-    if post_process:
-        dims = [1] if mode == "BC" else [1, 2]
-        _post_process_mesh(
-            msh_path=msh_file,
-            output_dir=out_path,
-            dimensions=dims,
-            **post_process_kwargs,
-        )
     return msh_file
 
 
@@ -1314,7 +1245,6 @@ def mesh_GreatCell_intact_meshes(
     out_dir=".",
     meshname="Greatcell_mesh",
 ) -> ot.Meshes:
-
     common = {
         "lc": lc,
         "lc2": lc2,
@@ -1328,14 +1258,12 @@ def mesh_GreatCell_intact_meshes(
     }
 
     msh_bc = mesh_GreatCell_intact(mode="BC", **common)
-    _meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
+    meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
 
     msh_domain = mesh_GreatCell_intact(mode="domain", **common)
-    _meshes_domain = ot.Meshes.from_gmsh(
-        msh_domain, dim=[1, 2], reindex=True, log=False
-    )
+    meshes_domain = ot.Meshes.from_gmsh(msh_domain, dim=[1, 2], reindex=True, log=False)
 
-    return ot.Meshes({"domain": _meshes_domain.domain, **_meshes_bc.subdomains})
+    return ot.Meshes({"domain": meshes_domain.domain, **dict(meshes_bc.subdomains)})
 
 
 def mesh_GreatCell_embeddedFracture_meshes(
@@ -1349,7 +1277,6 @@ def mesh_GreatCell_embeddedFracture_meshes(
     out_dir=".",
     meshname="Greatcell_mesh",
 ) -> ot.Meshes:
-
     common = {
         "lc": lc,
         "lc2": lc2,
@@ -1363,14 +1290,12 @@ def mesh_GreatCell_embeddedFracture_meshes(
     }
 
     msh_bc = mesh_GreatCell_embeddedFracture(mode="BC", **common)
-    _meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
+    meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
 
     msh_domain = mesh_GreatCell_embeddedFracture(mode="domain", **common)
-    _meshes_domain = ot.Meshes.from_gmsh(
-        msh_domain, dim=[1, 2], reindex=True, log=False
-    )
+    meshes_domain = ot.Meshes.from_gmsh(msh_domain, dim=[1, 2], reindex=True, log=False)
 
-    return ot.Meshes({"domain": _meshes_domain.domain, **_meshes_bc.subdomains})
+    return ot.Meshes({"domain": meshes_domain.domain, **dict(meshes_bc.subdomains)})
 
 
 def mesh_GreatCell_fullFracture_meshes(
@@ -1384,7 +1309,6 @@ def mesh_GreatCell_fullFracture_meshes(
     out_dir=".",
     meshname="Greatcell_mesh",
 ) -> ot.Meshes:
-
     common = {
         "lc": lc,
         "lc2": lc2,
@@ -1398,11 +1322,9 @@ def mesh_GreatCell_fullFracture_meshes(
     }
 
     msh_bc = mesh_GreatCell_fullFracture(mode="BC", **common)
-    _meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
+    meshes_bc = ot.Meshes.from_gmsh(msh_bc, dim=[1], reindex=True, log=False)
 
     msh_domain = mesh_GreatCell_fullFracture(mode="domain", **common)
-    _meshes_domain = ot.Meshes.from_gmsh(
-        msh_domain, dim=[1, 2], reindex=True, log=False
-    )
+    meshes_domain = ot.Meshes.from_gmsh(msh_domain, dim=[1, 2], reindex=True, log=False)
 
-    return ot.Meshes({"domain": _meshes_domain.domain, **_meshes_bc.subdomains})
+    return ot.Meshes({"domain": meshes_domain.domain, **dict(meshes_bc.subdomains)})
