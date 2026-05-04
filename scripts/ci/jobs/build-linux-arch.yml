@@ -4,8 +4,6 @@
     - .test-artifacts
   needs: [meta]
   timeout: 3h
-  variables:
-    BUILD_CTEST_LARGE_ON_MASTER: "true"
 
 # Rules for OGS_COVERAGE_PYTHON=OFF
 .common-arch-cpp-rules: &common-arch-cpp-rules
@@ -38,6 +36,7 @@ build linux arch:
     CMAKE_ARGS: "-DOGS_USE_MKL=ON -DOGS_USE_NETCDF=ON"
     ADDITIONAL_TARGETS_PRE: "check-headers"
     ADDITIONAL_TARGETS_POST: "feature_matrix"
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
   before_script: *common-linux-arch-before-script
   allow_failure:
     # Triggered by feature matrix feature_coverage
@@ -52,6 +51,7 @@ build linux arch (py-cov):
     CMAKE_ARGS: "-DOGS_USE_MKL=ON -DOGS_USE_NETCDF=ON -DOGS_COVERAGE_PYTHON=ON"
     ADDITIONAL_TARGETS_POST: "process_coverage_python"
     CTEST_ARGS: "-R nb-|pytest"
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
   before_script: *common-linux-arch-before-script
 
 # ============================================================
@@ -68,6 +68,7 @@ build linux petsc:
     ADDITIONAL_TARGETS_PRE: "check-headers"
     ADDITIONAL_TARGETS_POST: ""
     CTEST_ARGS: "-L default|petsc-mumps"
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
   before_script: *common-linux-arch-before-script
 
 build linux petsc (py-cov):
@@ -79,6 +80,7 @@ build linux petsc (py-cov):
     CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON -DOGS_COVERAGE_PYTHON=ON"
     ADDITIONAL_TARGETS_POST: "process_coverage_python"
     CTEST_ARGS: "-R nb-|pytest"
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
   before_script: *common-linux-arch-before-script
 
 # ============================================================
@@ -91,3 +93,4 @@ build linux arch lis:
   variables:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: "-DOGS_USE_LIS=ON"
+    BUILD_CTEST_LARGE_ON_MASTER: "true"
