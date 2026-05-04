@@ -29,9 +29,15 @@ def check_local_matrix_output_files_exist(outdir, file_should_exist=True):
 
     if file_should_exist:
         num_lines = sum(1 for line in logfile.open())
+        logfile_content = logfile.read_text()
 
         # the number is a "reference value", it should not change unless the test is changed
-        assert num_lines == 230
+        assert num_lines == 230, (
+            f"Unexpected number of lines in {logfile}.\n"
+            f"Expected: 230\n"
+            f"Actual: {num_lines}\n"
+            f"Log file content:\n{logfile_content}"
+        )
 
 
 def check_global_matrix_output_files_exist(outdir, file_should_exist=True):
