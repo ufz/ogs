@@ -400,7 +400,6 @@ macro(_set_omp_test_properties)
         set(_environment "")
     endif()
     math(EXPR _overall_processors "${OGS_CTEST_OMP_THREADS} * ${_processors}")
-    message(STATUS "Setting processors to ${OGS_CTEST_OMP_THREADS} * ${_processors} = ${_overall_processors} | ${TEST_NAME}-omp")
     set_tests_properties(
         ${TEST_NAME}-omp
         PROPERTIES ENVIRONMENT
