@@ -463,6 +463,13 @@
       ]
     },
     {
+      "name": "clang-release-large",
+      "configurePreset": "clang-release",
+      "inherits": [
+        "release-large"
+      ]
+    },
+    {
       "name": "clang-debug",
       "configurePreset": "clang-debug",
       "inherits": [
