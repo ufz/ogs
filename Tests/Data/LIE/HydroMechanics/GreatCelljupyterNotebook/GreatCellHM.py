@@ -5,11 +5,11 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
-#     display_name: Python (.venv)
+#     display_name: Python 3 (ipykernel)
 #     language: python
-#     name: venv
+#     name: python3
 # ---
 
 # %% [raw] magic_args="[raw]"
@@ -492,6 +492,7 @@ plotter.plot_volumetric_strain_vs_angle(
     ylim_range=[-7.5, 2.5],
     layout="subplots",
     external_data=external_data["strain"],
+    show_error=True,
 )
 
 # %% [markdown]
@@ -508,13 +509,6 @@ plotter.plot_volumetric_strain_vs_angle(
 
 # %% vscode={"languageId": "python"}
 plotter.plot_field_variables(vtu_files_dict)
-
-# %% [markdown]
-# **Note**: The stress distribution and **volumetric strain** are shown only in the central zone defined by:
-
-# %% vscode={"languageId": "python"}
-# Plot only inner mesh (within r=0.065 m):
-plotter.plot_field_variables(vtu_files_dict, inner=True, r=0.065)
 
 # %% [markdown]
 # ---
@@ -616,10 +610,10 @@ vtu_files_dict_embedded = sing_ogs_model.run_simulations_with_fracture(
 data_dir = Path("external_data")
 external_data = Plotter.load_external_data(data_dir, benchmark_tag="HM2b")
 custom_cb = {
-    "u": {"vmin": 0, "vmax": 0.25, "cmap": "Greens"},
-    "stress": {"vmin": -20, "vmax": 10, "cmap": "coolwarm"},
-    "strain": {"vmin": -0.05, "vmax": 0, "cmap": "RdBu_r"},
-    "pressure": {"vmin": 0.1, "vmax": 8, "cmap": "jet"},
+    "u": {"vmin": 0, "vmax": 0.25},
+    "stress": {"vmin": -20, "vmax": 10},
+    "strain": {"vmin": -0.05, "vmax": 0},
+    "pressure": {"vmin": 0.1, "vmax": 8},
 }
 plotter = Plotter(
     output_dir=out_dir,
@@ -648,6 +642,7 @@ plotter.plot_avg_width_vs_stress(
     methods_to_include=["LIE"],
     pee_load_values=PEE_load_values,
     external_data=external_data["average"],
+    w0=next(iter(materials.values()))["w_init"],
 )
 
 plotter.plot_avg_width_vs_stress(
@@ -656,6 +651,7 @@ plotter.plot_avg_width_vs_stress(
     methods_to_include=["LIE"],
     pee_load_values=PEE_load_values,
     external_data=external_data["average"],
+    w0=next(iter(materials.values()))["w_init"],
 )
 # %% vscode={"languageId": "python"}
 lie_profiles = {}
@@ -803,6 +799,7 @@ plotter.plot_avg_width_vs_stress(
     methods_to_include=["LIE"],
     pee_load_values=PEE_load_values,
     external_data=external_data["average"],
+    w0=next(iter(materials.values()))["w_init"],
 )
 
 plotter.plot_avg_width_vs_stress(
@@ -811,6 +808,7 @@ plotter.plot_avg_width_vs_stress(
     methods_to_include=["LIE"],
     pee_load_values=PEE_load_values,
     external_data=external_data["average"],
+    w0=next(iter(materials.values()))["w_init"],
 )
 
 # %% vscode={"languageId": "python"}

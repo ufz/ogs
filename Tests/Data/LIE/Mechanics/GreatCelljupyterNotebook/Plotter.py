@@ -29,6 +29,8 @@ class Plotter:
         "grid.linewidth": 0.4,
         "savefig.dpi": 600,
         "mathtext.fontset": "stix",
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
     }
 
     METHOD_COLORS: ClassVar[dict] = {
@@ -73,19 +75,17 @@ class Plotter:
         self,
         output_dir,
         colorbar_opts=None,
-        markers=None,
         save_extracted_data=False,
     ):
         self.output_dir = Path(output_dir)
         self.save_extracted_data = save_extracted_data
         self.colorbar_opts = colorbar_opts or {
-            "u": {"vmin": 0, "vmax": 0.25, "cmap": "Greens"},
-            "stress": {"vmin": -20, "vmax": 10, "cmap": "coolwarm"},
-            "strain": {"vmin": -0.05, "vmax": 0, "cmap": "RdBu_r"},
-            "pressure": {"vmin": 0.1, "vmax": 5, "cmap": "jet"},
+            "u": {"vmin": 0, "vmax": 0.25},
+            "stress": {"vmin": -20, "vmax": 10},
+            "strain": {"vmin": -0.05, "vmax": 0},
+            "pressure": {"vmin": 0.1, "vmax": 5},
         }
         self.load_order = ["A", "B", "C", "D", "E", "F", "NA"]
-        self.markers = markers or ["o", "s", "D", "^"]
         self.vtu_file_names: dict[str, dict[str, list[str]]] = {}
         self.material_names: list[str] = []
 
@@ -100,54 +100,63 @@ class Plotter:
         linestyle = self.LOAD_LINESTYLES.get(load_case, self.LOAD_LINESTYLES["Default"])
         return color, marker, linestyle
 
-    def _plot_mesh(self, filename, save_file=None, r=0.065, inner=False):
+    def _plot_mesh(
+        self,
+        filename,
+        save_file=None,
+        r=0.065,
+        inner=False,
+        show_phasefield=True,
+        show_pressure=True,
+    ):
         mesh = self.get_mesh(Path(filename).resolve(), r, inner)
         displacement = ot.variables.displacement.replace(output_unit="mm")
 
-        has_pressure = "pressure" in mesh.point_data
-        has_phasefield = "phasefield" in mesh.point_data
+        has_pressure = show_pressure and "pressure" in mesh.point_data
+        has_phasefield = show_phasefield and "phasefield" in mesh.point_data
         ncols = 4 + int(has_phasefield) if has_pressure else 3 + int(has_phasefield)
         fig, axs = plt.subplots(nrows=1, ncols=ncols, figsize=(12 * ncols, 10))
 
-        axs[0].set_title(r"$\mathbf{u}$ [mm]", fontsize=24)
-        ot.plot.contourf(mesh, displacement, fig, axs[0], **self.colorbar_opts["u"])
+        axs[0].set_title(r"$\mathbf{u}$")
+        ot.plot.contourf(
+            mesh, displacement, fig, axs[0], **self.colorbar_opts.get("u", {})
+        )
 
-        axs[1].set_title(r"$\mathrm{tr}(\sigma)$ [MPa]", fontsize=24)
+        axs[1].set_title(r"$\mathrm{tr}(\sigma)$")
         ot.plot.contourf(
             mesh,
             ot.variables.stress.trace,
             fig,
             axs[1],
-            **self.colorbar_opts["stress"],
+            **self.colorbar_opts.get("stress", {}),
         )
 
-        axs[2].set_title(r"$\mathrm{tr}(\varepsilon)$", fontsize=24)
+        axs[2].set_title(r"$\mathrm{tr}(\varepsilon)$")
         ot.plot.contourf(
             mesh,
             ot.variables.strain.trace,
             fig,
             axs[2],
-            **self.colorbar_opts["strain"],
+            **self.colorbar_opts.get("strain", {}),
         )
 
         col_idx = 3
         if has_pressure:
-            axs[col_idx].set_title(r"$p$ [MPa]", fontsize=24)
+            axs[col_idx].set_title(r"$p$")
             ot.plot.contourf(
                 mesh,
                 ot.variables.pressure,
                 fig,
                 axs[col_idx],
-                **self.colorbar_opts["pressure"],
+                **self.colorbar_opts.get("pressure", {}),
             )
             col_idx += 1
 
         if has_phasefield:
-            var_name = "phasefield" if "phasefield" in mesh.point_data else "d"
-            axs[col_idx].set_title(r"$v$ (Phase Field)", fontsize=24)
+            axs[col_idx].set_title(r"$v$ (Phase Field)")
             ot.plot.contourf(
                 mesh,
-                var_name,
+                "phasefield",
                 fig,
                 axs[col_idx],
                 **self.colorbar_opts.get("phasefield", {}),
@@ -156,7 +165,8 @@ class Plotter:
         domain_limit = 0.098
         for ax in axs:
             ax.set_aspect("equal")
-            ax.tick_params(labelsize=16)
+            ax.set_xlabel("x / m", labelpad=4)
+            ax.set_ylabel("y / m", labelpad=4)
             ax.set_xlim(-domain_limit, domain_limit)
             ax.set_ylim(-domain_limit, domain_limit)
         fig.tight_layout()
@@ -170,7 +180,15 @@ class Plotter:
         base = Path(base_path)
         return base.with_name(f"{base.stem}_{suffix}{base.suffix}")
 
-    def plot_field_variables(self, vtu_input, save_path=None, r=0.065, inner=False):
+    def plot_field_variables(
+        self,
+        vtu_input,
+        save_path=None,
+        r=0.065,
+        inner=False,
+        show_phasefield=True,
+        show_pressure=True,
+    ):
         def extract_benchmark_and_material(file_path):
             parts = Path(file_path).stem.split("_")
             benchmark = parts[0] if len(parts) > 0 else "Unknown"
@@ -180,14 +198,28 @@ class Plotter:
         if isinstance(vtu_input, str):
             benchmark, material = extract_benchmark_and_material(vtu_input)
             print(f"Benchmark: {benchmark}, Material: {material}")
-            return self._plot_mesh(vtu_input, save_path, r, inner)
+            return self._plot_mesh(
+                vtu_input,
+                save_path,
+                r,
+                inner,
+                show_phasefield=show_phasefield,
+                show_pressure=show_pressure,
+            )
 
         if isinstance(vtu_input, list):
             for i, f in enumerate(vtu_input):
                 benchmark, material = extract_benchmark_and_material(f)
                 print(f"[{i}] Benchmark: {benchmark}, Material: {material}")
                 sp = self._make_filename(save_path, i) if save_path else None
-                self._plot_mesh(f, sp, r, inner)
+                self._plot_mesh(
+                    f,
+                    sp,
+                    r,
+                    inner,
+                    show_phasefield=show_phasefield,
+                    show_pressure=show_pressure,
+                )
             return None
 
         if isinstance(vtu_input, dict):
@@ -199,7 +231,14 @@ class Plotter:
                         f"Load: {key}, File {i}, Benchmark: {benchmark}, Material: {material}"
                     )
                     sp = self._make_filename(save_path, tag) if save_path else None
-                    self._plot_mesh(f, sp, r, inner)
+                    self._plot_mesh(
+                        f,
+                        sp,
+                        r,
+                        inner,
+                        show_phasefield=show_phasefield,
+                        show_pressure=show_pressure,
+                    )
             return None
 
         msg = "vtu_input must be str, list, or dict"
@@ -243,7 +282,10 @@ class Plotter:
             try:
                 last_pvtu = self._last_from_pvd(path, ".pvtu", series_prefix)
                 out_vtu = last_pvtu.with_suffix(".vtu")
-                run(["pvtu2vtu", "-i", str(last_pvtu), "-o", str(out_vtu)], check=True)
+                run(
+                    ["pvtu2vtu", "-i", str(last_pvtu), "-o", str(out_vtu)],
+                    check=True,
+                )
                 return out_vtu
             except RuntimeError:
                 return self._last_from_pvd(path, ".vtu", series_prefix)
@@ -270,7 +312,10 @@ class Plotter:
         return mesh
 
     def inner_mesh(
-        self, filename: str | Path, r: float = 0.065, series_prefix: str | None = None
+        self,
+        filename: str | Path,
+        r: float = 0.065,
+        series_prefix: str | None = None,
     ) -> pv.UnstructuredGrid:
         path = (
             self.output_dir / Path(filename)
@@ -299,36 +344,91 @@ class Plotter:
         downsample: int = 1,
         markevery: int | None = None,
         external_data=None,
+        show_error: bool | None = None,
     ):
         self.setup_plot_style()
         BASE_WIDTH, BASE_HEIGHT = 7.0, 4.0
+        outdir = Path(self.output_dir or ".")
 
         if isinstance(vtu_files, list):
             vtu_files = {"Default": vtu_files}
         load_labels = list(vtu_files.keys())
 
-        if layout == "single":
-            fig, ax = plt.subplots(1, 1, figsize=(BASE_WIDTH, BASE_HEIGHT))
-            axes = dict.fromkeys(load_labels, ax)
-        elif layout == "subplots":
-            n = len(load_labels)
-            fig, axs = plt.subplots(
-                n, 1, figsize=(BASE_WIDTH, BASE_HEIGHT * n), sharex=True
-            )
-            if n == 1:
-                axs = [axs]
-            axes = {lbl: axs[i] for i, lbl in enumerate(load_labels)}
-        else:
-            err_msg = f"Invalid layout '{layout}'. Choose 'single' or 'subplots'."
-            raise ValueError(err_msg)
+        LIE_LIKE = {"LIE", "SD", "HM"}
+
+        def infer_method(vtu_file: str | Path) -> str | None:
+            parts = Path(vtu_file).stem.split("_")
+            tokens = [p.upper().strip() for p in parts[:4]]
+            if "VPF" in tokens:
+                return "VPF"
+            for m in ("LIE", "SD", "HM"):
+                if m in tokens:
+                    return m
+            return None
+
+        def has_error_comparison_data() -> bool:
+            if not isinstance(external_data, dict):
+                return False
+
+            for load_label, file_list in vtu_files.items():
+                run_methods = {
+                    method
+                    for method in (infer_method(vtu_file) for vtu_file in file_list)
+                    if method in ("VPF", *LIE_LIKE)
+                }
+                for run_method in run_methods:
+                    if run_method == "VPF":
+                        for om in LIE_LIKE:
+                            load_block = external_data.get(om, {}).get(load_label, {})
+                            if isinstance(load_block, dict) and load_block:
+                                return True
+                    elif run_method in LIE_LIKE:
+                        load_block = external_data.get("VPF", {}).get(load_label, {})
+                        if isinstance(load_block, dict) and load_block:
+                            return True
+            return False
+
+        if show_error is None:
+            show_error = has_error_comparison_data()
+
+        if not show_error:
+            if layout == "single":
+                fig, ax = plt.subplots(1, 1, figsize=(BASE_WIDTH, BASE_HEIGHT))
+                axes = dict.fromkeys(load_labels, ax)
+            elif layout == "subplots":
+                n = len(load_labels)
+                fig, axs = plt.subplots(
+                    n, 1, figsize=(BASE_WIDTH, BASE_HEIGHT * n), sharex=True
+                )
+                if n == 1:
+                    axs = [axs]
+                axes = {lbl: axs[i] for i, lbl in enumerate(load_labels)}
+            else:
+                err_msg = f"Invalid layout '{layout}'. Choose 'single' or 'subplots'."
+                raise ValueError(err_msg)
 
         for load_label, file_list in vtu_files.items():
-            ax = axes[load_label]
-            if layout == "subplots":
-                ax.set_title(f"Load case: {load_label}", fontsize=10, pad=10)
+            if show_error:
+                fig, (ax, ax_err) = plt.subplots(
+                    2,
+                    1,
+                    figsize=(BASE_WIDTH, BASE_HEIGHT + 2),
+                    sharex=True,
+                    gridspec_kw={"height_ratios": [2, 1]},
+                )
+            else:
+                ax = axes[load_label]
+                if layout == "subplots":
+                    ax.set_title(f"Load case: {load_label}", fontsize=10, pad=10)
+
+            run_method = None
+            run_series_by_mat: dict[str, tuple[np.ndarray, np.ndarray]] = {}
 
             for vtu_file in file_list:
-                if not Path(vtu_file).exists():
+                vtu_path = Path(vtu_file)
+                if not vtu_path.is_absolute():
+                    vtu_path = self.output_dir / vtu_path
+                if not vtu_path.exists():
                     continue
                 try:
                     phi, eps_v = self.sorted_angles_eps_trace(vtu_file)
@@ -337,8 +437,7 @@ class Plotter:
 
                 if self.save_extracted_data:
                     save_path = (
-                        Path(self.output_dir or ".")
-                        / f"extracted_{Path(vtu_file).stem}_volStrain.npz"
+                        outdir / f"extracted_{Path(vtu_file).stem}_volStrain.npz"
                     )
                     np.savez_compressed(save_path, phi=phi, eps_v=eps_v)
 
@@ -349,8 +448,24 @@ class Plotter:
                 mk = markevery or max(1, len(phi_ds) // 10)
 
                 parts = Path(vtu_file).stem.split("_")
-                method = parts[1] if len(parts) > 1 else "Unknown"
-                material = parts[3].title() if len(parts) > 3 else "Default"
+                parts_up = [p.upper() for p in parts]
+
+                known_methods = [
+                    m for m in self.METHOD_COLORS if m not in ("Unknown", "Default")
+                ]
+                known_materials = [m for m in self.MATERIAL_SHADES if m != "Default"]
+
+                method = infer_method(vtu_file) or next(
+                    (m for m in known_methods if m.upper() in parts_up),
+                    parts[1].upper() if len(parts) > 1 else "Unknown",
+                )
+                material = next(
+                    (m for m in known_materials if m.upper() in parts_up),
+                    parts[3].title() if len(parts) > 3 else "Default",
+                )
+
+                if run_method is None and method.upper() in ("VPF", *LIE_LIKE):
+                    run_method = method.upper()
 
                 base = self.METHOD_COLORS.get(method, self.METHOD_COLORS["Unknown"])
                 shade = self.MATERIAL_SHADES.get(
@@ -377,11 +492,22 @@ class Plotter:
                     markerfacecolor="none",
                     markeredgewidth=1.2,
                 )
+                run_series_by_mat[material] = (phi_deg, eps_pct)
 
-            if external_data:
-                for method_name, load_dict in external_data.items():
-                    if load_label not in load_dict:
-                        continue
+            other_method = None
+            if run_method in LIE_LIKE:
+                other_method = "VPF"
+            elif run_method == "VPF":
+                for om in ("LIE", "SD", "HM"):
+                    if external_data and load_label in external_data.get(om, {}):
+                        other_method = om
+                        break
+
+            other_series_by_mat: dict[str, tuple[np.ndarray, np.ndarray]] = {}
+
+            if external_data and other_method:
+                load_dict = external_data.get(other_method, {})
+                if load_label in load_dict:
                     for mat_name, vals in load_dict[load_label].items():
                         try:
                             phi_ext = np.array(vals["angle"])
@@ -394,7 +520,7 @@ class Plotter:
                         mk_ext = markevery or max(1, len(phi_ds_ext) // 10)
 
                         base = self.METHOD_COLORS.get(
-                            method_name, self.METHOD_COLORS["Unknown"]
+                            other_method, self.METHOD_COLORS["Unknown"]
                         )
                         shade = self.MATERIAL_SHADES.get(
                             mat_name.title(), self.MATERIAL_SHADES["Default"]
@@ -406,7 +532,7 @@ class Plotter:
                         ls = self.LOAD_LINESTYLES.get(
                             load_label, self.LOAD_LINESTYLES["Default"]
                         )
-                        lbl = f"{mat_name.title()}, {method_name}, Load {load_label}"
+                        lbl = f"{mat_name.title()}, {other_method}, Load {load_label}"
 
                         ax.plot(
                             phi_ds_ext,
@@ -421,15 +547,27 @@ class Plotter:
                             markeredgewidth=1.2,
                         )
 
+                        # collect sorted/unique series for error panel
+                        if show_error:
+                            order = np.argsort(phi_ext)
+                            phi_s, eps_s = phi_ext[order], eps_ext[order]
+                            phi_s, uidx = np.unique(phi_s, return_index=True)
+                            other_series_by_mat[mat_name.title()] = (
+                                phi_s,
+                                eps_s[uidx],
+                            )
+
             ax.set_xlim(0, 360)
             ax.set_xticks(np.arange(0, 361, 45))
             ax.grid(True, which="major", linestyle=":", linewidth=0.5, alpha=0.7)
-            ax.set_xlabel(r"Angle $\theta$ [$^\circ$]", labelpad=5)
             ax.set_ylabel(
-                r"Volumetric strain $\varepsilon_{\mathrm{vol}}$ [%]",
+                r"Volumetric strain $\varepsilon_{\mathrm{vol}}$ / %",
                 labelpad=5,
             )
-            ax.set_ylim(ylim_range or [-10, 0])
+            if not show_error:
+                ax.set_xlabel(r"Angle $\theta$ / $^\circ$", labelpad=5)
+            if ylim_range:
+                ax.set_ylim(ylim_range)
             ax.minorticks_on()
             ax.tick_params(which="minor", length=3, width=0.6)
             ax.tick_params(which="major", length=5, width=0.8)
@@ -437,51 +575,168 @@ class Plotter:
                 axis="both", which="both", direction="in", top=True, right=True
             )
 
-        Path(self.output_dir or ".").mkdir(parents=True, exist_ok=True)
-        save_opts = {"dpi": 600, "bbox_inches": "tight", "pad_inches": 0.05}
+            if show_error:
+                mats = sorted(
+                    set(run_series_by_mat.keys()) & set(other_series_by_mat.keys())
+                )
+                pairs_plotted = 0
+                for i, mat in enumerate(mats):
+                    x_run, y_run = run_series_by_mat[mat]
+                    x_oth, y_oth = other_series_by_mat[mat]
 
-        if layout == "single":
-            handles, labels = ax.get_legend_handles_labels()
-            ax.legend(
-                handles,
-                labels,
-                loc="lower right",
-                bbox_to_anchor=(0.98, 0.2),
-                frameon=True,
-                framealpha=0.95,
-                edgecolor="0.3",
-                borderpad=0.6,
-            )
-            fig.tight_layout()
-            fig.savefig(
-                Path(self.output_dir, f"volume_strain_plot_{model_type}_all.pdf"),
-                **save_opts,
-            )
-        else:
-            fig.subplots_adjust(hspace=0.3)
-            for subax in fig.axes:
-                handles, labels = subax.get_legend_handles_labels()
-                subax.legend(
+                    left = max(x_run.min(), x_oth.min())
+                    right = min(x_run.max(), x_oth.max())
+                    m_run = (x_run >= left) & (x_run <= right)
+                    m_oth = (x_oth >= left) & (x_oth <= right)
+                    if not np.any(m_run) or not np.any(m_oth):
+                        continue
+
+                    x = x_run[m_run]
+                    y0 = y_run[m_run]
+                    y1 = np.interp(x, x_oth[m_oth], y_oth[m_oth])
+                    err = y1 - y0
+
+                    marker = self.MATERIAL_MARKERS.get(
+                        mat, self.MATERIAL_MARKERS["Default"]
+                    )
+                    mk_err = markevery or max(1, len(x) // 10)
+                    col = self._gray_shade(i, max(1, len(mats)))
+
+                    ax_err.plot(
+                        x,
+                        err,
+                        color=col,
+                        linewidth=1.1,
+                        marker=marker,
+                        markersize=5,
+                        markevery=mk_err,
+                        markerfacecolor="none",
+                        markeredgewidth=1.1,
+                        label=mat,
+                    )
+                    pairs_plotted += 1
+
+                ax_err.axhline(0, linestyle="--", linewidth=0.8, color="gray")
+                ax_err.set_xlim(0, 360)
+                ax_err.set_xticks(np.arange(0, 361, 45))
+                if pairs_plotted == 0:
+                    ax_err.text(
+                        0.5,
+                        0.5,
+                        "No material overlap with both methods",
+                        ha="center",
+                        va="center",
+                        transform=ax_err.transAxes,
+                        fontsize=9,
+                    )
+                    ax_err.set_ylim(-1.0, 1.0)
+                else:
+                    ys = [
+                        np.asarray(ln.get_ydata())
+                        for ln in ax_err.get_lines()
+                        if np.asarray(ln.get_ydata()).size > 1
+                    ]
+                    if ys:
+                        all_err = np.concatenate(ys)
+                        finite = np.isfinite(all_err)
+                        if finite.any():
+                            emax = float(np.nanmax(np.abs(all_err[finite])))
+                            emax = max(emax, 1e-12)
+                            if emax > 5.0:
+                                emax = 5.0
+                            ax_err.set_ylim(-1.05 * emax, 1.05 * emax)
+                    ax_err.legend(
+                        fontsize=7,
+                        loc="upper right",
+                        frameon=True,
+                        framealpha=0.9,
+                        edgecolor="0.5",
+                    )
+
+                ax_err.set_xlabel(r"$\theta$ / $^\circ$", labelpad=5)
+                ax_err.set_ylabel(r"$\Delta_{\mathrm{pp}}$ / %", labelpad=5)
+                ax_err.grid(
+                    True, which="major", linestyle=":", linewidth=0.4, alpha=0.7
+                )
+                ax_err.minorticks_on()
+                ax_err.tick_params(which="minor", length=3, width=0.6)
+                ax_err.tick_params(which="major", length=5, width=0.8)
+                ax_err.tick_params(
+                    axis="both",
+                    which="both",
+                    direction="in",
+                    top=True,
+                    right=True,
+                )
+
+                handles, labels = ax.get_legend_handles_labels()
+                if handles:
+                    ax.legend(
+                        handles,
+                        labels,
+                        loc="lower right",
+                        bbox_to_anchor=(0.98, 0.02),
+                        frameon=True,
+                        framealpha=0.95,
+                        edgecolor="0.3",
+                        borderpad=0.6,
+                    )
+
+                fig.tight_layout()
+                outdir.mkdir(parents=True, exist_ok=True)
+                fig.savefig(
+                    outdir
+                    / f"volume_strain_plot_{model_type}_L{load_label}_withError.pdf",
+                    dpi=600,
+                    bbox_inches="tight",
+                    pad_inches=0.05,
+                )
+                plt.show()
+                plt.close(fig)
+
+        if not show_error:
+            outdir.mkdir(parents=True, exist_ok=True)
+            save_opts = {"dpi": 600, "bbox_inches": "tight", "pad_inches": 0.05}
+
+            if layout == "single":
+                handles, labels = ax.get_legend_handles_labels()
+                ax.legend(
                     handles,
                     labels,
                     loc="lower right",
-                    bbox_to_anchor=(0.98, 0.098),
+                    bbox_to_anchor=(0.98, 0.2),
                     frameon=True,
                     framealpha=0.95,
                     edgecolor="0.3",
                     borderpad=0.6,
                 )
-            fig.tight_layout()
-            fig.savefig(
-                Path(
-                    self.output_dir,
-                    f"volume_strain_plot_{model_type}_subplots.pdf",
-                ),
-                **save_opts,
-            )
+                fig.tight_layout()
+                fig.savefig(
+                    outdir / f"volume_strain_plot_{model_type}_all.pdf",
+                    **save_opts,
+                )
+            else:
+                fig.subplots_adjust(hspace=0.3)
+                for subax in fig.axes:
+                    handles, labels = subax.get_legend_handles_labels()
+                    subax.legend(
+                        handles,
+                        labels,
+                        loc="lower right",
+                        bbox_to_anchor=(0.98, 0.098),
+                        frameon=True,
+                        framealpha=0.95,
+                        edgecolor="0.3",
+                        borderpad=0.6,
+                    )
+                fig.tight_layout()
+                fig.savefig(
+                    outdir / f"volume_strain_plot_{model_type}_subplots.pdf",
+                    **save_opts,
+                )
 
-        plt.show()
-        plt.close()
+            plt.show()
+            plt.close()
 
     def _adjust_shade(self, hex_color, factor):
         try:
@@ -498,6 +753,14 @@ class Plotter:
         except Exception as e:
             print(f"Error adjusting shade for color {hex_color}: {e}")
             return "#000000"
+
+    def _gray_shade(self, index: int, count: int) -> str:
+        if count <= 1:
+            value = 0.5
+        else:
+            low, high = 0.25, 0.70
+            value = low + (high - low) * (index / (count - 1))
+        return str(round(value, 2))
 
     def get_sub_mesh_by_material(
         self, mesh: pv.UnstructuredGrid, material_id: int
@@ -740,6 +1003,7 @@ class Plotter:
         ylim_range: tuple[float, float] | None = None,
         external_data: dict[str, dict[str, dict[str, list[float]]]] | None = None,
         benchmark_tag: str | None = None,
+        w0: float | None = None,
     ) -> np.ndarray:
         if methods_to_include is None:
             methods_to_include = ["VPF", "LIE"]
@@ -751,7 +1015,11 @@ class Plotter:
         load_cases = list(pee_load_values.keys())
 
         lc_vpf, stress_vpf, width_vpf = ([], np.empty((0, 0)), np.empty((0, 0)))
-        lc_lie, stress_lie, aperture_lie = ([], np.empty((0, 0)), np.empty((0, 0)))
+        lc_lie, stress_lie, aperture_lie = (
+            [],
+            np.empty((0, 0)),
+            np.empty((0, 0)),
+        )
         if "VPF" in methods_to_include:
             lc_vpf, stress_vpf, width_vpf = self._gather_vpf_avg_data()
         if "LIE" in methods_to_include:
@@ -767,21 +1035,23 @@ class Plotter:
             stress_lie = stress_lie[indices, :]
             aperture_lie = aperture_lie[indices, :]
 
+        width_scale = w0 if w0 is not None else 1.0
+        perm_denom = w0**2 if w0 is not None else 12.0
         method_data: dict[str, dict[str, np.ndarray]] = {}
         if stress_vpf.size:
             arr = {
-                "width": width_vpf,
+                "width": width_vpf / width_scale,
                 "stress": stress_vpf,
-                "permeability": width_vpf**2 / 12.0,
+                "permeability": width_vpf**2 / perm_denom,
             }[metric]
             method_data["VPF"] = {
                 mat: arr[:, j] for j, mat in enumerate(self.material_names)
             }
         if stress_lie.size:
             arr = {
-                "width": aperture_lie,
+                "width": aperture_lie / width_scale,
                 "stress": stress_lie,
-                "permeability": aperture_lie**2 / 12.0,
+                "permeability": aperture_lie**2 / perm_denom,
             }[metric]
             method_data["LIE"] = {
                 mat: arr[:, j] for j, mat in enumerate(self.material_names)
@@ -832,11 +1102,15 @@ class Plotter:
                     ls = self.LOAD_LINESTYLES.get(load_case, "-")
                     for mat, vals in mat_profiles.items():
                         s_ext = np.array(vals.get("f_stress", []))
-                        y_ext = np.array(
-                            vals.get(metric, [])
-                            if metric != "permeability"
-                            else vals.get("permeability", [])
-                        )
+                        if metric == "permeability" and w0 is not None:
+                            w_ext = np.array(vals.get("width", []))
+                            y_ext = (w_ext / w0) ** 2 if w_ext.size else np.array([])
+                        elif metric == "width" and w0 is not None:
+                            y_ext = np.array(vals.get("width", []))
+                            if y_ext.size:
+                                y_ext = y_ext / w0
+                        else:
+                            y_ext = np.array(vals.get(metric, []))
                         if s_ext.size and y_ext.size:
                             shade = self.MATERIAL_SHADES.get(
                                 mat, self.MATERIAL_SHADES["Default"]
@@ -856,11 +1130,15 @@ class Plotter:
                                 label=f"{mat}, {method_name}",
                             )
 
-        ax.set_xlabel("Fracture normal stress [Pa]", labelpad=5)
+        ax.set_xlabel("Fracture normal stress / Pa", labelpad=5)
+        perm_ylabel = (
+            r"$k \, / \, k_0$ / -" if (w0 is not None) else r"Permeability / m²"
+        )
+        width_ylabel = r"$w \, / \, w_0$ / -" if w0 is not None else "Average width / m"
         ylabel_map = {
-            "width": "Average width [m]",
-            "stress": "Average stress [MPa]",
-            "permeability": "Permeability [m²]",
+            "width": width_ylabel,
+            "stress": "Average stress / MPa",
+            "permeability": perm_ylabel,
         }
         ax.set_ylabel(ylabel_map[metric], labelpad=5)
         if ylim_range:
@@ -1018,8 +1296,8 @@ class Plotter:
                             label=lbl_ext,
                         )
 
-            ax.set_xlabel("x [m]", labelpad=8)
-            ax.set_ylabel("Aperture [m]", labelpad=8)
+            ax.set_xlabel("x / m", labelpad=8)
+            ax.set_ylabel("Aperture / m", labelpad=8)
             if ylim is None:
                 ymax = max(
                     np.nanmax(vals) * 1.1
@@ -1223,13 +1501,18 @@ class Plotter:
                             **plot_kwargs,
                         )
 
-        ax.set_xlabel("Time [s]", labelpad=5)
-        ax.set_ylabel("Pressure [MPa]", labelpad=5)
+        ax.set_xlabel("Time / s", labelpad=5)
+        ax.set_ylabel("Pressure / MPa", labelpad=5)
         ax.grid(True, which="major", linestyle=":", linewidth=0.5, alpha=0.7)
         ax.minorticks_on()
         ax.tick_params(which="minor", length=3, width=0.6)
         ax.tick_params(
-            which="major", length=5, width=0.8, direction="in", top=True, right=True
+            which="major",
+            length=5,
+            width=0.8,
+            direction="in",
+            top=True,
+            right=True,
         )
 
         if time_min is not None or time_max is not None:

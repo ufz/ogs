@@ -5,11 +5,11 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
-#     display_name: Python (.venv)
+#     display_name: Python 3 (ipykernel)
 #     language: python
-#     name: venv
+#     name: python3
 # ---
 
 # %% [raw] magic_args="[raw]"
@@ -35,7 +35,6 @@ import matplotlib.pyplot as plt
 import meshio
 import numpy as np
 import ogstools as ot
-import pyvista as pv
 from matplotlib import colormaps
 
 mechanics_path = Path(
@@ -45,6 +44,7 @@ sys.path.insert(0, str(mechanics_path))
 # Local modules
 from mesh_generator import (  # noqa: E402
     mesh_GreatCell_Borehole_VPF,
+    plot_contourf_with_annotations,
 )
 from ogs_model_runner import SingleOGSModel  # noqa: E402
 from Plotter import Plotter  # noqa: E402
@@ -80,18 +80,18 @@ if not out_dir.exists():
 # %% [markdown]
 # # Great cell
 # ## $\texttt{HM}_{3d}$: Fracture Nucleation from Borehole under Poly-Axial Stress
-
+#
 # The **$\texttt{HM}_{3d}$** benchmark simulates **fracture nucleation** directly from a borehole in an intact rock sample subjected to **poly-axial stress conditions**.
-
+#
 # Fluid is injected at a rate of:
-
+#
 # $$
 # Q_0 = 2 \times 10^{-7} \times 2\pi r \quad \text{m}^2/\text{s}, \quad \text{with } r = 0.005\,\text{m}.
 # $$
-
-
+#
+#
 # This test provides insight into fluid-driven fracture processes under realistic in situ conditions and is especially useful for validating **coupled hydro-mechanical models**.
-
+#
 #  **For full details**, visit the GREAT Cell benchmark page:
 # [www.opengeosys.org/docs/benchmarks/small-deformations/greatcellm/](https://www.opengeosys.org/docs/benchmarks/small-deformations/greatcellm/)
 
@@ -104,16 +104,16 @@ if not out_dir.exists():
 #      -DOGS_USE_PETSC=ON \
 #      -DOGS_USE_PIP=ON
 #    ```
-
+#
 # 2. **Run the benchmark**
-
+#
 #    ```bash
 #    cd build-folder/release-petsc
 #    ctest -R nb-HMPhaseField/GreatCell
 #    ```
-
+#
 # 3. **Verify output files**
-
+#
 #    ```bash
 #    ls build-folder/release-petsc/Tests/Data/HMPhaseField/GreatCell/GreatCell
 #    ```
@@ -425,7 +425,7 @@ plt.show()
 # ### Input
 
 # %% vscode={"languageId": "python"}
-h = 0.001
+h = 0.0025
 borehole_radius = 0.0025
 delta = 0.00025
 meshname = "GreatCell"
@@ -451,9 +451,9 @@ msh_file = mesh_GreatCell_Borehole_VPF(
     out_dir=mesh_path,
     meshname=meshname,
     mode="BC",
-    post_process=True,
-    cmap="viridis",
-    opacity=0.8,
+)
+ot.Meshes.from_gmsh(msh_file, dim=[0, 1], reindex=True, log=False).save(
+    mesh_path, overwrite=True
 )
 
 
@@ -474,10 +474,12 @@ msh_file = mesh_GreatCell_Borehole_VPF(
     out_dir=mesh_path,
     meshname=meshname,
     mode="domain",
-    post_process=True,
-    cmap="viridis",
-    opacity=0.8,
 )
+meshes_borehole = ot.Meshes.from_gmsh(msh_file, dim=[1, 2], reindex=True, log=False)
+meshes_borehole.save(mesh_path, overwrite=True)
+
+# %%
+plot_contourf_with_annotations(meshes_borehole)
 
 # %% vscode={"languageId": "python"}
 mesh_dir = Path(mesh_path).resolve()
@@ -495,43 +497,43 @@ run(
 )
 
 physical_groups = [
-    "physical_group_DSS1.vtu",
-    "physical_group_DSS1a.vtu",
-    "physical_group_DSS2.vtu",
-    "physical_group_DSS2a.vtu",
-    "physical_group_DSS3.vtu",
-    "physical_group_DSS3a.vtu",
-    "physical_group_DSS4.vtu",
-    "physical_group_DSS4a.vtu",
-    "physical_group_DSS5.vtu",
-    "physical_group_DSS5a.vtu",
-    "physical_group_DSS6.vtu",
-    "physical_group_DSS6a.vtu",
-    "physical_group_DSS7.vtu",
-    "physical_group_DSS7a.vtu",
-    "physical_group_DSS8.vtu",
-    "physical_group_DSS8a.vtu",
-    "physical_group_PEE1.vtu",
-    "physical_group_PEE1a.vtu",
-    "physical_group_PEE2.vtu",
-    "physical_group_PEE2a.vtu",
-    "physical_group_PEE3.vtu",
-    "physical_group_PEE3a.vtu",
-    "physical_group_PEE4.vtu",
-    "physical_group_PEE4a.vtu",
-    "physical_group_PEE5.vtu",
-    "physical_group_PEE5a.vtu",
-    "physical_group_PEE6.vtu",
-    "physical_group_PEE6a.vtu",
-    "physical_group_PEE7.vtu",
-    "physical_group_PEE7a.vtu",
-    "physical_group_PEE8.vtu",
-    "physical_group_PEE8a.vtu",
-    "physical_group_p_bottom.vtu",
-    "physical_group_p_left.vtu",
-    "physical_group_p_right.vtu",
-    "physical_group_p_top.vtu",
-    "physical_group_borehole_boundary.vtu",
+    "DSS1.vtu",
+    "DSS1a.vtu",
+    "DSS2.vtu",
+    "DSS2a.vtu",
+    "DSS3.vtu",
+    "DSS3a.vtu",
+    "DSS4.vtu",
+    "DSS4a.vtu",
+    "DSS5.vtu",
+    "DSS5a.vtu",
+    "DSS6.vtu",
+    "DSS6a.vtu",
+    "DSS7.vtu",
+    "DSS7a.vtu",
+    "DSS8.vtu",
+    "DSS8a.vtu",
+    "PEE1.vtu",
+    "PEE1a.vtu",
+    "PEE2.vtu",
+    "PEE2a.vtu",
+    "PEE3.vtu",
+    "PEE3a.vtu",
+    "PEE4.vtu",
+    "PEE4a.vtu",
+    "PEE5.vtu",
+    "PEE5a.vtu",
+    "PEE6.vtu",
+    "PEE6a.vtu",
+    "PEE7.vtu",
+    "PEE7a.vtu",
+    "PEE8.vtu",
+    "PEE8a.vtu",
+    "p_bottom.vtu",
+    "p_left.vtu",
+    "p_right.vtu",
+    "p_top.vtu",
+    "borehole_boundary.vtu",
 ]
 
 group_paths = [str(mesh_dir.joinpath(name)) for name in physical_groups]
@@ -555,17 +557,26 @@ run(
 
 # %% vscode={"languageId": "python"}
 mesh_path_pre_existing = Path("mesh_borehole_pre_existing").resolve()
+
+
 # Compare generated and pre-existing meshes
+def _mesh_stats(path):
+    m = meshio.read(path)
+    return m.points.shape[0], sum(len(b.data) for b in m.cells)
+
+
 meshes = {
-    "mesh_path": pv.read(mesh_path.joinpath("domain.vtu")),
-    "mesh_path_pre_existing": pv.read(mesh_path_pre_existing.joinpath("domain.vtu")),
+    "mesh_path": _mesh_stats(mesh_path.joinpath("domain.vtu")),
+    "mesh_path_pre_existing": _mesh_stats(
+        mesh_path_pre_existing.joinpath("domain.vtu")
+    ),
 }
 
-for name, m in meshes.items():
-    print(name, "Nodes:", m.n_points, "Elements:", m.n_cells)
+for name, (n_points, n_cells) in meshes.items():
+    print(name, "Nodes:", n_points, "Elements:", n_cells)
 
-d_nodes = meshes["mesh_path_pre_existing"].n_points - meshes["mesh_path"].n_points
-d_cells = meshes["mesh_path_pre_existing"].n_cells - meshes["mesh_path"].n_cells
+d_nodes = meshes["mesh_path_pre_existing"][0] - meshes["mesh_path"][0]
+d_cells = meshes["mesh_path_pre_existing"][1] - meshes["mesh_path"][1]
 print("Δ Nodes:", d_nodes, " Δ Elements:", d_cells)
 
 mesh_path_pre_existing_copy = (
@@ -583,7 +594,7 @@ shutil.copytree(mesh_path_pre_existing, mesh_path_pre_existing_copy)
 #
 #  This benchmark, which does not consider any fracture, is designed to verify the basic computational setting for hydro-mechanical simulations. In addition to the mechanical loads, a zero constant pore pressure is prescribed at the outer boundary. At the center of sample, fluid is injected at a rate of $Q_0^{\text{v}} = 2.085 \times 10^{-9}$ m$^3$/s
 #
-#  The hydro-mechanical simulations follows a two-stage process: a 3000~s equilibrium phase under mechanical loading to stabilize initial conditions, followed by a 500~s fluid injection phase to model fluid flow. This loading condition is applied to both **Greywacke** and **Gneiss** samples
+#  The hydro-mechanical simulations follows a two-stage process: a 3000 s equilibrium phase under mechanical loading to stabilize initial conditions, followed by a 500~s fluid injection phase to model fluid flow. This loading condition is applied to both **Greywacke** and **Gneiss** samples
 #
 
 # %% [markdown]
@@ -653,10 +664,10 @@ vtu_files_dict_HM = sing_ogs_model.run_simulations_with_fracture(
 # %% vscode={"languageId": "python"}
 
 custom_cb = {
-    "u": {"vmin": 0, "vmax": 1e-2, "cmap": "Greens"},
-    "stress": {"vmin": -20, "vmax": 10, "cmap": "coolwarm"},
-    "strain": {"vmin": -0.025, "vmax": 0.05, "cmap": "RdBu_r"},
-    "pressure": {"vmin": 0.1, "vmax": 8, "cmap": "jet"},
+    "u": {"vmin": 0, "vmax": 1e-2},
+    "stress": {"vmin": -20, "vmax": 10},
+    "strain": {"vmin": -0.025, "vmax": 0.05},
+    "pressure": {"vmin": 0.1, "vmax": 8},
 }
 plotter = Plotter(
     output_dir=out_dir,
@@ -749,7 +760,11 @@ def compare_arrays(a, b, rtol=1e-6, atol=1e-8, equal_nan=False):
     if b.ndim == 1:
         b = b[:, None]
     if a.shape != b.shape:
-        return {"status": "SHAPE MISMATCH", "a_shape": a.shape, "b_shape": b.shape}
+        return {
+            "status": "SHAPE MISMATCH",
+            "a_shape": a.shape,
+            "b_shape": b.shape,
+        }
     try:
         np.testing.assert_allclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan)
         return {"status": "MATCH"}

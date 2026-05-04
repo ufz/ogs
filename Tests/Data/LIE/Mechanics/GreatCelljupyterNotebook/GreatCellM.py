@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -593,29 +593,6 @@ plotter.plot_volumetric_strain_vs_angle(
 
 # %% vscode={"languageId": "python"}
 plotter.plot_field_variables(vtu_files_dict)
-
-# %% [markdown]
-# **Note**: The stress distribution and **volumetric strain** are shown only in the central zone defined by:
-#
-# $$
-# \sqrt{x^2 + y^2} < 0.065\ \text{m}
-# $$
-#
-# This is done because **strain is relatively high in the PEE regions** (due to their softer material properties), and we want to isolate the deformation behavior within the **core of the sample**.
-#
-# <!-- ---
-#
-#  **Figure:** Effective Stress Trace and Volumetric Strain.
-#
-# | (a) Greywacke Sample | (b) Gneiss Sample |
-# |----------------------|------------------|
-# | ![Greywacke Stress-Strain](figs/M1_VPF_profiles_greywacke.png) | ![Gneiss Stress-Strain](figs/M1_VPF_profiles_gneiss.png) |
-#
-# **Figure**: Trace of effective stress and volumetric strain vs angle for intact Greywacke (a) and Gneiss (b). Stress is visualized over the full sample domain, while strain is restricted to the central region to avoid high values near PEE materials. -->
-
-# %% vscode={"languageId": "python"}
-# Plot only inner mesh (within r=0.065 m):
-plotter.plot_field_variables(vtu_files_dict, inner=True, r=0.065)
 
 # %% [markdown]
 # ---

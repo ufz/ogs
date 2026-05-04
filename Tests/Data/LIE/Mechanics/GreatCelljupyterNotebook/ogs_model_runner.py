@@ -14,9 +14,9 @@ class SingleOGSModel:
 
     def __init__(
         self,
-        project,
-        meshes,
-        out_dir,
+        project=None,
+        meshes=None,
+        out_dir=None,
         output_prefix="",
         n_fracture_p_ncs=3,
         method="LIE",
@@ -26,7 +26,27 @@ class SingleOGSModel:
         fracture_model_type=None,
         materials=None,
         n_mpi=1,
+        **kwargs,
     ):
+        # Backward compatibility for older notebooks.
+        if project is None and "model" in kwargs:
+            project = kwargs.pop("model")
+        if meshes is None and "mesh_path" in kwargs:
+            meshes = kwargs.pop("mesh_path")
+        if kwargs:
+            unexpected = ", ".join(sorted(kwargs))
+            msg = f"Unexpected keyword argument(s): {unexpected}"
+            raise TypeError(msg)
+        if project is None:
+            msg = "Missing required argument 'project' (or alias 'model')."
+            raise TypeError(msg)
+        if meshes is None:
+            msg = "Missing required argument 'meshes' (or alias 'mesh_path')."
+            raise TypeError(msg)
+        if out_dir is None:
+            msg = "Missing required argument 'out_dir'."
+            raise TypeError(msg)
+
         self.prj = project
         self.meshes = meshes
         self.method = method
@@ -710,50 +730,50 @@ class SingleOGSModel:
             )
 
         HM3D_GROUPS = [
-            "physical_group_DSS1.vtu",
-            "physical_group_DSS1a.vtu",
-            "physical_group_DSS2.vtu",
-            "physical_group_DSS2a.vtu",
-            "physical_group_DSS3.vtu",
-            "physical_group_DSS3a.vtu",
-            "physical_group_DSS4.vtu",
-            "physical_group_DSS4a.vtu",
-            "physical_group_DSS5.vtu",
-            "physical_group_DSS5a.vtu",
-            "physical_group_DSS6.vtu",
-            "physical_group_DSS6a.vtu",
-            "physical_group_DSS7.vtu",
-            "physical_group_DSS7a.vtu",
-            "physical_group_DSS8.vtu",
-            "physical_group_DSS8a.vtu",
-            "physical_group_PEE1.vtu",
-            "physical_group_PEE1a.vtu",
-            "physical_group_PEE2.vtu",
-            "physical_group_PEE2a.vtu",
-            "physical_group_PEE3.vtu",
-            "physical_group_PEE3a.vtu",
-            "physical_group_PEE4.vtu",
-            "physical_group_PEE4a.vtu",
-            "physical_group_PEE5.vtu",
-            "physical_group_PEE5a.vtu",
-            "physical_group_PEE6.vtu",
-            "physical_group_PEE6a.vtu",
-            "physical_group_PEE7.vtu",
-            "physical_group_PEE7a.vtu",
-            "physical_group_PEE8.vtu",
-            "physical_group_PEE8a.vtu",
-            "physical_group_p_bottom.vtu",
-            "physical_group_p_left.vtu",
-            "physical_group_p_right.vtu",
-            "physical_group_p_top.vtu",
-            "physical_group_borehole_boundary.vtu",
+            "DSS1.vtu",
+            "DSS1a.vtu",
+            "DSS2.vtu",
+            "DSS2a.vtu",
+            "DSS3.vtu",
+            "DSS3a.vtu",
+            "DSS4.vtu",
+            "DSS4a.vtu",
+            "DSS5.vtu",
+            "DSS5a.vtu",
+            "DSS6.vtu",
+            "DSS6a.vtu",
+            "DSS7.vtu",
+            "DSS7a.vtu",
+            "DSS8.vtu",
+            "DSS8a.vtu",
+            "PEE1.vtu",
+            "PEE1a.vtu",
+            "PEE2.vtu",
+            "PEE2a.vtu",
+            "PEE3.vtu",
+            "PEE3a.vtu",
+            "PEE4.vtu",
+            "PEE4a.vtu",
+            "PEE5.vtu",
+            "PEE5a.vtu",
+            "PEE6.vtu",
+            "PEE6a.vtu",
+            "PEE7.vtu",
+            "PEE7a.vtu",
+            "PEE8.vtu",
+            "PEE8a.vtu",
+            "p_bottom.vtu",
+            "p_left.vtu",
+            "p_right.vtu",
+            "p_top.vtu",
+            "borehole_boundary.vtu",
         ]
 
         HM2_GROUPS = HM3D_GROUPS[:-1] + [  # same as HM3D but replace last element
-            "physical_group_Inlet.vtu",
-            "physical_group_Outlet_R_embeddedFracture.vtu",
-            "physical_group_Outlet_R_fullFracture.vtu",
-            "physical_group_Outlet_L_fullFracture.vtu",
+            "Inlet.vtu",
+            "Outlet_R_embeddedFracture.vtu",
+            "Outlet_R_fullFracture.vtu",
+            "Outlet_L_fullFracture.vtu",
         ]
 
         if model_type == "HM3d":

@@ -185,7 +185,7 @@ for b_bar in ["true", "false"]:
     series[b_bar] = (angles, eps_v)
 
 
-ax.set_ylabel(r"Volumetric strain $\varepsilon_{\mathrm{vol}}$ [%]", labelpad=5)
+ax.set_ylabel(r"Volumetric strain $\varepsilon_{\mathrm{vol}}$ / %", labelpad=5)
 ax.set_xlim(0, 360)
 ax.set_ylim(-4, 0)
 ax.set_xticks(np.arange(0, 361, 45))
@@ -208,8 +208,8 @@ err = y_t - y_f
 
 ax_err.plot(phi_t, err, color="k")
 ax_err.axhline(0, linestyle="--", linewidth=0.8, color="gray")
-ax_err.set_xlabel(r"Angle $\theta$ [$^\circ$]", labelpad=5)
-ax_err.set_ylabel(r"$\Delta$ [%]", labelpad=5)
+ax_err.set_xlabel(r"Angle $\theta$ / $^\circ$", labelpad=5)
+ax_err.set_ylabel(r"$\Delta$ / %", labelpad=5)
 ax_err.grid(True, which="major", linestyle=":", linewidth=0.4, alpha=0.7)
 
 ax.minorticks_on()
@@ -254,15 +254,15 @@ def plot_mesh_compare(
 
     rows = [
         (
-            "$\\mathbf{u}$ [mm]",
+            "$\\mathbf{u}$",
             ot.variables.displacement.replace(output_unit="mm"),
             "u",
         ),
-        ("$\\mathrm{tr}(\\sigma)$ [MPa]", ot.variables.stress.trace, "stress"),
+        ("$\\mathrm{tr}(\\sigma)$", ot.variables.stress.trace, "stress"),
         ("$\\mathrm{tr}(\\varepsilon)$", ot.variables.strain.trace, "strain"),
     ]
     if include_pressure:
-        rows.append(("$p$ [MPa]", ot.variables.pressure, "pressure"))
+        rows.append(("$p$", ot.variables.pressure, "pressure"))
 
     nrows = len(rows)
     ncols = 2
@@ -296,10 +296,10 @@ def plot_mesh_compare(
 
 
 colorbar_opts = {
-    "u": {"vmin": 0, "vmax": 0.25, "cmap": "Greens"},
-    "stress": {"vmin": -15, "vmax": 5, "cmap": "coolwarm"},
-    "strain": {"vmin": -0.05, "vmax": 0.005, "cmap": "RdBu_r"},
-    "pressure": {"vmin": 0.1, "vmax": 10, "cmap": "jet"},
+    "u": {"vmin": 0, "vmax": 0.25},
+    "stress": {"vmin": -15, "vmax": 5},
+    "strain": {"vmin": -0.05, "vmax": 0.005},
+    "pressure": {"vmin": 0.1, "vmax": 10},
 }
 
 plot_mesh_compare(
