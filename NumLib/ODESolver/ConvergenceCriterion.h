@@ -5,6 +5,7 @@
 
 #include <memory>
 
+#include "DampingPolicy.h"
 #include "MathLib/LinAlg/LinAlg.h"  // For MathLib::VecNormType
 #include "NumLib/NumericsConfig.h"
 
@@ -43,7 +44,9 @@ public:
     //! done.
     virtual bool hasResidualCheck() const = 0;
 
-    virtual bool hasNonNegativeDamping() const = 0;
+    /// Returns the DampingPolicy implemented by this criterion, or nullptr if
+    /// this criterion does not constrain the step length.
+    virtual DampingPolicy const* dampingPolicy() const { return nullptr; }
 
     //! Check if the change of the solution between iterations satisfies the
     //! convergence criterion.
@@ -59,10 +62,6 @@ public:
 
     //! Check if the residual satisfies the convergence criterion.
     virtual void checkResidual(GlobalVector const& residual) = 0;
-
-    virtual double getDampingFactor(GlobalVector const& minus_delta_x,
-                                    GlobalVector const& x,
-                                    double damping_orig) = 0;
 
     //! Tell the ConvergenceCriterion that it is called for the first time now
     //! (while solving a specific nonlinear system).

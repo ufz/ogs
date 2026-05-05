@@ -4,6 +4,7 @@
 #pragma once
 
 #include "ConvergenceCriterionPerComponent.h"
+#include "DampingPolicy.h"
 #include "MathLib/LinAlg/LinAlgEnums.h"
 
 namespace NumLib
@@ -17,7 +18,8 @@ class LocalToGlobalIndexMap;
 //! If both an absolute and a relative tolerances are specified, at least one of
 //! them has to be satisfied.
 class ConvergenceCriterionPerComponentDeltaX
-    : public ConvergenceCriterionPerComponent
+    : public ConvergenceCriterionPerComponent,
+      public DampingPolicy
 {
 public:
     ConvergenceCriterionPerComponentDeltaX(
@@ -29,17 +31,17 @@ public:
 
     bool hasDeltaXCheck() const override { return true; }
     bool hasResidualCheck() const override { return false; }
-    bool hasNonNegativeDamping() const override
+    DampingPolicy const* dampingPolicy() const override
     {
-        return _damping_alpha_switch;
+        return _damping_alpha_switch ? this : nullptr;
     }
 
     void checkDeltaX(const GlobalVector& minus_delta_x,
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& /*residual*/) override {}
-    double getDampingFactor(const GlobalVector& minus_delta_x,
-                            GlobalVector const& x,
-                            double damping_orig) override;
+    double apply(GlobalVector const& minus_delta_x,
+                 GlobalVector const& x,
+                 double const base_damping) const override;
 
     void reset() override { this->_satisfied = true; }
 

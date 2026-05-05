@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "ConvergenceCriterionPerComponent.h"
+#include "DampingPolicy.h"
 #include "MathLib/LinAlg/LinAlgEnums.h"
 
 namespace NumLib
@@ -19,7 +20,8 @@ class LocalToGlobalIndexMap;
 //! If both an absolute and a relative tolerances are specified, at least one of
 //! them has to be satisfied.
 class ConvergenceCriterionPerComponentResidual
-    : public ConvergenceCriterionPerComponent
+    : public ConvergenceCriterionPerComponent,
+      public DampingPolicy
 {
 public:
     ConvergenceCriterionPerComponentResidual(
@@ -31,9 +33,9 @@ public:
 
     bool hasDeltaXCheck() const override { return true; }
     bool hasResidualCheck() const override { return true; }
-    bool hasNonNegativeDamping() const override
+    DampingPolicy const* dampingPolicy() const override
     {
-        return _damping_alpha_switch;
+        return _damping_alpha_switch ? this : nullptr;
     }
 
     /// The function will only do diagnostic output and no actual check of the
@@ -41,9 +43,9 @@ public:
     void checkDeltaX(const GlobalVector& minus_delta_x,
                      GlobalVector const& x) override;
     void checkResidual(const GlobalVector& residual) override;
-    double getDampingFactor(GlobalVector const& minus_delta_x,
-                            GlobalVector const& x,
-                            double damping_orig) override;
+    double apply(GlobalVector const& minus_delta_x,
+                 GlobalVector const& x,
+                 double const base_damping) const override;
 
     void setDOFTable(const LocalToGlobalIndexMap& dof_table,
                      MeshLib::Mesh const& mesh) override;

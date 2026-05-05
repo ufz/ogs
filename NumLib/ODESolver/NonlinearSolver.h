@@ -8,6 +8,7 @@
 
 #include "ConvergenceCriterion.h"
 #include "MathLib/LinAlg/GlobalLinearSolverType.h"
+#include "NewtonStepStrategy.h"
 #include "NonlinearSolverStatus.h"
 #include "NonlinearSystem.h"
 #include "Types.h"
@@ -75,37 +76,38 @@ public:
 
     /*! Constructs a new instance.
      *
-     * \param linear_solver the linear solver used by this nonlinear solver.
-     * \param maxiter the maximum number of iterations used to solve the
-     *                equation.
-     * \param recompute_jacobian recompute jacobian for the follow-up steps
-     * \param damping A positive damping factor.
-     * \see _damping
-     * \param damping_reduction A parameter that reduces damping
-     * \see _damping_reduction
+     * \param linear_solver    the linear solver used by this nonlinear solver.
+     * \param maxiter          the maximum number of iterations used to solve
+     *                         the equation.
+     * \param newton_strategy  globalization / step-acceptance strategy
+     *                         (e.g. fixed damping, line search).  Ownership
+     *                         is transferred to the solver.
+     * \param recompute_jacobian recompute the Jacobian every this many steps.
      */
-    explicit NonlinearSolver(
-        GlobalLinearSolver& linear_solver,
-        int const maxiter,
-        int const recompute_jacobian = 1,
-        double const damping = 1.0,
-        std::optional<double> const damping_reduction = std::nullopt)
+    explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
+                             int const maxiter,
+                             std::unique_ptr<NewtonStepStrategy>
+                                 newton_strategy,
+                             int const recompute_jacobian = 1)
         : _linear_solver(linear_solver),
           _maxiter(maxiter),
-          _recompute_jacobian(recompute_jacobian),
-          _damping(damping),
-          _damping_reduction(damping_reduction)
+          _step_strategy(std::move(newton_strategy)),
+          _recompute_jacobian(recompute_jacobian)
     {
     }
 
     ~NonlinearSolver();
 
-    //! Set the nonlinear equation system that will be solved.
-    //! TODO doc
+    //! Set the nonlinear equation system that will be solved and the
+    //! convergence criterion used to terminate the iteration.  Also forwards
+    //! the criterion to the step strategy so that strategies that depend on
+    //! residual or delta-x information (e.g. non-negative damping) can use it.
     void setEquationSystem(System& eq, ConvergenceCriterion& conv_crit)
     {
         _equation_system = &eq;
         _convergence_criterion = &conv_crit;
+        _step_strategy->setDampingPolicy(
+            _convergence_criterion->dampingPolicy());
     }
 
     void calculateNonEquilibriumInitialResiduum(
@@ -129,22 +131,16 @@ private:
     GlobalLinearSolver& _linear_solver;
     System* _equation_system = nullptr;
 
-    // TODO doc
-    ConvergenceCriterion* _convergence_criterion = nullptr;
     int const _maxiter;  //!< maximum number of iterations
 
-    int const _recompute_jacobian = 1;
+    //! Globalization / step-acceptance strategy (e.g. fixed damping).
+    std::unique_ptr<NewtonStepStrategy> _step_strategy;
 
-    //! A positive damping factor. The default value 1.0 gives a non-damped
-    //! Newton method. Common values are in the range 0.5 to 0.7 for somewhat
-    //! conservative method and seldom become smaller than 0.2 for very
-    //! conservative approach.
-    double const _damping;
+    //! Convergence criterion used to terminate the Newton iteration.
+    ConvergenceCriterion* _convergence_criterion = nullptr;
 
-    //! A parameter that reduces the damping by iteration / _damping_reduction
-    //! If the expression is smaller than zero, then damping is the same for all
-    //! iterations. If the expression is bigger than one it is clamped by one.
-    std::optional<double> const _damping_reduction;
+    int const _recompute_jacobian =
+        1;  //!< Recompute Jacobian every this many steps.
 
     GlobalVector* _r_neq = nullptr;      //!< non-equilibrium initial residuum.
     std::size_t _res_id = 0u;            //!< ID of the residual vector.
@@ -235,21 +231,6 @@ private:
     bool _compensate_non_equilibrium_initial_residuum = false;
     // clang-format on
 };
-
-/*! Creates a new nonlinear solver from the given configuration.
- *
- * \param linear_solver the linear solver that will be used by the nonlinear
- *                      solver
- * \param config configuration settings
- *
- * \return a pair <tt>(nl_slv, tag)</tt> where \c nl_slv is the generated
- *         nonlinear solver instance and the \c tag indicates if it uses
- *         the Picard or Newton-Raphson method
- */
-std::pair<std::unique_ptr<NonlinearSolverBase>, NonlinearSolverTag>
-createNonlinearSolver(GlobalLinearSolver& linear_solver,
-                      BaseLib::ConfigTree const& config);
-
 //! @}
 
 }  // namespace NumLib
