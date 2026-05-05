@@ -42,11 +42,11 @@ class glacier:
     def length(self, t):
         return self.L_max * (t - self.t_0) / self.t_1
 
-    def printMaxLoads(self):
+    def print_max_load(self):
         print("Maximal normal stress due to glacier load: ")
         print(self.normalstress(0, self.t_1) / 1e6, "MPa")
 
-    def plotEvolution(self):
+    def plot_evolution(self):
         tRange = np.linspace(self.t_0, self.t_1, 11)
         xRange = np.linspace(self.x_0, self.x_0 + self.L_dom, 500)
         yRangeBefore = 0
