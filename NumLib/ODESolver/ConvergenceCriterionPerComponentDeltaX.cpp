@@ -72,7 +72,7 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
 
 double ConvergenceCriterionPerComponentDeltaX::apply(
     GlobalVector const& minus_delta_x, GlobalVector const& x,
-    double damping_orig) const
+    double const base_damping) const
 {
     if (!_dof_table)
     {
@@ -95,7 +95,7 @@ double ConvergenceCriterionPerComponentDeltaX::apply(
             auto index = _dof_table->getGlobalIndex(l, global_component);
             damping_final = std::min(
                 damping_final,
-                damping_orig / std::max(1.0, (minus_delta_x.get(index) *
+                base_damping / std::max(1.0, (minus_delta_x.get(index) *
                                               _damping_alpha[global_component] /
                                               x.get(index))));
         }

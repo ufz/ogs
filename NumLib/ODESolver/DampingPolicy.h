@@ -16,7 +16,7 @@ class DampingPolicy
 public:
     virtual double apply(GlobalVector const& minus_delta_x,
                          GlobalVector const& x,
-                         double damping_orig) const = 0;
+                         double const base_damping) const = 0;
     virtual ~DampingPolicy() = default;
 };
 

@@ -45,7 +45,7 @@ public:
     void checkResidual(const GlobalVector& residual) override;
     double apply(GlobalVector const& minus_delta_x,
                  GlobalVector const& x,
-                 double damping_orig) const override;
+                 double const base_damping) const override;
 
     void setDOFTable(const LocalToGlobalIndexMap& dof_table,
                      MeshLib::Mesh const& mesh) override;
