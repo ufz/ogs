@@ -10,7 +10,8 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
-#include "NonnegativeDampingAndDampingReductionStrategy.h"
+#include "DampingReductionStrategy.h"
+#include "FixedDampingStrategy.h"
 #include "PETScNonlinearSolver.h"
 
 namespace NumLib
@@ -51,8 +52,16 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
         auto const damping_reduction =
             //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping_reduction}
             config.getConfigParameterOptional<double>("damping_reduction");
-        auto standard_newton =
-            std::make_unique<FixedDampingStrategy>(damping, damping_reduction);
+        std::unique_ptr<NewtonStepStrategy> standard_newton;
+        if (damping_reduction)
+        {
+            standard_newton = std::make_unique<DampingReductionStrategy>(
+                damping, *damping_reduction);
+        }
+        else
+        {
+            standard_newton = std::make_unique<FixedDampingStrategy>(damping);
+        }
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(

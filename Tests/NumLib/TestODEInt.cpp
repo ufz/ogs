@@ -20,7 +20,7 @@
 #endif
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/ODESolver/ConvergenceCriterionDeltaX.h"
-#include "NumLib/ODESolver/NonnegativeDampingAndDampingReductionStrategy.h"
+#include "NumLib/ODESolver/FixedDampingStrategy.h"
 #include "ODEs.h"
 #include "Tests/TestTools.h"
 #include "TimeLoopSingleODE.h"
@@ -89,8 +89,7 @@ public:
         {
             nonlinear_solver = std::make_unique<NLSolver>(
                 *linear_solver, _maxiter,
-                std::make_unique<NumLib::FixedDampingStrategy>(1.0,
-                                                               std::nullopt));
+                std::make_unique<NumLib::FixedDampingStrategy>(1.0));
         }
         else
         {
