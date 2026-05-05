@@ -106,7 +106,8 @@ public:
     {
         _equation_system = &eq;
         _convergence_criterion = &conv_crit;
-        _step_strategy->setConvergenceCriterion(*_convergence_criterion);
+        _step_strategy->setDampingPolicy(
+            _convergence_criterion->dampingPolicy());
     }
 
     void calculateNonEquilibriumInitialResiduum(

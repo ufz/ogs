@@ -106,9 +106,9 @@ void ConvergenceCriterionPerComponentResidual::checkResidual(
     }
 }
 
-double ConvergenceCriterionPerComponentResidual::getDampingFactor(
-    const GlobalVector& minus_delta_x, GlobalVector const& x,
-    double damping_orig)
+double ConvergenceCriterionPerComponentResidual::apply(
+    GlobalVector const& minus_delta_x, GlobalVector const& x,
+    double damping_orig) const
 {
     if ((!_dof_table) || (!_mesh))
     {

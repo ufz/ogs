@@ -70,9 +70,9 @@ void ConvergenceCriterionPerComponentDeltaX::checkDeltaX(
     }
 }
 
-double ConvergenceCriterionPerComponentDeltaX::getDampingFactor(
-    const GlobalVector& minus_delta_x, GlobalVector const& x,
-    double damping_orig)
+double ConvergenceCriterionPerComponentDeltaX::apply(
+    GlobalVector const& minus_delta_x, GlobalVector const& x,
+    double damping_orig) const
 {
     if (!_dof_table)
     {

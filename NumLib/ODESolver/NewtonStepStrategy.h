@@ -5,14 +5,20 @@
 
 #include <vector>
 
-#include "ConvergenceCriterion.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
-#include "NonlinearSystem.h"
+#include "Types.h"
 
 namespace NumLib
 {
+class DampingPolicy;
+template <NonlinearSolverTag NLTag>
+class NonlinearSystem;
+
 /// Context passed to the step strategy so it can evaluate the residual
 /// at trial points without owning the equation system directly.
+/// Currently unused by FixedDamping/DampingReduction; reserved for the
+/// in-progress line-search strategy, which needs to re-evaluate F(x) at
+/// trial points.
 struct NewtonStepContext
 {
     NonlinearSystem<NonlinearSolverTag::Newton>& sys;
@@ -75,13 +81,18 @@ public:
                                  GlobalVector& x_new,
                                  NewtonStepContext& ctx,
                                  int iteration) = 0;
-    /// Inject the convergence criterion used by the owning Newton solver.
-    /// Called by NonlinearSolver::setEquationSystem() before the first solve,
-    /// so that the strategy can query e.g. hasNonNegativeDamping() or
-    /// getDampingFactor().
-    virtual void setConvergenceCriterion(ConvergenceCriterion& conv_crit) = 0;
+    /// Inject the damping policy from the convergence criterion.
+    /// Called by NonlinearSolver::setEquationSystem() before the first solve.
+    /// A null pointer means the criterion imposes no step-length constraint.
+    void setDampingPolicy(DampingPolicy const* policy)
+    {
+        _damping_policy = policy;
+    }
 
     virtual ~NewtonStepStrategy() = default;
+
+protected:
+    DampingPolicy const* _damping_policy = nullptr;
 };
 
 }  // namespace NumLib

@@ -492,9 +492,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             x_new[process_id] =
                 &NumLib::GlobalVectorProvider::provider.getVector(
                     *x[process_id], _x_new_id);
-            auto const step_result =
-                _step_strategy->applyStep(*x[process_id], minus_delta_x, res, J,
-                                          *x_new[process_id], ctx, iteration);
+            auto const step_result = _step_strategy->applyStep(
+                *x[process_id], minus_delta_x, res, J, *x_new[process_id],
+                step_ctx, iteration);
 
             if (step_result.step_length != 1.0)
             {
