@@ -81,7 +81,7 @@ curve_y = [float(s) for s in curve.find("values").text.split(" ")]
 target_strength = np.interp(np.asarray(results.timevalues), curve_x, curve_y)
 
 center = results[0].threshold([1, 1], scalars="MaterialIDs").center
-sig_trace = results.probe(center, ot.variables.stress.trace)
+sig_trace = results.probe_values(center, ot.variables.stress.trace)
 res_strength = sig_trace / sig_trace[0]
 
 np.testing.assert_allclose(res_strength, target_strength)
