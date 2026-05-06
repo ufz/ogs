@@ -891,6 +891,11 @@ if(NOT (OGS_USE_PETSC OR OGS_USE_LIS) AND
    NOT WIN32 AND
    NOT "${HOSTNAME}" MATCHES "mac-bilke-623")
     NotebookTest(
+        NOTEBOOKFILE Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy.py
+        RUNTIME 22
+        PYTHON_PACKAGES porepy@git+https://github.com/pmgbergen/porepy.git@v1.12
+    )
+    NotebookTest(
         NOTEBOOKFILE Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy_to_OGS.py
         RUNTIME 66
         PYTHON_PACKAGES porepy@git+https://github.com/pmgbergen/porepy.git@v1.12
