@@ -303,6 +303,7 @@ for col in df_time_step_speedups.columns:
     c[3:6] = c[3] / c[3:6]
     c[6:] = c[6] / c[6:]
     assert len(c) == 9
+    df_time_step_speedups[col] = c
 
 
 # %% jupyter={"source_hidden": true}
