@@ -1,3 +1,25 @@
+# ---
+# jupyter:
+#   jupytext:
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.17.2
+#   kernelspec:
+#     display_name: Python 3 (ipykernel)
+#     language: python
+#     name: python3
+# ---
+
+# %% [raw]
+# +++
+# title = "DFN generating using Porepy"
+# date = "2025-04-28"
+# author = "Mostafa Mollaali, Thomas Nagel"
+# web_subsection = "reactive-transport"
+# +++
+
 # %%
 import json
 import os
@@ -5,6 +27,7 @@ from pathlib import Path
 
 import numpy as np
 import porepy as pp
+import pyvista as pv
 from numpy.random import default_rng
 
 # %%
@@ -82,7 +105,6 @@ domain = pp.Domain(bounding_box=bounding_box)
 # %%
 use_saved_fractures = True
 fracture_params_file = Path("fracture_params.json")
-fracture_params_path = Path(out_dir, "fracture_params.json")
 radius_range = np.array([50, 80])
 n_fractures = 10
 
@@ -203,13 +225,11 @@ os.chdir(out_dir)
 mdg = pp.create_mdg("simplex", mesh_args, network)
 os.chdir(orig_dir)
 
-# --- Remove the 3D matrix cells to keep only fractures + intersections ---
 mdg2d = mdg.copy()
 for sd in list(mdg2d.subdomains()):
     if sd.dim == 3:
         mdg2d.remove_subdomain(sd)
 
-# --- Clean up empty 1D subdomains & interfaces (avoid IndexError on export) ---
 for g in list(mdg2d.subdomains(dim=1)):
     cn = g.cell_nodes()
     if g.num_cells == 0 or cn.indices.size == 0 or cn.indptr.size <= 1:
@@ -222,3 +242,201 @@ for g in list(mdg2d.subdomains(dim=1)):
 
 # %%
 exporter = pp.Exporter(mdg2d, "mixed_dimensional_grid", folder_name=out_dir).write_vtu()
+
+# %%
+os.chdir(orig_dir)
+try:
+    pv.set_jupyter_backend("static")
+except Exception as e:
+    print("PyVista backend not set:", e)
+
+plot_mesh = pv.read(out_dir / "mixed_dimensional_grid_2.vtu")
+scalar_name = "MaterialIDs" if "MaterialIDs" in plot_mesh.cell_data else "subdomain_id"
+
+plotter = pv.Plotter(off_screen=True)
+plotter.add_mesh(
+    plot_mesh,
+    scalars=scalar_name,
+    cmap="tab20",
+    opacity=0.4,
+    scalar_bar_args={"title": scalar_name, "vertical": True},
+)
+plotter.add_mesh(plot_mesh.outline(), color="black", line_width=2)
+plotter.show_axes()
+plotter.enable_parallel_projection()
+plotter.view_isometric()
+
+output_path = out_dir / "mesh_overview.png"
+plotter.screenshot(str(output_path))
+plotter.show()
+plotter.close()
+
+
+# %% [markdown]
+# ## Mesh-based regression checks
+#
+# The following assertions validate fracture geometry using mesh-derived quantities
+# (orientation and in-plane metrics), not node-to-node equality.
+#
+# With PorePy v1.12, different operating systems can generate meshes with
+# different numbers of nodes/cells for the same DFN input (e.g., Linux vs macOS).
+# Using geometry-invariant checks keeps the validation robust across platforms.
+
+
+# %%
+def _expected_normal(strike_angle, dip_angle):
+    return np.array(
+        [
+            -np.sin(strike_angle) * np.sin(dip_angle),
+            np.cos(strike_angle) * np.sin(dip_angle),
+            -np.cos(dip_angle),
+        ]
+    )
+
+
+def _angle_diff_mod_pi(a, b):
+    """Smallest absolute difference of two line orientations (period pi)."""
+    return np.abs((a - b + 0.5 * np.pi) % np.pi - 0.5 * np.pi)
+
+
+mesh_candidates = [
+    out_dir / "mixed_dimensional_grid_2.vtu",
+    out_dir / "mixed_dimensional_grid.vtu",
+]
+mesh_path = next((p for p in mesh_candidates if p.exists()), None)
+assert mesh_path is not None, "Exported mesh file not found for fracture checks."
+
+mesh = pv.read(mesh_path)
+if "MaterialIDs" in mesh.cell_data:
+    material_ids = np.asarray(mesh.cell_data["MaterialIDs"], dtype=int)
+elif "subdomain_id" in mesh.cell_data:
+    subdomain_id = np.asarray(mesh.cell_data["subdomain_id"], dtype=int)
+    material_ids = subdomain_id - subdomain_id.min()
+else:
+    msg = "Neither 'MaterialIDs' nor 'subdomain_id' found in exported mesh."
+    raise KeyError(msg)
+
+fracture_params_from_json = json.loads(fracture_params_file.read_text())
+
+normal_alignment_tol = 1e-8
+strike_err_tol_deg = 1e-3
+dip_abs_err_tol_deg = 1e-3
+plane_dist_tol = 1e-8
+center_plane_dist_tol = 1e-5
+radius_upper_tol = 1e-8
+radius_touch_tol = 1e-6
+
+detail_rows = []
+for mat_id, p in enumerate(fracture_params_from_json):
+    cell_idx = np.flatnonzero(material_ids == mat_id)
+    assert cell_idx.size > 0, f"No mesh cells found for fracture MaterialID {mat_id}."
+
+    frac_mesh = (
+        mesh.extract_cells(cell_idx)
+        .extract_surface(algorithm=None)
+        .triangulate()
+        .compute_normals(
+            cell_normals=True,
+            point_normals=False,
+            consistent_normals=False,
+            auto_orient_normals=False,
+            inplace=False,
+        )
+        .compute_cell_sizes(area=True)
+    )
+
+    cell_normals = np.asarray(frac_mesh.cell_data["Normals"], dtype=float)
+    cell_areas = np.asarray(frac_mesh.cell_data["Area"], dtype=float)
+
+    normal_expected = _expected_normal(
+        float(p["strike_angle"]),
+        float(p["dip_angle"]),
+    )
+    dots = cell_normals @ normal_expected
+
+    # Normal direction on triangles can flip; align signs before averaging.
+    cell_normals[dots < 0.0] *= -1.0
+    normal_avg = (cell_normals * cell_areas[:, None]).sum(axis=0)
+    normal_avg /= np.linalg.norm(normal_avg)
+
+    alignment = np.abs(
+        np.dot(normal_avg, normal_expected)
+        / (np.linalg.norm(normal_avg) * np.linalg.norm(normal_expected))
+    )
+
+    angle_err_deg = float(np.degrees(np.arccos(np.clip(alignment, -1.0, 1.0))))
+
+    strike_ref = np.mod(float(p["strike_angle"]), np.pi)
+    strike_mesh = np.mod(np.arctan2(-normal_avg[0], normal_avg[1]), np.pi)
+    strike_err_deg = float(np.degrees(_angle_diff_mod_pi(strike_mesh, strike_ref)))
+
+    dip_ref_abs_deg = float(np.degrees(np.abs(float(p["dip_angle"]))))
+    dip_mesh_abs_deg = float(np.degrees(np.arccos(np.clip(-normal_avg[2], -1.0, 1.0))))
+    dip_abs_err_deg = abs(dip_mesh_abs_deg - dip_ref_abs_deg)
+
+    pts = np.asarray(frac_mesh.points, dtype=float)
+    center_ref = np.asarray(p["center"], dtype=float)
+    signed_plane_dist = (pts - center_ref) @ normal_expected
+    max_plane_dist = float(np.max(np.abs(signed_plane_dist)))
+    center_to_plane_dist = float(np.abs((center_ref - pts[0]) @ normal_avg))
+
+    # Radius checks are done in-plane around the JSON centre.
+    vec = pts - center_ref
+    vec_plane = vec - np.outer(vec @ normal_expected, normal_expected)
+    radius_max = float(np.linalg.norm(vec_plane, axis=1).max())
+    axis_major = float(p["major_axis"])
+    axis_minor = float(p["minor_axis"])
+
+    assert alignment > 1.0 - normal_alignment_tol, (
+        f"Fracture {mat_id}: |dot(n_mesh, n_json)|={alignment:.12f} "
+        f"is below {1.0 - normal_alignment_tol:.12f}."
+    )
+    assert strike_err_deg < strike_err_tol_deg, (
+        f"Fracture {mat_id}: strike mismatch {strike_err_deg:.3e} deg "
+        f"(tol {strike_err_tol_deg:.3e} deg)."
+    )
+    assert dip_abs_err_deg < dip_abs_err_tol_deg, (
+        f"Fracture {mat_id}: |dip| mismatch {dip_abs_err_deg:.3e} deg "
+        f"(tol {dip_abs_err_tol_deg:.3e} deg)."
+    )
+    assert max_plane_dist < plane_dist_tol, (
+        f"Fracture {mat_id}: points are off JSON plane by {max_plane_dist:.3e} m "
+        f"(tol {plane_dist_tol:.3e} m)."
+    )
+    assert center_to_plane_dist < center_plane_dist_tol, (
+        f"Fracture {mat_id}: JSON centre is off mesh plane by "
+        f"{center_to_plane_dist:.3e} m (tol {center_plane_dist_tol:.3e} m)."
+    )
+    assert radius_max <= axis_major + radius_upper_tol, (
+        f"Fracture {mat_id}: mesh radius {radius_max:.6e} exceeds JSON major axis "
+        f"{axis_major:.6e} (tol {radius_upper_tol:.1e})."
+    )
+    if np.isclose(axis_major, axis_minor, rtol=0.0, atol=1e-12):
+        assert abs(radius_max - axis_major) < radius_touch_tol, (
+            f"Fracture {mat_id}: circular fracture radius from mesh ({radius_max:.6e}) "
+            f"does not match JSON radius ({axis_major:.6e}) within {radius_touch_tol:.1e}."
+        )
+
+    detail_rows.append(
+        {
+            "strike_err_deg": strike_err_deg,
+            "dip_err_deg": dip_abs_err_deg,
+            "axis_err_m": abs(radius_max - axis_major),
+            "normal_err_deg": angle_err_deg,
+            "max_plane_dist_m": max_plane_dist,
+            "center_plane_dist_m": center_to_plane_dist,
+        }
+    )
+
+max_strike_err = max(r["strike_err_deg"] for r in detail_rows)
+max_dip_err = max(r["dip_err_deg"] for r in detail_rows)
+max_axis_err = max(r["axis_err_m"] for r in detail_rows)
+max_normal_err = max(r["normal_err_deg"] for r in detail_rows)
+max_plane_dist = max(r["max_plane_dist_m"] for r in detail_rows)
+max_center_dist = max(r["center_plane_dist_m"] for r in detail_rows)
+print(
+    f"Fracture validation passed ({len(detail_rows)}/{len(fracture_params_from_json)}). "
+    f"Max errors: strike={max_strike_err:.3e} deg, dip={max_dip_err:.3e} deg, "
+    f"axis={max_axis_err:.3e} m, normal={max_normal_err:.3e} deg, "
+    f"plane={max_plane_dist:.3e} m, centre={max_center_dist:.3e} m."
+)

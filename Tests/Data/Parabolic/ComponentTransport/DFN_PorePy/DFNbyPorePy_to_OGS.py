@@ -5,11 +5,11 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.1
+#       jupytext_version: 1.17.2
 #   kernelspec:
-#     display_name: Python (ogs-DFN)
+#     display_name: Python 3 (ipykernel)
 #     language: python
-#     name: ogs-dfn
+#     name: python3
 # ---
 
 # %% [raw]
@@ -22,7 +22,6 @@
 
 # %%
 import os
-import platform
 from pathlib import Path
 
 import numpy as np
@@ -94,7 +93,7 @@ orig_dir = Path.cwd()
 # # OpenGeosys
 
 # %% [markdown]
-
+#
 # See [DFNbyPorePy.py](DFNbyPorePy.py) how to generate
 # the DFN mesh and geometry data required by this notebook.
 #
@@ -126,17 +125,8 @@ DFN_2D.save(f"{out_dir}/mixed_dimensional_grid_2.vtu")
 # %%
 os.chdir(out_dir)
 
-# remove duplicated nodes using PyVista
-mesh_c = pv.read("mixed_dimensional_grid_2.vtu")
-clean_mesh = mesh_c.clean(tolerance=1e-12)
-clean_mesh.save("mixed_dimensional_grid_2.vtu")
-print(f"Original points: {mesh_c.n_points}, Cleaned points: {clean_mesh.n_points}")
-
-# %%
 ot.cli().reviseMesh(i="mixed_dimensional_grid_2.vtu", o="temp.vtu")
-ot.cli().NodeReordering(
-    i="mixed_dimensional_grid_2.vtu", o="mixed_dimensional_grid_2.vtu"
-)
+ot.cli().NodeReordering(i="temp.vtu", o="mixed_dimensional_grid_2.vtu")
 ot.cli().checkMesh("mixed_dimensional_grid_2.vtu", v=True)
 
 # %% [markdown]
@@ -156,7 +146,7 @@ maxs = np.array([domain_size, domain_size, domain_size])
 n_fractures = 10
 
 
-boundary_tol_fraction = 1e-6  # Tolerance for boundary selection
+boundary_tol_fraction = 1e-6
 boundary_tol = boundary_tol_fraction * domain_size
 x_outlet = maxs[0] - boundary_tol
 x_inlet = mins[0] + boundary_tol
@@ -227,7 +217,6 @@ plotter.add_mesh(
 plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
-# plotter.window_size = [500, 500]
 output_path = out_dir.joinpath("Concentration.png")
 plotter.screenshot(str(output_path))
 plotter.show()
@@ -352,7 +341,6 @@ def assign_cellwise_random_props(mesh, stats_dict, clip_min=1e-20, seed=42):
 # %%
 input_mesh = "mixed_dimensional_grid_2.vtu"
 output_mesh = "mixed_dimensional_grid_2_updated.vtu"
-use_isotropic_perm = False
 
 mesh = pv.read(Path(out_dir, input_mesh))
 
@@ -402,15 +390,7 @@ x_outlet = pv.read(Path(out_dir, "x_outlet.vtu"))
 
 def plot_scalar_field(mesh, inlet, outlet, scalar_data, title, cmap, filename):
     scalar_bar_args = base_scalar_bar_args.copy()
-    scalar_bar_args["title"] = title
-
-    scalar_bar_args = base_scalar_bar_args.copy()
-    scalar_bar_args.update(
-        {
-            "fmt": "%.1e",  # Scientific notation
-            "n_labels": 5,  # More labels to show range
-        }
-    )
+    scalar_bar_args.update({"title": title, "fmt": "%.1e", "n_labels": 5})
 
     plotter = pv.Plotter(off_screen=True)
     plotter.add_mesh(
@@ -439,7 +419,7 @@ def plot_isotropic_permeability(
     cmap="viridis",
     image_name="permeability_isotropic.png",
 ):
-    k_iso = mesh.cell_data["permeability_ic"]  # [:, 0]
+    k_iso = mesh.cell_data["permeability_ic"]
     k_log = np.log10(np.clip(k_iso, 1e-20, None))
     mesh.cell_data["log_k_iso"] = k_log
 
@@ -491,7 +471,6 @@ plot_scalar_field(
 def add_component_to_model(
     model, name, pore_diff="1e-9", retardation="1.0", decay="0.0"
 ):
-    # Add <component>
     model.add_element(".//media/medium/phases/phase/components", "component")
     component_xpath = ".//media/medium/phases/phase/components/component[last()]"
     model.add_element(component_xpath, "name", name)
@@ -508,7 +487,6 @@ def add_component_to_model(
         model.add_element(prop_xpath, "type", "Parameter")
         model.add_element(prop_xpath, "parameter_name", param)
 
-    # Add <process_variable>
     model.add_element("./process_variables", "process_variable")
     pv_xpath = "./process_variables/process_variable[last()]"
 
@@ -524,10 +502,8 @@ def add_component_to_model(
     model.add_element(bc_xpath, "mesh", mesh_name_bc)
     model.add_element(bc_xpath, "parameter", "c_bottom")
 
-    # Add <concentration> in <process_variables>
     model.add_element(".//processes/process/process_variables", "concentration", name)
 
-    # Add <parameter> entries
     for pname, val in {
         f"pore_diff_{name}": pore_diff,
         f"retard_{name}": retardation,
@@ -557,6 +533,7 @@ def update_project_parameters(project: ot.Project, params: dict):
         "fracture_thickness_value": ".//parameters/parameter[name='fracture_thickness_const']/value",
         "decay_Si_value": ".//parameters/parameter[name='decay']/value",
         "t_end": ".//time_loop/processes/process/time_stepping/t_end",
+        "maximum_dt": ".//time_loop/processes/process/time_stepping/maximum_dt",
     }
 
     for key, xpath in update_map.items():
@@ -629,28 +606,23 @@ def update_project_parameters(project: ot.Project, params: dict):
             )
         )
 
-        n = params["n_fractures"]
-        target_var_name = "Si"
-        bc_mesh_xpath = f".//process_variables/process_variable[name='{target_var_name}']/boundary_conditions/boundary_condition/mesh"
-        project.replace_text(f"borehole_right_Layer{n}", xpath=bc_mesh_xpath)
+    n = params["n_fractures"]
+    bc_mesh_xpath = ".//process_variables/process_variable[name='Si']/boundary_conditions/boundary_condition/mesh"
+    project.replace_text(f"borehole_right_Layer{n}", xpath=bc_mesh_xpath)
 
-        display(
-            Markdown(
-                f"**Success:** Updated BC mesh for `{target_var_name}` to `borehole_right_Layer{n}`"
-            )
-        )
+    display(
+        Markdown(f"**Success:** Updated BC mesh for `Si` to `borehole_right_Layer{n}`")
+    )
 
-        left_mesh = f"borehole_left_Layer{n + 1}.vtu"
-        right_mesh = f"borehole_right_Layer{n}.vtu"
+    left_mesh = f"borehole_left_Layer{n + 1}.vtu"
+    right_mesh = f"borehole_right_Layer{n}.vtu"
 
-        mesh_base_xpath = ".//meshes/mesh"
-        project.replace_text(left_mesh, xpath=f"{mesh_base_xpath}[last()-1]")
-        project.replace_text(right_mesh, xpath=f"{mesh_base_xpath}[last()]")
-        display(
-            Markdown(
-                f"**Success:** Updated borehole meshes: `{left_mesh}`, `{right_mesh}`"
-            )
-        )
+    mesh_base_xpath = ".//meshes/mesh"
+    project.replace_text(left_mesh, xpath=f"{mesh_base_xpath}[last()-1]")
+    project.replace_text(right_mesh, xpath=f"{mesh_base_xpath}[last()]")
+    display(
+        Markdown(f"**Success:** Updated borehole meshes: `{left_mesh}`, `{right_mesh}`")
+    )
 
 
 # %%
@@ -716,7 +688,7 @@ plotter.add_mesh(mesh.outline(), color="black", line_width=2)
 plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
-# plotter.window_size = [500, 500]
+
 output_path = out_dir.joinpath("pressure.png")
 plotter.screenshot(str(output_path))
 plotter.show()
@@ -779,7 +751,7 @@ plotter.add_mesh(mesh.outline(), color="black", line_width=2)
 plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
-# plotter.window_size = [500, 500]
+
 output_path = out_dir.joinpath("concentration.png")
 plotter.screenshot(str(output_path))
 plotter.show()
@@ -804,7 +776,7 @@ plotter.add_mesh(mesh.outline(), color="black", line_width=2)
 plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
-# plotter.window_size = [500, 500]
+
 output_path = out_dir.joinpath("concentration_Cs.png")
 plotter.screenshot(str(output_path))
 plotter.show()
@@ -840,12 +812,12 @@ fig_cs.axes[0].set_xscale("log")
 
 
 # %%
-def _ensure_point_pressure(m):
-    if "pressure" in m.point_data:
+def _ensure_point_field(m, field_name):
+    if field_name in m.point_data:
         return m
-    if "pressure" in m.cell_data:
+    if field_name in m.cell_data:
         return m.cell_data_to_point_data()
-    msg = "pressure not found in point_data or cell_data"
+    msg = f"{field_name} not found in point_data or cell_data"
     raise KeyError(msg)
 
 
@@ -862,43 +834,39 @@ def _nn_fill(masked_vals, valid_mask, tgt_pts, src_pts, src_vals):
 last_mesh = mesh_series[-1]
 pressure_last = np.asarray(last_mesh.point_data["pressure"])
 
-system_name = platform.system()
-if system_name == "Darwin":
-    ref_mesh_path = "DFN_HC_ts_39_t_100000000000.000000_mac.vtu"
-elif system_name == "Linux":
-    ref_mesh_path = "DFN_HC_ts_39_t_100000000000.000000_linux.vtu"
-else:
-    msg = f"Unsupported OS: {system_name}"
-    raise RuntimeError(msg)
+ref_mesh_path = Path("DFN_HC_ts_51_t_100000000000.000000.vtu")
+if not ref_mesh_path.exists():
+    available = list(Path().glob("DFN_HC_ts_*.vtu"))
+    msg = (
+        f"Reference mesh not found: {ref_mesh_path.resolve()}\n"
+        f"This file is generated by DFNbyPorePy.py during the test setup.\n"
+        f"Available files in current directory: {available if available else 'none'}"
+    )
+    raise FileNotFoundError(msg)
 
-ref_mesh = _ensure_point_pressure(pv.read(ref_mesh_path))
+ref_mesh = pv.read(ref_mesh_path)
 
-print(f"Original points: {mesh_c.n_points}, Cleaned points: {clean_mesh.n_points}")
-print("pressure_last shape:", pressure_last.shape, "size:", pressure_last.size)
-print(
-    "pressure_ref  shape:",
-    ref_mesh.point_data["pressure"].shape,
-    "size:",
-    ref_mesh.point_data["pressure"].size,
-)
 
-sampled = last_mesh.sample(ref_mesh)
-pressure_ref_on_last = np.asarray(sampled.point_data["pressure"])
+def _sample_ref_field_on_last_mesh(field_name):
+    ref_mesh_field = _ensure_point_field(ref_mesh, field_name)
+    sampled = last_mesh.sample(ref_mesh_field)
+    ref_values_on_last = np.asarray(sampled.point_data[field_name])
 
-mask = sampled.point_data.get("vtkValidPointMask", None)
-if mask is not None:
-    mask = np.asarray(mask).astype(bool)
-    if not mask.all():
-        pressure_ref_on_last = _nn_fill(
-            pressure_ref_on_last,
-            mask,
-            last_mesh.points,
-            ref_mesh.points,
-            np.asarray(ref_mesh.point_data["pressure"]),
-        )
+    mask = sampled.point_data.get("vtkValidPointMask", None)
+    if mask is not None:
+        mask = np.asarray(mask).astype(bool)
+        if not mask.all():
+            ref_values_on_last = _nn_fill(
+                ref_values_on_last,
+                mask,
+                last_mesh.points,
+                ref_mesh_field.points,
+                np.asarray(ref_mesh_field.point_data[field_name]),
+            )
+    return ref_values_on_last
 
-abs_diff = np.abs(pressure_last - pressure_ref_on_last)
-print(f"max|delta_p|={abs_diff.max():.6g}, mean|delta_p|={abs_diff.mean():.6g}")
+
+pressure_ref_on_last = _sample_ref_field_on_last_mesh("pressure")
 
 np.testing.assert_allclose(
     actual=pressure_last,
@@ -909,11 +877,20 @@ np.testing.assert_allclose(
 )
 print("Pressure fields match")
 
-# %% [markdown]
-# NOTE: PorePy produces slightly different number of mesh nodes on macOS vs. Linux.
-# This causes small variations in the output arrays. To avoid flaky test failures,
-# we accept either platform's expected results until the root cause is resolved.
-
+for field_name in ["Si", "Cs"]:
+    if field_name in last_mesh.point_data or field_name in last_mesh.cell_data:
+        last_values = np.asarray(
+            _ensure_point_field(last_mesh, field_name).point_data[field_name]
+        )
+        ref_values = _sample_ref_field_on_last_mesh(field_name)
+        np.testing.assert_allclose(
+            actual=last_values,
+            desired=ref_values,
+            rtol=1e-3,
+            atol=1e-8,
+            equal_nan=False,
+        )
+        print(f"{field_name} fields match")
 
 # %% [markdown]
 # # References
