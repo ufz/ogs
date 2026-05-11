@@ -26,6 +26,7 @@ Bruns
 Bure
 Carranza-Torres
 CLion
+complexation
 CSS
 Dalen
 Damkilde
@@ -37,6 +38,7 @@ Diederichs
 Diersch
 Dirichlet
 Dockerfile
+dolomitisation
 Doxygen
 Dupuit
 Ehlers

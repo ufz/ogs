@@ -1,13 +1,13 @@
-Component Tranpsort Module
+Component Transport Module
 ============
 
-This Component Tranpsort Module is dedicated to the modeling of Darcy-scale subsurface flow and (reactive) solute transport in saturated porous media.
+This Component Transport Module is dedicated to the modeling of Darcy-scale subsurface flow and (reactive) solute transport in saturated porous media.
 
 If you would like to download OpenGeoSys executables already built for different platforms, please visit the [OpenGeoSys Release Page](https://www.opengeosys.org/releases/).
 
 Before building your own OpenGeoSys model and start the simulation, please first have a look at our [User Guide](https://www.opengeosys.org/docs/userguide/basics/introduction/). There are tutorials available regarding how to download and build the source code, as well as how to run a model simulation. For advanced users who would like to make changes in the source code, the [Developer Guide](https://www.opengeosys.org/docs/devguide/getting-started/introduction/) is also very helpful.
 
-In order to ensure the reliability of the model feature, the code implementation is tested continuously through a variety of benchmarks. The input files of the benchmarks related to the Component Transport Module can be found [here](https://github.com/ufz/ogs/tree/master/Tests/Data/Parabolic/ComponentTransport). Additionally, online documentation is available for some featured benchmarks to demonstrate the capabilities of this module. For example, interested readers may refer to the [1D/2D tracer test](https://www.opengeosys.org/docs/benchmarks/hydro-component/contracer/contracer/), and [1D dolomitization process in a calcite-containing porous column](https://www.opengeosys.org/docs/benchmarks/reactive-transport/calcite/) case. If the reader would like to know details of the input parameters, please also visit our [Doxygen page](https://doxygen.opengeosys.org/).
+In order to ensure the reliability of the model feature, the code implementation is tested continuously through a variety of benchmarks. The input files of the benchmarks related to the Component Transport Module can be found [here](https://github.com/ufz/ogs/tree/master/Tests/Data/Parabolic/ComponentTransport). Additionally, online documentation is available for some featured benchmarks to demonstrate the capabilities of this module. For example, interested readers may refer to the [1D/2D tracer test](https://www.opengeosys.org/docs/benchmarks/hydro-component/contracer/contracer/), and [1D dolomitisation process in a calcite-containing porous column](https://www.opengeosys.org/docs/benchmarks/reactive-transport/calcite/) case. If the reader would like to know details of the input parameters, please also visit our [Doxygen page](https://doxygen.opengeosys.org/).
 
 List of header and implementation files:
 
