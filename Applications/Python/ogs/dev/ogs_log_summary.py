@@ -194,16 +194,14 @@ def write_xml_snippet(df_max, xml_out_file):
                 else ""
             )
 
-            fh.write(
-                f"""{error_msg}
+            fh.write(f"""{error_msg}
         <vtkdiff>
             <regex>{file_re}</regex>
             <!-- <file>{file}</file> -->
             <field>{tup.Index}</field>
             <absolute_tolerance>{tup.abs_maximum_norm}</absolute_tolerance>
             <relative_tolerance>0.0 <!-- {tup.rel_maximum_norm} --></relative_tolerance>
-        </vtkdiff>"""
-            )
+        </vtkdiff>""")
         fh.write("\n    </test_definition>\n")
 
 

@@ -76,8 +76,7 @@ def main():
     )
     path.write_text(text)
 
-    print(
-        f"""Run the following and update CITATION.cff:
+    print(f"""Run the following and update CITATION.cff:
 
 git shortlog -sne HEAD...{current_version}
 
@@ -86,8 +85,7 @@ Then check diff and run:
 git commit -m "{args.new_version}"
 git tag -s -m "OpenGeoSys {args.new_version}" {args.new_version}
 git push origin --tags
-git push origin master"""
-    )
+git push origin master""")
 
 
 if __name__ == "__main__":

@@ -123,8 +123,7 @@ def write_ctest_info(fh, tagpath, istag, tested_tags_attrs):
 
 
 def write_ctest_media_info(fh, pcs_type, df_n_t_p_pcst):
-    fh.write(
-        """
+    fh.write("""
 
 # This process is commonly used together with the following media properties
 
@@ -136,22 +135,19 @@ Probably most of the properties occurring in this list are mandatory.
 The list might contain different property <tt>&lt;type&gt;</tt>s for some property
 <tt>&lt;name&gt;</tt> to illustrate different possibilities the users have.
 
-"""
-    )
+""")
 
     df = df_n_t_p_pcst.set_index("pcs_type")
 
     try:
         df_this_pcs = df.xs(pcs_type)
     except KeyError:
-        fh.write(
-            f"""\
+        fh.write(f"""\
 No media property information could be found in the ctests for the {pcs_type} process.
 Either this process does not use <tt>&lt;media&gt;</tt> in the ctests or the extraction
 scripts could not process the ctest prj files properly.
 
-"""
-        )
+""")
         return
 
     df_this_pcs_s = df_this_pcs.sort_values(["path", "name", "type"])
