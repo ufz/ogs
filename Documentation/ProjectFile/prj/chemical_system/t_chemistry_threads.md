@@ -1,0 +1,1 @@
+Optional. Number of OpenMP threads for parallel PHREEQC chemistry execution per MPI rank. If not set, the value is read from the OGS_CHEM_THREADS environment variable. If that is also unset, the number of assembly threads (OGS_ASM_THREADS) is used. If neither variable is set, chemistry runs sequentially with a single thread.

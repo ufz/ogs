@@ -93,9 +93,7 @@ struct AqueousSolution
     bool const fixing_pe;
     double const temperature;
     double const pressure;
-    /// H+ activity 10^-pH, per chemical_system_id. Named after what it
-    /// stores so PhreeqcIO::pH()/setPH() can clearly do the pH<->activity
-    /// conversion at the public API boundary.
+    /// H+ activity 10^-pH, per chemical_system_id.
     std::vector<double> H_plus_activity;
     MeshLib::PropertyVector<double>* pe;
     double const pe0;

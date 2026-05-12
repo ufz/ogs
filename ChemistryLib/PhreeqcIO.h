@@ -203,7 +203,8 @@ private:
                           double dt) const;
 
     /// Parse one line of PHREEQC selected output and update the chemical
-    /// system state.  Used by all three output-reading code paths.
+    /// system state.  Used by both output-reading code paths (file-mode
+    /// operator>> and stream-mode parseOutputForSystem()).
     void updateSystemFromOutputLine(std::string_view line,
                                     std::size_t chemical_system_id);
 
