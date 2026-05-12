@@ -145,6 +145,13 @@ void ComponentTransportProcess::initializeConcreteProcess(
 
     if (_chemical_solver_interface && !_use_monolithic_scheme)
     {
+        // Note: active element IDs from ChemicalSolverInterface are
+        // initialized from the reactive domain mesh's bulk_element_ids
+        // property. When meshes are partitioned with partmesh, the
+        // bulk_element_ids are already renumbered to partition-local
+        // element indices (by renumberBulkElementIdsProperty), so no
+        // additional remapping is needed.
+
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystemID,
             local_assemblers_, _chemical_solver_interface->activeElementIDs());
@@ -313,6 +320,12 @@ void ComponentTransportProcess::solveReactionEquation(
 
     if (process_id == 0)
     {
+        // Synchronize ghost node values before accessing solution vectors
+        // for chemistry calculations (required for MPI)
+        std::for_each(
+            x.begin(), x.end(), [](auto const process_solution)
+            { MathLib::LinAlg::setLocalAccessibleVector(*process_solution); });
+
         GlobalExecutor::executeSelectedMemberOnDereferenced(
             &ComponentTransportLocalAssemblerInterface::setChemicalSystem,
             local_assemblers_, _chemical_solver_interface->activeElementIDs(),
