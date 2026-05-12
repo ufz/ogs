@@ -43,7 +43,6 @@
 #include <string>
 #include <vector>
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "Output.h"
 
 namespace MeshLib
@@ -67,7 +66,7 @@ struct Component
 
     std::string const name;
     std::string const chemical_formula;
-    std::unique_ptr<GlobalVector> amount;
+    std::vector<double> amount;
     static const ItemType item_type = ItemType::Component;
 };
 
@@ -94,7 +93,10 @@ struct AqueousSolution
     bool const fixing_pe;
     double const temperature;
     double const pressure;
-    std::unique_ptr<GlobalVector> pH;
+    /// H+ activity 10^-pH, per chemical_system_id. Named after what it
+    /// stores so PhreeqcIO::pH()/setPH() can clearly do the pH<->activity
+    /// conversion at the public API boundary.
+    std::vector<double> H_plus_activity;
     MeshLib::PropertyVector<double>* pe;
     double const pe0;
     std::vector<Component> components;

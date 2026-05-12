@@ -66,7 +66,9 @@ endif()
 
 if(TARGET ComponentTransport)
     append_source_and_header_files(
-        _sources _headers _private DIRECTORIES ProcessLib/ComponentTransport
+        _sources _headers _private DIRECTORIES
+        ProcessLib/ComponentTransport
+        ChemistryLib
     )
 endif()
 

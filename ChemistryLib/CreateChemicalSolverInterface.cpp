@@ -6,7 +6,9 @@
 #include <phreeqcpp/cxxKinetics.h>
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/OgsChemThreads.h"
 #include "Common/CreateReactionRate.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "MeshLib/Mesh.h"
@@ -103,6 +105,34 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         //! \ogs_file_param{prj__chemical_system__use_stream_for_data_exchange}
         config.getConfigParameter<bool>("use_stream_for_data_exchange", true);
 
+    // number of OpenMP threads for parallel chemistry execution
+    auto const num_chemistry_threads_opt =
+        //! \ogs_file_param{prj__chemical_system__chemistry_threads}
+        config.getConfigParameterOptional<int>("chemistry_threads");
+    if (num_chemistry_threads_opt && *num_chemistry_threads_opt <= 0)
+    {
+        OGS_FATAL(
+            "<chemistry_threads> must be a positive integer, but got {:d}.",
+            *num_chemistry_threads_opt);
+    }
+    int const num_chemistry_threads =
+        num_chemistry_threads_opt ? *num_chemistry_threads_opt
+                                  : BaseLib::getNumberOfChemistryThreads();
+
+    // Tolerance below which negative concentrations from MPI noise are
+    // silently clamped to zero. Default 1e-12 mol/L.
+    auto const negative_concentration_tolerance =
+        //! \ogs_file_param{prj__chemical_system__negative_concentration_tolerance}
+        config.getConfigParameter<double>("negative_concentration_tolerance",
+                                          1e-12);
+    if (negative_concentration_tolerance < 0.0)
+    {
+        OGS_FATAL(
+            "<negative_concentration_tolerance> must be non-negative, but "
+            "got {:g}.",
+            negative_concentration_tolerance);
+    }
+
     // dump
     auto const project_file_name =
         BaseLib::joinPaths(output_directory,
@@ -143,7 +173,8 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         mesh, *linear_solver, std::move(project_file_name),
         std::move(path_to_database), std::move(chemical_system),
         std::move(reaction_rates), std::move(user_punch), std::move(output),
-        std::move(dump), std::move(knobs), use_stream_for_data_exchange);
+        std::move(dump), std::move(knobs), use_stream_for_data_exchange,
+        num_chemistry_threads, negative_concentration_tolerance);
 }
 
 template <>

@@ -123,7 +123,7 @@ std::string getUniqueName(std::vector<std::string> const& existing_names,
     }
     return result_name;
 }
-std::expected<int, std::string> parseInteger(std::string_view str)
+std::expected<int, std::string> parseInteger(std::string_view const str)
 {
     int result = 0;
     auto const [ptr, ec] =

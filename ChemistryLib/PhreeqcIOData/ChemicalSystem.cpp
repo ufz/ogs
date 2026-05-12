@@ -4,8 +4,6 @@
 #include "ChemicalSystem.h"
 
 #include "AqueousSolution.h"
-#include "MathLib/LinAlg/MatrixVectorTraits.h"
-#include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 
 namespace ChemistryLib
 {
@@ -13,18 +11,14 @@ namespace PhreeqcIOData
 {
 void ChemicalSystem::initialize(std::size_t const num_chemical_systems)
 {
-    aqueous_solution->pH =
-        MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-            num_chemical_systems);
+    aqueous_solution->H_plus_activity.resize(num_chemical_systems);
 
     aqueous_solution->pe->resize(num_chemical_systems, aqueous_solution->pe0);
 
     auto& components = aqueous_solution->components;
     for (auto& component : components)
     {
-        component.amount =
-            MathLib::MatrixVectorTraits<GlobalVector>::newInstance(
-                num_chemical_systems);
+        component.amount.resize(num_chemical_systems);
     }
 
     for (auto& kinetic_reactant : kinetic_reactants)

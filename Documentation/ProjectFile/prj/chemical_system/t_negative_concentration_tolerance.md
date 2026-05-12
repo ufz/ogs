@@ -1,0 +1,1 @@
+Optional. Tolerance (mol/L) below which negative component concentrations arising from MPI partitioning noise are silently clamped to zero. Values more negative than -tolerance trigger an aggregated warning per chemical system. Must be non-negative. Default: 1e-12.
