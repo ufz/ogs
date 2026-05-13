@@ -142,7 +142,6 @@ Under the keyword `<component>`, the properties of the transported chemical comp
 * [Saturated Mass Transport]({{< relref "saturated-mass-transport" >}})
 * [Saturated Variable-Density Flow and Mass Transport (Elder)](https://www.opengeosys.org/docs/benchmarks/hydro-component/elder_jupyter/)
 * [Saturated Variable-Density Flow and Mass Transport (Goswami)]({{< relref "goswami" >}})
-* [Theis solution for well pumping]({{< relref "hc_theis" >}})
 * [Variable Dependent Boundary Condition]({{< relref "vdbc" >}})
 * [Conservative tracer transport with time varying source (1D/2D)]({{< relref "contracer" >}})
 * [(Advection-)diffusion-sorption-decay problem](https://www.opengeosys.org/docs/benchmarks/hydro-component/diffusionsorptiondecay/)

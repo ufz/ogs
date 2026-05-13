@@ -14,16 +14,11 @@
 
 # %% [raw]
 # +++
-# title = "H process: Theis solution (Pumping well)"
-# date = "2022-08-24"
-# author = "Wenqing Wang, Olaf Kolditz"
+# title = "LF process: Axisymmetric Theis solution (Pumping well)"
+# date = "2026-02-02"
+# author = "Leonard Grabow, Philipp Selzer, Wenqing Wang, Olaf Kolditz"
 # web_subsection = "liquid-flow"
 # +++
-
-# %% [markdown]
-# <img class="special-img-class" style="width: 25%; float: left" src="./figures/ogs-jupyter-lab.png" />
-# <img class="special-img-class" style="width: 10%; float: left" src="./figures/h-tet-1.png" />
-# <div style="clear: both;"></div>
 
 # %%
 import os
@@ -35,27 +30,23 @@ import ogstools as ot
 from scipy.special import exp1
 
 # %% [markdown]
-# ## H process: Theis solution
-
+# ## Problem description
 # %% [markdown]
-# **Problem description**
-#
-# Theis' problem examines the transient lowering of the water table induced by a pumping well.
+# Theis problem examines the transient lowering of the water table induced by a pumping well.
 # The assumptions required by the Theis solution are:
 #
 # The aquifer:
-# - is homogeneous, isotropic, confined, infinite in radial extent,
-# - has uniform thickness, horizontal piezometric surface.
+# - is homogeneous, isotropic, confined, and infinite in radial extent,
+# - has a uniform thickness and a horizontal piezometric surface.
 #
 # The well:
 # - is fully penetrating the entire aquifer thickness,
 # - has a constant pumping rate,
 # - well storage effects can be neglected,
-# - no other wells or long term changes in regional water levels.
+# - no other wells or long-term changes in regional water levels.
 
 # %% [markdown]
-# **Analytical solution**
-
+# ## Analytical solution
 # %% [markdown]
 # The analytical solution of the drawdown as a function of time and distance is expressed by:
 # $$
@@ -65,9 +56,9 @@ from scipy.special import exp1
 # where
 # - $s$ [$L$] is the _drawdown_ or change in hydraulic head,
 # - $h_0$ is the constant initial hydraulic head,
-# - $h$ is the hydrauic head at distance $r$ at time $t$
-# - $Q$ [$L^3T^{-1}$] is the constant pumping (discharge) rate
-# - $S$ [$-$] is the aquifer storage coefficient (volume of water released per unit decrease in $h$ per unit area)
+# - $h$ is the hydraulic head at distance $r$ at time $t$,
+# - $Q$ [$L^3T^{-1}$] is the constant pumping (discharge) rate,
+# - $S$ [$-$] is the depth-integrated aquifer storage coefficient (volume of water released per unit decrease in $h$ per unit area),
 # - $T$ [$L^2T^{-1}$] is the transmissivity (a measure of how much water is transported horizontally per unit time).
 #
 # The _Well Function_, $W(u)$ is the exponential integral, $E_1(u).$
@@ -75,9 +66,10 @@ from scipy.special import exp1
 # $$
 # W(u) = - \gamma - \ln u + \sum_{k=1}^\infty \frac{(-1)^{k+1} u^k}{k \cdot k!}
 # $$
-# where $\gamma=0.577215664$ is the Euler-Mascheroni constant
+# where $\gamma=0.577215664$ is the Euler-Mascheroni constant.
 #
-# For practical applications an approximation to the exponential integral is used often:
+# **Simplification**
+# In this notebook we stick to the exact expression introduced above. However, in some practical applications, an approximation to the exponential integral is used:
 # $$W(u) \approx -\gamma - \ln u$$
 #
 # This results in an expression for $s(r,t)$ known as the Jacob equation:
@@ -86,7 +78,6 @@ from scipy.special import exp1
 # $$
 # For more details we refer to Srivastava and Guzman-Guzman (1998).
 #
-# The following analytical solution is inspired by [linear and non linear fitting of the theis equation ](https://scipython.com/blog/linear-and-non-linear-fitting-of-the-theis-equation/).
 
 
 # %%
@@ -99,225 +90,134 @@ def theis_drawdown(t, S, T, Q, r):
     """Calculate and return the drawdown s(r,t) for parameters S, T.
 
     This version uses the Theis equation, s(r,t) = Q * W(u) / (4.pi.T),
-    where W(u) is the Well function for u = Sr^2 / (4Tt).
-    S is the aquifer storage coefficient,
-    T is the transmissivity (m2/day),
+    where W(u) is the well function for u = Sr^2 / (4Tt).
+    S is the aquifer storage coefficient: S_0 * thickness,
+    T is the transmissivity (m2/s): hydraulic conductivity * thickness,
     r is the distance from the well (m), and
-    Q is the pumping rate (m3/day).
+    Q is the pumping rate (m3/s).
     """
     u = calc_u(r, S, T, t)
     return Q / 4 / np.pi / T * exp1(u)
 
 
 # %% [markdown]
-# ## Analytical solution setup
+# ## Problem parameterisation
+# %% [markdown]
 #
-# Here, we choose some representative parameter values to evaluate the Theis analytical solution.
+# Here, we parameterise the problem to evaluate the Theis analytical solution against simulation results of OGS.
 #
-# We set the pumping rate to $Q=2000\, \mathrm{m^3/day}$ and consider a point located at a distance of $r=10\,\mathrm{m}$ from the well.
-# The time grid spans from 1 to 100 days.
+# We set the pumping rate to $Q=0.016\,\mathrm{m^{3}/s}$ and consider the solution at time $t=1728.0\,\mathrm{s}$.
 #
-# For the aquifer properties, we use a storage coefficient of $S=3 \times 10^{-4}$ and a transmissivity of  $T=1000\, \mathrm{m^{2}/day}$
+# For the aquifer properties, we use a storativity of $S=1 \times 10^{-3}$ and a transmissivity of  $T=1000\, \mathrm{m^{2}/day}$.
 #
-# Using these values, we compute the analytical drawdown $s(r,t)$ with the `theis_drawdown()` function.
+# We show the drawdown over radial distances ranging from $r=1\,\mathrm{m}$ to $40\,\mathrm{m}$.
+
 
 # %%
-Q = 2000  # Pumping rate from well (m3/day)
-r = 10  # Distance from well (m)
+# Aquifer properties
+#
+# Storativity (-)
+S = 0.001
+# Transmissivity (m2/s)
+T = 9.2903e-4
 
-# Time grid, days.
-t = np.array([1, 2, 4, 8, 12, 16, 20, 30, 40, 50, 60, 70, 80, 90, 100])
-
-# Calculate some synthetic data to fit.
-S, T = 0.0003, 1000
-s = theis_drawdown(t, S, T, Q, r)
-
-# Plot the data
-fig, ax = plt.subplots(figsize=(16, 10))
-
-ax.plot(t, s, label=f"r = {r} m")
-ax.set(
-    xlim=(0, 100),
-    ylim=(1.6, 2.6),
-    title="Theis: Analytical solution",
-    xlabel=r"$t\;/\;\mathrm{days}$",
-    ylabel=r"$s\;/\;\mathrm{m}$",
-)
-ax.legend()
-ax.grid()
-ot.plot.utils.update_font_sizes(ax)
-
+# Dynamic parameters
+#
+# Pumping rate from well (m3/s)
+Q = 0.016
 
 # %% [markdown]
-# In this step, we recalculate the drawdown using SI units for consistency with numerical simulations.
-#
-# The pumping rate is converted to $Q=0.016\,\mathrm{m^{3}/s}$ and the time is set to $t=864000\,\mathrm{s}$ (equivalent to 10 days).
-#
-# We evaluate the drawdown over radial distances ranging from $r=1\,\mathrm{m}$ to $40\,\mathrm{m}$.
-
+# ## Evaluation
 # %%
-# Recalculation from days in sec
-Q = 0.016  # Pumping rate from well (m3/s)
-t = 864000  # Time in s.
-
+# Evaluation parameters
+#
 # Distance from well (m)
 r = np.arange(1, 41, 1)
-
-# Calculate some synthetic data to fit.
-S = 0.001
-T = 9.2903e-4
-u = calc_u(r, S, T, t)
-s = theis_drawdown(t, S, T, Q, r)
-s = s - 5  # reference head
-
-# Plot the data
-fig, ax = plt.subplots(figsize=(16, 10))
-ax.plot(r, s, label=f"t = {t} days")
-ax.set(
-    xlim=(1, 40),
-    title="Theis: Analytical solution",
-    xlabel=r"$r\;/\mathrm{m}$",
-    ylabel=r"$hydraulic head\;/\;\mathrm{m}$",
-)
-ax.legend()
-ax.grid()
-ot.plot.utils.update_font_sizes(ax)
-
-
-# %% [markdown]
-# ## Numerical solution
+# Time values (s)
+time_vals = [1728.0]
 
 # %%
-mesh = ot.MeshSeries("axisym_theis.vtu")
+# Compute analytical solutions for the given time and distance values
+len_time_vals = len(time_vals)
+s_all = np.zeros((40, len(time_vals)))
 
-
-# %%
-fig = ot.plot.contourf(mesh, "OGS5_pressure")
-fig.get_axes()[0].set_title("Initial pressure")
-ot.plot.utils.update_font_sizes(fig.get_axes())
-
-
-# %% [markdown]
-# ## Running OGS
+for ii in range(len_time_vals):
+    u = calc_u(r, S, T, time_vals[ii])
+    s = theis_drawdown(time_vals[ii], S, T, Q, r)
+    s_all[:, ii] = s
 
 # %%
+# Prepare output directory
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
-model = ot.Project(
-    input_file="axisym_theis.prj", output_file=out_dir / "axisym_theis.prj"
-)
-model.write_input()
-model.run_model(logfile=out_dir / "out.log", args=f"-o {out_dir} -m .")
-
-
-# %% [markdown]
-# ## Spatial Profiles
+sim = ot.Model(project="axisym_theis.prj").run(out_dir, overwrite=True)
 
 # %%
-ms = ot.MeshSeries(f"{out_dir}/liquid_pcs.pvd")
+# Load simulation results
+ms = sim.meshseries
 
 # %%
-# %%capture --no-display
-
+# Extract probe at y=z=0 and x=1..40
 xaxis = np.column_stack((np.linspace(1.0, 40, 40), np.zeros((40, 2))))
 pressure = ot.variables.pressure.replace(
     data_unit="m", output_unit="m", output_name="hydraulic head", symbol=""
 )
 
-ms_probe = ot.MeshSeries.probe(ms, xaxis)
-
+ms_probe = ms.probe(xaxis)
 # %%
+# Plot results
 labels = [f"$t={np.round(x, 2)}s$" for x in ms_probe[1:].timevalues]
 fig, ax = plt.subplots(figsize=(18, 12))
 
 ot.plot.line(ms_probe[1:], "x", pressure, labels=labels, ax=ax)
-ot.plot.line(
-    ms_probe[ms_probe.closest_timestep(1728)],
-    "x",
-    "OGS5_pressure",
-    marker="x",
-    markersize=8,
-    linestyle="",
-    label="OGS, $t=1728 s$",
-    ax=ax,
+ax.plot(r, s_all, "+", markersize=16)
+ax.set(
+    xlim=(1, 40),
+    xlabel=r"$r\;/\; \mathrm{m}$",
+    ylabel=r"$hydraulic head \; /\; \mathrm{m}$",
 )
+
 fig.tight_layout()
 
-# %% [markdown]
-# ### Comparing Numerical and Analytical Solutions
-#
-# In this section, we compare the computed OGS solutions with the [analytical solution](#analytical-solution-setup) we computed earlier.
-
 # %%
-time = 864000
+# Validate results at time = 1728 s
+time = 1728.0
 timestep = ms_probe.closest_timestep(time)
 
-ana_sol = np.zeros_like(ms_probe.point_data[pressure])
-ana_sol[timestep] = s
+analytical_solution = s_all[:, timestep - 1]
 
-mask = np.nonzero(ana_sol)
-abs_error = np.zeros_like(ms_probe.point_data[pressure])
-abs_error[mask] = np.abs(ana_sol[mask] - ms_probe.point_data[pressure][mask])
+assert time == time_vals[timestep - 1]
 
-rel_error = np.zeros_like(ms_probe.point_data[pressure])
-rel_error[mask] = np.abs(abs_error[mask] / (ana_sol[mask]))
+abs_error = np.abs(analytical_solution - ms_probe.point_data[pressure][timestep])
 
-np.testing.assert_array_less(abs_error, 0.9)
+rel_error = np.abs(abs_error / analytical_solution)
+
+np.testing.assert_array_less(abs_error, 0.2)
 np.testing.assert_array_less(rel_error, 0.07)
 
-# %%
-ms_probe.point_data[pressure.anasol.data_name] = ana_sol
-ms_probe.point_data[pressure.abs_error.data_name] = abs_error
-ms_probe.point_data[pressure.rel_error.data_name] = rel_error
-
-# %%
-fig, ax = plt.subplots(ncols=3, figsize=(40, 12))
-
-ot.plot.line(
-    ms_probe[timestep],
-    "x",
-    pressure,
-    marker="x",
-    markersize=8,
-    linestyle="",
-    label="numerical solution (ogs6)",
-    ax=ax[0],
-)
-ot.plot.line(
-    ms_probe[timestep],
-    "x",
-    pressure.anasol,
-    marker="o",
-    label="analytical solution",
-    ax=ax[0],
-    color="C1",
-)
-ot.plot.line(ms_probe[timestep], "x", pressure.abs_error, marker="x", ax=ax[1])
-ot.plot.line(ms_probe[timestep], "x", pressure.rel_error, marker="x", ax=ax[2])
-
-fig.suptitle("Theis: Comparison analytical and numerical solution", fontsize=38)
-fig.tight_layout()
-
-# %%
-max_rel_error = (ms_probe[timestep].point_data[pressure.rel_error.data_name]).max()
-print(f"Max relative error: {max_rel_error*100:.2f}%")
-
 # %% [markdown]
-# The max relative error observed is nearly 6.35%.
-# The observed differences between the analytical and numerical results arise from the distinct boundary conditions applied in the two setups.
-#
-# Overall, the numerical solution closely matches the analytical results.
+
+# Solutions at later time steps computed by OGS6 deviate from the analytical solution because of two reasons:
+# - the time discretisation of the numerical model is chosen too coarse
+# - the solution of Theis assumes an aquifer of infinite radial extent wich for larger times deviates more visibly from the solution for a finite radial extent
 
 # %% [markdown]
 # ## OGS links
 # - Project file: [axisym_theis.prj](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.prj)
+# - Geometry file: [axisym_theis.gml](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.gml)
+# - Mesh file: [axisym_theis.vtu](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.vtu)
+
+# %% [markdown]
+# ## Related benchmarks
+# - The same Theis benchmark is done for the component transport (CT) process. Here you find the [python file](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/Theis_Axisymmetric/axisym_theis_CT.py) and [the project file](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/Theis_Axisymmetric/axisym_theis_CT.prj)
 
 # %% [markdown]
 # ## References
+# - Theis, C. V. (1935), The relation between the lowering of the Piezometric surface and the rate and duration of discharge of a well using ground-water storage, Eos Trans. AGU, 16(2), 519–524, [doi:10.1029/TR016i002p00519](https://doi.org/10.1029/TR016i002p00519)
 # - Rajesh Srivastava and Amado Guzman-Guzman (1998): Practical Approximations of the Well Function. Groundwater, 36(5): 844-848, [doi.org/10.1111/j.1745-6584.1998.tb02203.x](https://doi.org/10.1111/j.1745-6584.1998.tb02203.x)
 
 # %% [markdown]
 # ## Credits
-# - Christian for the analytical solution in Python: [linear and non linear fitting of the theis-equation](https://scipython.com/blog/linear-and-non-linear-fitting-of-the-theis-equation/)
-# - Wenqing Wang for set-up the OGS benchmark: [liquid flow theis problem](https://www.opengeosys.org/stable/docs/benchmarks/liquid-flow/liquid-flow-theis-problem/)
+# - The implementation of the analytical solution  in Python is inspired by [linear and non linear fitting of the Theis equation ](https://scipython.com/blog/linear-and-non-linear-fitting-of-the-theis-equation/).
+# - Thanks to Wenqing Wang for set-up the OGS benchmark

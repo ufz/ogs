@@ -220,3 +220,4 @@ Zeche
 Zenodo
 zlib
 [Gg]eosystem[s]
+Thiem
