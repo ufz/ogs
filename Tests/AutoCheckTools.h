@@ -6,6 +6,7 @@
 #include <Eigen/Core>
 #include <autocheck/autocheck.hpp>
 
+#include "MathLib/KelvinVector.h"
 #include "MathLib/Point3d.h"
 
 namespace std
@@ -143,3 +144,39 @@ struct progressivelySmallerGenerator
 };
 
 }  // namespace autocheck
+
+// Generators for OpenMP thread-safety tests
+namespace Tests
+{
+
+/// Generator for Point3D coordinates
+struct Point3DGenerator
+{
+    using result_type = MathLib::Point3d;
+
+    result_type operator()(std::size_t size)
+    {
+        autocheck::generator<double> gen;
+        return MathLib::Point3d{{gen(size), gen(size), gen(size)}};
+    }
+};
+
+/// Generator for KelvinVector stress (2D: 4 components, 3D: 6 components)
+template <int Dim>
+struct KelvinVectorGenerator
+{
+    using result_type = MathLib::KelvinVector::KelvinVectorType<Dim>;
+
+    result_type operator()(std::size_t size)
+    {
+        autocheck::generator<double> gen;
+        result_type stress;
+        for (int i = 0; i < stress.size(); ++i)
+        {
+            stress[i] = gen(size);
+        }
+        return stress;
+    }
+};
+
+}  // namespace Tests
