@@ -331,18 +331,14 @@ def allclose(x, y, abstol):
     ymin = np.min(y)
     ymax = np.max(y)
 
-    display(
-        HTML(
-            f"""
+    display(HTML(f"""
     <div class="alert alert-block alert-danger">
         <h3>Error in <span style="font-family: monospace;">allclose()</span></h3>
         difference of {d} exceeds abstol of {abstol}<br>
         field 1 ranges from {xmin} to {xmax} (delta = {xmax - xmin})<br>
         field 2 ranges from {ymin} to {ymax} (delta = {ymax - ymin})<br>
     </div>
-    """
-        )
-    )
+    """))
 
     return False
 

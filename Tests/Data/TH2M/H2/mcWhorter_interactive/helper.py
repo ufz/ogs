@@ -154,23 +154,14 @@ def render_latex_table(pandas_dataframe, latex_column):
         escape=False, index=False, float_format=format_numbers
     )  # deactivate Escape to render HTML
 
-    display(
-        HTML(
-            """
+    display(HTML("""
         <script type="text/javascript" async
             src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
         </script>
-        """
-            + html_table
-        )
-    )
+        """ + html_table))
 
-    display(
-        Javascript(
-            """
+    display(Javascript("""
         if (window.MathJax) {
             MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
         }
-    """
-        )
-    )
+    """))

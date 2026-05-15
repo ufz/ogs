@@ -111,7 +111,7 @@ def test_simulator():
     print("Python: sim.execute_time_step() done")
     top_boundary_grid: OGSMesh = sim.mesh("cuboid_1x1x1_hex_27_top_boundary")
 
-    (cells, celltypes) = top_boundary_grid.cells()
+    cells, celltypes = top_boundary_grid.cells()
     checkCells(cells, celltypes, points)
 
     # reset values of cell data array and get it back

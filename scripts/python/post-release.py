@@ -59,8 +59,7 @@ r = subprocess.run(
 )
 changelog = r.stdout[1:-2].replace(r"\n", "\n").replace(r"\"", '"')
 
-print(
-    f"""Add to CITATION.cff:
+print(f"""Add to CITATION.cff:
 
 ```
 identifiers:
@@ -86,5 +85,4 @@ We are happy to announce the release of **OpenGeoSys {version}**!
 ## Highlights
 
 {changelog}
-"""
-)
+""")

@@ -91,22 +91,19 @@ idcs = idcs[np.argsort(phi[idcs])]  # sorted with ascending polar angle
 
 
 with Path(out_geom).open(mode="w") as fh:
-    fh.write(
-        """<?xml version="1.0" encoding="ISO-8859-1"?>
+    fh.write("""<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysGLI>
     <name>geom</name>
     <points>
         <point id="0" x="0" y="0" z="0" name="center"/>
         <point id="1" x="0" y="1" z="0" name="top"/>
         <point id="2" x="1" y="0" z="0"/>
-"""
-    )
+""")
 
     for i, (x, y, z) in enumerate(new_coords[idcs]):
         fh.write(f'        <point id="{i + 3}" x="{x}" y="{y}" z="{z}" />\n')
 
-    fh.write(
-        """
+    fh.write("""
     </points>
 
     <polylines>
@@ -118,14 +115,11 @@ with Path(out_geom).open(mode="w") as fh:
             <pnt>0</pnt>
             <pnt>2</pnt>
         </polyline>
-        <polyline id="2" name="outer">\n"""
-    )
+        <polyline id="2" name="outer">\n""")
 
     for i in range(len(idcs)):
         fh.write(f"            <pnt>{i + 3}</pnt>\n")
 
-    fh.write(
-        """</polyline>
+    fh.write("""</polyline>
     </polylines>
-</OpenGeoSysGLI>"""
-    )
+</OpenGeoSysGLI>""")

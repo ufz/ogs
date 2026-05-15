@@ -368,14 +368,12 @@ def write_test_definition_snippet(
         fh.write("    <test_definition>")
 
         for field in sorted(fields_ogs):
-            fh.write(
-                f"""
+            fh.write(f"""
         <vtkdiff>
             <regex>{regex_prefix}_ts_.*_t_.*[.]vtu</regex>
             <field>{field}</field>
             <absolute_tolerance>0.0</absolute_tolerance>
             <relative_tolerance>0.0</relative_tolerance>
-        </vtkdiff>"""
-            )
+        </vtkdiff>""")
 
         fh.write("\n    </test_definition>\n")

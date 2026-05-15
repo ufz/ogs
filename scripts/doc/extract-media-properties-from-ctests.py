@@ -94,12 +94,10 @@ def main(datadir, docauxdir):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="""\
+    parser = argparse.ArgumentParser(description="""\
 This script extracts information about used media properties from all ctest prj
 files and puts them into the DocAux directory.\
-"""
-    )
+""")
     parser.add_argument("datadir", help="the Tests/Data directory OGS's source code")
     parser.add_argument("docauxdir", help="the DocAux directory OGS's build directory")
     args = parser.parse_args()
