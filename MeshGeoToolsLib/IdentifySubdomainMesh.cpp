@@ -145,9 +145,30 @@ void updateOrCheckExistingSubdomainProperty(
     MeshLib::MeshItemType const mesh_item_type, bool const force_overwrite)
 {
     auto& properties = mesh.getProperties();
+    const bool property_name_exists =
+        properties.hasPropertyVector(property_name);
     if (!properties.existsPropertyVector<std::size_t>(property_name,
                                                       mesh_item_type, 1))
     {
+        if (property_name_exists)
+        {
+            if (!force_overwrite)
+            {
+                OGS_FATAL(
+                    "A property named '{:s}' already exists on mesh '{:s}', "
+                    "but it has a different mesh item type or number of "
+                    "components. Use force overwrite to replace it.",
+                    property_name, mesh.getName());
+            }
+
+            WARN(
+                "A property named '{:s}' exists on mesh '{:s}' with a "
+                "different mesh item type or number of components. "
+                "Overwriting it.",
+                property_name, mesh.getName());
+            properties.removePropertyVector(property_name);
+        }
+
         addPropertyToMesh<std::size_t>(mesh, property_name, mesh_item_type, 1,
                                        {values});
         return;
