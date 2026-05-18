@@ -589,6 +589,10 @@ int main(int argc, char* argv[])
         "");
     cmd.add(original_mesh_input_arg);
 
+    TCLAP::SwitchArg compress_output_arg(
+        "c", "compress", "Compress the output (vtu file).", false);
+    cmd.add(compress_output_arg);
+
     auto log_level_arg = BaseLib::makeLogLevelArg();
 
     cmd.add(log_level_arg);
@@ -658,8 +662,8 @@ int main(int argc, char* argv[])
 
     BaseLib::RunTime writing_timer;
     writing_timer.start();
-    if (MeshLib::IO::writeMeshToFile(*merged_mesh.get(),
-                                     output_arg.getValue()) != 0)
+    if (MeshLib::IO::writeMeshToFile(*merged_mesh.get(), output_arg.getValue(),
+                                     {}, compress_output_arg.getValue()) != 0)
     {
         ERR("Could not write mesh to '{:s}'.", output_arg.getValue());
         return EXIT_FAILURE;
