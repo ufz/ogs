@@ -281,8 +281,21 @@ authors:
       orcid: "https://orcid.org/0000-0002-6686-9556"
       affiliation: >-
           Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Leonard
+      family-names: Grabow
+      orcid: "https://orcid.org/0000-0003-3763-0797"
+      affiliation: >-
+          Helmholtz Centre for Environmental Research -- UFZ
     - given-names: Kunqing
       family-names: Jiang
+      affiliation: >-
+          Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Hannah
+      family-names: Keese
+      affiliation: TU Bergakademie Freiberg
+    - given-names: Matthias
+      family-names: Bernt
+      orcid: "https://orcid.org/0000-0003-3763-0797"
       affiliation: >-
           Helmholtz Centre for Environmental Research -- UFZ
 identifiers:
