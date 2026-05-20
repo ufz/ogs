@@ -130,6 +130,29 @@ AddTest(
 )
 
 AddTest(
+    NAME identifySubdomains_EmbeddedBoundary
+    PATH MeshGeoToolsLib/IdentifySubdomains
+    EXECUTABLE identifySubdomains
+    # The file tunnel_boundary.vtu is copied to the binary directory at the CMakeLists.txt level,
+    # so we can modify it in place without affecting the source file.
+    EXECUTABLE_ARGS -m <SOURCE_PATH>/SMA_2D_excavation.vtu -f -s 1e-4 -o new_ -- <SOURCE_PATH>/tunnel_boundary.vtu
+    TESTER vtkdiff
+    DIFF_DATA
+    new_tunnel_boundary.vtu new_tunnel_boundary.vtu bulk_node_ids bulk_node_ids 0 0
+    new_tunnel_boundary.vtu new_tunnel_boundary.vtu bulk_element_ids bulk_element_ids 0 0
+)
+
+# Deliberately cause an error by trying to overwrite the input mesh without the -f flag.
+# The test checks that the program throws a runtime error in this case.
+AddTest(
+    NAME identifySubdomains_EmbeddedBoundary_overwrite
+    PATH MeshGeoToolsLib/IdentifySubdomains
+    EXECUTABLE identifySubdomains
+    EXECUTABLE_ARGS -m <SOURCE_PATH>/SMA_2D_excavation.vtu -s 1e-4  -- <SOURCE_PATH>/tunnel_boundary.vtu
+    PROPERTIES PASS_REGULAR_EXPRESSION "Use force overwrite to replace it"
+)
+
+AddTest(
     NAME partmesh_2Dmesh_ogs2metis
     PATH NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
     WORKING_DIRECTORY ${Data_SOURCE_DIR}/NodePartitionedMesh/partmesh_2Dmesh_3partitions/Binary
