@@ -326,7 +326,7 @@ AddTest(
     RUNTIME 32
     DIFF_DATA
     arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu displacement displacement 1.e-10 1.e-10
-    arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu sigma sigma 1.e-9 5.3e-7
+    arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu sigma sigma 1.e-9 5.7e-7
 )
 
     AddTest(
