@@ -98,6 +98,7 @@ deploy docs:
     - git add $CI_COMMIT_TAG
     - rm stable && ln -s $CI_COMMIT_TAG stable && git add stable
     - ../scripts/ci/helper/update-web-version.sh $CI_COMMIT_TAG doxygen _static/versions.json
+    - git add _static/versions.json
     - git commit -m "Release $CI_COMMIT_TAG"
     - git push "https://${DOXYGEN_CI_COMMITER_USER_AND_TOKEN}@${CI_SERVER_HOST}/ogs/ogs-doxygen-web.git" HEAD:main
   artifacts:
