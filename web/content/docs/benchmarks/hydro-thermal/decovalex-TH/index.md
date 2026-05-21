@@ -85,34 +85,65 @@ In the above figure, the domain in the annulus sector represents the sealing
 <td align="left"><span class="math inline">2.0 ⋅ 10<sup>−21</sup></span></td>
 </tr>
 <tr class="odd">
+<td align="left">Solid thermal expansivity</td>
+<td align="left"><span class="math inline"><em>K</em><sup>-1</sup></span></td>
+<td align="left"><span class="math inline">10<sup>−5</sup></span></td>
+</tr>
+<tr class="even">
+<td align="left">Biot's coefficient</td>
+<td align="left"><span class="math inline"><em>-</em></span></td>
+<td align="left"><span class="math inline">0.6</span></td>
+</tr>
+<tr class="odd">
+<td align="left">Storage</td>
+<td align="left"><span class="math inline"><em>Pa</em><sup>-1</sup></span></span></td>
+<td align="left"><span class="math inline">10<sup>−11</sup></span></td>
+</tr>
+<tr class="even">
 <td align="left"><em>Granite</em></td>
 <td align="left"></td>
 <td align="left"></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Density</td>
 <td align="left"><span class="math inline"><em>k</em><em>g</em>/<em>m</em><sup>3</sup></span></td>
 <td align="left">2700</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">Porosity</td>
 <td align="left">-</td>
 <td align="left">0.41</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Thermal conductivity</td>
 <td align="left"><span class="math inline"><em>W</em>/(<em>m</em><em>K</em>)</span></td>
 <td align="left">3</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td align="left">Specific heat capacity</td>
 <td align="left"><span class="math inline"><em>J</em>/(<em>k</em><em>g</em><em>K</em>)</span></td>
 <td align="left">900</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td align="left">Saturated permeability</td>
 <td align="left"><span class="math inline"><em>m</em><sup>2</sup></span></td>
 <td align="left"><span class="math inline">10<sup>−17</sup></span></td>
+</tr>
+</tr>
+<tr class="even">
+<td align="left">Solid thermal expansivity</td>
+<td align="left"><span class="math inline"><em>K</em><sup>-1</sup></span></td>
+<td align="left"><span class="math inline">10<sup>−5</sup></span></td>
+</tr>
+<tr class="odd">
+<td align="left">Biot's coefficient</td>
+<td align="left"><span class="math inline"><em>-</em></span></td>
+<td align="left"><span class="math inline">1.0</span></td>
+</tr>
+<tr class="even">
+<td align="left">Storage</td>
+<td align="left"><span class="math inline"><em>Pa</em><sup>-1</sup></span></span></td>
+<td align="left"><span class="math inline">2.0 ⋅ 10<sup>−11</sup></span></td>
 </tr>
 </tbody>
 </table>

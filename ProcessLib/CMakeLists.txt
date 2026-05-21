@@ -56,7 +56,10 @@ foreach(process ${_enabled_processes})
 endforeach()
 
 foreach(process ${_enabled_processes})
-    if(process STREQUAL "LiquidFlow" OR process STREQUAL "ThermoHydroMechanics")
+    if(process STREQUAL "LiquidFlow"
+       OR process STREQUAL "HT"
+       OR process STREQUAL "ThermoHydroMechanics"
+    )
         append_source_and_header_files(
             _sources _headers _private DIRECTORIES Common/HydraulicProcess
         )

@@ -9,9 +9,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
     DIFF_DATA
-    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu T T 1e-7 1e-9
-    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu p p 1e-9 1e-3
-    ThermalConvection_const_viscosity_expected.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
+    ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu T T 1e-7 1e-9
+    ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu p p 1e-9 1e-3
+    ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
 )
 
 AddTest(
@@ -189,18 +189,9 @@ AddTest(
 )
 
 # Staggered scheme
-AddTest(
-    NAME HT_a_DECOVALEX_THMC_based_Example
-    PATH Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS th_decovalex.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    DIFF_DATA
-    th_decovalex.vtu th_decovalex_ts_40_t_18.000000.vtu T_ref T 8e-12 1.e-14
-    th_decovalex.vtu th_decovalex_ts_40_t_18.000000.vtu p_ref p 1e-7 1.e-14
-)
+if ((NOT OGS_USE_MPI) AND (NOT OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample/th_decovalex.prj RUNTIME 2)
+endif()
 
 AddTest(
     NAME HT_SimpleSynthetics_IsothermalFluidFlowStaggered
@@ -326,22 +317,6 @@ AddTest(
     CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolicStaggered_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
 )
 
-# 2019-05-09 TF disable the test until the MPL can deal with parameters as properties
-# AddTest(
-#     NAME HT_a_DECOVALEX_THMC_based_Example
-#     PATH Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
-#     EXECUTABLE ogs
-#     EXECUTABLE_ARGS th_decovalex.prj
-#     WRAPPER mpirun
-#     WRAPPER_ARGS -np 1
-#     TESTER vtkdiff
-#     REQUIREMENTS OGS_USE_MPI
-#     RUNTIME 186
-#     DIFF_DATA
-#     th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18_000000_0.vtu T_ref T 1e-10  1.e-10
-#     th_decovalex.vtu th_decovalex_pcs_1_ts_40_t_18_000000_0.vtu p_ref p 1e-10  1.e-10
-# )
-
 AddTest(
     NAME HT_FaultedCube_rev0
     PATH Parabolic/HT/FaultedCube
@@ -352,9 +327,9 @@ AddTest(
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
     DIFF_DATA
-    ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu T T 1e-10 1e-16
-    ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu p p 3e-6 2e-10
-    ThermalConvection_ts_1_t_0.000000_expected.vtu ThermalConvection_ts_1_t_0.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
+    ThermalConvection_ts_1_t_0.000000.vtu ThermalConvection_ts_1_t_0.000000.vtu T T 1e-10 1e-16
+    ThermalConvection_ts_1_t_0.000000.vtu ThermalConvection_ts_1_t_0.000000.vtu p p 3e-6 2e-10
+    ThermalConvection_ts_1_t_0.000000.vtu ThermalConvection_ts_1_t_0.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
 )
 
 # generateInvalidMediaForHT.py logic moved to PythonSetup.cmake

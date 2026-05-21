@@ -60,7 +60,7 @@ public:
 
     void assemble(double const t, double const dt,
                   std::vector<double> const& local_x,
-                  std::vector<double> const& local_x_prev,
+                  std::vector<double> const& /*local_x_prev*/,
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override
@@ -85,7 +85,11 @@ public:
             pressure_index, pressure_index);
         auto Mpp = local_M.template block<pressure_size, pressure_size>(
             pressure_index, pressure_index);
+        auto MpT = local_M.template block<pressure_size, temperature_size>(
+            pressure_index, temperature_index);
         auto Bp = local_b.template block<pressure_size, 1>(pressure_index, 0);
+
+        typename ShapeMatricesType::NodalMatrixType NtN;
 
         auto const& process_data = this->_process_data;
 
@@ -98,6 +102,9 @@ public:
             medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
         auto const& solid_phase =
             medium.phase(MaterialPropertyLib::PhaseName::Solid);
+
+        bool const has_thermal_expansivity = solid_phase.hasProperty(
+            MaterialPropertyLib::PropertyType::thermal_expansivity);
 
         auto const& b =
             process_data
@@ -144,6 +151,12 @@ public:
             auto const specific_storage =
                 solid_phase.property(MaterialPropertyLib::PropertyType::storage)
                     .template value<double>(vars, pos, t, dt);
+#ifndef NDEBUG
+            if (has_thermal_expansivity)
+            {
+                assert(std::fabs(specific_storage) > 0.0);
+            }
+#endif
 
             auto const porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
@@ -169,13 +182,6 @@ public:
                     .template value<double>(vars, pos, t, dt);
 
             vars.density = fluid_density;
-            const double dfluid_density_dp =
-                liquid_phase
-                    .property(MaterialPropertyLib::PropertyType::density)
-                    .template dValue<double>(
-                        vars,
-                        MaterialPropertyLib::Variable::liquid_phase_pressure,
-                        pos, t, dt);
 
             // Use the viscosity model to compute the viscosity
             auto const viscosity =
@@ -203,43 +209,70 @@ public:
                                         specific_heat_capacity_fluid);
             average_velocity_norm += velocity.norm();
 
-            Kpp.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
-            MTT.noalias() += w *
-                             this->getHeatEnergyCoefficient(
-                                 vars, porosity, fluid_density,
-                                 specific_heat_capacity_fluid, pos, t, dt) *
-                             N.transpose() * N;
-            Mpp.noalias() += w *
-                             (porosity * dfluid_density_dp / fluid_density +
-                              specific_storage) *
-                             N.transpose() * N;
+            NtN.noalias() = N.transpose() * N;
+
+            MTT.noalias() +=
+                (w * this->getHeatEnergyCoefficient(
+                         vars, porosity, fluid_density,
+                         specific_heat_capacity_fluid, pos, t, dt)) *
+                NtN;
+
+            double const scaling_factor =
+                process_data.is_volume_balance_equation_type ? 1.0
+                                                             : fluid_density;
+
+            Kpp.noalias() +=
+                (scaling_factor * w) * dNdx.transpose() * K_over_mu * dNdx;
+
+            double const dfluid_density_dp =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::density)
+                    .template dValue<double>(
+                        vars,
+                        MaterialPropertyLib::Variable::liquid_phase_pressure,
+                        pos, t, dt);
+
+            Mpp.noalias() += (scaling_factor * w *
+                              (porosity * dfluid_density_dp / fluid_density +
+                               specific_storage)) *
+                             NtN;
             if (process_data.has_gravity)
             {
-                Bp += w * fluid_density * dNdx.transpose() * K_over_mu * b;
+                Bp += (scaling_factor * w * fluid_density) * dNdx.transpose() *
+                      K_over_mu * b;
             }
 
-            if (process_data.has_fluid_thermal_expansion)
+            if (!has_thermal_expansivity)
             {
-                double const solid_thermal_expansion =
-                    process_data.solid_thermal_expansion(t, pos)[0];
+                continue;
+            }
+
+            // Add the thermal expansion term
+            {
+                auto const linear_solid_thermal_expansivity =
+                    solid_phase
+                        .property(MaterialPropertyLib::PropertyType::
+                                      thermal_expansivity)
+                        .template value<double>(vars, pos, t, dt);
                 double const dfluid_density_dT =
                     liquid_phase
                         .property(MaterialPropertyLib::PropertyType::density)
                         .template dValue<double>(
                             vars, MaterialPropertyLib::Variable::temperature,
                             pos, t, dt);
-                double const Tdot_int_pt =
-                    (T_int_pt -
-                     Eigen::Map<const NodalVectorType>(
-                         &local_x_prev[temperature_index], temperature_size)
-                         .dot(N)) /
-                    dt;
-                double const biot_constant =
-                    process_data.biot_constant(t, pos)[0];
+                auto const biot_constant =
+                    medium
+                        .property(
+                            MaterialPropertyLib::PropertyType::biot_coefficient)
+                        .template value<double>(vars, pos, t, dt);
+
                 double const eff_thermal_expansion =
-                    3.0 * (biot_constant - porosity) * solid_thermal_expansion -
+                    3.0 * (biot_constant - porosity) *
+                        linear_solid_thermal_expansivity -
                     porosity * dfluid_density_dT / fluid_density;
-                Bp.noalias() += eff_thermal_expansion * Tdot_int_pt * w * N;
+
+                MpT.noalias() -=
+                    (scaling_factor * w * eff_thermal_expansion) * NtN;
             }
         }
 
@@ -251,7 +284,7 @@ public:
     }
 
     std::vector<double> const& getIntPtDarcyVelocity(
-        const double t,
+        double const t,
         std::vector<GlobalVector*> const& x,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_table,
         std::vector<double>& cache) const override

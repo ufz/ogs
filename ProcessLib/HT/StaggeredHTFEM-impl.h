@@ -62,6 +62,8 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
     auto const& solid_phase =
         medium.phase(MaterialPropertyLib::PhaseName::Solid);
+    bool const has_thermal_expansivity = solid_phase.hasProperty(
+        MaterialPropertyLib::PropertyType::thermal_expansivity);
 
     auto const& b =
         process_data
@@ -123,6 +125,12 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         auto const specific_storage =
             solid_phase.property(MaterialPropertyLib::PropertyType::storage)
                 .template value<double>(vars, pos, t, dt);
+#ifndef NDEBUG
+        if (has_thermal_expansivity)
+        {
+            assert(std::fabs(specific_storage) > 0.0);
+        }
+#endif
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -131,29 +139,36 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         GlobalDimMatrixType const K_over_mu =
             intrinsic_permeability / viscosity;
 
-        // matrix assembly
-        local_M.noalias() +=
-            w *
-            (porosity * dfluid_density_dp / fluid_density + specific_storage) *
-            N.transpose() * N;
+        double const scaling_factor =
+            process_data.is_volume_balance_equation_type ? 1.0 : fluid_density;
 
-        local_K.noalias() += w * dNdx.transpose() * K_over_mu * dNdx;
+        // matrix assembly
+        local_M.noalias() += (scaling_factor * w *
+                              (porosity * dfluid_density_dp / fluid_density +
+                               specific_storage)) *
+                             N.transpose() * N;
+
+        local_K.noalias() +=
+            (scaling_factor * w) * dNdx.transpose() * K_over_mu * dNdx;
 
         if (process_data.has_gravity)
         {
-            local_b.noalias() +=
-                w * fluid_density * dNdx.transpose() * K_over_mu * b;
+            local_b.noalias() += (scaling_factor * w * fluid_density) *
+                                 dNdx.transpose() * K_over_mu * b;
         }
 
-        if (!process_data.has_fluid_thermal_expansion)
+        if (!has_thermal_expansivity)
         {
-            return;
+            continue;
         }
 
         // Add the thermal expansion term
         {
-            auto const solid_thermal_expansion =
-                process_data.solid_thermal_expansion(t, pos)[0];
+            auto const linear_solid_thermal_expansivity =
+                solid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::thermal_expansivity)
+                    .template value<double>(vars, pos, t, dt);
             const double dfluid_density_dT =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
@@ -161,11 +176,17 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
                         vars, MaterialPropertyLib::Variable::temperature, pos,
                         t, dt);
             double const Tdot_int_pt = (T_int_pt - local_T_prev.dot(N)) / dt;
-            auto const biot_constant = process_data.biot_constant(t, pos)[0];
+            auto const biot_constant =
+                medium
+                    .property(
+                        MaterialPropertyLib::PropertyType::biot_coefficient)
+                    .template value<double>(vars, pos, t, dt);
             const double eff_thermal_expansion =
-                3.0 * (biot_constant - porosity) * solid_thermal_expansion -
+                3.0 * (biot_constant - porosity) *
+                    linear_solid_thermal_expansivity -
                 porosity * dfluid_density_dT / fluid_density;
-            local_b.noalias() += eff_thermal_expansion * Tdot_int_pt * w * N;
+            local_b.noalias() +=
+                (scaling_factor * eff_thermal_expansion * Tdot_int_pt * w) * N;
         }
     }
 }

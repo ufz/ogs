@@ -14,6 +14,7 @@
 #include "NumLib/NumericalStability/CreateNumericalStabilization.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
+#include "ProcessLib/Common/HydraulicProcess/checkVolumeBalanceEquationSetting.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -22,6 +23,32 @@ namespace ProcessLib
 {
 namespace HT
 {
+
+void checkThermalExpansivitySetting(
+    MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
+{
+    for (auto const& medium : media_map.media())
+    {
+        auto const& solid_phase =
+            medium->phase(MaterialPropertyLib::PhaseName::Solid);
+
+        bool const has_thermal_expansivity = solid_phase.hasProperty(
+            MaterialPropertyLib::PropertyType::thermal_expansivity);
+        if (has_thermal_expansivity)
+        {
+            bool const has_biot_constant = medium->hasProperty(
+                MaterialPropertyLib::PropertyType::biot_coefficient);
+            if (!has_biot_constant)
+            {
+                OGS_FATAL(
+                    "Since the solid phase has thermal expansivity, it must "
+                    "also have the Biot constant. Please add the property "
+                    "'biot_coefficient' to the `properties` in the material "
+                    "configuration.");
+            }
+        }
+    }
+}
 void checkMPLProperties(
     MeshLib::Mesh const& mesh,
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)
@@ -52,6 +79,8 @@ void checkMPLProperties(
         mesh, media_map, required_property_medium,
         required_property_solid_phase, required_property_liquid_phase,
         required_gas_properties);
+
+    checkThermalExpansivitySetting(media_map);
 }
 
 std::unique_ptr<Process> createHTProcess(
@@ -122,8 +151,8 @@ std::unique_ptr<Process> createHTProcess(
     if (static_cast<int>(b.size()) != mesh_space_dimension)
     {
         OGS_FATAL(
-            "specific body force (gravity vector) has {:d} components, mesh "
-            "dimension is {:d}",
+            "specific body force (gravity vector) has {:d} components, "
+            "mesh dimension is {:d}",
             b.size(), mesh_space_dimension);
     }
 
@@ -133,31 +162,6 @@ std::unique_ptr<Process> createHTProcess(
     if (has_gravity)
     {
         std::copy_n(b.data(), b.size(), specific_body_force.data());
-    }
-
-    ParameterLib::ConstantParameter<double> default_solid_thermal_expansion(
-        "default solid thermal expansion", 0.);
-    ParameterLib::ConstantParameter<double> default_biot_constant(
-        "default_biot constant", 0.);
-    ParameterLib::Parameter<double>* solid_thermal_expansion =
-        &default_solid_thermal_expansion;
-    ParameterLib::Parameter<double>* biot_constant = &default_biot_constant;
-
-    auto const solid_config =
-        //! \ogs_file_param{prj__processes__process__HT__solid_thermal_expansion}
-        config.getConfigSubtreeOptional("solid_thermal_expansion");
-    const bool has_fluid_thermal_expansion = static_cast<bool>(solid_config);
-    if (solid_config)
-    {
-        solid_thermal_expansion = &ParameterLib::findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__thermal_expansion}
-            *solid_config, "thermal_expansion", parameters, 1, &mesh);
-        DBUG("Use '{:s}' as solid thermal expansion.",
-             solid_thermal_expansion->name);
-        biot_constant = &ParameterLib::findParameter<double>(
-            //! \ogs_file_param_special{prj__processes__process__HT__solid_thermal_expansion__biot_constant}
-            *solid_config, "biot_constant", parameters, 1, &mesh);
-        DBUG("Use '{:s}' as Biot's constant.", biot_constant->name);
     }
 
     std::unique_ptr<ProcessLib::SurfaceFluxData> surfaceflux;
@@ -201,10 +205,28 @@ std::unique_ptr<Process> createHTProcess(
                    [&specific_body_force](const auto& R)
                    { return R * R.transpose() * specific_body_force; });
 
+    auto const equation_balance_type_str =
+        //! \ogs_file_param{prj__processes__process__HT__equation_balance_type}
+        config.getConfigParameter<std::string>("equation_balance_type",
+                                               "volume");
+    if (equation_balance_type_str != "volume" &&
+        equation_balance_type_str != "mass")
+    {
+        OGS_FATAL(
+            "Invalid equation_balance_type '{}'. Supported values: 'volume' or "
+            "'mass'.",
+            equation_balance_type_str);
+    }
+    bool const is_volume_balance_equation_type =
+        (equation_balance_type_str == "volume");
+
+    if (is_volume_balance_equation_type)
+    {
+        ProcessLib::Common::HydraulicProcess::checkVolumeBalanceEquationSetting(
+            media_map);
+    }
+
     HTProcessData process_data{std::move(media_map),
-                               has_fluid_thermal_expansion,
-                               *solid_thermal_expansion,
-                               *biot_constant,
                                has_gravity,
                                heat_transport_process_id,
                                hydraulic_process_id,
@@ -212,6 +234,7 @@ std::unique_ptr<Process> createHTProcess(
                                projected_specific_body_force_vectors,
                                mesh_space_dimension,
                                *aperture_size_parameter,
+                               is_volume_balance_equation_type,
                                NumLib::ShapeMatrixCache{integration_order}};
 
     SecondaryVariableCollection secondary_variables;

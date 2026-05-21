@@ -7,6 +7,7 @@
             <name>ConstViscosityThermalConvection</name>
             <type>HT</type>
             <integration_order>2</integration_order>
+            <equation_balance_type>mass</equation_balance_type>
             <process_variables>
                 <temperature>T</temperature>
                 <pressure>p</pressure>
