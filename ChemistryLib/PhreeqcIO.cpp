@@ -160,64 +160,6 @@ std::ostream& operator<<(std::ostream& os,
     return os;
 }
 
-struct ClampingStats
-{
-    std::size_t n_clamped = 0;
-    std::size_t n_severe_clamped = 0;
-    double total_clamped_amount = 0.0;
-    double worst_negative_value = 0.0;
-    std::string_view worst_component_name;
-};
-
-// Concentrations between -tolerance and 0 are floating-point noise from MPI
-// partitioning and are silently clamped to zero. Values more negative than
-// -tolerance trigger an aggregated WARN.
-ClampingStats setAqueousSolution(std::vector<double> const& concentrations,
-                                 GlobalIndexType const& chemical_system_id,
-                                 AqueousSolution& aqueous_solution,
-                                 double const negative_tolerance)
-{
-    ClampingStats stats;
-    auto& components = aqueous_solution.components;
-    for (unsigned component_id = 0; component_id < components.size();
-         ++component_id)
-    {
-        double c = concentrations[component_id];
-        if (c < 0.0)
-        {
-            if (c < -negative_tolerance)
-            {
-                stats.n_severe_clamped++;
-                if (c < stats.worst_negative_value)
-                {
-                    stats.worst_negative_value = c;
-                    stats.worst_component_name = components[component_id].name;
-                }
-            }
-            stats.n_clamped++;
-            stats.total_clamped_amount += -c;
-            c = 0.0;
-        }
-        components[component_id].amount[chemical_system_id] = c;
-    }
-
-    if (stats.n_severe_clamped > 0)
-    {
-        WARN(
-            "{:d} component(s) at chemical system {:d} had concentrations "
-            "more negative than the tolerance ({:g} mol/L); worst: '{:s}' "
-            "= {:g} mol/L. Clamping to zero.",
-            stats.n_severe_clamped, chemical_system_id, -negative_tolerance,
-            stats.worst_component_name, stats.worst_negative_value);
-    }
-
-    // The transport process carries the H+ activity 10^-pH as the last
-    // entry of the concentrations vector for the pH "component".
-    aqueous_solution.H_plus_activity[chemical_system_id] =
-        concentrations.back();
-    return stats;
-}
-
 template <typename Reactant>
 void initializeReactantMolality(Reactant& reactant,
                                 GlobalIndexType const& chemical_system_id,
@@ -413,7 +355,7 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
                      Knobs&& knobs,
                      bool const use_stream_mode,
                      int const num_chemistry_threads,
-                     double const negative_concentration_tolerance)
+                     double const concentration_warning_threshold)
     : ChemicalSolverInterface(mesh, linear_solver),
       _phreeqc_input_file(specifyFileName(project_file_name, ".inp")),
       _database(std::move(database)),
@@ -424,7 +366,7 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
       _output(std::move(output)),
       _dump(std::move(dump)),
       _num_chemical_systems(0),
-      _negative_concentration_tolerance(negative_concentration_tolerance),
+      _concentration_warning_threshold(concentration_warning_threshold),
       num_chemistry_threads_(num_chemistry_threads),
       _use_stream_mode(use_stream_mode)
 {
@@ -500,7 +442,7 @@ void PhreeqcIO::initializeChemicalSystemConcrete(
 {
     setAqueousSolution(concentrations, chemical_system_id,
                        *_chemical_system->aqueous_solution,
-                       _negative_concentration_tolerance);
+                       _concentration_warning_threshold);
 
     auto const& solid_phase =
         medium.phase(MaterialPropertyLib::PhaseName::Solid);
@@ -543,17 +485,11 @@ void PhreeqcIO::setChemicalSystemConcrete(
     MaterialPropertyLib::VariableArray const& vars,
     ParameterLib::SpatialPosition const& pos, double const t, double const dt)
 {
-    auto const clamping_stats = setAqueousSolution(
-        concentrations, chemical_system_id, *_chemical_system->aqueous_solution,
-        _negative_concentration_tolerance);
-    if (clamping_stats.n_clamped > 0)
-    {
-        DBUG(
-            "PhreeqcIO: {:d} concentration(s) clamped to zero before "
-            "speciation at chemical system {:d} (total clamped: {:g} mol/L).",
-            clamping_stats.n_clamped, chemical_system_id,
-            clamping_stats.total_clamped_amount);
-    }
+    // Accumulate clamping over all chemical systems; reported in a single
+    // aggregated message before speciation (see executeSpeciationCalculation).
+    _clamping_totals += setAqueousSolution(concentrations, chemical_system_id,
+                                           *_chemical_system->aqueous_solution,
+                                           _concentration_warning_threshold);
 
     auto const& solid_phase =
         medium->phase(MaterialPropertyLib::PhaseName::Solid);
@@ -575,6 +511,12 @@ void PhreeqcIO::setChemicalSystemConcrete(
 
 void PhreeqcIO::executeSpeciationCalculation(double const dt)
 {
+    // Report the negative-concentration clamping accumulated over all chemical
+    // systems in this step as a single aggregated message, then reset the
+    // accumulator for the next step.
+    _clamping_totals.report(_concentration_warning_threshold);
+    _clamping_totals = {};
+
     if (_use_stream_mode)
     {
         // Stream mode always uses the pool (serial or parallel), giving one

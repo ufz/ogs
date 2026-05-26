@@ -119,18 +119,20 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         num_chemistry_threads_opt ? *num_chemistry_threads_opt
                                   : BaseLib::getNumberOfChemistryThreads();
 
-    // Tolerance below which negative concentrations from MPI noise are
-    // silently clamped to zero. Default 1e-12 mol/L.
-    auto const negative_concentration_tolerance =
-        //! \ogs_file_param{prj__chemical_system__negative_concentration_tolerance}
-        config.getConfigParameter<double>("negative_concentration_tolerance",
-                                          1e-12);
-    if (negative_concentration_tolerance < 0.0)
+    // Negative (or zero) threshold below which clamped concentrations are
+    // reported. All negative concentrations are clamped to zero unconditionally
+    // (PHREEQC rejects negatives); this only sets the value below which an
+    // aggregated warning is emitted. Default -1e-12 mol/kgw.
+    auto const concentration_warning_threshold =
+        //! \ogs_file_param{prj__chemical_system__concentration_warning_threshold}
+        config.getConfigParameter<double>("concentration_warning_threshold",
+                                          -1e-12);
+    if (concentration_warning_threshold > 0.0)
     {
         OGS_FATAL(
-            "<negative_concentration_tolerance> must be non-negative, but "
-            "got {:g}.",
-            negative_concentration_tolerance);
+            "<concentration_warning_threshold> must not be positive (it is a "
+            "threshold for negative concentrations), but got {:g}.",
+            concentration_warning_threshold);
     }
 
     // dump
@@ -174,7 +176,7 @@ createChemicalSolverInterface<ChemicalSolver::Phreeqc>(
         std::move(path_to_database), std::move(chemical_system),
         std::move(reaction_rates), std::move(user_punch), std::move(output),
         std::move(dump), std::move(knobs), use_stream_for_data_exchange,
-        num_chemistry_threads, negative_concentration_tolerance);
+        num_chemistry_threads, concentration_warning_threshold);
 }
 
 template <>

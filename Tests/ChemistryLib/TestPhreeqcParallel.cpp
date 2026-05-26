@@ -258,7 +258,8 @@ struct PhreeqcIOTestDriver
             std::move(chemical_system), std::move(reaction_rates),
             /*user_punch=*/nullptr, std::move(output), std::move(dump),
             std::move(knobs),
-            /*use_stream_mode=*/true, num_threads);
+            /*use_stream_mode=*/true, num_threads,
+            /*concentration_warning_threshold=*/-1e-12);
 
         // ChemicalSolverInterface::chemical_system_index_map is normally
         // populated by the transport process before initialize() runs; supply
@@ -281,15 +282,21 @@ struct PhreeqcIOTestDriver
         // Drive the production initialization path: populates
         // (*reactant.molality)[id] and (*reactant.volume_fraction)[id] from
         // the Medium, and (*exchanger.molality)[id] from the Medium's
-        // <molality> property.
-        std::vector<double> const zero_concentrations(
-            components_spec.size() + 1, 0.0);
+        // <molality> property. Component amounts are placeholders here (the
+        // real state is set later via setChemicalSystemConcrete), but the last
+        // entry is the H+ activity 10^-pH: it must be a physically valid
+        // positive value (pH 7 -> 1e-7), matching the production init path,
+        // which reads it from the pH initial condition. A zero would mean
+        // pH = +inf and trips the H+ guard in setAqueousSolution.
+        std::vector<double> initial_concentrations(components_spec.size() + 1,
+                                                   0.0);
+        initial_concentrations.back() = std::pow(10.0, -7.0);
         for (int id = 0; id < num_systems; ++id)
         {
             ParameterLib::SpatialPosition pos;
             pos.setElementID(id);
             phreeqc_io->initializeChemicalSystemConcrete(
-                zero_concentrations, id, *medium, pos, /*t=*/0.0);
+                initial_concentrations, id, *medium, pos, /*t=*/0.0);
         }
     }
 

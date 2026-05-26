@@ -43,6 +43,7 @@
 #include <string>
 #include <vector>
 
+#include "ClampingStats.h"
 #include "Output.h"
 
 namespace MeshLib
@@ -100,5 +101,21 @@ struct AqueousSolution
     std::vector<Component> components;
     ChargeBalance const charge_balance;
 };
+
+/// Writes \c concentrations into \c aqueous_solution for the given
+/// \c chemical_system_id and returns the clamping statistics.
+///
+/// Negative component concentrations are clamped to zero: values in
+/// \f$[\text{warning\_threshold}, 0)\f$ are treated as floating-point noise
+/// (e.g. from MPI partitioning or non-monotone advection/diffusion schemes)
+/// and clamped silently, whereas values below \c warning_threshold (which is
+/// negative) are clamped and counted as "severe" in the returned ClampingStats.
+/// The caller is responsible for reporting these (e.g. as an aggregated warning
+/// across all chemical systems). The last entry of \c concentrations is the
+/// H+ activity \f$10^{-\text{pH}}\f$ for the pH "component".
+ClampingStats setAqueousSolution(std::vector<double> const& concentrations,
+                                 std::size_t chemical_system_id,
+                                 AqueousSolution& aqueous_solution,
+                                 double warning_threshold);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

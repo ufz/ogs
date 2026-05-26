@@ -37,6 +37,7 @@
 #include <memory>
 
 #include "ChemicalSolverInterface.h"
+#include "PhreeqcIOData/ClampingStats.h"
 #include "PhreeqcIOData/Knobs.h"
 #include "PhreeqcIOData/PhreeqcInstancePool.h"
 
@@ -125,7 +126,7 @@ public:
               Knobs&& knobs,
               bool use_stream_mode,
               int num_chemistry_threads,
-              double negative_concentration_tolerance = 1e-12);
+              double concentration_warning_threshold);
 
     ~PhreeqcIO();
 
@@ -233,6 +234,12 @@ private:
     }
 
     // Member variables are ordered by size (largest first) to minimize padding.
+
+    /// Negative-concentration clamping accumulated over all chemical systems
+    /// within one speciation step. Folded in setChemicalSystemConcrete() and
+    /// flushed (reported + reset) in executeSpeciationCalculation() so that
+    /// clamping is reported once per step rather than once per cell.
+    ClampingStats _clamping_totals;
     std::string const _database;
     Knobs const _knobs;
     std::vector<ReactionRate> const _reaction_rates;
@@ -243,9 +250,12 @@ private:
     std::unique_ptr<PhreeqcInstancePool> instance_pool_;
     double _dt = std::numeric_limits<double>::quiet_NaN();
     std::size_t _num_chemical_systems;
-    /// Concentrations between this magnitude (negative) and zero are
-    /// silently clamped; more-negative values trigger a per-call WARN.
-    double _negative_concentration_tolerance;
+    /// Negative (or zero) warning threshold for clamped concentrations. All
+    /// negative concentrations are clamped to zero unconditionally (PHREEQC
+    /// rejects negatives); this only sets the value below which a clamp is
+    /// reported via an aggregated WARN. Concentrations in [threshold, 0) are
+    /// treated as floating-point noise and clamped silently.
+    double _concentration_warning_threshold;
     /// ID of the standalone file-mode PHREEQC instance (independent of the
     /// parallel pool). Created by PhreeqcInstancePool::createInstance() in the
     /// ctor only in file mode; in stream mode the pool is used instead and
