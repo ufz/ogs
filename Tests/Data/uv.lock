@@ -2493,7 +2493,7 @@ wheels = [
 
 [[package]]
 name = "ogs"
-version = "6.5.8.dev450"
+version = "6.5.9.dev7"
 source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" }
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
@@ -2516,20 +2516,20 @@ resolution-markers = [
 dependencies = [
     { name = "pandas" },
 ]
-sdist = { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/cfbe6bcde54d9107d0415cbb9d07f1bf81fc0ed3ab5cd622b5053f092af8bdd3/ogs-6.5.8.dev450.tar.gz", hash = "sha256:cfbe6bcde54d9107d0415cbb9d07f1bf81fc0ed3ab5cd622b5053f092af8bdd3" }
+sdist = { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/0230abcd8dc4902bdcec753a2f1ebf21c887d3487e560186c41480b00106c15e/ogs-6.5.9.dev7.tar.gz", hash = "sha256:0230abcd8dc4902bdcec753a2f1ebf21c887d3487e560186c41480b00106c15e" }
 wheels = [
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/e2670b0dc78a6244291748bda5433fe690d26f8e0f73d47f53f76307a68949eb/ogs-6.5.8.dev450-cp311-cp311-macosx_15_0_arm64.whl", hash = "sha256:e2670b0dc78a6244291748bda5433fe690d26f8e0f73d47f53f76307a68949eb" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/c39d7e0a1e834f48f61221d0fbdf257eba4c1dd8e6d94dee37581a889d03a927/ogs-6.5.8.dev450-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:c39d7e0a1e834f48f61221d0fbdf257eba4c1dd8e6d94dee37581a889d03a927" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/28b507800dfa45425bf7f20782c40c209572117aac6fab0c942a20d7291c6ffe/ogs-6.5.8.dev450-cp311-cp311-win_amd64.whl", hash = "sha256:28b507800dfa45425bf7f20782c40c209572117aac6fab0c942a20d7291c6ffe" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/c444ad4bb6dcf5522ee266622c60e06b688e116de1a1e5ac65b95bc9ff287d9c/ogs-6.5.8.dev450-cp312-cp312-macosx_15_0_arm64.whl", hash = "sha256:c444ad4bb6dcf5522ee266622c60e06b688e116de1a1e5ac65b95bc9ff287d9c" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/82a8ace83bea1a512690063a0181ea32434500f4d538659c5bfbed6b7f6b3577/ogs-6.5.8.dev450-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:82a8ace83bea1a512690063a0181ea32434500f4d538659c5bfbed6b7f6b3577" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/cbbe83ef6948aad3342b0b16613b33d8fb870001a8ca96510a4a98cb7a1c8bc7/ogs-6.5.8.dev450-cp312-cp312-win_amd64.whl", hash = "sha256:cbbe83ef6948aad3342b0b16613b33d8fb870001a8ca96510a4a98cb7a1c8bc7" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/e61e265a5e11f0a1442015cdd15c85b492ba621547be5c89025c6547f91946bc/ogs-6.5.8.dev450-cp313-cp313-macosx_15_0_arm64.whl", hash = "sha256:e61e265a5e11f0a1442015cdd15c85b492ba621547be5c89025c6547f91946bc" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/4d1c933a6e06d43e8b8b96888372f488907605161dadb8e34605d82c8a404493/ogs-6.5.8.dev450-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:4d1c933a6e06d43e8b8b96888372f488907605161dadb8e34605d82c8a404493" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/625aca2e189ba6de5d3ee55443d10cf89924a5ed197bd4245297308ac6a92e20/ogs-6.5.8.dev450-cp313-cp313-win_amd64.whl", hash = "sha256:625aca2e189ba6de5d3ee55443d10cf89924a5ed197bd4245297308ac6a92e20" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/38db49f20cd58843d08b9010466e10de69b28056d9db30a63a25eff260f0cfd5/ogs-6.5.8.dev450-cp314-cp314-macosx_15_0_arm64.whl", hash = "sha256:38db49f20cd58843d08b9010466e10de69b28056d9db30a63a25eff260f0cfd5" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/3f1feae1127ebfa78f24acc5e11e2c44e2474d8a73140973f4e640ea0b250263/ogs-6.5.8.dev450-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:3f1feae1127ebfa78f24acc5e11e2c44e2474d8a73140973f4e640ea0b250263" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/210e1387815ccf59f6bade3c3197b6c5635b7ad34afb12a6be4fa2d05cda1fcc/ogs-6.5.8.dev450-cp314-cp314-win_amd64.whl", hash = "sha256:210e1387815ccf59f6bade3c3197b6c5635b7ad34afb12a6be4fa2d05cda1fcc" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/f0f7c4efb468e1e8f1746ad6750258f313eaa59a977854ec3d301ecfe878f97a/ogs-6.5.9.dev7-cp311-cp311-macosx_15_0_arm64.whl", hash = "sha256:f0f7c4efb468e1e8f1746ad6750258f313eaa59a977854ec3d301ecfe878f97a" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/c152929f1091b928736f1daf30ee85f8c910aec39bb72e1f561b5b09263fbafa/ogs-6.5.9.dev7-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:c152929f1091b928736f1daf30ee85f8c910aec39bb72e1f561b5b09263fbafa" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/5bf88b089c4b9b0ed431afcbaee6e38e4e36e5c05f1fa044559aa2aeda3d9164/ogs-6.5.9.dev7-cp311-cp311-win_amd64.whl", hash = "sha256:5bf88b089c4b9b0ed431afcbaee6e38e4e36e5c05f1fa044559aa2aeda3d9164" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/30d1f2cea31575438764b7c4864ccec46896b2977e05f9daca282a20015fa814/ogs-6.5.9.dev7-cp312-cp312-macosx_15_0_arm64.whl", hash = "sha256:30d1f2cea31575438764b7c4864ccec46896b2977e05f9daca282a20015fa814" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/66c9dc34c4cafe980b0a90901946312bb83e01ce5229003609b29e0276459671/ogs-6.5.9.dev7-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:66c9dc34c4cafe980b0a90901946312bb83e01ce5229003609b29e0276459671" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/153f930044276862dc391aa063a176859842d89ba7a3a1dba900410512c84084/ogs-6.5.9.dev7-cp312-cp312-win_amd64.whl", hash = "sha256:153f930044276862dc391aa063a176859842d89ba7a3a1dba900410512c84084" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/d99e41ad48f21bd569dd70915bfb5f11644f7ffd4cdcc5a072927afb147950f4/ogs-6.5.9.dev7-cp313-cp313-macosx_15_0_arm64.whl", hash = "sha256:d99e41ad48f21bd569dd70915bfb5f11644f7ffd4cdcc5a072927afb147950f4" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/b88de9bf1034db9327b0f4ef68c1635c5f25b5c77711eaa5acba9b0891e2bfde/ogs-6.5.9.dev7-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:b88de9bf1034db9327b0f4ef68c1635c5f25b5c77711eaa5acba9b0891e2bfde" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/99e192a78fe1ca75a38f2adec3a46f2f17efa4d52a1f7053d99afef2aed00975/ogs-6.5.9.dev7-cp313-cp313-win_amd64.whl", hash = "sha256:99e192a78fe1ca75a38f2adec3a46f2f17efa4d52a1f7053d99afef2aed00975" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/c977debbfe023299118a7709950e63d00bcf0be0cfdd7df08946a099f97e5cce/ogs-6.5.9.dev7-cp314-cp314-macosx_15_0_arm64.whl", hash = "sha256:c977debbfe023299118a7709950e63d00bcf0be0cfdd7df08946a099f97e5cce" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/16d59dde47d2916fd62b2691ba203bf92e6cc526792363d0fcdd5573b1da0dd3/ogs-6.5.9.dev7-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:16d59dde47d2916fd62b2691ba203bf92e6cc526792363d0fcdd5573b1da0dd3" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/9f435723c19a01b1e886c4d068680013a12bdfaf6a68d44e23bdf0d01c8a3aac/ogs-6.5.9.dev7-cp314-cp314-win_amd64.whl", hash = "sha256:9f435723c19a01b1e886c4d068680013a12bdfaf6a68d44e23bdf0d01c8a3aac" },
 ]
 
 [[package]]
@@ -2567,7 +2567,7 @@ ogs-local = [
     { name = "ogs", source = { directory = "../../" } },
 ]
 ogs-master = [
-    { name = "ogs", version = "6.5.8.dev450", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
+    { name = "ogs", version = "6.5.9.dev7", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
 ]
 ogs-pypi = [
     { name = "ogs", version = "6.5.7", source = { registry = "https://pypi.org/simple" } },
@@ -2589,7 +2589,7 @@ requires-dist = [
     { name = "nbconvert", specifier = ">=7.16.5" },
     { name = "nbformat", specifier = ">=5.7.3" },
     { name = "numpy" },
-    { name = "ogstools", git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.1.RC0" },
+    { name = "ogstools", specifier = "==0.8.1" },
     { name = "pandas", specifier = ">=1.5" },
     { name = "papermill", specifier = ">=2.6.0" },
     { name = "pytest", specifier = ">=8.2.2" },
@@ -2607,8 +2607,8 @@ ogs-pypi = [{ name = "ogs" }]
 
 [[package]]
 name = "ogstools"
-version = "0.8.1rc0"
-source = { git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.1.RC0#e58d38519e9cde36bd33bd5a316bd6b108e512f1" }
+version = "0.8.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bokeh" },
     { name = "gmsh", version = "4.15.0.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "sys_platform == 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
@@ -2635,6 +2635,10 @@ dependencies = [
     { name = "types-pyyaml" },
     { name = "vtk" },
     { name = "watchdog" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/44/dd/5dcb32aa271bdeb8194b03c3205a418db08575e79f2a11740798c9f8cdba/ogstools-0.8.1.tar.gz", hash = "sha256:2215004a4e158cc24d647707d32142fcf849cbf1077c18e1182ba27f69cbc561", size = 12455084, upload-time = "2026-06-01T13:09:16.14Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bb/82/b306b4fd79afd59bdf9e01c7d18e0950abb611aa364741a03a601dee568d/ogstools-0.8.1-py3-none-any.whl", hash = "sha256:e7bf3857d22489d8b4e7c2b2497c7ca58f4453a51c8566501c148f0f1a479b31", size = 9040864, upload-time = "2026-06-01T13:09:12.891Z" },
 ]
 
 [[package]]
