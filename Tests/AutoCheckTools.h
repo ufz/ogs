@@ -8,8 +8,8 @@
 
 #include "MathLib/Point3d.h"
 
-
-namespace std{
+namespace std
+{
 
 /// Output of array enclosed in brackets. Required for autocheck for output of
 /// std::arrays in case of failing test.
@@ -37,9 +37,7 @@ struct IntervalGenerator
 {
     /// Constructor initializing the slope and the \f$y\f$-intercept deploying
     /// lower bound \f$a\f$ and upper bound \f$b\f$ of the interval.
-    IntervalGenerator(T a, T b)
-        : _m((b-a)/2), _n((b+a)/2)
-    {}
+    IntervalGenerator(T a, T b) : _m((b - a) / 2), _n((b + a) / 2) {}
 
     // parameters for the interval mapping [-1,1] -> [a,b],
     // y = _m * x + _n
@@ -50,10 +48,7 @@ struct IntervalGenerator
 
     using result_type = T;
 
-    result_type intervalMap(T val) const
-    {
-        return _m * val + _n;
-    }
+    result_type intervalMap(T val) const { return _m * val + _n; }
 
     result_type operator()(std::size_t /*size*/ = 0)
     {
@@ -66,7 +61,8 @@ struct IntervalTupleGenerator
 {
     IntervalTupleGenerator(Gen& ig0, Gen& ig1, Gen& ig2)
         : x_gen(ig0), y_gen(ig1), z_gen(ig2)
-    {}
+    {
+    }
 
     Gen x_gen, y_gen, z_gen;
 
@@ -74,7 +70,7 @@ struct IntervalTupleGenerator
 
     result_type operator()(std::size_t /*size*/ = 0)
     {
-        return {{ x_gen(), y_gen(), z_gen() }};
+        return {{x_gen(), y_gen(), z_gen()}};
     }
 };
 
@@ -89,7 +85,7 @@ struct randomEigenMatrixGenerator
     result_type operator()(std::size_t size = 0)
     {
         result_type rv;
-        std::generate_n(rv.data(), M*N, fix(size, source));
+        std::generate_n(rv.data(), M * N, fix(size, source));
         return rv;
     }
 };
