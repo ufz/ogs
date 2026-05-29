@@ -372,27 +372,23 @@ bool parseNodes(std::ifstream& in,
     return false;
 }
 
-/// Parses the segments of the current line
+/// Parses the segments of the current line, returning parsed node ID pairs
 bool parseLineSegments(std::ifstream& in,
-                       std::vector<MeshLib::Node*> const& nodes,
-                       std::vector<MeshLib::Element*>& elems,
+                       std::vector<std::array<std::size_t, 2>>& segment_data,
                        std::map<std::size_t, std::size_t> const& node_id_map,
-                       MeshLib::Properties& mesh_prop)
+                       MeshLib::Properties& mesh_prop,
+                       int& current_mat_id)
 {
     MeshLib::PropertyVector<int>& mat_ids =
         *mesh_prop.getPropertyVector<int>(mat_id_name);
-    // std::vector allows for push_back(), create temporary mat_ids_vec and copy
-    // values
-    std::vector<int> mat_ids_vec;
-    mat_ids_vec.assign(mat_ids.begin(), mat_ids.end());
-
-    int current_mat_id(0);
+    int max_mat_id = 0;
     if (!mat_ids.empty())
     {
-        current_mat_id = (*std::max_element(mat_ids.begin(), mat_ids.end()))++;
+        max_mat_id = *std::max_element(mat_ids.begin(), mat_ids.end());
+        current_mat_id = max_mat_id + 1;
     }
+
     std::streampos pos = in.tellg();
-    std::size_t id(0);
     std::string line;
     while (std::getline(in, line))
     {
@@ -406,31 +402,53 @@ bool parseLineSegments(std::ifstream& in,
             std::string keyword;
             std::array<std::size_t, 2> data{};
             sstr >> keyword >> data[0] >> data[1];
-            std::array<MeshLib::Node*, 2> elem_nodes{};
-            for (std::size_t i = 0; i < 2; ++i)
-            {
-                auto const it = node_id_map.find(data[i]);
-                if (it == node_id_map.end() || it->second >= nodes.size())
-                {
-                    ERR("Error: Node ID ({:d}) out of range (0, {:d}).",
-                        data[i], nodes.back()->getID());
-                    return false;
-                }
-                elem_nodes[i] = nodes[it->second];
-            }
-            elems.push_back(new MeshLib::Line(elem_nodes, id++));
-            mat_ids_vec.push_back(current_mat_id);
+            segment_data.push_back(data);
         }
         else
         {
             in.seekg(pos);
-            mat_ids.assign(mat_ids_vec);
             return true;
         }
         pos = in.tellg();
     }
     ERR("{:s}", eof_error);
+
     return false;
+}
+
+/// Creates Line elements from parsed node ID pairs
+bool createLineElements(
+    std::vector<std::array<std::size_t, 2>> const& segment_data,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::vector<MeshLib::Element*>& elems,
+    std::map<std::size_t, std::size_t> const& node_id_map,
+    MeshLib::PropertyVector<int>& mat_ids,
+    int current_mat_id)
+{
+    std::vector<int> mat_ids_vec;
+    mat_ids_vec.assign(mat_ids.begin(), mat_ids.end());
+
+    std::size_t id = elems.size();
+    for (auto const& data : segment_data)
+    {
+        std::array<MeshLib::Node*, 2> elem_nodes{};
+        for (std::size_t i = 0; i < 2; ++i)
+        {
+            auto const it = node_id_map.find(data[i]);
+            if (it == node_id_map.end() || it->second >= nodes.size())
+            {
+                ERR("Error: Node ID ({:d}) out of range (0, {:d}).", data[i],
+                    nodes.back()->getID());
+                return false;
+            }
+            elem_nodes[i] = nodes[it->second];
+        }
+        elems.push_back(new MeshLib::Line(elem_nodes, id++));
+        mat_ids_vec.push_back(current_mat_id);
+    }
+    mat_ids.assign(mat_ids_vec);
+
+    return true;
 }
 
 /// Parses line information (nodes, segments, properties)
@@ -444,7 +462,17 @@ bool parseLine(std::ifstream& in,
     {
         return false;
     }
-    if (!parseLineSegments(in, nodes, elems, node_id_map, mesh_prop))
+    std::vector<std::array<std::size_t, 2>> segment_data;
+    int current_mat_id(0);
+    if (!parseLineSegments(in, segment_data, node_id_map, mesh_prop,
+                           current_mat_id))
+    {
+        return false;
+    }
+    MeshLib::PropertyVector<int>& mat_ids =
+        *mesh_prop.getPropertyVector<int>(mat_id_name);
+    if (!createLineElements(segment_data, nodes, elems, node_id_map, mat_ids,
+                            current_mat_id))
     {
         return false;
     }
@@ -469,28 +497,24 @@ bool parseLine(std::ifstream& in,
     return false;
 }
 
-/// Parses the element data for the current mesh
+/// Parses the element data for the current mesh, returning parsed node ID
+/// triplets
 bool parseElements(std::ifstream& in,
-                   std::vector<MeshLib::Node*> const& nodes,
-                   std::vector<MeshLib::Element*>& elems,
+                   std::vector<std::array<std::size_t, 3>>& element_data,
                    std::map<std::size_t, std::size_t> const& node_id_map,
-                   MeshLib::Properties& mesh_prop)
+                   MeshLib::Properties& mesh_prop,
+                   int& current_mat_id)
 {
     MeshLib::PropertyVector<int>& mat_ids =
         *mesh_prop.getPropertyVector<int>(mat_id_name);
-    // std::vector allows for push_back(), create temporary mat_ids_vec and copy
-    // values
-    std::vector<int> mat_ids_vec;
-    mat_ids_vec.assign(mat_ids.begin(), mat_ids.end());
-
-    int current_mat_id(0);
+    int max_mat_id = 0;
     if (!mat_ids.empty())
     {
-        current_mat_id = (*std::max_element(mat_ids.begin(), mat_ids.end()))++;
+        max_mat_id = *std::max_element(mat_ids.begin(), mat_ids.end());
+        current_mat_id = max_mat_id + 1;
     }
 
     std::streampos pos = in.tellg();
-    std::size_t id(0);
     std::string line;
     while (std::getline(in, line))
     {
@@ -504,31 +528,52 @@ bool parseElements(std::ifstream& in,
             std::string keyword;
             std::array<std::size_t, 3> data{};
             sstr >> keyword >> data[0] >> data[1] >> data[2];
-            std::array<MeshLib::Node*, 3> elem_nodes{};
-            for (std::size_t i = 0; i < 3; ++i)
-            {
-                auto const it = node_id_map.find(data[i]);
-                if (it == node_id_map.end() || it->second >= nodes.size())
-                {
-                    ERR("Error: Node ID ({:d}) out of range (0, {:d}).",
-                        data[i], nodes.back()->getID());
-                    return false;
-                }
-                elem_nodes[i] = nodes[it->second];
-            }
-            elems.push_back(new MeshLib::Tri(elem_nodes, id++));
-            mat_ids_vec.push_back(current_mat_id);
+            element_data.push_back(data);
         }
         else
         {
             in.seekg(pos);
-            mat_ids.assign(mat_ids_vec);
             return true;
         }
         pos = in.tellg();
     }
     ERR("{:s}", eof_error);
     return false;
+}
+
+/// Creates Tri elements from parsed node ID triplets
+bool createTriElements(
+    std::vector<std::array<std::size_t, 3>> const& element_data,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::vector<MeshLib::Element*>& elems,
+    std::map<std::size_t, std::size_t> const& node_id_map,
+    MeshLib::PropertyVector<int>& mat_ids,
+    int current_mat_id)
+{
+    std::vector<int> mat_ids_vec;
+    mat_ids_vec.assign(mat_ids.begin(), mat_ids.end());
+
+    std::size_t id = elems.size();
+    for (auto const& data : element_data)
+    {
+        std::array<MeshLib::Node*, 3> elem_nodes{};
+        for (std::size_t i = 0; i < 3; ++i)
+        {
+            auto const it = node_id_map.find(data[i]);
+            if (it == node_id_map.end() || it->second >= nodes.size())
+            {
+                ERR("Error: Node ID ({:d}) out of range (0, {:d}).", data[i],
+                    nodes.back()->getID());
+                return false;
+            }
+            elem_nodes[i] = nodes[it->second];
+        }
+        elems.push_back(new MeshLib::Tri(elem_nodes, id++));
+        mat_ids_vec.push_back(current_mat_id);
+    }
+    mat_ids.assign(mat_ids_vec);
+
+    return true;
 }
 
 /// Parses the surface information (nodes, triangles, properties)
@@ -542,7 +587,17 @@ bool parseSurface(std::ifstream& in,
     {
         return false;
     }
-    if (!parseElements(in, nodes, elems, node_id_map, mesh_prop))
+    std::vector<std::array<std::size_t, 3>> element_data;
+    int current_mat_id(0);
+    if (!parseElements(in, element_data, node_id_map, mesh_prop,
+                       current_mat_id))
+    {
+        return false;
+    }
+    MeshLib::PropertyVector<int>& mat_ids =
+        *mesh_prop.getPropertyVector<int>(mat_id_name);
+    if (!createTriElements(element_data, nodes, elems, node_id_map, mat_ids,
+                           current_mat_id))
     {
         return false;
     }
