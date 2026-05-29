@@ -404,6 +404,19 @@ bool parseLineSegments(std::ifstream& in,
     return false;
 }
 
+/// Appends material IDs for count new elements, assigning them a fresh
+/// material ID one larger than the current maximum.
+void extendMaterialIDs(MeshLib::PropertyVector<int>& mat_ids,
+                       std::size_t const count)
+{
+    int current_mat_id = 0;
+    if (!mat_ids.empty())
+    {
+        current_mat_id = *std::max_element(mat_ids.begin(), mat_ids.end()) + 1;
+    }
+    mat_ids.resize(mat_ids.size() + count, current_mat_id);
+}
+
 /// Creates Line elements from parsed node ID pairs
 bool createLineElements(
     std::vector<std::array<std::size_t, 2>> const& segment_data,
@@ -412,18 +425,9 @@ bool createLineElements(
     std::map<std::size_t, std::size_t> const& node_id_map,
     MeshLib::PropertyVector<int>& mat_ids)
 {
-    std::vector<int> mat_ids_vec;
-    mat_ids_vec.assign(mat_ids.begin(), mat_ids.end());
-
-    int current_mat_id = 0;
-    if (!mat_ids.empty())
-    {
-        current_mat_id = *std::max_element(mat_ids.begin(), mat_ids.end()) + 1;
-    }
+    extendMaterialIDs(mat_ids, segment_data.size());
 
     std::size_t id = elems.size();
-    std::size_t new_size = mat_ids_vec.size() + segment_data.size();
-    mat_ids_vec.resize(new_size, current_mat_id);
     for (auto const& data : segment_data)
     {
         std::array<MeshLib::Node*, 2> elem_nodes{};
@@ -440,7 +444,6 @@ bool createLineElements(
         }
         elems.push_back(new MeshLib::Line(elem_nodes, id++));
     }
-    mat_ids.assign(mat_ids_vec);
 
     return true;
 }
@@ -453,18 +456,9 @@ bool createTriElements(
     std::map<std::size_t, std::size_t> const& node_id_map,
     MeshLib::PropertyVector<int>& mat_ids)
 {
-    std::vector<int> mat_ids_vec;
-    mat_ids_vec.assign(mat_ids.begin(), mat_ids.end());
-
-    int current_mat_id = 0;
-    if (!mat_ids.empty())
-    {
-        current_mat_id = *std::max_element(mat_ids.begin(), mat_ids.end()) + 1;
-    }
+    extendMaterialIDs(mat_ids, element_data.size());
 
     std::size_t id = elems.size();
-    std::size_t new_size = mat_ids_vec.size() + element_data.size();
-    mat_ids_vec.resize(new_size, current_mat_id);
     for (auto const& data : element_data)
     {
         std::array<MeshLib::Node*, 3> elem_nodes{};
@@ -481,7 +475,6 @@ bool createTriElements(
         }
         elems.push_back(new MeshLib::Tri(elem_nodes, id++));
     }
-    mat_ids.assign(mat_ids_vec);
 
     return true;
 }
