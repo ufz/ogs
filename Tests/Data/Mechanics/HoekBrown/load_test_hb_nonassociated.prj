@@ -77,19 +77,15 @@
                     <t_end>40</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>10</repeat>
+                            <repeat>4</repeat>
                             <delta_t>1</delta_t>
                         </pair>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>64</repeat>
+                            <delta_t>0.25</delta_t>
                         </pair>
                         <pair>
-                            <repeat>10</repeat>
-                            <delta_t>1</delta_t>
-                        </pair>
-                        <pair>
-                            <repeat>10</repeat>
+                            <repeat>20</repeat>
                             <delta_t>1</delta_t>
                         </pair>
                     </timesteps>
@@ -100,10 +96,11 @@
             <type>VTK</type>
             <timesteps>
                 <pair>
-                    <repeat>4000</repeat>
-                    <each_steps>10</each_steps>
+                    <repeat>1</repeat>
+                    <each_steps>10000</each_steps>
                 </pair>
             </timesteps>
+            <fixed_output_times>0 10 20 30 40</fixed_output_times>
             <variables>
                 <variable>displacement</variable>
                 <variable>sigma</variable>
@@ -111,7 +108,7 @@
                 <variable>ElasticStrain</variable>
                 <variable>EquivalentPlasticStrain</variable>
             </variables>
-            <suffix>_ts_{:timestep}_t_{:time}</suffix>
+            <suffix>_t_{:time}</suffix>
         </output>
     </time_loop>
     <parameters>
@@ -267,37 +264,37 @@
                 <scaling>true</scaling>
             </eigen>
             <petsc>
-                <parameters>-ksp_type bcgs -pc_type bjacobi -ksp_rtol 1e-15 -ksp_atol 1e-16 -ksp_max_it 4000</parameters>
+                <parameters>-ksp_type bcgs -pc_type lu -ksp_rtol 1e-16 -ksp_max_it 10000</parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <regex>load_test_hb_ts_.*_t_.*.vtu</regex>
+            <regex>load_test_hb_t_.*.vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>4.4e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>load_test_hb_ts_.*_t_.*.vtu</regex>
+            <regex>load_test_hb_t_.*.vtu</regex>
             <field>sigma</field>
             <absolute_tolerance>3.8e-6</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>load_test_hb_ts_.*_t_.*.vtu</regex>
+            <regex>load_test_hb_t_.*.vtu</regex>
             <field>epsilon</field>
             <absolute_tolerance>9.0e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>load_test_hb_ts_.*_t_.*.vtu</regex>
+            <regex>load_test_hb_t_.*.vtu</regex>
             <field>ElasticStrain</field>
             <absolute_tolerance>5.6e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <regex>load_test_hb_ts_.*_t_.*.vtu</regex>
+            <regex>load_test_hb_t_.*.vtu</regex>
             <field>EquivalentPlasticStrain</field>
             <absolute_tolerance>9e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>

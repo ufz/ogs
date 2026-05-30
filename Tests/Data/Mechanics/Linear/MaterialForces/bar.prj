@@ -167,7 +167,7 @@
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>
-            <max_iter>4</max_iter>
+            <max_iter>5</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
