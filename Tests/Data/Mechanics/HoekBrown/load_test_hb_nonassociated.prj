@@ -264,7 +264,7 @@
                 <scaling>true</scaling>
             </eigen>
             <petsc>
-                <parameters>-ksp_type bcgs -pc_type bjacobi -ksp_rtol 1e-15 -ksp_atol 1e-16 -ksp_max_it 4000</parameters>
+                <parameters>-ksp_type bcgs -pc_type lu -ksp_rtol 1e-16 -ksp_max_it 10000</parameters>
             </petsc>
         </linear_solver>
     </linear_solvers>
