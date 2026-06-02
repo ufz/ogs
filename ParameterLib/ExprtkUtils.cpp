@@ -73,11 +73,26 @@ void registerCurveWrappers(
 {
     for (auto const& name : curve_names)
     {
+        if (exprtk::details::is_reserved_symbol(name))
+        {
+            OGS_FATAL(
+                "Curve name '{:s}' collides with an exprtk reserved symbol "
+                "(built-in function or keyword). Such a curve cannot be "
+                "registered: the built-in would silently be used instead. "
+                "Please rename the curve.",
+                name);
+        }
         curve_wrappers.emplace(name, CurveWrapper(*curves.at(name)));
     }
     for (auto& [name, wrapper] : curve_wrappers)
     {
-        symbol_table.add_function(name, wrapper);
+        if (!symbol_table.add_function(name, wrapper))
+        {
+            OGS_FATAL(
+                "Failed to register curve '{:s}' as an exprtk function. The "
+                "name is likely already in use (reserved symbol or duplicate).",
+                name);
+        }
     }
 }
 

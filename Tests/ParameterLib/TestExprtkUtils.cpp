@@ -518,12 +518,27 @@ TEST_F(ExprtkUtilsTest, RegisterCurveWrappersErrors)
                  std::out_of_range);
 }
 
+TEST_F(ExprtkUtilsTest, RegisterCurveWrappersRejectsReservedName)
+{
+    using namespace ParameterLib;
+    auto symbol_table = createBaseSymbolTable(false);
+    std::map<std::string, CurveWrapper> wrappers;
+
+    // A curve named like an exprtk built-in (e.g. "sin") cannot be registered:
+    // exprtk would silently keep the built-in and the curve would be ignored.
+    // Such a name must be rejected outright.
+    curves["sin"] = createLinearTestCurve();
+    EXPECT_THROW(registerCurveWrappers(symbol_table, {"sin"}, curves, wrappers),
+                 std::runtime_error);
+}
+
 // ============================================================================
 // State Management & Cache Reuse
 // ============================================================================
 
 TEST_F(ExprtkUtilsTest, SymbolTableCacheCrossTimeStepReuse)
 {
+    using namespace ParameterLib;
     // Verify cache works correctly across multiple time steps
     auto symbol_table = createBaseSymbolTable(true);
     SymbolTableCache cache(symbol_table, true);
