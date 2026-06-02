@@ -4,6 +4,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <optional>
 #include <vector>
 
 #include "LiquidFlowData.h"
@@ -91,16 +92,21 @@ public:
                                       GlobalDim>(element, is_axially_symmetric,
                                                  _integration_method);
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
-        double const aperture_size =
-            (_element.getDimension() == 3u)
-                ? 1.0
-                : _process_data.aperture_size(0.0, pos)[0];
-
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            auto const& N = shape_matrices[ip].N;
+            ParameterLib::SpatialPosition const pos{
+                std::nullopt, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N))};
+
+            double const aperture_size =
+                (_element.getDimension() == 3u)
+                    ? 1.0
+                    : _process_data.aperture_size(0.0, pos)[0];
+
             _ip_data.emplace_back(
                 shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
