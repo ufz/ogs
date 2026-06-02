@@ -396,10 +396,29 @@ TEST_F(ExprtkUtilsTest, CollectVariablesWithFunctionNames)
               variables.end());
 }
 
+TEST_F(ExprtkUtilsTest, CollectVariablesExcludesConstants)
+{
+    // The named constants registered by add_constants() (pi, epsilon, inf)
+    // must not be reported as variables: downstream code would otherwise try
+    // to (re)create them and clash with the constants.
+    std::vector<std::string> expr_strings{"pi + epsilon + inf + t"};
+    auto variables = ParameterLib::collectVariables(expr_strings);
+
+    EXPECT_EQ(std::find(variables.begin(), variables.end(), "pi"),
+              variables.end());
+    EXPECT_EQ(std::find(variables.begin(), variables.end(), "epsilon"),
+              variables.end());
+    EXPECT_EQ(std::find(variables.begin(), variables.end(), "inf"),
+              variables.end());
+    // t is a normal variable and must still be reported.
+    EXPECT_NE(std::find(variables.begin(), variables.end(), "t"),
+              variables.end());
+}
+
 TEST_F(ExprtkUtilsTest, CollectVariablesEmpty)
 {
     std::vector<std::string> expr_strings{};
-    auto variables = collectVariables(expr_strings);
+    auto variables = ParameterLib::collectVariables(expr_strings);
 
     EXPECT_EQ(0, variables.size());
 }

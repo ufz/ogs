@@ -121,6 +121,17 @@ std::vector<std::string> collectVariables(
         }
     }
     BaseLib::makeVectorUnique(expression_symbol_names);
+
+    // exprtk::collect_variables reports the named constants added by
+    // add_constants() (pi, epsilon, inf) as variables. Drop them so that
+    // downstream code does not try to (re)create them as variables and clash
+    // with the constants. A base symbol table is used so the set of constants
+    // is queried from exprtk itself rather than hard-coded.
+    auto const constants = createBaseSymbolTable(false);
+    std::erase_if(expression_symbol_names,
+                  [&constants](std::string const& name)
+                  { return constants.is_constant_node(name); });
+
     return expression_symbol_names;
 }
 
