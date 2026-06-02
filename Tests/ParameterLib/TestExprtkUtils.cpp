@@ -311,6 +311,41 @@ TEST_F(ExprtkUtilsTest, CompileExpressionsErrors)
         std::runtime_error);
 }
 
+TEST_F(ExprtkUtilsTest, CompileExpressionsRejectsAssignmentToRegisteredSymbol)
+{
+    using namespace ParameterLib;
+
+    // Assigning to a built-in/registered symbol must fail: it would corrupt
+    // the shared per-thread evaluation state.
+    {
+        auto symbol_table = createBaseSymbolTable(true);
+        EXPECT_THROW(compileExpressions(symbol_table, {"x := 5; x"}),
+                     std::runtime_error);
+    }
+    {
+        auto symbol_table = createBaseSymbolTable(false);
+        EXPECT_THROW(compileExpressions(symbol_table, {"t := 2.0; t"}),
+                     std::runtime_error);
+    }
+    // Assigning to a registered MPL-style variable must also fail.
+    {
+        auto symbol_table = createBaseSymbolTable(false);
+        symbol_table.create_variable("param");
+        EXPECT_THROW(compileExpressions(symbol_table, {"param := 1.0; param"}),
+                     std::runtime_error);
+    }
+
+    // Assignment to a user-defined local 'var' is allowed.
+    {
+        auto symbol_table = createBaseSymbolTable(false);
+        auto expressions =
+            compileExpressions(symbol_table, {"var foo := 5; foo + t"});
+        symbol_table.get_variable("t")->ref() = 0.0;
+        EXPECT_NEAR(5.0, expressions[0].value(),
+                    std::numeric_limits<double>::epsilon());
+    }
+}
+
 // ============================================================================
 // collectVariables Tests
 // ============================================================================

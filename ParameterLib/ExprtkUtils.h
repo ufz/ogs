@@ -63,12 +63,21 @@ private:
 
 /// Compiles expression strings into exprtk expressions using the given symbol
 /// table.
+/// Assignment (`:=`, `+=`, ...) to user-defined local `var`s is allowed, but
+/// assignment to a symbol that is already registered in \p symbol_table
+/// (the built-in t/x/y/z, MPL variables, curves or constants) is rejected:
+/// such a write would corrupt the shared per-thread evaluation scratch. This
+/// is enforced by enabling exprtk's dependent-entity collector and checking,
+/// after each compile, whether any assignment target resolves to a registered
+/// symbol (local `var` assignments are not reported by the collector).
 template <typename T>
 std::vector<exprtk::expression<T>> compileExpressions(
     exprtk::symbol_table<T>& symbol_table,
     std::vector<std::string> const& string_expressions)
 {
-    exprtk::parser<T> parser;
+    using settings_t = typename exprtk::parser<T>::settings_store;
+    exprtk::parser<T> parser(settings_t::default_compile_all_opts +
+                             settings_t::e_collect_assings);
 
     std::vector<exprtk::expression<T>> expressions(string_expressions.size());
     for (unsigned i = 0; i < string_expressions.size(); ++i)
@@ -78,6 +87,30 @@ std::vector<exprtk::expression<T>> compileExpressions(
         {
             OGS_FATAL("Error: {:s}\tExpression: {:s}\n", parser.error(),
                       string_expressions[i]);
+        }
+
+        std::vector<
+            typename exprtk::parser<T>::dependent_entity_collector::symbol_t>
+            assignments;
+        parser.dec().assignment_symbols(assignments);
+        if (!assignments.empty())
+        {
+            std::string names;
+            for (auto const& [name, type] : assignments)
+            {
+                if (!names.empty())
+                {
+                    names += ", ";
+                }
+                names += name;
+            }
+            OGS_FATAL(
+                "Expression '{:s}' assigns to the already-defined symbol(s) "
+                "'{:s}'. Assignment to the built-in variables (t, x, y, z), to "
+                "MPL variables, curves or constants is not allowed because it "
+                "would corrupt the shared evaluation state. Assignment to "
+                "user-defined local 'var's is permitted.",
+                string_expressions[i], names);
         }
     }
     return expressions;
