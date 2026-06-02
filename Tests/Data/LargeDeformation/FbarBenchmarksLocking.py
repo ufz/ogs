@@ -56,7 +56,10 @@ import numpy as np
 import ogstools as ot
 import pyvista as pv
 
-pv.set_jupyter_backend("static" if "OGS_TESTRUNNER" in os.environ else "client")
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)

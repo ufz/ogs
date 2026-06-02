@@ -250,7 +250,6 @@ def mesh_generation(lc, lc_fine):
 # %%
 def pre_processing(mesh, h, a0):
     phase_field = np.ones((len(mesh.points), 1))
-    pv.set_plot_theme("document")
 
     for node_id, x in enumerate(mesh.points):
         if (
@@ -270,8 +269,10 @@ def pre_processing(mesh, h, a0):
 #
 
 # %%
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 
 
 def Hydraulic_Fracturing_Toughness_Dominated_numerical(h, phasefield_model):
