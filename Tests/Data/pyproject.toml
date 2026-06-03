@@ -17,7 +17,7 @@ dependencies = [
   "glaciationBCs @ git+https://github.com/cbsilver/glaciationBCs.git@1a7feb2ce1e019e242fecd8d94d8633474042e97",
   # When changing ogstools version, update in testrunner.py
   # (binder_tag) and header.html ($tools_url) as well!
-  "ogstools @ git+https://gitlab.opengeosys.org/ogs/tools/ogstools.git@0.8.1.RC0",
+  "ogstools==0.8.1",
   "pandas>=1.5",
   "pyvista[all]",
   "seaborn>=0.12",
