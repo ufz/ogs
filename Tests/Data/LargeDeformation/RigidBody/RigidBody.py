@@ -83,6 +83,11 @@ plt.rcParams["figure.figsize"] = (8, 6)
 out_dir = Path(os.environ.get("OGS_TESTRUNNER_OUT_DIR", "_out"))
 out_dir.mkdir(parents=True, exist_ok=True)
 
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
+
 # %% jupyter={"source_hidden": true}
 model_s = ot.Project(
     input_file="square_1e0.prj", output_file=out_dir / "square_1e0_small.prj"
@@ -110,10 +115,6 @@ model_s.write_input()
 # %% jupyter={"source_hidden": true}
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 model_s.run_model(logfile=f"{out_dir}/out_s.txt", args=f"-o {out_dir} -m .")
-
-# %% jupyter={"source_hidden": true}
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")  # comment out for interactive graphics
 
 # %% jupyter={"source_hidden": true}
 reader = pv.get_reader(f"{out_dir}/square_1e0.pvd")

@@ -181,10 +181,11 @@ ot.cli().identifySubdomains(
 
 # %%
 os.chdir(orig_dir)
-try:
+
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
     pv.set_jupyter_backend("static")
-except Exception as e:
-    print("PyVista backend not set:", e)
 
 DFN_2D = pv.read(f"{out_dir}/mixed_dimensional_grid_2.vtu")
 x_inlet = pv.read(f"{out_dir}/x_inlet.vtu")
@@ -217,8 +218,9 @@ plotter.add_mesh(
 plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
-output_path = out_dir.joinpath("Concentration.png")
-plotter.screenshot(str(output_path))
+if not pv.global_theme.trame.server_proxy_enabled:
+    output_path = out_dir.joinpath("Concentration.png")
+    plotter.screenshot(str(output_path))
 plotter.show()
 plotter.close()
 
@@ -378,11 +380,6 @@ base_scalar_bar_args = {
 }
 
 # %%
-try:
-    pv.set_jupyter_backend("static")
-except Exception as e:
-    print("PyVista backend not set:", e)
-
 DFN_2D = pv.read(Path(out_dir, output_mesh))
 x_inlet = pv.read(Path(out_dir, "x_inlet.vtu"))
 x_outlet = pv.read(Path(out_dir, "x_outlet.vtu"))
@@ -406,7 +403,8 @@ def plot_scalar_field(mesh, inlet, outlet, scalar_data, title, cmap, filename):
     plotter.show_axes()
     plotter.enable_parallel_projection()
     plotter.view_isometric()
-    plotter.screenshot(Path(out_dir, filename))
+    if not pv.global_theme.trame.server_proxy_enabled:
+        plotter.screenshot(Path(out_dir, filename))
     plotter.show()
     plotter.close()
 
@@ -440,7 +438,8 @@ def plot_isotropic_permeability(
     plotter.view_isometric()
     plotter.enable_parallel_projection()
     plotter.show_axes()
-    plotter.screenshot(Path(out_dir, image_name))
+    if not pv.global_theme.trame.server_proxy_enabled:
+        plotter.screenshot(Path(out_dir, image_name))
     plotter.show()
     plotter.close()
 
@@ -689,8 +688,9 @@ plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
 
-output_path = out_dir.joinpath("pressure.png")
-plotter.screenshot(str(output_path))
+if not pv.global_theme.trame.server_proxy_enabled:
+    output_path = out_dir.joinpath("pressure.png")
+    plotter.screenshot(str(output_path))
 plotter.show()
 plotter.close()
 
@@ -727,8 +727,9 @@ plotter.add_mesh(mesh.outline(), color="black", line_width=2)
 plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
-output_path = out_dir.joinpath("full_mesh_velocity_log_arrows.png")
-plotter.screenshot(str(output_path))
+if not pv.global_theme.trame.server_proxy_enabled:
+    output_path = out_dir.joinpath("full_mesh_velocity_log_arrows.png")
+    plotter.screenshot(str(output_path))
 plotter.show()
 plotter.close()
 
@@ -752,8 +753,9 @@ plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
 
-output_path = out_dir.joinpath("concentration.png")
-plotter.screenshot(str(output_path))
+if not pv.global_theme.trame.server_proxy_enabled:
+    output_path = out_dir.joinpath("concentration.png")
+    plotter.screenshot(str(output_path))
 plotter.show()
 plotter.close()
 
@@ -777,8 +779,9 @@ plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
 
-output_path = out_dir.joinpath("concentration_Cs.png")
-plotter.screenshot(str(output_path))
+if not pv.global_theme.trame.server_proxy_enabled:
+    output_path = out_dir.joinpath("concentration_Cs.png")
+    plotter.screenshot(str(output_path))
 plotter.show()
 plotter.close()
 

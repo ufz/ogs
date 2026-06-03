@@ -69,8 +69,10 @@ out_dir.mkdir(parents=True, exist_ok=True)
 ```python
 # Use pyvista for visualization of the generated meshes
 import pyvista as pv
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 ```
 
 ```python

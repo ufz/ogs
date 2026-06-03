@@ -57,8 +57,10 @@ import pyvista as pv
 import vtuIO
 
 # %%
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 
 mesh = pv.read("49k_prisms/Cylinder_r_1_h_1_prism_49k.vtu")
 plotter = pv.Plotter()

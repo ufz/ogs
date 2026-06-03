@@ -283,7 +283,6 @@ reader = pv.get_reader(f"{out_dir}/AT2_OrthoMasonry.pvd")
 plotter = pv.Plotter(off_screen=True)
 
 plotter.open_gif(f"{out_dir}/AT2_OrthoMasonry.gif")
-pv.set_plot_theme("document")
 for time_value in reader.time_values:
     reader.set_active_time_value(time_value)
     mesh = reader.read()[0]  # This dataset only has 1 block
@@ -327,7 +326,10 @@ plotter.close()
 reader = pv.get_reader(f"{out_dir}/AT2_OrthoMasonry.pvd")
 
 mesh = reader.read()[0]
-pv.set_jupyter_backend("static")
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 p = pv.Plotter(shape=(1, 1), border=False)
 p.add_mesh(
     mesh,

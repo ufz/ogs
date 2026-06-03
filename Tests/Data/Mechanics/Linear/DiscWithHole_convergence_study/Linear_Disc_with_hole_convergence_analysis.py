@@ -268,8 +268,10 @@ for idx in STUDY_indices:
 # To get a better sense of cell sizes and the additional refinement around the hole, the meshes of refinement indices 8 and 80 are shown below.
 
 # %% jupyter={"source_hidden": true}
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 
 
 # %% jupyter={"source_hidden": true}

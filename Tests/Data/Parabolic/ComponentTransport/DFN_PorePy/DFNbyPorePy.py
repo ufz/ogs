@@ -27,7 +27,6 @@ from pathlib import Path
 
 import numpy as np
 import porepy as pp
-import pyvista as pv
 from numpy.random import default_rng
 
 # %%
@@ -245,10 +244,13 @@ exporter = pp.Exporter(mdg2d, "mixed_dimensional_grid", folder_name=out_dir).wri
 
 # %%
 os.chdir(orig_dir)
-try:
+
+import pyvista as pv  # noqa: E402
+
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
     pv.set_jupyter_backend("static")
-except Exception as e:
-    print("PyVista backend not set:", e)
 
 plot_mesh = pv.read(out_dir / "mixed_dimensional_grid_2.vtu")
 scalar_name = "MaterialIDs" if "MaterialIDs" in plot_mesh.cell_data else "subdomain_id"
@@ -266,8 +268,9 @@ plotter.show_axes()
 plotter.enable_parallel_projection()
 plotter.view_isometric()
 
-output_path = out_dir / "mesh_overview.png"
-plotter.screenshot(str(output_path))
+if not pv.global_theme.trame.server_proxy_enabled:
+    output_path = out_dir / "mesh_overview.png"
+    plotter.screenshot(str(output_path))
 plotter.show()
 plotter.close()
 

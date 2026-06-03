@@ -149,8 +149,10 @@ plt.rcParams["ytick.labelsize"] = 12
 plt.rcParams["axes.titlesize"] = 12
 plt.rcParams["axes.labelsize"] = 12
 
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 
 
 # %%
@@ -490,9 +492,6 @@ for name, mesh in meshes.items():
 # As was already visible in the analytical solution, the pressure and stress gradients are particularly high in the upper half of the geometry. Therefore, it makes sense to refine the mesh in this area.
 
 # %%
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
-
 mesh = pv.read(f"{out_dir}/square_200x100_domain.vtu")
 plotter = pv.Plotter(window_size=[1000, 800])
 plotter.add_mesh(mesh, show_edges=True, show_scalar_bar=False, color=None, scalars=None)

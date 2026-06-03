@@ -13,6 +13,11 @@ import numpy as np
 import ogstools as ot
 import pyvista as pv
 
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
+
 
 class Plotter:
     DEFAULT_RC_PARAMS: ClassVar[dict] = {

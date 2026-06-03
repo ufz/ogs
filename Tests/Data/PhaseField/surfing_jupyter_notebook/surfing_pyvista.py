@@ -199,8 +199,10 @@ run(
 # At fracture, we set the initial phase field to zero.
 
 # %%
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 
 mesh = pv.read(f"{out_dir}/surfing_quad_1x2_NR.vtu")
 phase_field = np.ones((len(mesh.points), 1))
@@ -522,7 +524,6 @@ plotter = pv.Plotter(off_screen=True)
 
 (out_dir / "figures").mkdir(parents=True, exist_ok=True)
 plotter.open_gif(out_dir / "figures/surfing.gif")
-pv.set_plot_theme("document")
 for time_value in reader.time_values:
     reader.set_active_time_value(time_value)
     mesh = reader.read()[0]  # This dataset only has 1 block
@@ -568,7 +569,6 @@ plotter.close()
 # %%
 mesh = reader.read()[0]
 
-pv.set_jupyter_backend("static")
 p = pv.Plotter(shape=(1, 1), border=False)
 p.add_mesh(
     mesh,

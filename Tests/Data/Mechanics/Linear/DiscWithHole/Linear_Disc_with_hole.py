@@ -70,6 +70,11 @@ plt.rcParams["axes.spines.bottom"] = True
 plt.rcParams["axes.axisbelow"] = True
 plt.rcParams["figure.figsize"] = (8, 6)
 
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
+
 
 # %% jupyter={"source_hidden": true}
 def kirsch_sig_rr(sig, r, theta, a):
@@ -262,8 +267,10 @@ model.write_input()
 model.run_model(logfile=f"{out_dir}/out.txt", args=f"-o {out_dir} -m .")
 
 # %%
-pv.set_plot_theme("document")
-pv.set_jupyter_backend("static")  # comment out for interactive graphics
+if pv.global_theme.trame.server_proxy_enabled:
+    pv.set_jupyter_backend("client")
+else:
+    pv.set_jupyter_backend("static")
 
 # %%
 reader = pv.get_reader(f"{out_dir}/disc_with_hole.pvd")
