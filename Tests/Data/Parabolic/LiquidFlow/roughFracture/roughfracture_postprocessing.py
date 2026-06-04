@@ -1,16 +1,11 @@
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 import ogstools as ot
 import pyvista as pv
-from IPython.display import display as _display
 from roughfracture_runner import jrc_dir_name, sigma_tag
-from scipy.spatial import cKDTree
 
 CMAP_VMAG = "jet"
 CMAP_P = "turbo"
@@ -18,15 +13,8 @@ CMAP_AP = "viridis"
 CMAP_CT = "gray"
 
 n_stream_seeds = 50
-stream_tube_r_frac = 0.001
-stream_tube_min_radius = 2.0e-5  # [m]
-stream_tube_n_sides = 8
-stream_line_width = 1.5
 boundary_strip_pct = 0.03
 stream_clim_pct = (2, 98)
-streamline_tube_opacity = 1.0
-
-opacity = 0.5
 min_mag = 1e-14
 
 PRESSURE_CANDIDATES = ("pressure", "LiquidFlow_pressure", "p")
@@ -109,7 +97,6 @@ def _interior_pct_clim(
 
 
 def _build_streamlines(output_mesh: pv.DataSet):
-    """Return (tubes, interior_clim, used_tubes) from output velocity field."""
     surf = (
         output_mesh.copy(deep=False)
         if isinstance(output_mesh, pv.PolyData)
@@ -122,7 +109,7 @@ def _build_streamlines(output_mesh: pv.DataSet):
         elif "v" in surf.array_names:
             surf.point_data["v"] = surf["v"]
         else:
-            return None, None, False
+            return None, None
 
     v_all = np.asarray(surf.point_data["v"])
     vm_all = _vmag(v_all)
@@ -131,19 +118,12 @@ def _build_streamlines(output_mesh: pv.DataSet):
     bounds = surf.bounds
     int_clim = _interior_pct_clim(vm_all, np.asarray(surf.points), bounds)
     diag = float(surf.length)
-    tube_r = max(diag * stream_tube_r_frac, stream_tube_min_radius)
 
     dx = bounds[1] - bounds[0]
     x_in = bounds[0] + dx * 0.01
     y_seed = np.linspace(bounds[2], bounds[3], n_stream_seeds + 2)[1:-1]
     source = pv.PolyData(
-        np.column_stack(
-            [
-                np.full(len(y_seed), x_in),
-                y_seed,
-                np.zeros(len(y_seed)),
-            ]
-        )
+        np.column_stack([np.full(len(y_seed), x_in), y_seed, np.zeros(len(y_seed))])
     )
 
     try:
@@ -158,158 +138,17 @@ def _build_streamlines(output_mesh: pv.DataSet):
         )
     except Exception as exc:
         print(f"  [streamlines] failed: {exc}")
-        return None, int_clim, False
+        return None, int_clim
 
     if sl is None or sl.n_points == 0:
-        return None, int_clim, False
+        return None, int_clim
 
     sl_v = np.asarray(sl.point_data.get("v", np.zeros((sl.n_points, 3))))
     sl_vm = np.linalg.norm(sl_v, axis=1)
     sl_vm[sl_vm <= 0] = min_mag
     sl.point_data["v_mag"] = sl_vm
 
-    try:
-        tubes = sl.tube(radius=tube_r, n_sides=stream_tube_n_sides, capping=False)
-        if tubes is None or tubes.n_points == 0:
-            msg = "tube() returned empty geometry"
-            raise RuntimeError(msg)
-        _, idx = cKDTree(sl.points).query(tubes.points)
-        tubes.point_data["v_mag"] = sl_vm[idx]
-        used_tubes = True
-    except Exception as exc:
-        print(f"  [streamlines] tube failed ({exc}); using polylines")
-        tubes = sl
-        used_tubes = False
-
-    return tubes, int_clim, used_tubes
-
-
-def render_case_to_png(
-    jrc: int,
-    sigma: float,
-    png_file: Path,
-    scalar_name: str,
-    clim: tuple,
-    cmap_name: str,
-    base_run_dir: Path,
-    window_size: tuple = (2600, 1800),
-    scale: int = 2,
-    zoom_factor: float = 1.0,
-) -> None:
-    jrc, sigma = int(jrc), float(sigma)
-    pvd = _find_pvd(base_run_dir, jrc, sigma)
-    out_mesh = _load_last_output(pvd)
-    in_mesh = ot.mesh.read(str(_find_input_vtu(base_run_dir, jrc, sigma)))
-    surf = in_mesh.extract_surface(algorithm="dataset_surface")
-    bg = surf.copy(deep=True)
-
-    scalar_preference = "point"
-    bg_opacity = float(opacity)
-
-    if scalar_name in ("aperture_closed", "contact_closed"):
-        scalar_preference = "cell"
-        if scalar_name == "aperture_closed":
-            name = _find_first(APERTURE_CANDIDATES, surf.cell_data.keys())
-            if name is None:
-                msg = (
-                    f"No aperture field in {_find_input_vtu(base_run_dir, jrc, sigma)}"
-                )
-                raise KeyError(msg)
-            bg.cell_data["aperture_closed"] = np.asarray(surf.cell_data[name], float)
-        else:
-            name = _find_first(CONTACT_CANDIDATES, surf.cell_data.keys())
-            if name is None:
-                msg = f"No contact field in {_find_input_vtu(base_run_dir, jrc, sigma)}"
-                raise KeyError(msg)
-            bg.cell_data["contact_closed"] = (
-                np.asarray(surf.cell_data[name], float) > 0.5
-            ).astype(float)
-            bg_opacity = 1.0
-
-    elif scalar_name == "pressure":
-        sampled = out_mesh.sample(surf)
-        for k in list(sampled.point_data.keys()):
-            arr = np.asarray(sampled.point_data[k])
-            if arr.shape[0] == bg.n_points:
-                bg.point_data[k] = arr
-
-        pname = _find_first(PRESSURE_CANDIDATES, bg.point_data.keys())
-        if pname is None:
-            msg = "No pressure field in output"
-            raise KeyError(msg)
-        bg["pressure"] = _clean_pressure(bg.point_data[pname])
-        # use per-case interior percentile clim (pressure range differs across cases)
-        p_vals = np.asarray(bg["pressure"], float)
-        b_ = bg.bounds
-        pts_ = np.asarray(bg.points)
-        sx_ = (b_[1] - b_[0]) * boundary_strip_pct
-        sy_ = (b_[3] - b_[2]) * boundary_strip_pct
-        mask_ = (
-            (pts_[:, 0] > b_[0] + sx_)
-            & (pts_[:, 0] < b_[1] - sx_)
-            & (pts_[:, 1] > b_[2] + sy_)
-            & (pts_[:, 1] < b_[3] - sy_)
-        )
-        p_int = p_vals[mask_]
-        p_int = p_int[np.isfinite(p_int)]
-        if p_int.size > 10:
-            clim = (
-                float(np.nanpercentile(p_int, 2)),
-                float(np.nanpercentile(p_int, 98)),
-            )
-    else:
-        msg = f"Unsupported scalar_name='{scalar_name}'"
-        raise ValueError(msg)
-
-    sl_tubes, sl_clim, sl_used_tubes = _build_streamlines(out_mesh)
-
-    p = pv.Plotter(off_screen=True, window_size=window_size)
-    p.set_background("white")
-    p.add_mesh(
-        bg,
-        scalars=scalar_name,
-        cmap=cmap_name,
-        clim=clim,
-        opacity=bg_opacity,
-        preference=scalar_preference,
-        show_edges=False,
-        show_scalar_bar=False,
-    )
-
-    if sl_tubes is not None:
-        sl_kw = {
-            "scalars": "v_mag",
-            "cmap": CMAP_VMAG,
-            "clim": sl_clim,
-            "opacity": streamline_tube_opacity,
-            "show_scalar_bar": False,
-            "lighting": False,
-        }
-        if not sl_used_tubes:
-            sl_kw["render_lines_as_tubes"] = False
-            sl_kw["line_width"] = float(stream_line_width)
-        p.add_mesh(sl_tubes, **sl_kw)
-    p.add_axes(
-        line_width=3,
-        xlabel="x",
-        ylabel="y",
-        zlabel="z",
-        x_color="#d62728",
-        y_color="#2ca02c",
-        z_color="#1f77b4",
-    )
-    p.enable_parallel_projection()
-    bounds = bg.bounds
-    cx = (bounds[0] + bounds[1]) / 2
-    cy = (bounds[2] + bounds[3]) / 2
-    cz = (bounds[4] + bounds[5]) / 2
-    diag = float(bg.length)
-    p.camera.position = (cx + diag * 0.6, cy + diag * 0.8, cz + diag * 0.5)
-    p.camera.focal_point = (cx, cy, cz)
-    p.camera.up = (0, 0, 1)
-    p.camera.zoom(float(zoom_factor))
-    p.screenshot(str(png_file), scale=scale)
-    p.close()
+    return sl, int_clim
 
 
 def _compute_global_clim(
@@ -336,8 +175,12 @@ def _compute_global_clim(
                     if name is None:
                         continue
                     vals = _finite_vals(np.asarray(surf.cell_data[name], float))
-                    if vals.size:
-                        vmins.append(float(np.min(vals)))
+                    open_vals = vals[vals > 1e-7]
+                    if open_vals.size > 10:
+                        vmins.append(0.0)
+                        vmaxs.append(float(np.percentile(open_vals, 98)))
+                    elif vals.size:
+                        vmins.append(0.0)
                         vmaxs.append(float(np.max(vals)))
 
                 elif scalar_name == "pressure":
@@ -373,104 +216,154 @@ def _compute_global_clim(
     return (float(np.min(vmins)), float(np.max(vmaxs)))
 
 
-def _render_scalar_grid(
+def render_scalar_grid(
     jrc_list: list[int],
     sigmas_mpa: list[float],
     scalar_name: str,
     cmap_name: str,
+    cbar_label: str,
     base_run_dir: Path,
-    out_img_dir: Path,
     zoom_factor: float = 1.4,
-) -> tuple[dict, tuple]:
-    out_dir = out_img_dir / scalar_name
-    out_dir.mkdir(parents=True, exist_ok=True)
-
+    cell_size: tuple = (680, 520),
+) -> None:
     clim = _compute_global_clim(jrc_list, sigmas_mpa, scalar_name, base_run_dir)
     print(f"  global clim for {scalar_name}: {clim}")
 
-    png_map: dict = {}
-    for jrc in jrc_list:
-        for sigma in sigmas_mpa:
-            s = sigma_tag(float(sigma))
-            png_file = out_dir / f"JRC{int(jrc)}_sigma_{s}__{scalar_name}.png"
-            try:
-                render_case_to_png(
-                    jrc=int(jrc),
-                    sigma=float(sigma),
-                    png_file=png_file,
-                    scalar_name=scalar_name,
-                    clim=clim,
-                    cmap_name=cmap_name,
-                    base_run_dir=base_run_dir,
-                    window_size=(2800, 2000),
-                    scale=2,
-                    zoom_factor=zoom_factor,
-                )
-                png_map[(int(jrc), float(sigma))] = png_file
-                print(f"    saved: {png_file.name}")
-            except FileNotFoundError as exc:
-                print(f"    skip  JRC={jrc}, s={sigma}: {exc}")
-                png_map[(int(jrc), float(sigma))] = None
-            except Exception as exc:
-                print(f"    FAILED JRC={jrc}, s={sigma}: {exc}")
-                png_map[(int(jrc), float(sigma))] = None
-    return png_map, clim
-
-
-def _plot_grid(
-    png_map: dict,
-    jrc_list: list[int],
-    sigmas_mpa: list[float],
-    clim: tuple,
-    cmap_name: str,
-    cbar_label: str,
-    title_fontsize: int = 16,
-    cbar_fontsize: int = 16,
-    cbar_ticksize: int = 12,
-    figsize: tuple | None = None,
-) -> plt.Figure:
     nrows, ncols = len(jrc_list), len(sigmas_mpa)
-    if figsize is None:
-        figsize = (6 * ncols, 4.8 * nrows + 1.0)
-
-    fig = plt.figure(figsize=figsize)
-    gs = fig.add_gridspec(
-        nrows + 1,
-        ncols,
-        height_ratios=[1.0] * nrows + [0.04],
-        hspace=0.02,
-        wspace=0.02,
+    pl = pv.Plotter(
+        shape=(nrows, ncols),
+        border=False,
+        window_size=(ncols * cell_size[0], nrows * cell_size[1]),
     )
 
     for i, jrc in enumerate(jrc_list):
         for j, sigma in enumerate(sigmas_mpa):
-            ax = fig.add_subplot(gs[i, j])
-            png = png_map.get((int(jrc), float(sigma)))
-            ax.set_title(
-                rf"JRC={int(jrc)} | $\sigma_n={float(sigma):g}\ \mathrm{{MPa}}$",
-                fontsize=title_fontsize,
+            pl.subplot(i, j)
+            pl.set_background("white")
+            pl.add_text(
+                f"JRC={int(jrc)},  σₙ={float(sigma):g} MPa",
+                font_size=9,
+                color="black",
             )
-            if png is None:
-                ax.text(
-                    0.5,
-                    0.5,
-                    "missing",
-                    ha="center",
-                    va="center",
-                    transform=ax.transAxes,
-                )
-            else:
-                ax.imshow(plt.imread(png))
-            ax.axis("off")
 
-    cax = fig.add_subplot(gs[-1, :])
-    norm = mpl.colors.Normalize(vmin=float(clim[0]), vmax=float(clim[1]))
-    sm = mpl.cm.ScalarMappable(norm=norm, cmap=mpl.colormaps[cmap_name])
-    sm.set_array([])
-    cbar = fig.colorbar(sm, cax=cax, orientation="horizontal")
-    cbar.set_label(cbar_label, fontsize=cbar_fontsize)
-    cbar.ax.tick_params(labelsize=cbar_ticksize)
-    return fig
+            try:
+                jrc_, sigma_ = int(jrc), float(sigma)
+                pvd = _find_pvd(base_run_dir, jrc_, sigma_)
+                out_mesh = _load_last_output(pvd)
+                in_mesh = ot.mesh.read(str(_find_input_vtu(base_run_dir, jrc_, sigma_)))
+                surf = in_mesh.extract_surface(algorithm="dataset_surface")
+                bg = surf.copy(deep=True)
+
+                actual_clim = clim
+                scalar_preference = "point"
+                bg_opacity = 0.9
+
+                if scalar_name == "aperture_closed":
+                    scalar_preference = "cell"
+                    name = _find_first(APERTURE_CANDIDATES, surf.cell_data.keys())
+                    if name is None:
+                        msg = "No aperture field"
+                        raise KeyError(msg)
+                    bg.cell_data["aperture_closed"] = np.asarray(
+                        surf.cell_data[name], float
+                    )
+
+                elif scalar_name == "contact_closed":
+                    scalar_preference = "cell"
+                    name = _find_first(CONTACT_CANDIDATES, surf.cell_data.keys())
+                    if name is None:
+                        msg = "No contact field"
+                        raise KeyError(msg)
+                    bg.cell_data["contact_closed"] = (
+                        np.asarray(surf.cell_data[name], float) > 0.5
+                    ).astype(float)
+                    bg_opacity = 1.0
+
+                elif scalar_name == "pressure":
+                    sampled = out_mesh.sample(surf)
+                    for k in list(sampled.point_data.keys()):
+                        arr = np.asarray(sampled.point_data[k])
+                        if arr.shape[0] == bg.n_points:
+                            bg.point_data[k] = arr
+                    pname = _find_first(PRESSURE_CANDIDATES, bg.point_data.keys())
+                    if pname is None:
+                        msg = "No pressure field"
+                        raise KeyError(msg)
+                    bg["pressure"] = _clean_pressure(bg.point_data[pname])
+                    p_vals = np.asarray(bg["pressure"], float)
+                    b_ = bg.bounds
+                    pts_ = np.asarray(bg.points)
+                    sx_ = (b_[1] - b_[0]) * boundary_strip_pct
+                    sy_ = (b_[3] - b_[2]) * boundary_strip_pct
+                    mask_ = (
+                        (pts_[:, 0] > b_[0] + sx_)
+                        & (pts_[:, 0] < b_[1] - sx_)
+                        & (pts_[:, 1] > b_[2] + sy_)
+                        & (pts_[:, 1] < b_[3] - sy_)
+                    )
+                    p_int = p_vals[mask_]
+                    p_int = p_int[np.isfinite(p_int)]
+                    if p_int.size > 10:
+                        actual_clim = (
+                            float(np.nanpercentile(p_int, 2)),
+                            float(np.nanpercentile(p_int, 98)),
+                        )
+
+                show_bar = i == nrows - 1 and j == ncols // 2
+                pl.add_mesh(
+                    bg,
+                    scalars=scalar_name,
+                    cmap=cmap_name,
+                    clim=actual_clim,
+                    opacity=bg_opacity,
+                    preference=scalar_preference,
+                    show_edges=False,
+                    show_scalar_bar=show_bar,
+                    scalar_bar_args={
+                        "title": cbar_label,
+                        "vertical": False,
+                        "position_x": 0.1,
+                        "position_y": 0.03,
+                        "width": 0.8,
+                        "height": 0.16,
+                        "title_font_size": 20,
+                        "label_font_size": 16,
+                        "color": "black",
+                    },
+                )
+
+                sl_lines, sl_clim = _build_streamlines(out_mesh)
+                if sl_lines is not None:
+                    pl.add_mesh(
+                        sl_lines,
+                        scalars="v_mag",
+                        cmap=CMAP_VMAG,
+                        clim=sl_clim,
+                        render_lines_as_tubes=True,
+                        line_width=3.0,
+                        show_scalar_bar=False,
+                        lighting=False,
+                    )
+
+                pl.enable_parallel_projection()
+                b = bg.bounds
+                cx_ = (b[0] + b[1]) / 2
+                cy_ = (b[2] + b[3]) / 2
+                cz_ = (b[4] + b[5]) / 2
+                diag = float(bg.length)
+                pl.camera.position = (
+                    cx_ + diag * 0.6,
+                    cy_ + diag * 0.8,
+                    cz_ + diag * 0.5,
+                )
+                pl.camera.focal_point = (cx_, cy_, cz_)
+                pl.camera.up = (0, 0, 1)
+                pl.camera.zoom(float(zoom_factor))
+
+            except (FileNotFoundError, KeyError) as exc:
+                pl.add_text(f"missing\n{exc}", font_size=8, color="red")
+
+    pl.show()
 
 
 def run_all_plots(
@@ -478,64 +371,28 @@ def run_all_plots(
     out_dir: Path,
     jrc_list: list[int],
     sigmas_mpa: list[float],
-    fontsize: int = 16,
-) -> dict[str, Path]:
-    """Render JRC x sigma field grids: pressure + streamlines, aperture, contact."""
+) -> None:
     base_run_dir = Path(out_dir) / "runs"
-    plot_dir = Path(out_dir) / "plots"
-    plot_dir.mkdir(parents=True, exist_ok=True)
 
     configs = [
-        # (scalar_name,      cmap,      cbar_label,         fname)
-        ("pressure", CMAP_P, r"$p$ / Pa", "GRID_pressure.png"),
-        ("aperture_closed", CMAP_AP, r"$w$ / m", "GRID_aperture_closed.png"),
-        ("contact_closed", CMAP_CT, r"$I_c$ / -", "GRID_contact.png"),
+        ("pressure", CMAP_P, r"p / Pa"),
+        ("aperture_closed", CMAP_AP, r"w / m"),
+        ("contact_closed", CMAP_CT, r"Ic / -"),
     ]
 
-    if "ipykernel" in sys.modules:
-
-        def _show_fig(f):
-            _display(f)
-            plt.close(f)
-
-    else:
-
-        def _show_fig(f):
-            plt.show()
-            plt.close(f)
-
-    saved: dict[str, Path] = {}
-    for scalar_name, cmap, cbar_label, fname in configs:
+    for scalar_name, cmap, cbar_label in configs:
         print(f"\nPlotting {scalar_name} …")
         try:
-            png_map, clim = _render_scalar_grid(
+            render_scalar_grid(
                 jrc_list=jrc_list,
                 sigmas_mpa=sigmas_mpa,
                 scalar_name=scalar_name,
                 cmap_name=cmap,
-                base_run_dir=base_run_dir,
-                out_img_dir=plot_dir / "pngs",
-            )
-            fig = _plot_grid(
-                png_map=png_map,
-                jrc_list=jrc_list,
-                sigmas_mpa=sigmas_mpa,
-                clim=clim,
-                cmap_name=cmap,
                 cbar_label=cbar_label,
-                title_fontsize=fontsize,
-                cbar_fontsize=fontsize,
-                cbar_ticksize=fontsize - 2,
+                base_run_dir=base_run_dir,
             )
-            out_file = plot_dir / fname
-            fig.savefig(out_file, dpi=300, bbox_inches="tight")
-            _show_fig(fig)
-            saved[scalar_name] = out_file
-            print(f"  saved: {out_file}")
         except Exception as exc:
             print(f"  FAILED {scalar_name}: {exc}")
-
-    return saved
 
 
 def run_roughfracture_postprocessing(
@@ -543,14 +400,9 @@ def run_roughfracture_postprocessing(
     out_dir: Path,
     jrc_list: list[int],
     sigmas_mpa: list[float],
-    fontsize: int = 16,
-) -> dict:
-    """Run all post-processing plots."""
-    return {
-        "plots": run_all_plots(
-            out_dir=out_dir,
-            jrc_list=jrc_list,
-            sigmas_mpa=sigmas_mpa,
-            fontsize=fontsize,
-        ),
-    }
+) -> None:
+    run_all_plots(
+        out_dir=out_dir,
+        jrc_list=jrc_list,
+        sigmas_mpa=sigmas_mpa,
+    )
