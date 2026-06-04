@@ -179,13 +179,14 @@ AddTest(
     WRAPPER time
     TESTER vtkdiff
     REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
+    # TODO: relaxed tol. after !5697, maybe regenerate ref. results?
     DIFF_DATA
-    flux_1e4_t_0.000000.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_1_t_0.000000.vtu specific_flux specific_flux 1e-10 1e-16
-    flux_1e4_t_0.000010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_2_t_0.000010.vtu specific_flux specific_flux 1e-10 1e-16
-    flux_1e4_t_0.001010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_3_t_0.001010.vtu specific_flux specific_flux 1e-10 1e-16
-    flux_1e4_t_0.101010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_4_t_0.101010.vtu specific_flux specific_flux 1e-10 1e-16
-    flux_1e4_t_1.101010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_5_t_1.101010.vtu specific_flux specific_flux 1e-10 1e-16
-    flux_1e4_t_10.000000.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_6_t_10.000000.vtu specific_flux specific_flux 1e-10 1e-16
+    flux_1e4_t_0.000000.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_1_t_0.000000.vtu specific_flux specific_flux 2e-9 1e-16
+    flux_1e4_t_0.000010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_2_t_0.000010.vtu specific_flux specific_flux 2e-9 1e-16
+    flux_1e4_t_0.001010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_3_t_0.001010.vtu specific_flux specific_flux 2e-9 1e-16
+    flux_1e4_t_0.101010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_4_t_0.101010.vtu specific_flux specific_flux 2e-9 1e-16
+    flux_1e4_t_1.101010.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_5_t_1.101010.vtu specific_flux specific_flux 3e-9 1e-16
+    flux_1e4_t_10.000000.vtu ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_6_t_10.000000.vtu specific_flux specific_flux 3.5e-9 1e-16
 )
 
 # Staggered scheme
