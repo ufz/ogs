@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import sys
-import tempfile
 from pathlib import Path
 
 import matplotlib as mpl
@@ -9,12 +8,8 @@ import matplotlib.pyplot as plt
 import matplotlib.tri as mtri
 import numpy as np
 import pyvista as pv
-from IPython.display import Image as _Img
 from IPython.display import display as _display
-from matplotlib.backends.backend_agg import FigureCanvasAgg
-from matplotlib.figure import Figure
 from roughfracture_runner import sigma_tag
-from vtkmodules.vtkRenderingCore import vtkCoordinate
 
 APERTURE_CANDIDATES = ("aperture_closed", "aperture", "w")
 CONTACT_CANDIDATES = ("contact_closed", "is_contact", "contact_flag")
@@ -27,7 +22,7 @@ def _find_first(candidates, names):
     return None
 
 
-def _show(fig: plt.Figure, save_to: Path | None) -> None:
+def _show_mpl(fig: plt.Figure, save_to: Path | None) -> None:
     if save_to is not None:
         fig.savefig(save_to, dpi=200, bbox_inches="tight")
         print(f"saved: {save_to}")
@@ -38,118 +33,16 @@ def _show(fig: plt.Figure, save_to: Path | None) -> None:
         plt.show()
 
 
-def _add_boundary_overlays(pl: pv.Plotter, mesh: pv.DataSet) -> list:
-    b = mesh.bounds
-    tol_x = (b[1] - b[0]) * 0.015
-    tol_y = (b[3] - b[2]) * 0.015
-    cx = (b[0] + b[1]) / 2
-    cy = (b[2] + b[3]) / 2
-    z_label = b[5]
-
-    edges = mesh.extract_feature_edges(
-        boundary_edges=True,
-        feature_edges=False,
-        manifold_edges=False,
-        non_manifold_edges=False,
-    )
-    pts = np.asarray(edges.points)
-
-    sides = [
-        (
-            np.abs(pts[:, 0] - b[0]) < tol_x,
-            "#d62728",
-            "Inlet ($p_\\mathrm{in}$)",
-            [b[0], cy, z_label],
-        ),
-        (
-            np.abs(pts[:, 0] - b[1]) < tol_x,
-            "#1f77b4",
-            "Outlet ($p_\\mathrm{out}$)",
-            [b[1], cy, z_label],
-        ),
-        (np.abs(pts[:, 1] - b[2]) < tol_y, "#7f7f7f", "No-flow", [cx, b[2], z_label]),
-        (np.abs(pts[:, 1] - b[3]) < tol_y, "#7f7f7f", "No-flow", [cx, b[3], z_label]),
-    ]
-
-    label_specs = []
-    for mask, color, label, lpt in sides:
-        idx = np.where(mask)[0]
-        if idx.size < 2:
-            continue
-        sub = pts[idx]
-        axis = 0 if np.ptp(sub[:, 0]) > np.ptp(sub[:, 1]) else 1
-        sub = sub[np.argsort(sub[:, axis])]
-        pl.add_mesh(
-            pv.Spline(sub, n_points=max(60, len(sub))),
-            color=color,
-            line_width=6,
-            render_lines_as_tubes=True,
-        )
-        label_specs.append((lpt, label, color))
-    return label_specs
-
-
-def _project_labels(
-    label_specs: list, renderer, window_size: tuple, scale: int
-) -> list:
-    coord = vtkCoordinate()
-    coord.SetCoordinateSystemToWorld()
-    win_h = window_size[1]
-    projected = []
-    for world_pt, text, color in label_specs:
-        coord.SetValue(*world_pt)
-        px, py = coord.GetComputedDoubleDisplayValue(renderer)
-        projected.append((px * scale, (win_h - py) * scale, text, color))
-    return projected
-
-
-def _stamp_boundary_labels(png_path: Path, projected: list) -> None:
-
-    img = plt.imread(str(png_path))
-    h, w = img.shape[:2]
-
-    fig = Figure(figsize=(w / 150, h / 150), dpi=150)
-    FigureCanvasAgg(fig)
-    ax = fig.add_axes([0, 0, 1, 1])
-    ax.imshow(img)
-    ax.axis("off")
-
-    fontsize = max(10, w // 110)
-    for ix, iy, text, color in projected:
-        ax.text(
-            ix,
-            iy,
-            text,
-            color=color,
-            fontsize=fontsize,
-            fontweight="bold",
-            ha="center",
-            va="center",
-            bbox={
-                "boxstyle": "round,pad=0.35",
-                "facecolor": "white",
-                "alpha": 0.85,
-                "edgecolor": color,
-                "linewidth": 1.5,
-            },
-        )
-
-    fig.savefig(str(png_path), dpi=150, bbox_inches=None, pad_inches=0)
-
-
-def _render_surface_png(
+def plot_fracture_surface_3d(
     vtu_path: Path,
-    png_path: Path,
     *,
-    z_scale: float,
-    scalar: str,
-    clim: tuple[float, float],
-    cmap: str,
-    window_size: tuple,
-    show_boundaries: bool = False,
+    z_scale: float = 2.0,
+    scalar: str = "aperture_closed",
+    cmap: str = "viridis",
+    window_size: tuple = (900, 600),
+    show_boundaries: bool = True,
 ) -> None:
-    mesh = pv.read(str(vtu_path))
-
+    mesh = pv.read(str(Path(vtu_path)))
     pts = mesh.points.copy()
     pts[:, 2] *= z_scale
     mesh.points = pts
@@ -157,7 +50,14 @@ def _render_surface_png(
     if scalar in mesh.cell_data:
         mesh = mesh.cell_data_to_point_data()
 
-    pl = pv.Plotter(off_screen=True, window_size=window_size)
+    values = np.asarray(mesh.point_data.get(scalar, np.zeros(mesh.n_points)), float)
+    open_vals = values[values > 1e-7]
+    if open_vals.size > 10:
+        clim = (0.0, float(np.percentile(open_vals, 98)))
+    else:
+        clim = (0.0, max(float(np.nanmax(values)), 1e-4))
+
+    pl = pv.Plotter(window_size=window_size)
     pl.set_background("white")
     pl.add_mesh(
         mesh,
@@ -165,11 +65,43 @@ def _render_surface_png(
         cmap=cmap,
         clim=clim,
         show_edges=False,
-        show_scalar_bar=False,
+        scalar_bar_args={"title": "w / m", "color": "black"},
     )
-    label_specs = _add_boundary_overlays(pl, mesh) if show_boundaries else []
+
+    if show_boundaries:
+        b = mesh.bounds
+        tol_x = (b[1] - b[0]) * 0.01
+        edges = mesh.extract_feature_edges(
+            boundary_edges=True,
+            feature_edges=False,
+            manifold_edges=False,
+            non_manifold_edges=False,
+        )
+        edge_pts = np.asarray(edges.points)
+        for x0, color, label in [
+            (b[0], "#d62728", "Inlet"),
+            (b[1], "#1f77b4", "Outlet"),
+        ]:
+            mask = np.abs(edge_pts[:, 0] - x0) < tol_x
+            side = edge_pts[mask]
+            if side.size == 0:
+                continue
+            side = side[np.argsort(side[:, 1])]
+            spline = pv.Spline(side, n_points=max(60, len(side)))
+            pl.add_mesh(spline, color=color, line_width=6, render_lines_as_tubes=True)
+            mid = side[len(side) // 2]
+            x_offset = (b[0] - b[1]) * 0.12 if x0 == b[0] else (b[1] - b[0]) * 0.12
+            pl.add_point_labels(
+                [[mid[0] + x_offset, mid[1], mid[2]]],
+                [label],
+                text_color=color,
+                font_size=14,
+                shape=None,
+                always_visible=True,
+            )
+
     pl.add_text(
-        f"z x{int(z_scale)}", position="lower_right", font_size=14, color="dimgray"
+        f"z x{int(z_scale)}", position="lower_right", font_size=12, color="dimgray"
     )
     pl.add_axes(
         line_width=3,
@@ -181,57 +113,17 @@ def _render_surface_png(
         z_color="#1f77b4",
     )
     pl.enable_parallel_projection()
-    bounds = mesh.bounds
-    cx = (bounds[0] + bounds[1]) / 2
-    cy = (bounds[2] + bounds[3]) / 2
-    cz = (bounds[4] + bounds[5]) / 2
+
+    b = mesh.bounds
+    cx = (b[0] + b[1]) / 2
+    cy = (b[2] + b[3]) / 2
+    cz = (b[4] + b[5]) / 2
     diag = float(mesh.length)
     pl.camera.position = (cx + diag * 0.6, cy + diag * 0.8, cz + diag * 0.5)
     pl.camera.focal_point = (cx, cy, cz)
     pl.camera.up = (0, 0, 1)
     pl.camera.zoom(1.2)
-    pl.screenshot(str(png_path), scale=2)
-    projected = _project_labels(label_specs, pl.renderer, window_size, scale=2)
-    pl.close()
-    if projected:
-        _stamp_boundary_labels(png_path, projected)
-
-
-def plot_fracture_surface_3d(
-    vtu_path: Path,
-    *,
-    z_scale: float = 2.0,
-    scalar: str = "aperture_closed",
-    cmap: str = "viridis",
-    window_size: tuple = (1600, 900),
-    show_boundaries: bool = True,
-    save_to: Path | None = None,
-) -> None:
-    mesh = pv.read(str(Path(vtu_path)))
-    vals = (
-        np.asarray(mesh.cell_data[scalar], float)
-        if scalar in mesh.cell_data
-        else np.zeros(mesh.n_cells)
-    )
-    clim = (float(vals.min()), float(vals.max()))
-
-    if save_to is None:
-        with tempfile.NamedTemporaryFile(suffix=".png", delete=False) as _f:
-            tmp = Path(_f.name)
-    else:
-        tmp = save_to
-    _render_surface_png(
-        Path(vtu_path),
-        tmp,
-        z_scale=z_scale,
-        scalar=scalar,
-        clim=clim,
-        cmap=cmap,
-        window_size=window_size,
-        show_boundaries=show_boundaries,
-    )
-    if "ipykernel" in sys.modules:
-        _display(_Img(str(tmp)))
+    pl.show()
 
 
 def plot_aperture_grid(
@@ -262,12 +154,22 @@ def plot_aperture_grid(
                 v = np.asarray(m.cell_data[ap], float)
                 all_vals.extend(v[np.isfinite(v)].tolist())
 
-    vmin = float(np.percentile(all_vals, 2))
-    vmax = float(np.percentile(all_vals, 98))
+    all_arr = np.asarray(all_vals)
+    open_arr = all_arr[all_arr > 1e-7]
+    if open_arr.size > 10:
+        vmin = 0.0
+        vmax = float(np.percentile(open_arr, 98))
+    else:
+        vmin = 0.0
+        vmax = float(np.percentile(all_arr, 98))
 
     fig = plt.figure(figsize=(4.2 * ncols, 3.6 * nrows + 0.6))
     gs = fig.add_gridspec(
-        nrows + 1, ncols, height_ratios=[1.0] * nrows + [0.04], hspace=0.12, wspace=0.06
+        nrows + 1,
+        ncols,
+        height_ratios=[1.0] * nrows + [0.04],
+        hspace=0.12,
+        wspace=0.06,
     )
 
     for i, jrc in enumerate(jrc_list):
@@ -294,17 +196,19 @@ def plot_aperture_grid(
                 )
                 continue
 
-            # UnstructuredGrid cells: [3, v0, v1, v2, 3, v0, v1, v2, ...]
             faces = m.cells.reshape(-1, 4)[:, 1:]
             pts = m.points
             triang = mtri.Triangulation(pts[:, 0], pts[:, 1], faces)
-
             mp = m.cell_data_to_point_data()
             ap_name = _find_first(APERTURE_CANDIDATES, mp.point_data.keys())
             apt = np.asarray(mp.point_data[ap_name], float)
-
             ax.tripcolor(
-                triang, apt, cmap="viridis", vmin=vmin, vmax=vmax, shading="gouraud"
+                triang,
+                apt,
+                cmap="viridis",
+                vmin=vmin,
+                vmax=vmax,
+                shading="gouraud",
             )
 
             if i == nrows - 1 and j == 0:
@@ -348,8 +252,7 @@ def plot_aperture_grid(
     cbar = fig.colorbar(sm, cax=cax, orientation="horizontal")
     cbar.set_label(r"$w$ / m", fontsize=fontsize)
     cbar.ax.tick_params(labelsize=fontsize - 2)
-
-    _show(fig, save_to)
+    _show_mpl(fig, save_to)
 
 
 def plot_fracture_geometry_summary(
@@ -395,7 +298,6 @@ def plot_fracture_geometry_summary(
             data[int(jrc)]["contact_pct"].append(contact_pct)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=figsize)
-
     for idx, jrc in enumerate(jrc_list):
         d = data[int(jrc)]
         col = colors[idx % len(colors)]
@@ -427,4 +329,4 @@ def plot_fracture_geometry_summary(
         ax.spines[["top", "right"]].set_visible(False)
 
     fig.tight_layout()
-    _show(fig, save_to)
+    _show_mpl(fig, save_to)

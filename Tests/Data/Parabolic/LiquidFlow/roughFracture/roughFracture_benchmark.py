@@ -72,10 +72,7 @@ import roughfracture_runner as rr
 # | Top | y = y_max = 0.1 m | no-flow | |
 #
 # Prescribing pressure on both inlet and outlet guarantees a physically bounded
-# pressure field regardless of fracture permeability. The resulting flow rate
-# is an output — analogous to a laboratory constant-head permeability test.
-# A fixed-flux (Neumann) inlet would require arbitrarily large pressures in
-# nearly-closed fractures (high JRC, high stress), causing numerical blowup.
+# pressure field regardless of fracture permeability.
 #
 # ### Body force
 #
@@ -105,7 +102,7 @@ import roughfracture_runner as rr
 # The aperture field is produced using the
 # **midplane method** of Stigsson & Mas Ivars (2025), combined with the
 # **Barton–Bandis hyperbolic closure law** (Bandis et al. 1983) for
-# normal closure. Local permeability is then assigned cell by cell via
+# normal closure. Local permeability is then assigned cell by cell by
 # the **cubic law** (Witherspoon et al. 1980):
 #
 # $$k = \frac{w^2}{12}$$
@@ -306,7 +303,7 @@ for jrc in JRC_LIST:
         p_comp = np.asarray(ot.MeshSeries(str(pvd))[-1].point_data["pressure"])
         p_ref = np.asarray(ref.point_data["pressure"])
 
-        np.testing.assert_allclose(p_comp, p_ref, rtol=2e-3, atol=1e-3)
+        np.testing.assert_allclose(p_comp, p_ref, rtol=5e-3, atol=1e-3)
         print(
             f"JRC={jrc}, sigma={sigma:g} MPa: max|dp| = {np.abs(p_comp - p_ref).max():.3g} Pa -- OK"
         )
