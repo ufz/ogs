@@ -37,6 +37,52 @@ using PropertyDataType =
 /// major storage order.
 PropertyDataType fromVector(std::vector<double> const& values);
 
+/// Conversion of a fixed-size array to PropertyDataType.
+///
+/// Supported sizes: 1, 2, 3, 4, 6, 9 - same semantics as fromVector().
+///
+/// \attention This method cannot distinguish between 2x2 matrix and 4x1 vector.
+///
+/// \note 4-element arrays map to Eigen::Matrix2d (row-major), 9-element arrays
+/// map to Eigen::Matrix3d (row-major).
+template <std::size_t N>
+PropertyDataType fromArray(std::array<double, N> const& values)
+{
+    if constexpr (N == 1)
+    {
+        return values[0];
+    }
+    else if constexpr (N == 2)
+    {
+        return Eigen::Vector2d{values[0], values[1]};
+    }
+    else if constexpr (N == 3)
+    {
+        return Eigen::Vector3d{values[0], values[1], values[2]};
+    }
+    else if constexpr (N == 4)
+    {
+        using M = Eigen::Matrix2d;
+        using MRM = Eigen::Matrix<double, 2, 2, Eigen::RowMajor>;
+        return M{Eigen::Map<MRM const>{values.data(), 2, 2}};
+    }
+    else if constexpr (N == 6)
+    {
+        using M = Eigen::Matrix<double, 6, 1>;
+        return M{Eigen::Map<M const>{values.data(), 6}};
+    }
+    else if constexpr (N == 9)
+    {
+        using M = Eigen::Matrix3d;
+        using MRM = Eigen::Matrix<double, 3, 3, Eigen::RowMajor>;
+        return M{Eigen::Map<MRM const>{values.data(), 3, 3}};
+    }
+    else
+    {
+        static_assert(false, "Unsupported array size for fromArray.");
+    }
+}
+
 /// This class is the base class for any material property of any
 /// scale (i.e. components, phases, media, ...). The single value of
 /// that Property can hold scalars, vectors, tensors, strings, etc.

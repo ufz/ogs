@@ -6,10 +6,11 @@
 #include <Eigen/Core>
 #include <autocheck/autocheck.hpp>
 
+#include "MathLib/KelvinVector.h"
 #include "MathLib/Point3d.h"
 
-
-namespace std{
+namespace std
+{
 
 /// Output of array enclosed in brackets. Required for autocheck for output of
 /// std::arrays in case of failing test.
@@ -37,9 +38,7 @@ struct IntervalGenerator
 {
     /// Constructor initializing the slope and the \f$y\f$-intercept deploying
     /// lower bound \f$a\f$ and upper bound \f$b\f$ of the interval.
-    IntervalGenerator(T a, T b)
-        : _m((b-a)/2), _n((b+a)/2)
-    {}
+    IntervalGenerator(T a, T b) : _m((b - a) / 2), _n((b + a) / 2) {}
 
     // parameters for the interval mapping [-1,1] -> [a,b],
     // y = _m * x + _n
@@ -50,10 +49,7 @@ struct IntervalGenerator
 
     using result_type = T;
 
-    result_type intervalMap(T val) const
-    {
-        return _m * val + _n;
-    }
+    result_type intervalMap(T val) const { return _m * val + _n; }
 
     result_type operator()(std::size_t /*size*/ = 0)
     {
@@ -66,7 +62,8 @@ struct IntervalTupleGenerator
 {
     IntervalTupleGenerator(Gen& ig0, Gen& ig1, Gen& ig2)
         : x_gen(ig0), y_gen(ig1), z_gen(ig2)
-    {}
+    {
+    }
 
     Gen x_gen, y_gen, z_gen;
 
@@ -74,7 +71,7 @@ struct IntervalTupleGenerator
 
     result_type operator()(std::size_t /*size*/ = 0)
     {
-        return {{ x_gen(), y_gen(), z_gen() }};
+        return {{x_gen(), y_gen(), z_gen()}};
     }
 };
 
@@ -89,7 +86,7 @@ struct randomEigenMatrixGenerator
     result_type operator()(std::size_t size = 0)
     {
         result_type rv;
-        std::generate_n(rv.data(), M*N, fix(size, source));
+        std::generate_n(rv.data(), M * N, fix(size, source));
         return rv;
     }
 };
@@ -147,3 +144,39 @@ struct progressivelySmallerGenerator
 };
 
 }  // namespace autocheck
+
+// Generators for OpenMP thread-safety tests
+namespace Tests
+{
+
+/// Generator for Point3D coordinates
+struct Point3DGenerator
+{
+    using result_type = MathLib::Point3d;
+
+    result_type operator()(std::size_t size)
+    {
+        autocheck::generator<double> gen;
+        return MathLib::Point3d{{gen(size), gen(size), gen(size)}};
+    }
+};
+
+/// Generator for KelvinVector stress (2D: 4 components, 3D: 6 components)
+template <int Dim>
+struct KelvinVectorGenerator
+{
+    using result_type = MathLib::KelvinVector::KelvinVectorType<Dim>;
+
+    result_type operator()(std::size_t size)
+    {
+        autocheck::generator<double> gen;
+        result_type stress;
+        for (int i = 0; i < stress.size(); ++i)
+        {
+            stress[i] = gen(size);
+        }
+        return stress;
+    }
+};
+
+}  // namespace Tests

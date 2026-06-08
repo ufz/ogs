@@ -1,1 +1,1 @@
-\copydoc MaterialPropertyLib::Function::Implementation<D>::value_expressions
+\copydoc MaterialPropertyLib::PerThreadData::value_expressions

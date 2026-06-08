@@ -48,7 +48,7 @@ public:
 
 private:
     template <int D>
-    class Implementation;
+    struct Implementation;
 
     std::unique_ptr<Implementation<2>> impl2_;
     std::unique_ptr<Implementation<3>> impl3_;
@@ -58,6 +58,6 @@ private:
         VariableArray const& variable_array) const;
 
     /// Variables used in the exprtk expressions.
-    std::vector<Variable> variables_;
+    std::vector<Variable> required_variables_enum_;
 };
 }  // namespace MaterialPropertyLib

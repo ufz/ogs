@@ -3,8 +3,13 @@
 
 #include "OgsAsmThreads.h"
 
+#include <algorithm>
 #include <cstdlib>
 #include <sstream>
+
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 #include "Error.h"
 #include "StringTools.h"
@@ -55,5 +60,15 @@ int getNumberOfAssemblyThreads()
     }
 
     return num_threads;
+}
+
+int getNumberOfThreads()
+{
+#ifdef _OPENMP
+    int const num_omp_threads = omp_get_max_threads();
+#else
+    int const num_omp_threads = 1;
+#endif
+    return std::max(getNumberOfAssemblyThreads(), num_omp_threads);
 }
 }  // namespace BaseLib

@@ -85,6 +85,84 @@ TEST(MaterialPropertyLib, PropertyFromVector9Elems)
     ASSERT_EQ(expected, get<V>(prop));
 }
 
+TEST(MaterialPropertyLib, PropertyFromArray1Elem)
+{
+    std::array const values{3.14};
+    auto const prop = MPL::fromArray(values);
+
+    using V = double;
+    ASSERT_TRUE(std::holds_alternative<V>(prop));
+    ASSERT_EQ(3.14, get<V>(prop));
+}
+
+TEST(MaterialPropertyLib, PropertyFromArray2Elems)
+{
+    std::array const values{2.71, 3.14};
+    auto const prop = MPL::fromArray(values);
+
+    using V = Eigen::Vector2d;
+    ASSERT_TRUE(std::holds_alternative<V>(prop));
+    ASSERT_EQ((V{2.71, 3.14}), get<V>(prop));
+}
+
+TEST(MaterialPropertyLib, PropertyFromArray3Elems)
+{
+    std::array const values{2.71, 3.14, 1.602e-19};
+    auto const prop = MPL::fromArray(values);
+
+    using V = Eigen::Vector3d;
+    ASSERT_TRUE(std::holds_alternative<V>(prop));
+    ASSERT_EQ((V{2.71, 3.14, 1.602e-19}), get<V>(prop));
+}
+
+TEST(MaterialPropertyLib, PropertyFromArray4Elems)
+{
+    std::array const values{2.71, 3.14,  //
+                            1.602e-19, 6.626e-34};
+    auto const prop = MPL::fromArray(values);
+
+    using V = Eigen::Matrix2d;
+    V expected;
+    expected(0, 0) = 2.71;
+    expected(0, 1) = 3.14;  // row major storage order of the values array
+    expected(1, 0) = 1.602e-19;
+    expected(1, 1) = 6.626e-34;
+
+    ASSERT_TRUE(std::holds_alternative<V>(prop));
+    ASSERT_EQ(expected, get<V>(prop));
+}
+
+TEST(MaterialPropertyLib, PropertyFromArray6Elems)
+{
+    std::array const values{2.71,      3.14,   1.602e-19,
+                            6.626e-34, 2.99e8, 1. / 137.};
+    auto const prop = MPL::fromArray(values);
+
+    using V = Eigen::Vector<double, 6>;
+    V expected;
+    expected << 2.71, 3.14, 1.602e-19, 6.626e-34, 2.99e8, 1. / 137.;
+
+    ASSERT_TRUE(std::holds_alternative<V>(prop));
+    ASSERT_EQ(expected, get<V>(prop));
+}
+
+TEST(MaterialPropertyLib, PropertyFromArray9Elems)
+{
+    std::array const values{2.71,      3.14,     1.602e-19,  //
+                            6.626e-34, 2.99e8,   1. / 137.,  //
+                            1.38e-23,  9.11e-31, 2.002};
+    auto const prop = MPL::fromArray(values);
+
+    using V = Eigen::Matrix3d;
+    V expected;
+    expected.row(0) << 2.71, 3.14, 1.602e-19;
+    expected.row(1) << 6.626e-34, 2.99e8, 1. / 137.;
+    expected.row(2) << 1.38e-23, 9.11e-31, 2.002;
+
+    ASSERT_TRUE(std::holds_alternative<V>(prop));
+    ASSERT_EQ(expected, get<V>(prop));
+}
+
 TEST(MaterialPropertyLib, PropertyFromVectorInvalidElemCount)
 {
     std::vector const values{2.71,      3.14,     1.602e-19,  //

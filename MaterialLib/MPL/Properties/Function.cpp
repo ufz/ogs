@@ -7,68 +7,296 @@
 #include <omp.h>
 #endif
 
-#include <exprtk.hpp>
-#include <numeric>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/transform.hpp>
 #include <ranges>
-#include <typeinfo>
 #include <unordered_set>
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/OgsAsmThreads.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/VectorizedTensor.h"
+#include "ParameterLib/ExprtkUtils.h"
 
 namespace MaterialPropertyLib
 {
-struct CurveWrapper : public exprtk::ifunction<double>
+
+/// Scalar copy operation: transfers one double from a VariableArray into the
+/// per-thread symbol table using a precomputed byte offset.
+/// The \p variable field is carried only for error messages.
+struct ScalarCopyOp
 {
-    explicit CurveWrapper(const MathLib::PiecewiseLinearInterpolation& curve)
-        : exprtk::ifunction<double>(1), _curve(curve)
+    std::ptrdiff_t src_offset;  ///< byte offset from VariableArray start
+    double* dst_ptr;            ///< pointer into this thread's symbol table
+    Variable variable;          ///< for error messages
+
+    ScalarCopyOp(VariableArray const& base,
+                 VariableArray::Scalar* dst,
+                 Variable var)
+        : src_offset{reinterpret_cast<char const*>(dst) -
+                     reinterpret_cast<char const*>(&base)},
+          dst_ptr{dst},
+          variable{var}
     {
-        exprtk::disable_has_side_effects(*this);
     }
 
-    double operator()(const double& t) override { return _curve.getValue(t); }
-
-private:
-    const MathLib::PiecewiseLinearInterpolation& _curve;
-};
-// Passing symbol table by reference as required by register_symbol_table()
-// call.
-template <typename T>
-static std::vector<exprtk::expression<T>> compileExpressions(
-    exprtk::symbol_table<T>& symbol_table,
-    std::vector<std::string> const& string_expressions)
-{
-    exprtk::parser<T> parser;
-
-    std::vector<exprtk::expression<T>> expressions(string_expressions.size());
-    for (unsigned i = 0; i < string_expressions.size(); ++i)
+    void apply(VariableArray const& src) const
     {
-        expressions[i].register_symbol_table(symbol_table);
-        if (!parser.compile(string_expressions[i], expressions[i]))
+        double const val = *reinterpret_cast<double const*>(
+            reinterpret_cast<char const*>(&src) + src_offset);
+        if (std::isnan(val))
         {
-            OGS_FATAL("Error: {:s}\tExpression: {:s}\n",
-                      parser.error(),
-                      string_expressions[i]);
+            OGS_FATAL(
+                "Function property: Scalar variable '{:s}' is not "
+                "initialized.",
+                variable_enum_to_string[static_cast<int>(variable)]);
         }
+        *dst_ptr = val;
     }
-    return expressions;
+};
+
+/// Creates a symbol table for one MPL Function thread, registering standard
+/// variables (t, x, y, z), VariableArray fields, and curve wrappers.
+/// \p variable_array and \p curve_wrappers are members of the owning
+/// PerThreadData and must already be at their final address.
+template <int D>
+static exprtk::symbol_table<double> createSymbolTable(
+    std::vector<std::string> const& expression_symbol_names,
+    bool const spatial_position_is_required,
+    std::vector<std::string> const& used_curve_names,
+    std::map<std::string,
+             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+        curves,
+    VariableArray& variable_array,
+    std::map<std::string, ParameterLib::CurveWrapper>& curve_wrappers)
+{
+    auto symbol_table =
+        ParameterLib::createBaseSymbolTable(spatial_position_is_required);
+
+    std::unordered_set<std::string> curve_name_set(used_curve_names.begin(),
+                                                   used_curve_names.end());
+
+    for (auto const& v : expression_symbol_names)
+    {
+        if (ParameterLib::isBuiltinSymbol(v) || curve_name_set.contains(v))
+        {
+            continue;
+        }
+
+        auto add_scalar = [&v, &symbol_table](double& value)
+        { symbol_table.add_variable(v, value); };
+
+        auto add_vector =
+            [&v, &symbol_table](double* ptr, std::size_t const size)
+        { symbol_table.add_vector(v, ptr, size); };
+
+        auto add_any_variable = BaseLib::Overloaded{
+            [&add_scalar](VariableArray::Scalar* address)
+            { add_scalar(*address); },
+            [&add_vector](VariableArray::KelvinVector* address)
+            {
+                auto constexpr size =
+                    MathLib::KelvinVector::kelvin_vector_dimensions(D);
+                auto& result =
+                    address->template emplace<Eigen::Matrix<double, size, 1>>();
+                add_vector(result.data(), size);
+            },
+            [&add_vector](VariableArray::DeformationGradient* address)
+            {
+                auto constexpr size = MathLib::VectorizedTensor::size(D);
+                auto& result =
+                    address->template emplace<Eigen::Matrix<double, size, 1>>();
+                add_vector(result.data(), size);
+            }};
+
+        Variable const variable = convertStringToVariable(v);
+        variable_array.visitVariable(add_any_variable, variable);
+    }
+
+    ParameterLib::registerCurveWrappers(symbol_table, used_curve_names, curves,
+                                        curve_wrappers);
+    return symbol_table;
 }
 
-template <int D>
-class Function::Implementation
+/// Symbol table storage and compiled expressions for one OpenMP thread.
+/// Each thread receives its own instance so that concurrent evaluations
+/// do not race on the exprtk symbol table or the VariableArray scratch space.
+/// The symbol table has to point to some fixed addresses. Therefore, it cannot
+/// directly use a user-provided VariableArray during evaluation. Instead, a
+/// user-provided VariableArray will be copied to this object before expression
+/// evaluation.
+struct PerThreadData
 {
-public:
+    template <int D>
+    PerThreadData(
+        std::integral_constant<int, D> /*dim_tag*/,
+        std::vector<std::string> const& expression_symbol_names,
+        bool spatial_position_is_required,
+        std::vector<std::string> const& used_curve_names,
+        std::map<std::string,
+                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
+            curves,
+        std::vector<Variable> const& variables_enum,
+        std::vector<Variable>* non_scalar_out,
+        std::vector<std::string> const& value_string_expressions,
+        std::vector<std::pair<std::string, std::vector<std::string>>> const&
+            dvalue_string_expressions)
+        : symbol_table(createSymbolTable<D>(
+              expression_symbol_names, spatial_position_is_required,
+              used_curve_names, curves, variable_array, curve_wrappers)),
+          symbol_table_cache(symbol_table, spatial_position_is_required)
+    {
+        buildCopyOps(variables_enum, non_scalar_out);
+        compileExpressions(value_string_expressions, dvalue_string_expressions);
+    }
+
+    PerThreadData(PerThreadData&& /*other*/)
+    {
+        OGS_FATAL(
+            "MPL's Function property: The internal PerThreadData is not "
+            "move-constructible.");
+    }
+    PerThreadData& operator=(PerThreadData&& other) noexcept = delete;
+    PerThreadData(PerThreadData const&) = delete;
+    PerThreadData& operator=(PerThreadData const&) = delete;
+
+    /// Curve wrappers owned by this thread; must outlive the symbol table.
+    std::map<std::string, ParameterLib::CurveWrapper> curve_wrappers;
+
+    /// Storage for vectorial variables (KelvinVector / DeformationGradient).
+    /// Must be declared before symbol_table so it is initialized first
+    /// (symbol_table stores pointers into variable_array).
+    VariableArray variable_array;
+
+    /// Symbol table holding variable storage. Must be destroyed after
+    /// expressions (exprtk requirement) and after curve_wrappers and
+    /// variable_array.
+    exprtk::symbol_table<double> symbol_table;
+
+    /// Value expressions evaluating the property value.
+    /// Multi-component expressions corresponding one-to-one with the input
+    /// XML entries, e.g.:
+    /// ```xml
+    /// <value>
+    ///   <expression>f1</expression>
+    ///   <expression>f2</expression>
+    /// </value>
+    /// ```
+    std::vector<exprtk::expression<double>> value_expressions;
+
+    /// Derivative expressions w.r.t. a differentiation variable.
+    /// Outer vector is an unordered set of (Variable, expressions) pairs.
+    /// Each pair's second element holds multi-component expressions,
+    /// corresponding one-to-one with the input XML entries, e.g.:
+    /// ```xml
+    /// <dvalue>
+    ///   <variable>T</variable>
+    ///   <expression>df1/dT</expression>
+    ///   <expression>df2/dT</expression>
+    /// </dvalue>
+    /// ```
+    std::vector<std::pair<Variable, std::vector<exprtk::expression<double>>>>
+        dvalue_expressions;
+
+    /// Cached pointers to symbol table variables (t, x, y, z).
+    ParameterLib::SymbolTableCache symbol_table_cache;
+
+    /// Scalar copy operations into this thread's symbol table.
+    std::vector<ScalarCopyOp> scalar_copy_ops;
+
+    /// Update non-scalar (KelvinVector / DeformationGradient) variables in
+    /// this thread's variable_array from \p new_variable_array.
+    void updateNonScalarVariables(
+        std::vector<Variable> const& non_scalar_variables,
+        VariableArray const& new_variable_array);
+
+    /// Evaluate \p expressions against the given variable array and position,
+    /// returning the result as a PropertyDataType.
+    /// \param non_scalar_variables  Non-scalar variables from Implementation
+    ///                              (shared read-only).
+    /// \param new_variable_array    Input variable array for this evaluation.
+    /// \param pos                   Spatial position (coordinates required when
+    ///                              spatial variables x, y, z are used).
+    /// \param t                     Current time.
+    /// \param expressions           Compiled exprtk expressions to evaluate.
+    PropertyDataType evaluate(
+        std::vector<Variable> const& non_scalar_variables,
+        VariableArray const& new_variable_array,
+        ParameterLib::SpatialPosition const& pos, double t,
+        std::vector<exprtk::expression<double>> const& expressions);
+
+    /// Build scalar_copy_ops for this thread.
+    /// \param variables_enum    All variables to visit.
+    /// \param non_scalar_out    If non-null, non-scalar variables are appended
+    ///                          here (pass only for thread 0).
+    void buildCopyOps(std::vector<Variable> const& variables_enum,
+                      std::vector<Variable>* non_scalar_out)
+    {
+        for (auto const variable : variables_enum)
+        {
+            auto const add_non_scalar = [&]()
+            {
+                if (non_scalar_out)
+                {
+                    non_scalar_out->push_back(variable);
+                }
+            };
+
+            variable_array.visitVariable(
+                BaseLib::Overloaded{[&](VariableArray::Scalar* dst)
+                                    {
+                                        scalar_copy_ops.emplace_back(
+                                            variable_array, dst, variable);
+                                    },
+                                    [&](VariableArray::KelvinVector*)
+                                    { add_non_scalar(); },
+                                    [&](VariableArray::DeformationGradient*)
+                                    { add_non_scalar(); }},
+                variable);
+        }
+    }
+
+    /// Compile value and dValue expressions for this thread.
+    /// \param value_string_expressions  Raw value expression strings.
+    /// \param dvalue_string_expressions Variable name paired with its
+    ///                                  derivative expression strings.
+    void compileExpressions(
+        std::vector<std::string> const& value_string_expressions,
+        std::vector<std::pair<std::string, std::vector<std::string>>> const&
+            dvalue_string_expressions)
+    {
+        value_expressions = ParameterLib::compileExpressions(
+            symbol_table, value_string_expressions);
+
+        for (auto const& [variable_name, string_expressions] :
+             dvalue_string_expressions)
+        {
+            if (string_expressions.size() != value_string_expressions.size())
+            {
+                OGS_FATAL(
+                    "The number of dValue expressions ({:d}) for variable "
+                    "'{:s}' does not match the number of value expressions "
+                    "({:d}).",
+                    string_expressions.size(), variable_name,
+                    value_string_expressions.size());
+            }
+            dvalue_expressions.emplace_back(
+                convertStringToVariable(variable_name),
+                ParameterLib::compileExpressions(symbol_table,
+                                                 string_expressions));
+        }
+    }
+};
+
+template <int D>
+struct Function::Implementation
+{
     using Expression = exprtk::expression<double>;
 
-public:
     Implementation(
         int num_threads,
-        std::vector<std::string> const& variables,
+        std::vector<std::string> const& expression_symbol_names,
+        std::vector<Variable> const& variables_enum,
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
             dvalue_string_expressions,
@@ -76,149 +304,21 @@ public:
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);
 
-private:
-    /// Create symbol table for given variables and populates the variable_array
-    /// as needed.
-    exprtk::symbol_table<double> createSymbolTable(
-        std::vector<std::string> const& variables,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves,
-        VariableArray& variable_array);
+    /// Per-thread data; indexed by omp_get_thread_num().
+    std::vector<PerThreadData> per_thread_data;
 
-    /// Create symbol tables for all threads.
-    std::vector<exprtk::symbol_table<double>> createSymbolTables(
-        int num_threads,
-        std::vector<std::string> const& variables,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves);
-
-public:
-    /// Value expressions per thread.
-    /// Multiple expressions are representing vector-valued functions.
-    std::vector<std::vector<Expression>> value_expressions;
-
-    /// Derivative expressions with respect to the variable per thread.
-    /// Multiple expressions are representing vector-valued functions.
-    std::vector<std::vector<std::pair<Variable, std::vector<Expression>>>>
-        dvalue_expressions;
-
-    /// Stores values for evaluation of vectorial quantities per thread. Needed
-    /// for constant pointers for exprtk.
-    std::vector<VariableArray> variable_arrays;
-
-    std::map<std::string, CurveWrapper> _curve_wrappers;
+    /// Non-scalar variables (KelvinVector / DeformationGradient); shared
+    /// read-only across all threads.
+    std::vector<Variable> non_scalar_variables;
 
     bool spatial_position_is_required = false;
 };
 
 template <int D>
-exprtk::symbol_table<double> Function::Implementation<D>::createSymbolTable(
-    std::vector<std::string> const& variables,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    VariableArray& variable_array)
-{
-    exprtk::symbol_table<double> symbol_table;
-    symbol_table.add_constants();
-
-    std::unordered_set<std::string> curve_names;
-    for (auto const& curve : curves)
-    {
-        curve_names.insert(curve.first);
-    }
-
-    std::unordered_set<std::string> used_curves;
-
-    symbol_table.create_variable("t");
-
-    for (auto const& v : variables)
-    {
-        if (v == "t")
-        {
-            continue;
-        }
-        if (v == "x" || v == "y" || v == "z")
-        {
-            symbol_table.create_variable("x");
-            symbol_table.create_variable("y");
-            symbol_table.create_variable("z");
-            spatial_position_is_required = true;
-        }
-        else if (curve_names.contains(v))
-        {
-            used_curves.insert(v);
-        }
-        else
-        {
-            auto add_scalar = [&v, &symbol_table](double& value)
-            { symbol_table.add_variable(v, value); };
-
-            auto add_vector =
-                [&v, &symbol_table](double* ptr, std::size_t const size)
-            { symbol_table.add_vector(v, ptr, size); };
-
-            auto add_any_variable = BaseLib::Overloaded{
-                [&add_scalar](VariableArray::Scalar* address)
-                { add_scalar(*address); },
-                [&add_vector](VariableArray::KelvinVector* address)
-                {
-                    auto constexpr size =
-                        MathLib::KelvinVector::kelvin_vector_dimensions(D);
-                    auto& result = address->template emplace<
-                        Eigen::Matrix<double, size, 1>>();
-                    add_vector(result.data(), size);
-                },
-                [&add_vector](VariableArray::DeformationGradient* address)
-                {
-                    auto constexpr size = MathLib::VectorizedTensor::size(D);
-                    auto& result = address->template emplace<
-                        Eigen::Matrix<double, size, 1>>();
-                    add_vector(result.data(), size);
-                }};
-
-            Variable const variable = convertStringToVariable(v);
-            variable_array.visitVariable(add_any_variable, variable);
-        }
-    }
-
-    for (const auto& name : used_curves)
-    {
-        const auto& curve_ptr = curves.at(name);
-        _curve_wrappers.emplace(name, CurveWrapper(*curve_ptr));
-    }
-    for (auto& [name, wrapper] : _curve_wrappers)
-    {
-        symbol_table.add_function(name, wrapper);
-    }
-    return symbol_table;
-}
-template <int D>
-std::vector<exprtk::symbol_table<double>>
-Function::Implementation<D>::createSymbolTables(
-    int num_threads,
-    std::vector<std::string> const& variables,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
-{
-    std::vector<exprtk::symbol_table<double>> symbol_tables(num_threads);
-
-    for (int thread_id = 0; thread_id < num_threads; ++thread_id)
-    {
-        symbol_tables[thread_id] =
-            createSymbolTable(variables, curves, variable_arrays[thread_id]);
-    }
-
-    return symbol_tables;
-}
-
-template <int D>
 Function::Implementation<D>::Implementation(
     int num_threads,
-    std::vector<std::string> const& variables,
+    std::vector<std::string> const& expression_symbol_names,
+    std::vector<Variable> const& variables_enum,
     std::vector<std::string> const& value_string_expressions,
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
         dvalue_string_expressions,
@@ -226,55 +326,33 @@ Function::Implementation<D>::Implementation(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    variable_arrays.resize(num_threads);
-    value_expressions.resize(num_threads);
-    dvalue_expressions.resize(num_threads);
+    spatial_position_is_required =
+        ParameterLib::hasSpatialVariables(expression_symbol_names);
 
-    auto symbol_tables = createSymbolTables(num_threads, variables, curves);
+    // Determine which curves are actually referenced in the expressions.
+    // The expression symbol names list (from exprtk::collect_variables)
+    // contains both VariableArray field names and curve names as plain
+    // identifiers.
+    auto const used_curve_names =
+        ParameterLib::collectUsedCurveNames(expression_symbol_names, curves);
 
-    // value expressions per thread.
+    per_thread_data.reserve(num_threads);
     for (int thread_id = 0; thread_id < num_threads; ++thread_id)
     {
-        value_expressions[thread_id] = compileExpressions(
-            symbol_tables[thread_id], value_string_expressions);
-    }
-
-    // dValue expressions per thread.
-    for (int thread_id = 0; thread_id < num_threads; ++thread_id)
-    {
-        for (auto const& [variable_name, string_expressions] :
-             dvalue_string_expressions)
-        {
-            dvalue_expressions[thread_id].emplace_back(
-                convertStringToVariable(variable_name),
-                compileExpressions(symbol_tables[thread_id],
-                                   string_expressions));
-        }
+        per_thread_data.emplace_back(
+            std::integral_constant<int, D>{}, expression_symbol_names,
+            spatial_position_is_required, used_curve_names, curves,
+            variables_enum, thread_id == 0 ? &non_scalar_variables : nullptr,
+            value_string_expressions, dvalue_string_expressions);
     }
 }
 
-static void updateVariableArrayValues(std::vector<Variable> const& variables,
-                                      VariableArray const& new_variable_array,
-                                      VariableArray& variable_array)
+void PerThreadData::updateNonScalarVariables(
+    std::vector<Variable> const& non_scalar_variables,
+    VariableArray const& new_variable_array)
 {
-    for (auto const& variable : variables)
+    for (auto const& variable : non_scalar_variables)
     {
-        auto assign_scalar =
-            [&variable, &new_variable_array](VariableArray::Scalar* address)
-        {
-            double const value = *std::get<VariableArray::Scalar const*>(
-                new_variable_array.address_of(variable));
-
-            if (std::isnan(value))
-            {
-                OGS_FATAL(
-                    "Function property: Scalar variable '{:s}' is not "
-                    "initialized.",
-                    variable_enum_to_string[static_cast<int>(variable)]);
-            }
-
-            *address = value;
-        };
         auto assign_kelvin_vector = [&variable, &new_variable_array](
                                         VariableArray::KelvinVector* address)
         {
@@ -345,108 +423,71 @@ static void updateVariableArrayValues(std::vector<Variable> const& variables,
         };
 
         variable_array.visitVariable(
-            BaseLib::Overloaded{assign_scalar, assign_kelvin_vector,
-                                assign_deformation_gradient},
+            BaseLib::Overloaded{
+                [](VariableArray::Scalar*)
+                {
+                    OGS_FATAL(
+                        "Function property: updateNonScalarVariables called "
+                        "with a scalar variable.");
+                },
+                assign_kelvin_vector, assign_deformation_gradient},
             variable);
     }
 }
 
-static PropertyDataType evaluateExpressions(
-    std::vector<Variable> const& variables,
-    VariableArray const& new_variable_array,
-    ParameterLib::SpatialPosition const& pos, double const t,
-    std::vector<exprtk::expression<double>> const& expressions,
-    VariableArray& variable_array, bool const spatial_position_is_required)
+/// Helper to get fixed-size array from expressions for known sizes.
+/// This avoids heap allocation.
+template <std::size_t N>
+static std::array<double, N> evaluateToArray(
+    std::vector<exprtk::expression<double>> const& expressions)
 {
-    std::vector<double> result(expressions.size());
-
-    updateVariableArrayValues(variables, new_variable_array, variable_array);
-
-    std::transform(begin(expressions), end(expressions), begin(result),
-                   [t, &pos, spatial_position_is_required](auto const& e)
-                   {
-                       auto& symbol_table = e.get_symbol_table();
-                       symbol_table.get_variable("t")->ref() = t;
-
-                       if (spatial_position_is_required)
-                       {
-                           if (!pos.getCoordinates())
-                           {
-                               OGS_FATAL(
-                                   "FunctionParameter: The spatial position "
-                                   "has to be set by "
-                                   "coordinates.");
-                           }
-                           auto const coords = pos.getCoordinates().value();
-                           symbol_table.get_variable("x")->ref() = coords[0];
-                           symbol_table.get_variable("y")->ref() = coords[1];
-                           symbol_table.get_variable("z")->ref() = coords[2];
-                       }
-
-                       return e.value();
-                   });
-
-    switch (result.size())
+    std::array<double, N> result{};
+    for (std::size_t i = 0; i < N; ++i)
     {
-        case 1:
-        {
-            return result[0];
-        }
-        case 2:
-        {
-            return Eigen::Vector2d{result[0], result[1]};
-        }
-        case 3:
-        {
-            return Eigen::Vector3d{result[0], result[1], result[2]};
-        }
-        case 4:
-        {
-            Eigen::Matrix<double, 2, 2> m;
-            m = Eigen::Map<Eigen::Matrix<double, 2, 2> const>(result.data(), 2,
-                                                              2);
-            return m;
-        }
-        case 9:
-        {
-            Eigen::Matrix<double, 3, 3> m;
-            m = Eigen::Map<Eigen::Matrix<double, 3, 3> const>(result.data(), 3,
-                                                              3);
-            return m;
-        }
+        result[i] = expressions[i].value();
     }
-    OGS_FATAL("Cannot convert a vector of size {} to a PropertyDataType",
-              result.size());
+    return result;
 }
 
-static std::vector<std::string> collectVariables(
-    std::vector<std::string> const& value_string_expressions,
-    std::vector<std::pair<std::string, std::vector<std::string>>> const&
-        dvalue_string_expressions)
+PropertyDataType PerThreadData::evaluate(
+    std::vector<Variable> const& non_scalar_variables,
+    VariableArray const& new_variable_array,
+    ParameterLib::SpatialPosition const& pos, double const t,
+    std::vector<exprtk::expression<double>> const& expressions)
 {
-    std::vector<std::string> variables;
-
-    auto collect_variables = [&](auto string_expressions)
+    // Fast path: direct offset arithmetic.
+    for (auto const& op : scalar_copy_ops)
     {
-        for (auto const& string_expression : string_expressions)
-        {
-            if (!exprtk::collect_variables(string_expression, variables))
-            {
-                OGS_FATAL(
-                    "Collecting variables from expression '{}' didn't work.",
-                    string_expression);
-            }
-        }
-    };
-
-    collect_variables(value_string_expressions);
-    for (auto const& var_name_string_expression : dvalue_string_expressions)
-    {
-        collect_variables(var_name_string_expression.second);
+        op.apply(new_variable_array);
     }
+    // Fallback for KelvinVector / DeformationGradient variables.
+    updateNonScalarVariables(non_scalar_variables, new_variable_array);
 
-    BaseLib::makeVectorUnique(variables);
-    return variables;
+    // Set symbol table variables using cached pointers.
+    symbol_table_cache.setTimeAndPosition(t, pos);
+
+    // Dispatch on expression count: template specialisations fix N at compile
+    // time, enabling stack allocation in evaluateToArray and branch-free
+    // conversion in fromArray.
+    auto const n = expressions.size();
+    switch (n)
+    {
+        case 1:
+            return fromArray(evaluateToArray<1>(expressions));
+        case 2:
+            return fromArray(evaluateToArray<2>(expressions));
+        case 3:
+            return fromArray(evaluateToArray<3>(expressions));
+        case 4:
+            return fromArray(evaluateToArray<4>(expressions));
+        case 6:
+            return fromArray(evaluateToArray<6>(expressions));
+        case 9:
+            return fromArray(evaluateToArray<9>(expressions));
+        default:
+            OGS_FATAL(
+                "Cannot convert a vector of size {} to a PropertyDataType", n);
+    }
 }
 
 Function::Function(
@@ -460,43 +501,35 @@ Function::Function(
 {
     name_ = std::move(name);
 
-    auto const variables =
-        collectVariables(value_string_expressions, dvalue_string_expressions);
-
-    // filter the strings unrelated to time or spatial position
-    static std::unordered_set<std::string> filter_not_variables = {"t", "x",
-                                                                   "y", "z"};
-    for (auto const& curve : curves)
+    // Collect variables from all expressions (value and dvalue) so the symbol
+    // table is complete even when a variable appears only in a derivative.
+    auto all_exprs = value_string_expressions;
+    for (auto const& [_, exprs] : dvalue_string_expressions)
     {
-        filter_not_variables.insert(curve.first);
+        all_exprs.insert(all_exprs.end(), exprs.begin(), exprs.end());
     }
+    auto const expression_symbol_names =
+        ParameterLib::collectVariables(all_exprs);
 
-    variables_ =
-        variables |
-        std::views::filter([](const std::string& s)
-                           { return !filter_not_variables.contains(s); }) |
+    required_variables_enum_ =
+        expression_symbol_names |
+        std::views::filter(
+            [&curves](std::string const& s)
+            {
+                return !ParameterLib::isBuiltinSymbol(s) && !curves.contains(s);
+            }) |
         std::views::transform([](std::string const& s)
                               { return convertStringToVariable(s); }) |
         ranges::to<std::vector>;
 
-    auto const get_number_omp_threads = []()
-    {
-#ifdef _OPENMP
-        return omp_get_max_threads();
-#else
-        return 1;
-#endif
-    };
-
-    int const num_threads = std::max(BaseLib::getNumberOfAssemblyThreads(),
-                                     get_number_omp_threads());
+    int const num_threads = BaseLib::getNumberOfThreads();
 
     impl2_ = std::make_unique<Implementation<2>>(
-        num_threads, variables, value_string_expressions,
-        dvalue_string_expressions, curves);
+        num_threads, expression_symbol_names, required_variables_enum_,
+        value_string_expressions, dvalue_string_expressions, curves);
     impl3_ = std::make_unique<Implementation<3>>(
-        num_threads, variables, value_string_expressions,
-        dvalue_string_expressions, curves);
+        num_threads, expression_symbol_names, required_variables_enum_,
+        value_string_expressions, dvalue_string_expressions, curves);
 }
 
 std::variant<Function::Implementation<2>*, Function::Implementation<3>*>
@@ -529,19 +562,18 @@ PropertyDataType Function::value(VariableArray const& variable_array,
     return std::visit(
         [&](auto&& impl_ptr)
         {
-            if (thread_id >=
-                static_cast<int>(impl_ptr->value_expressions.size()))
+            if (thread_id >= static_cast<int>(impl_ptr->per_thread_data.size()))
             {
                 OGS_FATAL(
                     "In Function-type property '{:s}' evaluation the "
                     "OMP-thread with id {:d} exceeds the number of allocated "
                     "threads {:d}.",
-                    name_, thread_id, impl_ptr->value_expressions.size());
+                    name_, thread_id, impl_ptr->per_thread_data.size());
             }
-            return evaluateExpressions(variables_, variable_array, pos, t,
-                                       impl_ptr->value_expressions[thread_id],
-                                       impl_ptr->variable_arrays[thread_id],
-                                       impl_ptr->spatial_position_is_required);
+            auto& thread_data = impl_ptr->per_thread_data[thread_id];
+            return thread_data.evaluate(impl_ptr->non_scalar_variables,
+                                        variable_array, pos, t,
+                                        thread_data.value_expressions);
         },
         getImplementationForDimensionOfVariableArray(variable_array));
 }
@@ -559,33 +591,29 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
     return std::visit(
         [&](auto&& impl_ptr)
         {
-            if (thread_id >=
-                static_cast<int>(impl_ptr->dvalue_expressions.size()))
+            if (thread_id >= static_cast<int>(impl_ptr->per_thread_data.size()))
             {
                 OGS_FATAL(
                     "In Function-type property '{:s}' evaluation the "
                     "OMP-thread with id {:d} exceeds the number of allocated "
                     "threads {:d}.",
-                    name_, thread_id, impl_ptr->value_expressions.size());
+                    name_, thread_id, impl_ptr->per_thread_data.size());
             }
-            auto const it = std::find_if(
-                begin(impl_ptr->dvalue_expressions[thread_id]),
-                end(impl_ptr->dvalue_expressions[thread_id]),
+            auto& thread_data = impl_ptr->per_thread_data[thread_id];
+            auto const it = std::ranges::find_if(
+                thread_data.dvalue_expressions,
                 [&variable](auto const& v) { return v.first == variable; });
 
-            if (it == end(impl_ptr->dvalue_expressions[thread_id]))
+            if (it == end(thread_data.dvalue_expressions))
             {
                 OGS_FATAL(
                     "Requested derivative with respect to the variable {:s} "
-                    "not "
-                    "provided for Function-type property {:s}.",
+                    "not provided for Function-type property {:s}.",
                     variable_enum_to_string[static_cast<int>(variable)], name_);
             }
 
-            return evaluateExpressions(variables_, variable_array, pos, t,
-                                       it->second,
-                                       impl_ptr->variable_arrays[thread_id],
-                                       impl_ptr->spatial_position_is_required);
+            return thread_data.evaluate(impl_ptr->non_scalar_variables,
+                                        variable_array, pos, t, it->second);
         },
         getImplementationForDimensionOfVariableArray(variable_array));
 }
