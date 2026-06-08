@@ -511,10 +511,9 @@ TEST_P(MPLFunctionOpenMPTest, DeterministicSameInputEvaluation)
     // analytically known value. This is verified separately for value()
     // and dValue().
 #ifdef _OPENMP
-        std::size_t const num_threads =
-            static_cast<std::size_t>(omp_get_max_threads());
+        int const num_threads = omp_get_max_threads();
 #else
-        std::size_t const num_threads = 1;
+        int const num_threads = 1;
 #endif
 
         MPL::Property const& f = MPL::Function{"test",
@@ -531,13 +530,13 @@ TEST_P(MPLFunctionOpenMPTest, DeterministicSameInputEvaluation)
         std::vector<double> value_results(num_threads);
 
 #pragma omp parallel for
-        for (std::size_t i = 0; i < num_threads; ++i)
+        for (int i = 0; i < num_threads; ++i)
         {
             // all testees are called with the same inputs...
             value_results[i] = f.value<double>(vars, pos, input.t, nan);
         }
 
-        for (std::size_t i = 1; i < num_threads; ++i)
+        for (int i = 1; i < num_threads; ++i)
         {
             // ... and must return the same results
             if (value_results[i] != value_results[0])
@@ -549,14 +548,14 @@ TEST_P(MPLFunctionOpenMPTest, DeterministicSameInputEvaluation)
         std::vector<double> dvalue_results(num_threads);
 
 #pragma omp parallel for
-        for (std::size_t i = 0; i < num_threads; ++i)
+        for (int i = 0; i < num_threads; ++i)
         {
             // same for the derivative: identical inputs on every thread...
             dvalue_results[i] = f.dValue<double>(
                 vars, MPL::Variable::temperature, pos, input.t, nan);
         }
 
-        for (std::size_t i = 1; i < num_threads; ++i)
+        for (int i = 1; i < num_threads; ++i)
         {
             // ... must yield identical results
             if (dvalue_results[i] != dvalue_results[0])
@@ -621,8 +620,9 @@ TEST_P(MPLFunctionOpenMPTest, SequentialParallelEquivalence)
 
         std::vector<std::pair<double, double>> par_results(inputs.size());
 
+        int const num_threads = static_cast<int>(inputs.size());
 #pragma omp parallel for
-        for (std::size_t i = 0; i < inputs.size(); ++i)
+        for (int i = 0; i < num_threads; ++i)
         {
             auto const& inp = inputs[i];
             MPL::VariableArray vars;
@@ -656,8 +656,9 @@ TEST_P(MPLFunctionOpenMPTest, IndependentThreadIsolationWithCurves)
 
         std::vector<double> value_results(inputs.size());
 
+        int const num_threads = static_cast<int>(inputs.size());
 #pragma omp parallel for
-        for (std::size_t i = 0; i < inputs.size(); ++i)
+        for (int i = 0; i < num_threads; ++i)
         {
             auto const& inp = inputs[i];
             MPL::VariableArray vars;
@@ -672,7 +673,7 @@ TEST_P(MPLFunctionOpenMPTest, IndependentThreadIsolationWithCurves)
         std::vector<double> dvalue_results(inputs.size());
 
 #pragma omp parallel for
-        for (std::size_t i = 0; i < inputs.size(); ++i)
+        for (int i = 0; i < num_threads; ++i)
         {
             auto const& inp = inputs[i];
             MPL::VariableArray vars;
