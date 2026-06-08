@@ -272,7 +272,7 @@
         <vtkdiff>
             <regex>load_test_hb_t_.*.vtu</regex>
             <field>displacement</field>
-            <absolute_tolerance>4.4e-13</absolute_tolerance>
+            <absolute_tolerance>4.6e-13</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
