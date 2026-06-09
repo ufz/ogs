@@ -9,6 +9,8 @@
              ((guix licenses)
               #:prefix license:))
 
+(load "manifest-common.scm")
+
 (define current-dir
   (getcwd))
 
@@ -86,7 +88,7 @@
                      (specification->package "mgis")
                      (specification->package "netcdf")
                      (specification->package "netcdf-cxx4")
-                     (specification->package "pybind11@2.10.4")
+                     (specification->package "pybind11@2.13.6")
                      (specification->package "python")
                      (specification->package "range-v3")
                      (specification->package "spdlog")
@@ -95,7 +97,7 @@
                      (specification->package "tfel")
                      (specification->package "zlib")
                      (specification->package "xmlpatch")
-                     (specification->package "metis")
+                     metis-int64
                      (specification->package "googletest")
                      autocheck
                      ;; OGS sources inside container
