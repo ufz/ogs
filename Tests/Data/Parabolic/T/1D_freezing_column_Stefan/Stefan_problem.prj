@@ -93,10 +93,13 @@
                     <value>1.0</value> <!--no porous solid present-->
                 </property>
                 <property>
-                    <name>volume_fraction</name>
-                    <type>TemperatureDependentFraction</type>
-                    <steepness>5</steepness> <!-- 1/K -->
-                    <characteristic_temperature>273.15</characteristic_temperature> <!-- K -->
+                    <name>frozen_liquid_saturation</name>
+                    <type>Sigmoid</type>
+                    <steepness>-5</steepness> <!-- 1/K -->
+                    <midpoint>273.15</midpoint> <!-- K -->
+                    <lower_bound>0</lower_bound>
+                    <upper_bound>1</upper_bound>
+                    <independent_variable>temperature</independent_variable>
                 </property>
                 <property>
                     <name>density</name>

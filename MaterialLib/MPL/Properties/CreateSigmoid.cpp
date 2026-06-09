@@ -23,9 +23,9 @@ std::unique_ptr<Sigmoid> createSigmoid(BaseLib::ConfigTree const& config)
         //! \ogs_file_param{properties__property__Sigmoid__steepness}
         config.getConfigParameter<double>("steepness");
 
-    auto const characteristic_value =
-        //! \ogs_file_param{properties__property__Sigmoid__characteristic_value}
-        config.getConfigParameter<double>("characteristic_value");
+    auto const midpoint =
+        //! \ogs_file_param{properties__property__Sigmoid__midpoint}
+        config.getConfigParameter<double>("midpoint");
 
     auto const lower_bound =
         //! \ogs_file_param{properties__property__Sigmoid__lower_bound}
@@ -58,9 +58,8 @@ std::unique_ptr<Sigmoid> createSigmoid(BaseLib::ConfigTree const& config)
     auto const independent_variable =
         convertStringToVariable(independent_variable_str);
 
-    return std::make_unique<Sigmoid>(name, steepness, characteristic_value,
-                                     lower_bound, upper_bound,
-                                     independent_variable);
+    return std::make_unique<Sigmoid>(name, steepness, midpoint, lower_bound,
+                                     upper_bound, independent_variable);
 }
 
 }  // namespace MaterialPropertyLib

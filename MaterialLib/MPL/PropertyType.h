@@ -44,6 +44,10 @@ enum PropertyType : int
     entry_pressure,
     evaporation_enthalpy,
     fredlund_parameters,
+    /// frozen liquid (ice) saturation, i.e. the fraction of the pore space
+    /// occupied by ice. The corresponding volume fraction is this value times
+    /// the porosity.
+    frozen_liquid_saturation,
     heat_capacity,
     henry_coefficient,
     /// used to compute the hydrodynamic dispersion tensor.
@@ -128,6 +132,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "entry_pressure",
                              "evaporation_enthalpy",
                              "fredlund_parameters",
+                             "frozen_liquid_saturation",
                              "heat_capacity",
                              "henry_coefficient",
                              "longitudinal_dispersivity",

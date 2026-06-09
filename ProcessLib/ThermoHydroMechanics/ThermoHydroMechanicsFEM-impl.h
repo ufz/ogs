@@ -219,9 +219,14 @@ void ThermoHydroMechanicsLocalAssembler<
         vars.temperature = N.dot(T);
         if (frozen_liquid_phase)
         {
-            ip_data.phi_fr =
-                (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
+            auto const porosity =
+                (*medium)[MaterialPropertyLib::PropertyType::porosity]
                     .template value<double>(vars, x_position, t, dt);
+            auto const S_fr =
+                (*medium)[MaterialPropertyLib::PropertyType::
+                              frozen_liquid_saturation]
+                    .template value<double>(vars, x_position, t, dt);
+            ip_data.phi_fr = S_fr * porosity;
         }
     }
 }
@@ -373,20 +378,26 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     crv.dk_rel_dT = 0;
     if (frozen_liquid_phase)
     {
-        ip_data.phi_fr =
-            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                .template value<double>(vars, x_position, t, dt);
+        auto const S_fr =
+            (*medium)
+                [MaterialPropertyLib::PropertyType::frozen_liquid_saturation]
+                    .template value<double>(vars, x_position, t, dt);
+        ip_data.phi_fr = S_fr * porosity;
 
-        double const dphi_fr_dT =
-            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::temperature,
-                    x_position, t, dt);
+        // The Sigmoid returns the frozen liquid (ice) saturation, i.e. the
+        // fraction of the pore space occupied by ice. dS_fr/dT is its
+        // temperature derivative; the absolute frozen volume fraction and its
+        // derivative are obtained by multiplying with the porosity.
+        auto const dS_fr_dT =
+            (*medium)
+                [MaterialPropertyLib::PropertyType::frozen_liquid_saturation]
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::temperature,
+                        x_position, t, dt);
 
-        // Set ice_volume_fraction variable for relative permeability
-        // calculation ice_volume_fraction = fraction of pore space occupied by
-        // ice
-        vars.ice_volume_fraction = ip_data.phi_fr / porosity;
+        // Set frozen_liquid_saturation variable for the relative permeability
+        // calculation (fraction of pore space occupied by ice).
+        vars.frozen_liquid_saturation = S_fr;
 
         crv.k_rel =
             liquid_phase
@@ -394,16 +405,16 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     MaterialPropertyLib::PropertyType::relative_permeability)
                 .template value<double>(vars, x_position, t, dt);
 
-        // dk_rel/dT = (dk_rel/dphi_ice) * (dphi_ice/dT)
-        // where dphi_ice/dT = dphi_fr_dT / porosity
-        auto const dk_rel_dphi_ice =
+        // dk_rel/dT = (dk_rel/dS_fr) * (dS_fr/dT)
+        auto const dk_rel_dS_fr =
             liquid_phase
                 .property(
                     MaterialPropertyLib::PropertyType::relative_permeability)
                 .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::ice_volume_fraction,
+                    vars,
+                    MaterialPropertyLib::Variable::frozen_liquid_saturation,
                     x_position, t, dt);
-        crv.dk_rel_dT = dk_rel_dphi_ice * dphi_fr_dT / porosity;
+        crv.dk_rel_dT = dk_rel_dS_fr * dS_fr_dT;
     }
 
     auto const& b = _process_data.specific_body_force;
@@ -529,25 +540,32 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         double const l_fr = frozen_liquid_value(
             MaterialPropertyLib::PropertyType::specific_latent_heat);
 
-        double const dphi_fr_dT =
-            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                .template dValue<double>(
-                    vars, MaterialPropertyLib::Variable::temperature,
-                    x_position, t, dt);
+        auto const dS_fr_dT =
+            (*medium)
+                [MaterialPropertyLib::PropertyType::frozen_liquid_saturation]
+                    .template dValue<double>(
+                        vars, MaterialPropertyLib::Variable::temperature,
+                        x_position, t, dt);
+        double const dphi_fr_dT = dS_fr_dT * porosity;
 
-        double const d2phi_fr_dT2 =
-            (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                .template d2Value<double>(
-                    vars, MaterialPropertyLib::Variable::temperature,
-                    MaterialPropertyLib::Variable::temperature, x_position, t,
-                    dt);
+        auto const d2S_fr_dT2 =
+            (*medium)
+                [MaterialPropertyLib::PropertyType::frozen_liquid_saturation]
+                    .template d2Value<double>(
+                        vars, MaterialPropertyLib::Variable::temperature,
+                        MaterialPropertyLib::Variable::temperature, x_position,
+                        t, dt);
+        double const d2phi_fr_dT2 = d2S_fr_dT2 * porosity;
 
         double const phi_fr_prev = [&]()
         {
             MaterialPropertyLib::VariableArray vars_prev;
             vars_prev.temperature = T_prev_int_pt;
-            return (*medium)[MaterialPropertyLib::PropertyType::volume_fraction]
-                .template value<double>(vars_prev, x_position, t, dt);
+            auto const S_fr_prev =
+                (*medium)[MaterialPropertyLib::PropertyType::
+                              frozen_liquid_saturation]
+                    .template value<double>(vars_prev, x_position, t, dt);
+            return S_fr_prev * porosity;
         }();
         ip_data.phi_fr_prev = phi_fr_prev;
 

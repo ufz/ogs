@@ -96,10 +96,13 @@
                     <value>1.0</value>    <!-- we sfitch off the solid phase completely, since it is only a melted ice slab that we model -->
                 </property>
                 <property>
-                    <name>volume_fraction</name>
-                    <type>TemperatureDependentFraction</type>
-                    <steepness>5</steepness> <!-- k in the Sigmoid function, typical ref. value is k=2 (not suitable in Stefan problem) -->
-                    <characteristic_temperature>273.15</characteristic_temperature> <!-- melting/freezing temperature T_m -->
+                    <name>frozen_liquid_saturation</name>
+                    <type>Sigmoid</type>
+                    <steepness>-5</steepness> <!-- -k in the Sigmoid function, typical ref. value is k=2 (not suitable in Stefan problem) -->
+                    <midpoint>273.15</midpoint> <!-- melting/freezing temperature T_m -->
+                    <lower_bound>0</lower_bound>
+                    <upper_bound>1</upper_bound>
+                    <independent_variable>temperature</independent_variable>
                 </property>
                 <property>
                     <name>density</name>

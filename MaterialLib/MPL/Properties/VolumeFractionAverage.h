@@ -28,7 +28,10 @@ namespace MaterialPropertyLib
  *
  * where \f$\phi\f$ is the porosity (pore space volume fraction),
  * \f$\phi_\mathrm{p}\f$ is the porous solid skeleton volume fraction,
- * \f$\phi_\mathrm{f}\f$ is the frozen volume fraction,
+ * \f$\phi_\mathrm{f}=\phi\,S_\mathrm{fr}\f$ is the frozen volume fraction,
+ * obtained from the frozen liquid (ice) saturation \f$S_\mathrm{fr}\f$ (the
+ * fraction of the pore space occupied by ice, given by the medium's
+ * frozen_liquid_saturation property),
  * \f$\phi_\mathrm{l}\f$ is the liquid one.
  * \f$\mathrm{R}\f$ stands for the real/pure phase property.
  *

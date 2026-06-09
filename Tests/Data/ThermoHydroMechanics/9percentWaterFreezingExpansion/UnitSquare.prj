@@ -68,7 +68,7 @@
                             <type>Linear</type>
                             <reference_value>1.0</reference_value>
                             <independent_variable>
-                                <variable_name>ice_volume_fraction</variable_name>
+                                <variable_name>frozen_liquid_saturation</variable_name>
                                 <reference_condition>0.0</reference_condition>
                                 <slope>-0.99999</slope>
                             </independent_variable>
@@ -145,10 +145,13 @@
                     <value>0.35</value>
                 </property>
                 <property>
-                    <name>volume_fraction</name>
-                    <type>TemperatureDependentFraction</type>
-                    <steepness>20.0</steepness>
-                    <characteristic_temperature>273.15</characteristic_temperature> <!-- K -->
+                    <name>frozen_liquid_saturation</name>
+                    <type>Sigmoid</type>
+                    <steepness>-20.0</steepness>
+                    <midpoint>273.15</midpoint> <!-- K -->
+                    <lower_bound>0</lower_bound>
+                    <upper_bound>1</upper_bound>
+                    <independent_variable>temperature</independent_variable>
                 </property>
                 <property>
                     <name>density</name>

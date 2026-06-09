@@ -68,7 +68,7 @@
                             <type>Linear</type>
                             <reference_value>1.0</reference_value>
                             <independent_variable>
-                                <variable_name>ice_volume_fraction</variable_name>
+                                <variable_name>frozen_liquid_saturation</variable_name>
                                 <reference_condition>0.0</reference_condition>
                                 <slope>-0.99999</slope>
                             </independent_variable>
@@ -158,11 +158,14 @@
                     <value>0.5</value>
                 </property>
                 <property>
-                    <name>volume_fraction</name>
-                    <type>TemperatureDependentFraction</type>
+                    <name>frozen_liquid_saturation</name>
+                    <type>Sigmoid</type>
                     <!-- High value required s.t. no ice formation happens when temperature oscillates. The former would influence pressure. -->
-                    <steepness>20</steepness>
-                    <characteristic_temperature>273.15</characteristic_temperature>
+                    <steepness>-20</steepness>
+                    <midpoint>273.15</midpoint>
+                    <lower_bound>0</lower_bound>
+                    <upper_bound>1</upper_bound>
+                    <independent_variable>temperature</independent_variable>
                 </property>
                 <property>
                     <name>density</name>

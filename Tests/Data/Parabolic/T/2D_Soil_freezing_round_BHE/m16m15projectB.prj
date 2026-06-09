@@ -99,10 +99,13 @@
                     <value>0.5</value>
                 </property>
                 <property>
-                    <name>volume_fraction</name>
-                    <type>TemperatureDependentFraction</type>
-                    <steepness>2</steepness> <!-- 1/K, it is the k of the sigmoid function -->
-                    <characteristic_temperature>273.15</characteristic_temperature> <!-- K, it is the T_m -->
+                    <name>frozen_liquid_saturation</name>
+                    <type>Sigmoid</type>
+                    <steepness>-2</steepness> <!-- 1/K, it is the -k of the sigmoid function -->
+                    <midpoint>273.15</midpoint> <!-- K, it is the T_m -->
+                    <lower_bound>0</lower_bound>
+                    <upper_bound>1</upper_bound>
+                    <independent_variable>temperature</independent_variable>
                 </property>
                 <property>
                     <name>density</name>

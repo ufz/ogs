@@ -39,12 +39,12 @@ static std::optional<std::pair<double, double>> normalizedState(
 
 Sigmoid::Sigmoid(std::string name,
                  double const steepness,
-                 double const characteristic_value,
+                 double const midpoint,
                  double const lower_bound,
                  double const upper_bound,
                  Variable const independent_variable)
     : steepness_(steepness),
-      characteristic_value_(characteristic_value),
+      midpoint_(midpoint),
       lower_bound_(lower_bound),
       upper_bound_(upper_bound),
       independent_variable_(independent_variable)
@@ -68,7 +68,7 @@ PropertyDataType Sigmoid::value(VariableArray const& variable_array,
     double const X = std::get<double>(variable_array[independent_variable_]);
 
     // Compute sigmoid: (X_u - X_l) / (1 + exp(-k * (X - X_c))) + X_l
-    double const exponent = -steepness_ * (X - characteristic_value_);
+    double const exponent = -steepness_ * (X - midpoint_);
 
     // Exponent large positive -> sigmoid -> lower_bound; avoid exp overflow.
     if (exponent > max_exp_argument)

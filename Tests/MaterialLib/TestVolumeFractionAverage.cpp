@@ -10,7 +10,7 @@
 
 struct ParameterSetIceWaterRock
 {
-    double const k = 1;
+    double const k = -1;        // negative -> frozen fraction decreases with T
     double const T_c = 273.15;  // K
     double const rho_I = 900;   // kg/m³
     double const rho_W = 1000;  // kg/m³
@@ -68,11 +68,14 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_Density)
     prj << "         <value>0.33</value>\n";
     prj << "       </property>\n";
     prj << "       <property>\n";
-    prj << "         <name>volume_fraction</name>\n";
-    prj << "         <type>TemperatureDependentFraction</type>\n";
+    prj << "         <name>frozen_liquid_saturation</name>\n";
+    prj << "         <type>Sigmoid</type>\n";
     prj << "         <steepness>" << water_ice_rock.k << "</steepness>\n";
-    prj << "         <characteristic_temperature>" << water_ice_rock.T_c
-        << "</characteristic_temperature>\n";
+    prj << "         <midpoint>" << water_ice_rock.T_c << "</midpoint>\n";
+    prj << "         <lower_bound>0</lower_bound>\n";
+    prj << "         <upper_bound>1</upper_bound>\n";
+    prj << "         "
+           "<independent_variable>temperature</independent_variable>\n";
     prj << "       </property>\n";
     prj << "       <property>\n";
     prj << "         <name>density</name>\n";
@@ -183,11 +186,13 @@ TEST(MaterialPropertyLib, VolumeFractionAverage_ThermalConductivity)
     prj << "        <value>1.0</value>\n";
     prj << "      </property>\n";
     prj << "      <property>\n";
-    prj << "        <name>volume_fraction</name>\n";
-    prj << "        <type>TemperatureDependentFraction</type>\n";
+    prj << "        <name>frozen_liquid_saturation</name>\n";
+    prj << "        <type>Sigmoid</type>\n";
     prj << "        <steepness>" << water_ice_rock.k << "</steepness>\n";
-    prj << "        <characteristic_temperature>" << water_ice_rock.T_c
-        << "</characteristic_temperature>\n";
+    prj << "        <midpoint>" << water_ice_rock.T_c << "</midpoint>\n";
+    prj << "        <lower_bound>0</lower_bound>\n";
+    prj << "        <upper_bound>1</upper_bound>\n";
+    prj << "        <independent_variable>temperature</independent_variable>\n";
     prj << "      </property>\n";
     prj << "      <property>\n";
     prj << "        <name>thermal_conductivity</name>\n";

@@ -33,7 +33,7 @@ class Sigmoid final : public Property
 public:
     Sigmoid(std::string name,
             double const steepness,
-            double const characteristic_value,
+            double const midpoint,
             double const lower_bound,
             double const upper_bound,
             Variable const independent_variable);
@@ -65,8 +65,8 @@ private:
                         ///< gives an increasing curve, negative k a decreasing
                         ///< one. Has units of \f$1/[X]\f$, i.e. the inverse of
                         ///< the independent variable's unit.
-    double characteristic_value_;    ///< X_c parameter, the midpoint (a.k.a.
-                                     ///< inflection point) of the transition
+    double midpoint_;   ///< X_c parameter, the midpoint (a.k.a. inflection
+                        ///< point) of the transition
     double lower_bound_;             ///< X_l parameter (lower bound)
     double upper_bound_;             ///< X_u parameter (upper bound)
     Variable independent_variable_;  ///< Independent material variable
