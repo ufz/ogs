@@ -251,6 +251,11 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
                                                  local_coordinate_system);
     }
 
+    if (boost::iequals(property_type, "Sigmoid"))
+    {
+        return createSigmoid(config);
+    }
+
     if (boost::iequals(property_type, "TemperatureDependentFraction"))
     {
         return createTemperatureDependentFraction(config);

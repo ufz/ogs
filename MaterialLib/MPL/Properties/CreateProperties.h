@@ -36,6 +36,7 @@
 #include "CreatePorosityFromMassBalance.h"
 #include "CreateSaturationDependentSwelling.h"
 #include "CreateSaturationDependentThermalConductivity.h"
+#include "CreateSigmoid.h"
 #include "CreateSpecificHeatCapacityWithLatentHeat.h"
 #include "CreateStrainDependentPermeability.h"
 #include "CreateTemperatureDependentDiffusion.h"

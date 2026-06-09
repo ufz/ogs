@@ -41,6 +41,7 @@
 #include "RelativePermeability/RelPermUdellNonwettingPhase.h"
 #include "RelativePermeability/RelPermVanGenuchten.h"
 #include "SaturationDependentSwelling.h"
+#include "Sigmoid.h"
 #include "SpecificHeatCapacityWithLatentHeat.h"
 #include "TemperatureDependentDiffusion.h"
 #include "TemperatureDependentFraction.h"
