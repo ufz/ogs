@@ -200,6 +200,7 @@
         "OGS_COVERAGE": "ON",
         "OGS_CTEST_MAX_RUNTIME": "101",
         "OGS_USE_MFRONT": "ON",
+        "OGS_ENABLE_NON_OMP_TEST_VARIANTS": "ON",
         "OGS_CTEST_LABEL_EXCLUDE": "-LE omp"
       }
     },
