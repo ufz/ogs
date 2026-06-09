@@ -107,7 +107,7 @@ environment-pass = [
 "cmake.define.CMAKE_CXX_SCAN_FOR_MODULES" = "OFF"
 
 [tool.cibuildwheel.windows]
-repair-wheel-command = "delvewheel repair --exclude processlibboundaryconditionandsourcetermpythonmodule.dll;processlibboundaryconditionandsourcetermpython.dll -w {dest_dir} -v {wheel}"
+repair-wheel-command = "python {project}/scripts/python/repair_windows_wheel.py -w {dest_dir} {wheel}"
 
 # maybe this should be moved to CMake logic, i.e. disabling both features on win
 [tool.cibuildwheel.windows.config-settings]
