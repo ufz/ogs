@@ -106,6 +106,9 @@ environment-pass = [
 # cc1plus: error: to generate dependencies you must specify either ‘-M’ or ‘-MM’
 "cmake.define.CMAKE_CXX_SCAN_FOR_MODULES" = "OFF"
 
+[tool.cibuildwheel.windows]
+repair-wheel-command = "delvewheel repair --exclude processlibboundaryconditionandsourcetermpythonmodule.dll;processlibboundaryconditionandsourcetermpython.dll -w {dest_dir} -v {wheel}"
+
 # maybe this should be moved to CMake logic, i.e. disabling both features on win
 [tool.cibuildwheel.windows.config-settings]
 "cmake.define.OGS_USE_MFRONT" = "OFF"
