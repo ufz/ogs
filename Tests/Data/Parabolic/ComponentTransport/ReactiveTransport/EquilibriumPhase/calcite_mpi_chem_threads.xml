@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="calcite.prj">
+    <add sel="/*/chemical_system">
+        <chemistry_threads>2</chemistry_threads>
+    </add>
+    <replace msel="/*/test_definition/vtkdiff/regex/text()">calcite_ts_[0-9]*_t_[0-9]*_000000_[0-9]*.vtu</replace>
+</OpenGeoSysProjectDiff>

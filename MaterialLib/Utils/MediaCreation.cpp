@@ -18,7 +18,7 @@ namespace MaterialLib
 
 /// Checks that a string part contains no whitespace.
 /// Throws OGS_FATAL if any whitespace is found.
-void checkForWhitespaces(std::string_view part)
+void checkForWhitespaces(std::string_view const part)
 {
     if (std::ranges::any_of(
             part,
@@ -32,7 +32,7 @@ void checkForWhitespaces(std::string_view part)
 
 /// Creates a range of integers from start to end (inclusive).
 /// Throws OGS_FATAL if end < start.
-auto expandRange(int start, int end)
+auto expandRange(int const start, int const end)
 {
     if (end < start)
     {

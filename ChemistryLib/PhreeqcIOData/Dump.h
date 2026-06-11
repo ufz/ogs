@@ -19,6 +19,8 @@ extern std::string specifyFileName(std::string const& project_file_name,
 
 struct Dump
 {
+    Dump() = default;
+
     explicit Dump(std::string const& project_file_name)
         : dump_file(specifyFileName(project_file_name, ".dmp"))
     {
@@ -43,9 +45,15 @@ struct Dump
     void readDumpFromString(std::string_view dump_content,
                             std::size_t const num_chemical_systems);
 
-    std::string const dump_file;
+    /// Parse dump data for a single chemical system from parallel execution.
+    /// In parallel mode, each PHREEQC instance produces dump for solution 1,
+    /// which needs to be mapped to the correct chemical_system_id.
+    void readDumpFromStringForSystem(std::string_view dump_content,
+                                     std::size_t const chemical_system_id,
+                                     std::size_t const num_chemical_systems);
+
+    std::string dump_file;
     std::vector<std::string> aqueous_solutions_prev;
-    std::string dump_content_stream;  // In-memory dump data from PhreeqC
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

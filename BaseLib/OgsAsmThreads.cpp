@@ -16,9 +16,9 @@
 
 namespace BaseLib
 {
-int getNumberOfAssemblyThreads()
+int getNumberOfThreadsFromEnv(char const* env_var_name)
 {
-    char const* const num_threads_env = std::getenv("OGS_ASM_THREADS");
+    char const* const num_threads_env = std::getenv(env_var_name);
 
     if (!num_threads_env)
     {
@@ -27,7 +27,8 @@ int getNumberOfAssemblyThreads()
 
     if (std::strlen(num_threads_env) == 0)
     {
-        OGS_FATAL("The environment variable OGS_ASM_THREADS is set but empty.");
+        OGS_FATAL("The environment variable {} is set but empty.",
+                  env_var_name);
     }
 
     std::string num_threads_str{num_threads_env};
@@ -40,26 +41,32 @@ int getNumberOfAssemblyThreads()
 
     if (!num_threads_iss)
     {
-        OGS_FATAL("Error parsing OGS_ASM_THREADS (= \"{}\").", num_threads_env);
+        OGS_FATAL("Error parsing {} (= \"{}\").", env_var_name,
+                  num_threads_env);
     }
 
     if (!num_threads_iss.eof())
     {
         OGS_FATAL(
-            "Error parsing OGS_ASM_THREADS (= \"{}\"): not read entirely, the "
+            "Error parsing {} (= \"{}\"): not read entirely, the "
             "remainder is \"{}\"",
+            env_var_name,
             num_threads_env,
             num_threads_iss.str().substr(num_threads_iss.tellg()));
     }
 
     if (num_threads < 1)
     {
-        OGS_FATAL(
-            "You asked (via OGS_ASM_THREADS) to assemble with {} < 1 thread.",
-            num_threads);
+        OGS_FATAL("You asked (via {}) to use {} < 1 thread.", env_var_name,
+                  num_threads);
     }
 
     return num_threads;
+}
+
+int getNumberOfAssemblyThreads()
+{
+    return getNumberOfThreadsFromEnv("OGS_ASM_THREADS");
 }
 
 int getNumberOfThreads()

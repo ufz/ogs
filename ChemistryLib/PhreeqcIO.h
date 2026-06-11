@@ -37,7 +37,9 @@
 #include <memory>
 
 #include "ChemicalSolverInterface.h"
+#include "PhreeqcIOData/ClampingStats.h"
 #include "PhreeqcIOData/Knobs.h"
+#include "PhreeqcIOData/PhreeqcInstancePool.h"
 
 namespace MeshLib
 {
@@ -104,8 +106,10 @@ struct UserPunch;
  *  - _chemical_system holds the per-\c chemical_system_id definition
  *    (aqueous solution, kinetic and equilibrium reactants, exchangers,
  *    surface sites).
- *  - writeInputsToFile(), callPhreeqc(), readOutputsFromFile() implement
- *    PHREEQC I/O.
+ *  - In stream mode, executeSpeciationCalculationParallel() handles both
+ *    serial (pool size 1) and parallel cases via the PhreeqcInstancePool.
+ *  - In file mode, writeInputsToFile(), callPhreeqc(), readOutputsFromFile()
+ *    implement PHREEQC I/O.
  */
 class PhreeqcIO final : public ChemicalSolverInterface
 {
@@ -120,7 +124,9 @@ public:
               std::unique_ptr<Output>&& output,
               std::unique_ptr<Dump>&& dump,
               Knobs&& knobs,
-              bool use_stream_mode);
+              bool use_stream_mode,
+              int num_chemistry_threads,
+              double concentration_warning_threshold);
 
     ~PhreeqcIO();
 
@@ -175,21 +181,51 @@ public:
 private:
     void writeInputsToFile(double const dt);
 
-    std::stringstream writeInputsToStringStream(double const dt);
+    /// Write the global input header (PHASES, KNOBS, SELECTED_OUTPUT,
+    /// USER_PUNCH, RATES) shared by both file and stream mode.
+    void writeInputHeader(std::ostream& os) const;
+
+    /// Write the per-system input block (SOLUTION, EQUILIBRIUM_PHASES,
+    /// KINETICS, SURFACE, EXCHANGE).
+    /// @param os                Output stream to write the PHREEQC input to.
+    /// @param chemical_system_id  Zero-based index of the chemical system
+    ///                            (mesh node/cell) being written.
+    /// @param solution_id       PHREEQC solution number for this system
+    ///                          (1 in stream mode, chemical_system_id+1 in
+    ///                          file mode).
+    /// @param prev_solution_id  Solution number of the previous-timestep
+    ///                          aqueous solution used for SURFACE/EXCHANGE
+    ///                          equilibration.
+    /// @param dt                Time step size in seconds.
+    void writeSystemBlock(std::ostream& os,
+                          std::size_t chemical_system_id,
+                          std::size_t solution_id,
+                          std::size_t prev_solution_id,
+                          double dt) const;
+
+    /// Parse one line of PHREEQC selected output and update the chemical
+    /// system state.  Used by both output-reading code paths (file-mode
+    /// operator>> and stream-mode parseOutputForSystem()).
+    void updateSystemFromOutputLine(std::string_view line,
+                                    std::size_t chemical_system_id);
 
     void setAqueousSolutionsPrevFromDumpString(std::string_view dump_content);
 
     void callPhreeqc() const;
 
-    void callPhreeqcWithString(std::string const& input_content) const;
-
-    std::string_view retrieveSelectedOutputString() const;
-
-    std::string_view retrieveDumpString() const;
-
     void readOutputsFromFile();
 
-    void readOutputsFromStringView(std::string_view output_content);
+    void executeSpeciationCalculationParallel(double const dt);
+
+    std::string generateInputForSystem(std::size_t chemical_system_id,
+                                       double const dt) const;
+
+    void parseOutputForSystem(std::string_view output_content,
+                              std::size_t chemical_system_id);
+
+    void updateChemicalSystemFromOutput(
+        std::vector<double> const& accepted_items,
+        std::size_t chemical_system_id);
 
     PhreeqcIO& operator<<(double const dt)
     {
@@ -197,17 +233,39 @@ private:
         return *this;
     }
 
+    // Member variables are ordered by size (largest first) to minimize padding.
+
+    /// Negative-concentration clamping accumulated over all chemical systems
+    /// within one speciation step. Folded in setChemicalSystemConcrete() and
+    /// flushed (reported + reset) in executeSpeciationCalculation() so that
+    /// clamping is reported once per step rather than once per cell.
+    ClampingStats _clamping_totals;
     std::string const _database;
-    std::unique_ptr<ChemicalSystem> _chemical_system;
+    Knobs const _knobs;
     std::vector<ReactionRate> const _reaction_rates;
+    std::unique_ptr<ChemicalSystem> _chemical_system;
     std::unique_ptr<UserPunch> _user_punch;
     std::unique_ptr<Output> const _output;
     std::unique_ptr<Dump> const _dump;
-    Knobs const _knobs;
+    std::unique_ptr<PhreeqcInstancePool> instance_pool_;
     double _dt = std::numeric_limits<double>::quiet_NaN();
-    const int phreeqc_instance_id = 0;
-    std::size_t _num_chemical_systems = -1;
-    bool _use_stream_mode = false;
+    std::size_t _num_chemical_systems;
+    /// Negative (or zero) warning threshold for clamped concentrations. All
+    /// negative concentrations are clamped to zero unconditionally (PHREEQC
+    /// rejects negatives); this only sets the value below which a clamp is
+    /// reported via an aggregated WARN. Concentrations in [threshold, 0) are
+    /// treated as floating-point noise and clamped silently.
+    double _concentration_warning_threshold;
+    /// ID of the standalone file-mode PHREEQC instance (independent of the
+    /// parallel pool). Created by PhreeqcInstancePool::createInstance() in the
+    /// ctor only in file mode; in stream mode the pool is used instead and
+    /// this stays -1. It must not be hard-coded to 0 because the IPhreeqc
+    /// library hands out monotonically increasing IDs and another consumer
+    /// (e.g. a unit test that constructed an IPhreeqc instance earlier) may
+    /// have used 0 first.
+    int phreeqc_instance_id = -1;
+    int num_chemistry_threads_;
+    bool _use_stream_mode;
 };
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

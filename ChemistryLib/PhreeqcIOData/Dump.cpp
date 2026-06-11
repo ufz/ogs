@@ -3,7 +3,55 @@
 
 #include "Dump.h"
 
-#include <iostream>
+#include <sstream>
+
+#include "BaseLib/Logging.h"
+
+namespace
+{
+/// Parse a PHREEQC dump stream and return accumulated SOLUTION_RAW blocks.
+/// Each block's ID is remapped to num_chemical_systems + (start_id + index) +
+/// 1, matching the convention expected by the next timestep's PHREEQC input.
+std::vector<std::string> parseDumpContent(
+    std::istream& in,
+    std::size_t const num_chemical_systems,
+    std::size_t const start_id = 0)
+{
+    std::vector<std::string> results;
+    std::string line;
+    std::string current;
+    std::size_t id = start_id;
+
+    while (std::getline(in, line))
+    {
+        // Strip trailing \r for robustness when the stream was produced on a
+        // platform with CRLF line endings.
+        if (!line.empty() && line.back() == '\r')
+        {
+            line.pop_back();
+        }
+        if (line.find("USE reaction_pressure none") != std::string::npos)
+        {
+            break;
+        }
+        if (line.find("SOLUTION_RAW") != std::string::npos)
+        {
+            current = "SOLUTION_RAW " +
+                      std::to_string(num_chemical_systems + id + 1) + "\n";
+            continue;
+        }
+        current += line;
+        current += "\n";
+        if (line.find("-gammas") != std::string::npos)
+        {
+            results.push_back(std::move(current));
+            current.clear();
+            ++id;
+        }
+    }
+    return results;
+}
+}  // namespace
 
 namespace ChemistryLib
 {
@@ -24,95 +72,35 @@ void Dump::print(std::ostream& os, std::size_t const num_chemical_systems) const
 void Dump::readDumpFile(std::istream& in,
                         std::size_t const num_chemical_systems)
 {
-    aqueous_solutions_prev.clear();
-    aqueous_solutions_prev.reserve(num_chemical_systems);
-
-    std::string line;
-    std::string aqueous_solution_prev;
-    std::size_t chemical_system_id = 0;
-    while (std::getline(in, line))
-    {
-        if (line.find("USE reaction_pressure none") != std::string::npos)
-        {
-            break;
-        }
-
-        if (line.find("SOLUTION_RAW") != std::string::npos)
-        {
-            aqueous_solution_prev =
-                "SOLUTION_RAW " +
-                std::to_string(num_chemical_systems + chemical_system_id + 1) +
-                "\n";
-            continue;
-        }
-
-        aqueous_solution_prev += line + "\n";
-
-        if (line.find("-gammas") != std::string::npos)
-        {
-            aqueous_solutions_prev.push_back(aqueous_solution_prev);
-            aqueous_solution_prev.clear();
-            ++chemical_system_id;
-        }
-    }
+    aqueous_solutions_prev = parseDumpContent(in, num_chemical_systems);
 }
 
-void Dump::readDumpFromString(std::string_view dump_content,
+void Dump::readDumpFromString(std::string_view const dump_content,
                               std::size_t const num_chemical_systems)
 {
-    aqueous_solutions_prev.clear();
-    aqueous_solutions_prev.reserve(num_chemical_systems);
+    std::istringstream in{std::string(dump_content)};
+    readDumpFile(in, num_chemical_systems);
+}
 
-    std::string_view line;
-    std::string aqueous_solution_prev;
-    std::size_t chemical_system_id = 0;
-    std::size_t pos = 0;
-
-    while (pos < dump_content.size())
+void Dump::readDumpFromStringForSystem(std::string_view const dump_content,
+                                       std::size_t const chemical_system_id,
+                                       std::size_t const num_chemical_systems)
+{
+    if (aqueous_solutions_prev.size() < num_chemical_systems)
     {
-        // Extract next line
-        if (const auto newline_pos = dump_content.find('\n', pos);
-            newline_pos == std::string_view::npos)
-        {
-            line = dump_content.substr(pos);
-            pos = dump_content.size();
-        }
-        else
-        {
-            line = dump_content.substr(pos, newline_pos - pos);
-            pos = newline_pos + 1;
-        }
-
-        // Remove trailing \r if present (Windows line endings)
-        if (!line.empty() && line.back() == '\r')
-        {
-            line.remove_suffix(1);
-        }
-
-        if (line.find("USE reaction_pressure none") != std::string::npos)
-        {
-            break;
-        }
-
-        if (line.find("SOLUTION_RAW") != std::string::npos)
-        {
-            aqueous_solution_prev =
-                "SOLUTION_RAW " +
-                std::to_string(num_chemical_systems + chemical_system_id + 1) +
-                "\n";
-            continue;
-        }
-
-        aqueous_solution_prev += line;
-        aqueous_solution_prev += "\n";
-
-        if (line.find("-gammas") != std::string::npos)
-        {
-            aqueous_solutions_prev.push_back(aqueous_solution_prev);
-            aqueous_solution_prev.clear();
-            ++chemical_system_id;
-        }
+        aqueous_solutions_prev.resize(num_chemical_systems);
     }
+
+    std::istringstream in{std::string(dump_content)};
+    auto parsed =
+        parseDumpContent(in, num_chemical_systems, chemical_system_id);
+    if (parsed.empty())
+    {
+        WARN("No SOLUTION_RAW found in dump for chemical system {}.",
+             chemical_system_id);
+        return;
+    }
+    aqueous_solutions_prev[chemical_system_id] = std::move(parsed[0]);
 }
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib

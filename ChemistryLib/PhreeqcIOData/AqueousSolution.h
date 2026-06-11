@@ -43,7 +43,7 @@
 #include <string>
 #include <vector>
 
-#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "ClampingStats.h"
 #include "Output.h"
 
 namespace MeshLib
@@ -67,7 +67,7 @@ struct Component
 
     std::string const name;
     std::string const chemical_formula;
-    std::unique_ptr<GlobalVector> amount;
+    std::vector<double> amount;
     static const ItemType item_type = ItemType::Component;
 };
 
@@ -94,11 +94,28 @@ struct AqueousSolution
     bool const fixing_pe;
     double const temperature;
     double const pressure;
-    std::unique_ptr<GlobalVector> pH;
+    /// H+ activity 10^-pH, per chemical_system_id.
+    std::vector<double> H_plus_activity;
     MeshLib::PropertyVector<double>* pe;
     double const pe0;
     std::vector<Component> components;
     ChargeBalance const charge_balance;
 };
+
+/// Writes \c concentrations into \c aqueous_solution for the given
+/// \c chemical_system_id and returns the clamping statistics.
+///
+/// Negative component concentrations are clamped to zero: values in
+/// \f$[\text{warning\_threshold}, 0)\f$ are treated as floating-point noise
+/// (e.g. from MPI partitioning or non-monotone advection/diffusion schemes)
+/// and clamped silently, whereas values below \c warning_threshold (which is
+/// negative) are clamped and counted as "severe" in the returned ClampingStats.
+/// The caller is responsible for reporting these (e.g. as an aggregated warning
+/// across all chemical systems). The last entry of \c concentrations is the
+/// H+ activity \f$10^{-\text{pH}}\f$ for the pH "component".
+ClampingStats setAqueousSolution(std::vector<double> const& concentrations,
+                                 std::size_t chemical_system_id,
+                                 AqueousSolution& aqueous_solution,
+                                 double warning_threshold);
 }  // namespace PhreeqcIOData
 }  // namespace ChemistryLib
