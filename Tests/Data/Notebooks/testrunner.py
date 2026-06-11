@@ -24,6 +24,11 @@ def coverage_enabled():
     return value in {"1", "true", "yes", "on"}
 
 
+def petsc_enabled():
+    value = os.getenv("OGS_USE_PETSC", "").lower()
+    return value in {"1", "true", "yes", "on"}
+
+
 def save_to_website(exec_notebook_file):
     output_path_arg = ""
     output_path = ""
@@ -107,10 +112,13 @@ def check_and_modify_frontmatter():
     repo = "https://gitlab.opengeosys.org/ogs/ogs"
     branch = "master"
     binder_tag = "6.5.8-0.8.1"
+    petsc_prefix = ""
+    if petsc_enabled:
+        petsc_prefix = "petsc-"
     if "CI_MERGE_REQUEST_SOURCE_PROJECT_URL" in os.environ:
         repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
         branch = os.environ["CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]
-    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/{binder_tag}?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}%26depth=1"
+    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/{petsc_prefix}{binder_tag}?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}%26depth=1"
     text = """
 <div class="note">
     <p style="margin-top: 0; margin-bottom: 0;">
