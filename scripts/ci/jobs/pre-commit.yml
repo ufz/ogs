@@ -10,3 +10,14 @@ pre commit:
     - uvx pre-commit==${PRE_COMMIT_VERSION} install
     - uvx pre-commit==${PRE_COMMIT_VERSION} run --from-ref ${CI_MERGE_REQUEST_DIFF_BASE_SHA} --to-ref HEAD
     - uvx pre-commit==${PRE_COMMIT_VERSION} run --hook-stage manual clang-format
+  after_script:
+    - git diff --exit-code && exit
+    - |-
+      cat <<EOM
+      You can make a new commit locally with the above changes with the following commands:
+      $ cat >clang-format.patch <<EOF
+      COPY & PASTE DIFF TO TERMINAL
+      EOF
+      $ git apply clang-format.patch
+      $ git commit -a --no-verify
+      EOM
