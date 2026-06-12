@@ -8,6 +8,7 @@
 #include <range/v3/range/concepts.hpp>
 #include <range/v3/view/common.hpp>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -17,7 +18,11 @@
 namespace MeshLib
 {
 
+#if defined(__cpp_lib_constexpr_string) && __cpp_lib_constexpr_string >= 201907L
 inline constexpr std::string vtkGhostTypeString = "vtkGhostType";
+#else
+inline constexpr std::string_view vtkGhostTypeString = "vtkGhostType";
+#endif
 
 class PropertyVectorBase
 {
