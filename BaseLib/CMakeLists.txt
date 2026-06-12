@@ -25,8 +25,17 @@ ogs_add_library(
 )
 
 if(MSVC)
-    find_library(WinMM_LIBRARY WinMM REQUIRED)
-    find_library(DbgHelp_LIBRARY DbgHelp REQUIRED)
+    # Let the toolchain/Windows SDK resolve system libraries by name.
+    # Create IMPORTED library targets that represent the system libraries so LINK_LIBRARIES_ONLY_TARGETS is satisfied.
+    add_library(winmm UNKNOWN IMPORTED)
+    set_target_properties(winmm PROPERTIES
+        IMPORTED_LOCATION "winmm.lib"
+    )
+
+    add_library(dbghelp UNKNOWN IMPORTED)
+    set_target_properties(dbghelp PROPERTIES
+        IMPORTED_LOCATION "dbghelp.lib"
+    )
 endif()
 
 target_link_libraries(
