@@ -8,7 +8,9 @@
 #include <range/v3/range/concepts.hpp>
 #include <range/v3/view/common.hpp>
 #include <string>
-#include <string_view>
+#ifdef _MSC_VER
+#include <string_view>  // for MSVC, we need to include <string_view> to use std::string_view
+#endif
 #include <utility>
 #include <vector>
 
@@ -18,10 +20,11 @@
 namespace MeshLib
 {
 
-#if defined(__cpp_lib_constexpr_string) && __cpp_lib_constexpr_string >= 201907L
-inline constexpr std::string vtkGhostTypeString = "vtkGhostType";
-#else
+#ifdef _MSC_VER  // MSVC does not support inline variables until C++17, so we
+                 // use a constexpr string_view instead of an inline variable.
 inline constexpr std::string_view vtkGhostTypeString = "vtkGhostType";
+#else
+inline constexpr std::string vtkGhostTypeString = "vtkGhostType";
 #endif
 
 class PropertyVectorBase
