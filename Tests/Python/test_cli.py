@@ -3,9 +3,10 @@
 
 import ogs._internal.provide_ogs_cli_tools_via_wheel as ogs_cli_wheel
 import pytest
-from ogs._internal.binaries_list import binaries_list
 
 from . import push_argv
+
+binaries_list = ogs_cli_wheel.binaries_list
 
 
 def _run(program, args):

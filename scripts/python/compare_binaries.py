@@ -12,10 +12,10 @@ if __name__ == "__main__":
     parent_dir = (script_dir / "../../Applications/Python").resolve()
     sys.path.insert(0, str(parent_dir))
 
-    from ogs._internal.binaries_list import binaries_list
+    from ogs._internal.binaries_list import get_binaries_list
 
     cmake_set = set(cmake_binaries)
-    python_set = set(binaries_list)
+    python_set = set(get_binaries_list("ON"))
     missing_in_python = cmake_set - python_set
 
     if missing_in_python:
