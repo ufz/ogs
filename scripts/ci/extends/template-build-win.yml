@@ -16,6 +16,10 @@
     - |
       echo "######################## $(Get-Date) ########################"
       Invoke-Expression $cmake_cmd
+      if ($LASTEXITCODE -ne 0) {
+        exit $LASTEXITCODE
+      }
+
       # Activate .venv
       Invoke-Expression $build_directory_full\.envrc.ps1
       $cmakeArgs = @("--build", "--preset=$env:CMAKE_PRESET")
@@ -25,9 +29,18 @@
       echo "######################## $(Get-Date) ########################"
       Write-Output "Running cmake $($cmakeArgs -join ' ')"
       cmake @cmakeArgs | Tee-Object -FilePath $log_file
+      $cmakeBuildExitCode = $LASTEXITCODE
+      if ($cmakeBuildExitCode -ne 0) {
+        exit $cmakeBuildExitCode
+      }
 
       echo "######################## $(Get-Date) ########################"
-      if($env:BUILD_TESTS -eq "true") { cmake --build --preset=$env:CMAKE_PRESET --target tests }
+      if($env:BUILD_TESTS -eq "true") {
+        cmake --build --preset=$env:CMAKE_PRESET --target tests
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
+      }
       $ctest_group = "Experimental"
       if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }
 

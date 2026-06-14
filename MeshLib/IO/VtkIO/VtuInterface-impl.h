@@ -40,7 +40,7 @@ bool VtuInterface::writeVTU(std::string const& file_name,
     if (_mesh->getProperties().existsPropertyVector<unsigned char>(
             vtkGhostTypeString, MeshLib::MeshItemType::Cell, 1))
     {
-        if (_output_variable_names.find(vtkGhostTypeString) ==
+        if (_output_variable_names.find(std::string(vtkGhostTypeString)) ==
             _output_variable_names.cend())
         {
             _output_variable_names.insert(vtkGhostTypeString);

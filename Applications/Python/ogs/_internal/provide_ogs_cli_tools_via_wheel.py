@@ -3,9 +3,13 @@ import platform
 import subprocess
 import sys
 
+from ogs.config import OGS_USE_PETSC
+
 from . import OGS_USE_PATH
-from .binaries_list import binaries_list
+from .binaries_list import get_binaries_list
 from .get_bin_dir import get_bin_dir
+
+binaries_list = get_binaries_list(OGS_USE_PETSC)
 
 OGS_BIN_DIR = get_bin_dir()
 if platform.system() == "Windows":

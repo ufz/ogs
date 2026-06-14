@@ -142,6 +142,11 @@ int main(int argc, char* argv[])
         BaseLib::extractBaseNameWithoutExtension(pvd_file_arg.getValue()) +
         ".xdmf"};
     std::filesystem::path output_file_path{outdir_arg.getValue()};
+    if (!BaseLib::createOutputDirectory(output_file_path.string()))
+    {
+        OGS_FATAL("Folder '{}' doesn't exist. Failed to create folder.",
+                  output_file_path.string());
+    }
     if (outdir_arg.getValue() != "")
     {
         output_file_path =
