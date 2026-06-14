@@ -1120,7 +1120,9 @@ void PhreeqcIO::executeSpeciationCalculationParallel(double const dt)
         int const phreeqc_id = instance_pool_->getInstanceForThread(thread_id);
 
 #pragma omp for schedule(dynamic)
-        for (std::size_t i = 0; i < _num_chemical_systems; ++i)
+        for (std::ptrdiff_t i = 0;
+             i < static_cast<std::ptrdiff_t>(_num_chemical_systems);
+             ++i)
         {
             if (RunString(phreeqc_id, inputs[i].c_str()) != IPQ_OK)
             {
