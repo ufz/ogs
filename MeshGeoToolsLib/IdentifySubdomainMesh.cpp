@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
+#include <algorithm>
+#include <functional>
 #include <range/v3/algorithm/equal.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <unordered_map>
@@ -48,31 +50,49 @@ std::vector<std::size_t> findElementsInMesh(
     std::vector<std::size_t> const& node_ids,
     std::vector<std::vector<std::size_t>> const& connected_element_ids_per_node)
 {
-    //
-    // Count how often an element is shared by all nodes.
-    //
-    std::unordered_map<std::size_t, int> element_counts(8);
-    for (auto const node_id : node_ids)
+    if (node_ids.empty())
     {
-        for (auto const element_id : connected_element_ids_per_node[node_id])
+        return {};
+    }
+
+    // An element belongs to the subdomain element when it is connected to all
+    // of the given nodes. Use the node with the fewest connected elements as
+    // the candidate set and keep only those candidates that are connected to
+    // every other node. This avoids any allocation that scales with the bulk
+    // mesh size, so the work per call stays cheap inside the parallel loop
+    // over subdomain elements. Only local state is used, hence thread-safe.
+    auto const& smallest_elements =
+        connected_element_ids_per_node[*std::min_element(
+            begin(node_ids), end(node_ids),
+            [&connected_element_ids_per_node](std::size_t const a,
+                                              std::size_t const b)
+            {
+                return connected_element_ids_per_node[a].size() <
+                       connected_element_ids_per_node[b].size();
+            })];
+
+    std::vector<std::size_t> element_ids;
+    for (auto const element_id : smallest_elements)
+    {
+        bool const shared_by_all = std::all_of(
+            begin(node_ids), end(node_ids),
+            [&connected_element_ids_per_node,
+             element_id](std::size_t const node_id)
+            {
+                auto const& elements = connected_element_ids_per_node[node_id];
+                return std::find(begin(elements), end(elements), element_id) !=
+                       end(elements);
+            });
+        if (shared_by_all)
         {
-            element_counts[element_id]++;
+            element_ids.push_back(element_id);
         }
     }
 
-    //
-    // Elements which are shared by as many nodes as the input nodes are the
-    // desired elements.
-    //
-    auto const nnodes = node_ids.size();
-    std::vector<std::size_t> element_ids;
-    for (auto const& pair : element_counts)
-    {
-        if (pair.second == static_cast<int>(nnodes))
-        {
-            element_ids.push_back(pair.first);
-        }
-    }
+    // Sort descending so the result is deterministic across compilers and
+    // parallel execution ordering.
+    std::sort(element_ids.begin(), element_ids.end(),
+              std::greater<std::size_t>());
 
     return element_ids;
 }
@@ -236,8 +256,10 @@ void identifySubdomainMesh(MeshLib::Mesh& subdomain_mesh,
     // entry---this happens if the subdomain mesh lies inside the bulk mesh and
     // has lower dimension.
     // First find out the type, then add/check the CellData or FieldData.
-    if (all_of(begin(bulk_element_ids), end(bulk_element_ids),
-               [](std::vector<std::size_t> const& v) { return v.size() == 1; }))
+    bool const all_single_elements =
+        all_of(begin(bulk_element_ids), end(bulk_element_ids),
+               [](std::vector<std::size_t> const& v) { return v.size() == 1; });
+    if (all_single_elements)
     {
         // All vectors are of size 1, so the data can be flattened and
         // stored in CellData or compared to existing CellData.
@@ -263,8 +285,15 @@ void identifySubdomainMesh(MeshLib::Mesh& subdomain_mesh,
         std::vector<std::size_t> number_of_bulk_element_ids;
         number_of_bulk_element_ids.reserve(bulk_element_ids.size());
 
-        for (std::vector<std::size_t> const& v : bulk_element_ids)
+        for (auto const& v : bulk_element_ids)
         {
+            // The element ids are already sorted descending by
+            // findElementsInMesh(), making the ordering deterministic across
+            // compilers and parallel execution.
+            // TODO: sort the bulk element ids by the positions of the
+            // corresponding subdomain element to the subdomain element, e.g.
+            // left-to-right for 1D subdomains in 2D bulk meshes or 2D
+            // subdomains in 3D bulk meshes.
             number_of_bulk_element_ids.push_back(v.size());
             flat_bulk_element_ids.insert(end(flat_bulk_element_ids), begin(v),
                                          end(v));
