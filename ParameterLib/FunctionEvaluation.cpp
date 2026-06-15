@@ -23,9 +23,9 @@ FunctionEvaluation::FunctionEvaluation(
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
-    auto const spatial_position_is_required = hasSpatialVariables(variables);
-
     auto const expression_symbol_names = collectVariables(expression_strings);
+    auto const spatial_position_is_required =
+        hasSpatialVariables(expression_symbol_names);
     auto const used_curve_names =
         collectUsedCurveNames(expression_symbol_names, curves);
 
