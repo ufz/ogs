@@ -16,5 +16,7 @@ exclude = [
   "gitlab\\.io",
   "overleaf\\.com",
   "web\\.archive\\.org/",
+  "upload\\.wikimedia\\.org",
+  "geo\\.verruijt\\.net",
 ]
 exclude_path = ["public/releases/", "public/docs/featurematrix/bundle/"]
