@@ -20,7 +20,8 @@ class AbstractJacobianAssembler
 public:
     //! Assembles the Jacobian, the matrices \f$M\f$ and \f$K\f$, and the vector
     //! \f$b\f$.
-    virtual void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
+    virtual void assembleWithJacobian(std::size_t const mesh_item_id,
+                                      LocalAssemblerInterface& local_assembler,
                                       double const t, double const dt,
                                       std::vector<double> const& local_x,
                                       std::vector<double> const& local_x_prev,

@@ -201,7 +201,8 @@ struct CompareJacobiansJacobianAssemblerImpl
                   << std::endl;
     }
 
-    void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
+    void assembleWithJacobian(std::size_t const mesh_item_id,
+                              LocalAssemblerInterface& local_assembler,
                               double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_x_prev,
@@ -232,9 +233,10 @@ private:
 };
 
 void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
-    LocalAssemblerInterface& local_assembler, double const t, double const dt,
-    std::vector<double> const& local_x, std::vector<double> const& local_x_prev,
-    std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
+    std::size_t const mesh_item_id, LocalAssemblerInterface& local_assembler,
+    double const t, double const dt, std::vector<double> const& local_x,
+    std::vector<double> const& local_x_prev, std::vector<double>& local_b_data,
+    std::vector<double>& local_Jac_data)
 {
     ++_counter;
 
@@ -242,8 +244,8 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
 
     // First assembly -- the one whose results will be added to the global
     // equation system finally.
-    _asm1->assembleWithJacobian(local_assembler, t, dt, local_x, local_x_prev,
-                                local_b_data, local_Jac_data);
+    _asm1->assembleWithJacobian(mesh_item_id, local_assembler, t, dt, local_x,
+                                local_x_prev, local_b_data, local_Jac_data);
 
     auto const local_b1 = MathLib::toVector(local_b_data);
 
@@ -251,8 +253,8 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     std::vector<double> local_Jac_data2;
 
     // Second assembly -- used for checking only.
-    _asm2->assembleWithJacobian(local_assembler, t, dt, local_x, local_x_prev,
-                                local_b_data2, local_Jac_data2);
+    _asm2->assembleWithJacobian(mesh_item_id, local_assembler, t, dt, local_x,
+                                local_x_prev, local_b_data2, local_Jac_data2);
 
     auto const local_b2 = MathLib::toVector(local_b_data2);
 
@@ -327,7 +329,8 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     if (output)
     {
         _log_file << "\n### counter: " << std::to_string(_counter)
-                  << ", t: " << t << " (begin)\n";
+                  << ", t: " << t << ", element_id: " << mesh_item_id
+                  << " (begin)\n";
     }
 
     if (fatal_error)
@@ -356,6 +359,11 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     {
         dump_py(_log_file, "counter", _counter);
         dump_py(_log_file, "t", t);
+        dump_py(_log_file, "dt", dt);
+        dump_py(_log_file, "element_id", mesh_item_id);
+
+        _log_file << '\n';
+
         dump_py(_log_file, "num_dof", num_dof);
         dump_py(_log_file, "abs_tol", _abs_tol_Jac);
         dump_py(_log_file, "rel_tol", _rel_tol_Jac);
@@ -364,7 +372,6 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
 
         dump_py(_log_file, "local_x", local_x);
         dump_py(_log_file, "local_x_prev", local_x_prev);
-        dump_py(_log_file, "dt", dt);
 
         _log_file << '\n';
 
@@ -446,12 +453,13 @@ CompareJacobiansJacobianAssembler::CompareJacobiansJacobianAssembler(
 }
 
 void CompareJacobiansJacobianAssembler::assembleWithJacobian(
-    LocalAssemblerInterface& local_assembler, double const t, double const dt,
-    std::vector<double> const& local_x, std::vector<double> const& local_x_prev,
-    std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)
+    std::size_t const mesh_item_id, LocalAssemblerInterface& local_assembler,
+    double const t, double const dt, std::vector<double> const& local_x,
+    std::vector<double> const& local_x_prev, std::vector<double>& local_b_data,
+    std::vector<double>& local_Jac_data)
 {
-    impl_->assembleWithJacobian(local_assembler, t, dt, local_x, local_x_prev,
-                                local_b_data, local_Jac_data);
+    impl_->assembleWithJacobian(mesh_item_id, local_assembler, t, dt, local_x,
+                                local_x_prev, local_b_data, local_Jac_data);
 }
 
 std::unique_ptr<AbstractJacobianAssembler>

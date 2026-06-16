@@ -45,7 +45,8 @@ public:
         std::shared_ptr<detail::CompareJacobiansJacobianAssemblerImpl> impl,
         Key);
 
-    void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
+    void assembleWithJacobian(std::size_t const mesh_item_id,
+                              LocalAssemblerInterface& local_assembler,
                               double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_x_prev,

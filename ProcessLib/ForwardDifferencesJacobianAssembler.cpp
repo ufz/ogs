@@ -16,6 +16,7 @@ ForwardDifferencesJacobianAssembler::ForwardDifferencesJacobianAssembler(
 }
 
 void ForwardDifferencesJacobianAssembler::assembleWithJacobian(
+    std::size_t const /*mesh_item_id*/,
     LocalAssemblerInterface& local_assembler, const double t, double const dt,
     const std::vector<double>& local_x_data,
     const std::vector<double>& local_x_prev_data,
