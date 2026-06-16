@@ -19,6 +19,7 @@ The minimum prerequisites to build OGS are:
 - A compiler with [C++23](http://en.wikipedia.org/wiki/C%2B%2B23)-support
 - Python interpreter and libraries (and optionally the `uv` virtual environment management tool)
 - *Optional (but recommended)*: [Ninja](https://ninja-build.org) build tool
+- *Optional*: `yarn` and `node.js` for `web-preview`
 
 <div class='note'>
 

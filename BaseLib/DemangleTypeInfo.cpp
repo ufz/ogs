@@ -10,6 +10,8 @@
 #include <windows.h>
 #include <dbghelp.h>
 // clang-format on
+// Ensure linkage against DbgHelp to resolve UnDecorateSymbolName on MSVC.
+#pragma comment(lib, "Dbghelp.lib")
 #else
 #include <cxxabi.h>
 #endif
