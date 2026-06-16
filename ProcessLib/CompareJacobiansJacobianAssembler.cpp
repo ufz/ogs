@@ -327,7 +327,7 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     if (output)
     {
         _log_file << "\n### counter: " << std::to_string(_counter)
-                  << " (begin)\n";
+                  << ", t: " << t << " (begin)\n";
     }
 
     if (fatal_error)
@@ -355,6 +355,7 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     if (output)
     {
         dump_py(_log_file, "counter", _counter);
+        dump_py(_log_file, "t", t);
         dump_py(_log_file, "num_dof", num_dof);
         dump_py(_log_file, "abs_tol", _abs_tol_Jac);
         dump_py(_log_file, "rel_tol", _rel_tol_Jac);
