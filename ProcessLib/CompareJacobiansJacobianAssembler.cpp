@@ -17,14 +17,10 @@
 
 namespace
 {
-//! Dumps a \c double value as a Python script snippet.
-void dump_py(std::ostream& fh, std::string const& var, double const val)
-{
-    fh << var << " = " << val << '\n';
-}
-
-//! Dumps a \c std::size_t value as a Python script snippet.
-void dump_py(std::ostream& fh, std::string const& var, std::size_t const val)
+//! Dumps a numeric value as a Python script snippet.
+template <typename T>
+    requires std::integral<T> || std::floating_point<T>
+void dump_py(std::ostream& fh, std::string const& var, T const val)
 {
     fh << var << " = " << val << '\n';
 }
@@ -229,7 +225,7 @@ private:
     //! Counter used for identifying blocks in the \c _log_file. It is
     //! incremented upon each call of the assembly routine, i.e., for
     //! each element in each iteration etc.
-    std::size_t _counter = 0;
+    std::ptrdiff_t _counter = -1;
 };
 
 void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
