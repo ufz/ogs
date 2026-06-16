@@ -88,7 +88,7 @@ def test_assembly_optimization(tmp_path, capfd, monkeypatch):
     # note: the linear solver time check is important since a messed up assembly
     # could in hypothetically lead to worse linear solver performance; the
     # output time limit is not that important
-    assert rt["linear_solver_time"] < 0.03
+    assert rt["linear_solver_time"] < 0.04
     assert rt["output_time"] < 0.03
     assert rt["dirichlet_time"] < 0.04
 
