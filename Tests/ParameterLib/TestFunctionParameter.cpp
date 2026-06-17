@@ -188,6 +188,24 @@ TEST_P(FunctionParameterOpenMPTest, SequentialParallelEquivalence)
         gtest_reporter);
 }
 
+// Regression test for deriving the spatial-position requirement from the
+// expression's symbols (commit da6fb8be1b). A purely time-dependent
+// expression must evaluate without any spatial coordinates being set.
+// Before the fix the requirement came from the always-{x,y,z,t} declared
+// variable list, so this threw "no coordinates have been set".
+TEST(FunctionParameterRegressionTest, NonSpatialExpressionNeedsNoCoordinates)
+{
+    ParameterLib::FunctionParameter<double> param("test", {"exp(t)"}, {});
+
+    ParameterLib::SpatialPosition pos;  // intentionally no coordinates set
+    double const t = 1.5;
+
+    std::vector<double> values;
+    ASSERT_NO_THROW(values = param(t, pos));
+    ASSERT_EQ(1u, values.size());
+    EXPECT_NEAR(std::exp(t), values[0], 1e-12);
+}
+
 TEST_P(FunctionParameterOpenMPTest, IndependentThreadIsolationWithCurves)
 {
     auto property = [&](std::vector<std::array<double, 4>> const& inputs)
