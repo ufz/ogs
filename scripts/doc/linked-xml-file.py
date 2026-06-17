@@ -86,10 +86,12 @@ def replace_prefix(tag: str, typetag: str) -> str:
     "Replaces prefix to match the different docs structure for some tags."
 
     type_prefix = "" if typetag is None else typetag + "__"
-    if (prefix := "prj__processes__process__constitutive_relation__") in tag:
-        tag = tag.replace(
-            prefix, "material.solid.constitutive_relation__" + type_prefix
-        )
+    const_rel_src = "prj__processes__process__constitutive_relation"
+    const_rel_tgt = "material__solid__constitutive_relation"
+    if tag == const_rel_src:
+        tag = const_rel_tgt
+    elif (prefix := const_rel_src + "__") in tag:
+        tag = tag.replace(prefix, const_rel_tgt + "__" + type_prefix)
 
     for prefix_end in ["phases__phase__", "phases__", ""]:
         if (prefix := "prj__media__medium__" + prefix_end) in tag:
