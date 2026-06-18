@@ -5,7 +5,7 @@ function(OgsTest)
     endif()
 
     set(options DISABLED NO_TEST_DEFINITION)
-    set(oneValueArgs PROJECTFILE RUNTIME)
+    set(oneValueArgs PROJECTFILE RUNTIME NAME_SUFFIX)
     set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES)
     cmake_parse_arguments(
         OgsTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
@@ -72,8 +72,10 @@ function(OgsTest)
         endif()
     endif()
 
-    # Append short hash of the patch files to the test name.
-    if(OgsTest_PATCH_FILES)
+    if(DEFINED OgsTest_NAME_SUFFIX)
+        set(TEST_NAME "${TEST_NAME}-${OgsTest_NAME_SUFFIX}")
+    elseif(OgsTest_PATCH_FILES)
+        # Append short hash of the patch files to the test name.
         string(SHA1 _patches_hash "${OgsTest_PATCH_FILES}")
         string(SUBSTRING "${_patches_hash}" 0 4 _short_patches_hash)
         set(TEST_NAME "${TEST_NAME}_${_short_patches_hash}")
