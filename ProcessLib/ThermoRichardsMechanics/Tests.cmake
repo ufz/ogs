@@ -77,40 +77,14 @@ if(OGS_USE_MPI)
         WRAPPER mpirun -np 2
         RUNTIME 10
     )
-endif()
-
-AddTest(
-    NAME ParallelFEM_ThermoRichardsMechanics_point_heat_injection
-    PATH ThermoRichardsMechanics/PointHeatSource
-    RUNTIME 5
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS -p point_heat_source_2D_non_submesh_r_output.xml point_heat_source_2D.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 3
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    LABELS "petsc-mumps"
-    DIFF_DATA
-    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu displacement displacement 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu pressure pressure 1e-10 1.0e-6
-    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu temperature temperature 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu epsilon epsilon 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_0.vtu PointHeatSource_ts_10_t_50000_000000_0.vtu sigma sigma 1e-10 1.0e-6
-#
-    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu displacement displacement 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu pressure pressure 1e-10 1.0e-6
-    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu temperature temperature 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu epsilon epsilon 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_1.vtu PointHeatSource_ts_10_t_50000_000000_1.vtu sigma sigma 1e-10 1.0e-6
-#
-    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu displacement displacement 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu pressure pressure 1e-10 1.0e-6
-    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu temperature temperature 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
-    PointHeatSource_ts_10_t_50000_000000_2.vtu PointHeatSource_ts_10_t_50000_000000_2.vtu sigma sigma 1e-10 1.0e-6
-)
-
-if(OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE ThermoRichardsMechanics/PointHeatSource/point_heat_source_2D.prj
+        PATCH_FILES point_heat_source_2D_non_submesh_r_output.xml
+        NAME_SUFFIX non_submesh_r_output
+        WRAPPER mpirun -np 3
+        RUNTIME 5
+        LABELS "petsc-mumps"
+    )
     OgsTest(
         PROJECTFILE
             ThermoRichardsMechanics/PointHeatSource/point_heat_source_2D_gml.prj
@@ -132,17 +106,15 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
 endif()
 
 if(NOT OGS_USE_LIS)
-OgsTest(PROJECTFILE ThermoRichardsMechanics/BodyForce/square_total_stress_test.xml RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/BodyForce/square_total_stress_test.xml RUNTIME 1)
+    OgsTest(
+        PROJECTFILE ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM/cube_1e3.prj
+        PATCH_FILES 3D_axially_symmetric_fail_test_patch.xml
+        NAME_SUFFIX axially_symmetric_fail
+        PROPERTIES
+            PASS_REGULAR_EXPRESSION "3D mesh cannot be axially symmetric."
+    )
 
-AddTest(
-    NAME TRM_3D_and_axially_symmetric
-    PATH ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM
-    RUNTIME 1
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS -p 3D_axially_symmetric_fail_test_patch.xml cube_1e3.prj
-    PROPERTIES
-        PASS_REGULAR_EXPRESSION "3D mesh cannot be axially symmetric."
-)
 endif()
 
 if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
