@@ -1,0 +1,40 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="Stefan_problem.prj">
+    <!-- Replace the TemperatureDependentFraction (Sigmoid, k=5, T_c=273.15,
+         S_r=0) volume_fraction property with an analytically identical MPL
+         Function. This exercises Function::value/dValue/d2Value end-to-end in
+         the THM freezing assembly. With porosity=1 the ice volume fraction
+         equals the sigmoid shape phi = 1/(1+exp(k(T-T_c))). Derivatives are
+         written in the numerically stable phi*(1-phi) form:
+           dphi/dT   = -k phi (1-phi)
+           d2phi/dT2 =  k^2 phi (1-phi) (1-2 phi) -->
+    <remove sel="/*/media/medium/properties/property/name[text()=&quot;volume_fraction&quot;]/.." />
+    <add sel="/*/media/medium/properties">
+        <property>
+            <name>volume_fraction</name>
+            <type>Function</type>
+            <value>
+                <expression>1 / (1 + exp(5 * (temperature - 273.15)))</expression>
+            </value>
+            <dvalue>
+                <variable_name>temperature</variable_name>
+                <expression>-5 * (1 / (1 + exp(5 * (temperature - 273.15)))) * (1 - 1 / (1 + exp(5 * (temperature - 273.15))))</expression>
+            </dvalue>
+            <d2value>
+                <variable_name>temperature</variable_name>
+                <variable_name>temperature</variable_name>
+                <expression>25 * (1 / (1 + exp(5 * (temperature - 273.15)))) * (1 - 1 / (1 + exp(5 * (temperature - 273.15)))) * (1 - 2 / (1 + exp(5 * (temperature - 273.15))))</expression>
+            </d2value>
+        </property>
+    </add>
+    <replace sel="/*/time_loop/output/prefix/text()">Stefan_problem_Function</replace>
+    <!-- Point the vtkdiff regression files at the renamed output; the source
+         Stefan_problem_Function_ts_*.vtu are relative symlinks to the trusted
+         Sigmoid references. -->
+    <replace sel="/*/test_definition/vtkdiff[1]/file/text()">Stefan_problem_Function_ts_51_t_46000000.000000.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[2]/file/text()">Stefan_problem_Function_ts_432_t_427000000.000000.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[3]/file/text()">Stefan_problem_Function_ts_51_t_46000000.000000.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[4]/file/text()">Stefan_problem_Function_ts_432_t_427000000.000000.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[5]/file/text()">Stefan_problem_Function_ts_51_t_46000000.000000.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[6]/file/text()">Stefan_problem_Function_ts_432_t_427000000.000000.vtu</replace>
+</OpenGeoSysProjectDiff>
