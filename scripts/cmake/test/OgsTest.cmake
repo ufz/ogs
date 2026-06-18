@@ -6,7 +6,7 @@ function(OgsTest)
 
     set(options DISABLED NO_TEST_DEFINITION)
     set(oneValueArgs PROJECTFILE RUNTIME NAME_SUFFIX)
-    set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES)
+    set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES EXECUTABLE_ARGS)
     cmake_parse_arguments(
         OgsTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -92,6 +92,9 @@ function(OgsTest)
     foreach(_patch ${OgsTest_PATCH_FILES})
         list(APPEND _exe_args -p ${OgsTest_SOURCE_DIR}/${_patch})
     endforeach()
+    if(OgsTest_EXECUTABLE_ARGS)
+        list(APPEND _exe_args ${OgsTest_EXECUTABLE_ARGS})
+    endif()
 
     current_dir_as_list(ProcessLib labels)
     if(OgsTest_LABELS)
