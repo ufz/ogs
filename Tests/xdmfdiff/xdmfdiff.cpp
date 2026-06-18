@@ -26,7 +26,7 @@ struct Args
     bool const verbose;
     bool const meshcheck;
     double const abs_err_thr;
-    double const rel_err_thr;
+    double const rel_err_thr;  // TODO: not used
     std::string const xdmf_input_a;
     std::string const xdmf_input_b;
     std::string const data_array_a;

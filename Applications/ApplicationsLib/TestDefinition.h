@@ -26,12 +26,23 @@ public:
                    std::string const& reference_path,
                    std::string const& output_directory);
 
+    /// Runs all configured test command lines.
     OGS_EXPORT_SYMBOL bool runTests() const;
+
+    /// Returns all output files referenced by the configured test definitions.
     std::vector<std::string> const& getOutputFiles() const;
+
+    /// Returns the number of configured test command lines.
     std::size_t numberOfTests() const;
 
 private:
-    std::vector<std::string> _command_lines;
+    struct CommandLine
+    {
+        std::string diff_tool_name;
+        std::string command_line;
+    };
+
+    std::vector<CommandLine> _command_lines;
     std::vector<std::string> _output_files;
 };
 }  // namespace ApplicationsLib

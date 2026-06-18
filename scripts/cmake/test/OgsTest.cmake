@@ -158,6 +158,10 @@ macro(_ogs_add_test TEST_NAME)
         # from venv.
         set(_ogs_exe ogs)
     endif()
+    set(_diff_tool_environment VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>)
+    if(TARGET xdmfdiff)
+        list(APPEND _diff_tool_environment XDMFDIFF_EXE=$<TARGET_FILE:xdmfdiff>)
+    endif()
 
     add_test(
         NAME ${TEST_NAME}
@@ -176,7 +180,7 @@ macro(_ogs_add_test TEST_NAME)
         ${TEST_NAME}
         PROPERTIES ${OgsTest_PROPERTIES}
                    ENVIRONMENT
-                   VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
+                   "${_diff_tool_environment}"
                    COST
                    ${OgsTest_RUNTIME}
                    DISABLED
