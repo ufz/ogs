@@ -6,7 +6,7 @@ function(OgsTest)
 
     set(options DISABLED NO_TEST_DEFINITION)
     set(oneValueArgs PROJECTFILE RUNTIME)
-    set(multiValueArgs WRAPPER PROPERTIES LABELS)
+    set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES)
     cmake_parse_arguments(
         OgsTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -72,6 +72,14 @@ function(OgsTest)
         endif()
     endif()
 
+    # Append short hash of the patch files to the test name.
+    if(OgsTest_PATCH_FILES)
+        string(SHA1 _patches_hash "${OgsTest_PATCH_FILES}")
+        string(SUBSTRING "${_patches_hash}" 0 4 _short_patches_hash)
+        set(TEST_NAME "${TEST_NAME}_${_short_patches_hash}")
+        message(DEBUG "Test name is already defined. New test name: ${TEST_NAME}")
+    endif()
+
     if(OgsTest_NO_TEST_DEFINITION)
         set(_exe_args ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
     else()
@@ -79,6 +87,9 @@ function(OgsTest)
                       ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
         )
     endif()
+    foreach(_patch ${OgsTest_PATCH_FILES})
+        list(APPEND _exe_args -p ${OgsTest_SOURCE_DIR}/${_patch})
+    endforeach()
 
     current_dir_as_list(ProcessLib labels)
     if(OgsTest_LABELS)
