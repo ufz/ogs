@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <OpenGeoSysProject>
   <meshes>
-    <mesh>cube_1x1x1_hex_1e1.vtu</mesh>
-    <mesh>cube_1x1x1_hex_1e1_left.vtu</mesh>
+    <mesh>cube_1x1x1_hex_1e0.vtu</mesh>
+    <mesh>cube_1x1x1_hex_1e0_left.vtu</mesh>
   </meshes>
   <geometry>cube_1x1x1.gml</geometry>
   <processes>
@@ -53,10 +53,10 @@
     </processes>
     <output>
       <type>VTK</type>
-      <prefix>1e1_{:meshname}</prefix>
+      <prefix>1e0_{:meshname}</prefix>
       <suffix>_ts_{:timestep}_t_{:time}</suffix>
       <meshes>
-        <mesh>cube_1x1x1_hex_1e1</mesh>
+        <mesh>cube_1x1x1_hex_1e0</mesh>
       </meshes>
       <geometrical_sets>
         <!-- points -->
@@ -203,7 +203,8 @@
       <initial_condition>p0</initial_condition>
       <boundary_conditions>
         <boundary_condition>
-          <mesh>cube_1x1x1_hex_1e1_left</mesh>
+          <geometrical_set>cube_1x1x1_geometry</geometrical_set>
+          <geometry>left</geometry>
           <type>Dirichlet</type>
           <parameter>p_Dirichlet_left</parameter>
         </boundary_condition>
@@ -240,14 +241,4 @@
       </petsc>
     </linear_solver>
   </linear_solvers>
-  <test_definition>
-    <vtkdiff>
-      <file>1e1_cube_1x1x1_hex_1e1_ts_1_t_1.000000.vtu</file>
-      <reference_file>cube_1x1x1_hex_1e1.vtu</reference_file>
-      <field>pressure</field>
-      <reference_field>Linear_1_to_minus1</reference_field>
-      <absolute_tolerance>1e-15</absolute_tolerance>
-      <relative_tolerance>1e-15</relative_tolerance>
-    </vtkdiff>
-  </test_definition>
 </OpenGeoSysProject>

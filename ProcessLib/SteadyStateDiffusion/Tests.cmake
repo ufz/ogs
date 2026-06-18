@@ -121,35 +121,26 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
     )
 endforeach()
 
-foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
-    set(RUNTIME 10)
-    if("${mesh_size}" STREQUAL "1e6")
-        set(RUNTIME 75)
-    endif()
-    AddTest(
-        NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
-        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        RUNTIME ${RUNTIME}
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_${mesh_size}.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
-    )
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
+        set(RUNTIME 10)
+        if("${mesh_size}" STREQUAL "1e6")
+            set(RUNTIME 75)
+        endif()
+        OgsTest(
+            PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}.prj
+            RUNTIME ${RUNTIME}
+            NAME_SUFFIX ${mesh_size}
+        )
 
-    AddTest(
-        NAME SteadyStateDiffusion_cube_1x1x1_Neumann_${mesh_size}
-        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        RUNTIME ${RUNTIME}
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-2 1e-2
-    )
-endforeach()
+        OgsTest(
+            PROJECTFILE
+                Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_neumann.prj
+            RUNTIME ${RUNTIME}
+            NAME_SUFFIX ${mesh_size}_Neumann
+        )
+    endforeach()
+endif()
 
 # CG TriangularMatrix test
 foreach(matrix lower upper lowerupper)
@@ -188,148 +179,87 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e0_quadratic_hex.prj)
 endif()
 
-# SQUARE 1x1 GROUNDWATER FLOW TESTS
-foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
-    AddTest(
-        NAME SteadyStateDiffusion_square_1x1_${mesh_size}
-        PATH Elliptic/square_1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS -p square_${mesh_size}.xml square_1e0.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    # SQUARE 1x1 GROUNDWATER FLOW TESTS
+    foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
+        OgsTest(
+            PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+            PATCH_FILES square_${mesh_size}.xml
+            NAME_SUFFIX ${mesh_size}
+        )
+
+        OgsTest(
+            PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+            PATCH_FILES square_${mesh_size}_neumann.xml
+            NAME_SUFFIX ${mesh_size}_Neumann
+        )
+    endforeach()
+
+    foreach(mesh_size 1e5 1e6)
+        set(RUNTIME 30)
+        if("${mesh_size}" STREQUAL "1e6")
+            set(RUNTIME 90)
+        endif()
+        OgsTest(
+            PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+            PATCH_FILES square_${mesh_size}_neumann.xml
+            RUNTIME ${RUNTIME}
+            NAME_SUFFIX ${mesh_size}_Neumann
+        )
+    endforeach()
+
+    OgsTest(
+        PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+        PATCH_FILES square_1e5.xml
+        RUNTIME 2
+        NAME_SUFFIX 1e5
     )
 
-    AddTest(
-        NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
-        PATH Elliptic/square_1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-1 1e-1
-    )
-endforeach()
-
-foreach(mesh_size 1e5 1e6)
-    set(RUNTIME 30)
-    if("${mesh_size}" STREQUAL "1e6")
-        set(RUNTIME 90)
-    endif()
-    AddTest(
-        NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
-        PATH Elliptic/square_1x1_SteadyStateDiffusion
-        RUNTIME ${RUNTIME}
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-02 1e-02
-    )
-endforeach()
-
-AddTest(
-    NAME SteadyStateDiffusion_square_1x1_1e5
-    PATH Elliptic/square_1x1_SteadyStateDiffusion
-    RUNTIME 2
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS -p square_1e5.xml square_1e0.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_1x1_quad_1e5.vtu square_1e5_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1.2e-13 1e-16
-)
-
-# The largest test is less accurate
-AddTest(
-    NAME SteadyStateDiffusion_square_1x1_1e6
-    PATH Elliptic/square_1x1_SteadyStateDiffusion
-    RUNTIME 15
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS -p square_1e6.xml square_1e0.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_1x1_quad_1e6.vtu square_1e6_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 3e-12 1e-16
-)
-
-# LINE 1 GROUNDWATER FLOW TESTS
-foreach(mesh_size 1e1)
-    AddTest(
-        NAME SteadyStateDiffusion_line_1_${mesh_size}
-        PATH Elliptic/line_1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_${mesh_size}.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
+    # The largest test is less accurate
+    OgsTest(
+        PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+        PATCH_FILES square_1e6.xml
+        RUNTIME 15
+        NAME_SUFFIX 1e6
     )
 
-    AddTest(
-        NAME SteadyStateDiffusion_line_1_Neumann_${mesh_size}
-        PATH Elliptic/line_1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
-    )
-    if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    # LINE 1 GROUNDWATER FLOW TESTS
+    foreach(mesh_size 1e1)
+        OgsTest(
+            PROJECTFILE Elliptic/line_1_SteadyStateDiffusion/line_${mesh_size}.prj
+            NAME_SUFFIX ${mesh_size}
+        )
+
+        OgsTest(
+            PROJECTFILE Elliptic/line_1_SteadyStateDiffusion/line_${mesh_size}_neumann.prj
+            NAME_SUFFIX ${mesh_size}_Neumann
+        )
         OgsTest(PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/drainage_excavation.prj)
-    endif()
-    AddTest(
-        NAME SteadyStateDiffusion_line_1_Robin_Right_Picard_${mesh_size}
-        PATH Elliptic/line_1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_${mesh_size}_robin_right_picard.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_right_picard_ts_1_t_1.000000.vtu D1_left_N1_right pressure 4e-14 2e-14
-    )
+        OgsTest(
+            PROJECTFILE
+                Elliptic/line_1_SteadyStateDiffusion/line_${mesh_size}_robin_right_picard.prj
+            NAME_SUFFIX ${mesh_size}_Robin_Right_Picard
+        )
 
-    AddTest(
-        NAME SteadyStateDiffusion_line_1_Robin_Left_Picard_${mesh_size}
-        PATH Elliptic/line_1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_${mesh_size}_robin_left_picard.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_robin_left_picard_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
-    )
+        OgsTest(
+            PROJECTFILE
+                Elliptic/line_1_SteadyStateDiffusion/line_${mesh_size}_robin_left_picard.prj
+            NAME_SUFFIX ${mesh_size}_Robin_Left_Picard
+        )
 
-    AddTest(
-        NAME SteadyStateDiffusion_line_1_Time_Dep_Dirichlet_${mesh_size}
-        PATH Elliptic/line_1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_${mesh_size}_time_dep_dirichlet.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_ts_1_t_1.000000.vtu t_1s pressure 1e-14 1e-14
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_ts_5_t_5.000000.vtu t_5s pressure 1e-14 1e-14
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_dirichlet_ts_10_t_10.000000.vtu t_10s pressure 1e-14 1e-14
-    )
+        OgsTest(
+            PROJECTFILE
+                Elliptic/line_1_SteadyStateDiffusion/line_${mesh_size}_time_dep_dirichlet.prj
+            NAME_SUFFIX ${mesh_size}_Time_Dep_Dirichlet
+        )
 
-    AddTest(
-        NAME SteadyStateDiffusion_line_1_Time_Dep_Neumann_${mesh_size}
-        PATH Elliptic/line_1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_${mesh_size}_time_dep_neumann.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_ts_1_t_1.000000.vtu t_1s pressure 1e-14 1e-14
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_ts_5_t_5.000000.vtu t_5s pressure 1e-14 1e-14
-        line_1_time_dep_dirichlet.vtu line_${mesh_size}_time_dep_neumann_ts_10_t_10.000000.vtu t_10s pressure 1e-14 1e-14
-    )
-endforeach()
+        OgsTest(
+            PROJECTFILE
+                Elliptic/line_1_SteadyStateDiffusion/line_${mesh_size}_time_dep_neumann.prj
+            NAME_SUFFIX ${mesh_size}_Time_Dep_Neumann
+        )
+    endforeach()
+endif()
 
 # Some Neumann BC tests
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
@@ -483,167 +413,103 @@ if(OGS_USE_MPI)
             EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/2/cube_1e4_anisotropic_mpi.xml
         WRAPPER mpirun -np 2
     )
+    # Single core
+    # CUBE 1x1x1 GROUNDWATER FLOW TESTS
+    foreach(mesh_size 1e0 1e1 1e2 1e3)
+        if("${mesh_size}" STREQUAL "1e0")
+            OgsTest(
+                PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e0.prj
+                WRAPPER mpirun -np 1
+            )
+        else()
+            OgsTest(
+                PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_processed.prj
+                NAME_SUFFIX ${mesh_size}
+                WRAPPER mpirun -np 1
+            )
+        endif()
+        OgsTest(
+            PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_neumann.prj
+            WRAPPER mpirun -np 1
+        )
+    endforeach()
+
+    # TODO: Parallel LARGE tests not tested!
+    foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
+        set(RUNTIME 10)
+        if("${mesh_size}" STREQUAL "1e5")
+            set(RUNTIME 55)
+        endif()
+        if("${mesh_size}" STREQUAL "1e6")
+            set(RUNTIME 430)
+        endif()
+        OgsTest(
+            PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}.prj
+            RUNTIME ${RUNTIME}
+            WRAPPER mpirun -np 1
+        )
+        OgsTest(
+            PROJECTFILE
+                Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_neumann.prj
+            RUNTIME ${RUNTIME}
+            WRAPPER mpirun -np 1
+        )
+    endforeach()
+
+    # SQUARE 1x1 GROUNDWATER FLOW TESTS
+    foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
+        OgsTest(
+            PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+            PATCH_FILES square_${mesh_size}.xml
+            WRAPPER mpirun -np 1
+            NAME_SUFFIX ${mesh_size}
+        )
+
+        OgsTest(
+            PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+            PATCH_FILES square_${mesh_size}_neumann.xml
+            WRAPPER mpirun -np 1
+            NAME_SUFFIX ${mesh_size}_Neumann
+        )
+    endforeach()
+
+    foreach(mesh_size 1e5 1e6)
+        set(RUNTIME 65)
+        if("${mesh_size}" STREQUAL "1e6")
+            set(RUNTIME 450)
+        endif()
+        OgsTest(
+            PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+            PATCH_FILES square_${mesh_size}.xml
+            RUNTIME ${RUNTIME}
+            WRAPPER mpirun -np 1
+            NAME_SUFFIX ${mesh_size}
+        )
+
+        OgsTest(
+            PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e0.prj
+            PATCH_FILES square_${mesh_size}_neumann.xml
+            RUNTIME ${RUNTIME}
+            WRAPPER mpirun -np 1
+            NAME_SUFFIX ${mesh_size}_Neumann
+        )
+    endforeach()
+
+    # LINE 1 GROUNDWATER FLOW TESTS
+    foreach(mesh_size 1e1)
+        OgsTest(
+            PROJECTFILE Elliptic/line_1_SteadyStateDiffusion/line_${mesh_size}.prj
+            WRAPPER mpirun -np 1
+            NAME_SUFFIX ${mesh_size}
+        )
+
+        OgsTest(
+            PROJECTFILE Elliptic/line_1_SteadyStateDiffusion/line_${mesh_size}_neumann.prj
+            WRAPPER mpirun -np 1
+            NAME_SUFFIX ${mesh_size}_Neumann
+        )
+    endforeach()
 endif()
-
-# Single core
-# CUBE 1x1x1 GROUNDWATER FLOW TESTS
-foreach(mesh_size 1e0 1e1 1e2 1e3)
-    AddTest(
-        NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
-        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_${mesh_size}.xml
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu ${mesh_size}_cube_1x1x1_hex_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-    )
-
-    AddTest(
-        NAME SteadyStateDiffusion_cube_1x1x1_Neumann_${mesh_size}
-        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-1 1e-1
-    )
-endforeach()
-
-# TODO: Parallel LARGE tests not tested!
-foreach(mesh_size 1e4 2e4 3e4 4e4 5e4 1e5 1e6)
-    set(RUNTIME 10)
-    if("${mesh_size}" STREQUAL "1e5")
-        set(RUNTIME 55)
-    endif()
-    if("${mesh_size}" STREQUAL "1e6")
-        set(RUNTIME 430)
-    endif()
-    AddTest(
-        NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}
-        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        RUNTIME ${RUNTIME}
-        EXECUTABLE_ARGS cube_${mesh_size}.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-7 1e-7
-    )
-
-    AddTest(
-        NAME SteadyStateDiffusion_cube_1x1x1_Neumann_${mesh_size}
-        PATH Elliptic/cube_1x1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        RUNTIME ${RUNTIME}
-        EXECUTABLE_ARGS cube_${mesh_size}_neumann.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        cube_1x1x1_hex_${mesh_size}.vtu cube_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_front_N1_right pressure 1e-2 1e-2
-    )
-endforeach()
-
-# SQUARE 1x1 GROUNDWATER FLOW TESTS
-foreach(mesh_size 1e0 1e1 1e2 1e3 1e4)
-    AddTest(
-        NAME SteadyStateDiffusion_square_1x1_${mesh_size}
-        PATH Elliptic/square_1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS -p square_${mesh_size}.xml square_1e0.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-13 1e-13
-    )
-
-    AddTest(
-        NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
-        PATH Elliptic/square_1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-1 1e-1
-    )
-endforeach()
-
-foreach(mesh_size 1e5 1e6)
-    set(RUNTIME 65)
-    if("${mesh_size}" STREQUAL "1e6")
-        set(RUNTIME 450)
-    endif()
-    AddTest(
-        NAME SteadyStateDiffusion_square_1x1_${mesh_size}
-        PATH Elliptic/square_1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        RUNTIME ${RUNTIME}
-        EXECUTABLE_ARGS -p square_${mesh_size}.xml square_1e0.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-7 1e-7
-    )
-
-    AddTest(
-        NAME SteadyStateDiffusion_square_1x1_Neumann_${mesh_size}
-        PATH Elliptic/square_1x1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        RUNTIME ${RUNTIME}
-        EXECUTABLE_ARGS -p square_${mesh_size}.xml -p square_neumann.xml square_1e0.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        square_1x1_quad_${mesh_size}.vtu square_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_bottom_N1_right pressure 1e-02 1e-02
-    )
-endforeach()
-
-# LINE 1 GROUNDWATER FLOW TESTS
-foreach(mesh_size 1e1)
-    AddTest(
-        NAME SteadyStateDiffusion_line_1_${mesh_size}
-        PATH Elliptic/line_1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_${mesh_size}.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_ts_1_t_1.000000.vtu Linear_1_to_minus1 pressure 1e-15 1e-15
-    )
-
-    AddTest(
-        NAME SteadyStateDiffusion_line_1_Neumann_${mesh_size}
-        PATH Elliptic/line_1_SteadyStateDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_${mesh_size}_neumann.prj
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 1
-        TESTER vtkdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        line_1_line_${mesh_size}.vtu line_${mesh_size}_neumann_ts_1_t_1.000000.vtu D1_left_N1_right pressure 1e-14 1e-14
-    )
-endforeach()
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Elliptic/nonuniform_bc_SteadyStateDiffusion/inhomogeneous_permeability.prj)
     OgsTest(PROJECTFILE Elliptic/nonuniform_bc_SteadyStateDiffusion/neumann_nonuniform.prj)
@@ -694,9 +560,7 @@ AddTest(
 
 if(OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.py RUNTIME 10)
+    OgsTest(PROJECTFILE EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/gml_output/3/cube_hex_27.prj WRAPPER mpirun -np 3)
 else()
     NotebookTest(NOTEBOOKFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/ssd-cube.py RUNTIME 6)
-endif()
-if(OGS_USE_MPI)
-    OgsTest(PROJECTFILE EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/gml_output/3/cube_hex_27.prj WRAPPER mpirun -np 3)
 endif()

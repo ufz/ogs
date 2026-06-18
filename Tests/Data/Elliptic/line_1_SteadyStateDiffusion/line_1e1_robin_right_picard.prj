@@ -128,4 +128,14 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>line_1e1_robin_right_picard_ts_1_t_1.000000.vtu</file>
+            <reference_file>line_1_line_1e1.vtu</reference_file>
+            <field>pressure</field>
+            <reference_field>D1_left_N1_right</reference_field>
+            <absolute_tolerance>4e-14</absolute_tolerance>
+            <relative_tolerance>2e-14</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
