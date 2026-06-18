@@ -18,30 +18,18 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
     if(NOT ENABLE_ASAN)
         OgsTest(PROJECTFILE Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj RUNTIME 2)
-        AddTest(
-            NAME Mechanics_ElementDeactivation3D_failcase_duplicate_id_list
-            PATH Mechanics/Linear/ElementDeactivation3D
-            RUNTIME 1
-            EXECUTABLE ogs
-            EXECUTABLE_ARGS -p failcase_duplicate_id_list.xml element_deactivation_M_3D.prj
+        OgsTest(PROJECTFILE Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj
+            PATCH_FILES failcase_duplicate_id_list.xml
             PROPERTIES
                 PASS_REGULAR_EXPRESSION "Multiple media were specified for the same material id '1'."
         )
-        AddTest(
-            NAME Mechanics_ElementDeactivation3D_failcase_duplicate_id_0
-            PATH Mechanics/Linear/ElementDeactivation3D
-            RUNTIME 1
-            EXECUTABLE ogs
-            EXECUTABLE_ARGS -p failcase_duplicate_id_0.xml element_deactivation_M_3D.prj
+        OgsTest(PROJECTFILE Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj
+            PATCH_FILES failcase_duplicate_id_0.xml
             PROPERTIES
                 PASS_REGULAR_EXPRESSION "Multiple media were specified for the same material id '0'."
         )
-        AddTest(
-            NAME Mechanics_ElementDeactivation3D_failcase_duplicate_id_1
-            PATH Mechanics/Linear/ElementDeactivation3D
-            RUNTIME 1
-            EXECUTABLE ogs
-            EXECUTABLE_ARGS -p failcase_duplicate_id_1.xml element_deactivation_M_3D.prj
+        OgsTest(PROJECTFILE Mechanics/Linear/ElementDeactivation3D/element_deactivation_M_3D.prj
+            PATCH_FILES failcase_duplicate_id_1.xml
             PROPERTIES
                 PASS_REGULAR_EXPRESSION "Multiple media were specified for the same material id '1'."
         )
