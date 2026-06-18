@@ -86,28 +86,6 @@ endif()
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/3D/Hex/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs.xml)
 
-    AddTest(
-        NAME LiquidFlow_Flux_3D_HEX_MultipleOutputs_xdmf
-        PATH Parabolic/LiquidFlow/Flux/3D/Hex
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS
-            cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs.xml
-        WRAPPER time
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        TESTER xdmfdiff
-        DIFF_DATA
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27.xdmf
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27.xdmf
-            pressure pressure 1e-10 1e-15 0 0
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_bottom_boundary.xdmf
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_bottom_boundary.xdmf
-            pressure pressure 1e-7 1e-13 0 0
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf
-            pressure pressure 1e-7 1e-13 0 0
-        PROPERTIES DEPENDS ogs-Parabolic/LiquidFlow/Flux/3D/Hex/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs
-    )
-
     if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(
             PROJECTFILE Parabolic/LiquidFlow/Flux/3D/Hex/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_invalid_multiple_outputs.xml
@@ -152,120 +130,69 @@ if(OGS_USE_MPI)
     )
 endif()
 
-AddTest(
-    NAME LiquidFlow_SimpleSynthetics_XDMF
-    PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
-    WRAPPER time
-    TESTER xdmfdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13 1 1
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf VolumetricFlowRate VolumetricFlowRate 1e-7 1e-13 2 2
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13 3 3
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf v v 1e-7 1e-13 4 4
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf pressure pressure 1e-7 1e-13 2 2
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13 3 3
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13 2 2
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf pressure pressure 1e-7 1e-13 4 4
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13 3 3
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13 2 2
-)
-
-AddTest(
-    NAME LiquidFlow_SimpleSynthetics_XDMF_compression_off
-    PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF_compression_off
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS FunctionParameterTest_XDMF.prj
-    WRAPPER time
-    TESTER xdmfdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf pressure pressure 1e-7 1e-13 1 1
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf VolumetricFlowRate VolumetricFlowRate 1e-7 1e-13 2 2
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf MaterialIDs MaterialIDs 1e-7 1e-13 3 3
-    square_5x5_tris_32.xdmf square_5x5_tris_32_square_5x5_tris_32.xdmf v v 1e-7 1e-13 1 1
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf pressure pressure 1e-7 1e-13 2 2
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13 0 0
-    square_5x5_tris_32_right_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_right_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13 1 1
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf pressure pressure 1e-7 1e-13 2 2
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf bulk_element_ids bulk_element_ids 1e-7 1e-13 0 0
-    square_5x5_tris_32_left_boundary.xdmf square_5x5_tris_32_square_5x5_tris_32_left_boundary.xdmf bulk_node_ids bulk_node_ids 1e-7 1e-13 1 1
-)
-
-# Single mesh XDMF MPI tests
-foreach(mesh bulk left right top bottom)
-    AddTest(
-        NAME LiquidFlow_SimpleSynthetics_XDMF_MPI_${mesh}
-        PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF_MPI/3/${mesh}
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS ${mesh}.xml -m ../
-        WRAPPER mpirun
-        WRAPPER_ARGS -np 3
-        TESTER xdmfdiff
-        REQUIREMENTS OGS_USE_MPI
-        DIFF_DATA
-        ${mesh}_${mesh}.xdmf  ${mesh}_${mesh}.xdmf  pressure pressure 1e-12 1e-12 1 1
-        ${mesh}_${mesh}.xdmf  ${mesh}_${mesh}.xdmf  v v 1e-12 1e-12 1 1
-        ${mesh}_${mesh}.xdmf  ${mesh}_${mesh}.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+if(TARGET xdmfdiff AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/XDMF/FunctionParameterTest_XDMF.prj
     )
-endforeach()
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/SimpleSynthetics/XDMF_compression_off/FunctionParameterTest_XDMF.prj
+    )
+endif()
 
-# Two mesh XDMF MPI tests
-foreach(mesh1 bulk left right top bottom)
-    foreach(mesh2 bulk left right top bottom)
-        if(NOT "${mesh1}" STREQUAL "${mesh2}")
-            AddTest(
-                NAME LiquidFlow_SimpleSynthetics_XDMF_MPI_${mesh1}_${mesh2}
-                PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF_MPI/3/${mesh1}_${mesh2}
-                EXECUTABLE ogs
-                EXECUTABLE_ARGS ${mesh1}_${mesh2}.xml -m ../
-                WRAPPER mpirun
-                WRAPPER_ARGS -np 3
-                TESTER xdmfdiff
-                REQUIREMENTS OGS_USE_MPI
-                DIFF_DATA
-                ${mesh1}_${mesh1}.xdmf  ${mesh1}_${mesh1}.xdmf  pressure pressure 1e-12 1e-12 1 1
-                ${mesh1}_${mesh1}.xdmf  ${mesh1}_${mesh1}.xdmf  v v 1e-12 1e-12 1 1
-                ${mesh1}_${mesh1}.xdmf  ${mesh1}_${mesh1}.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
-                ${mesh1}_${mesh2}.xdmf  ${mesh1}_${mesh2}.xdmf  pressure pressure 1e-12 1e-12 1 1
-                ${mesh1}_${mesh2}.xdmf  ${mesh1}_${mesh2}.xdmf  v v 1e-12 1e-12 1 1
-                ${mesh1}_${mesh2}.xdmf  ${mesh1}_${mesh2}.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
-            )
-        endif()
+if(OGS_USE_MPI AND TARGET xdmfdiff)
+    set(XDMF_MPI_MESH_DIR
+        ${Data_SOURCE_DIR}/Parabolic/LiquidFlow/SimpleSynthetics/XDMF_MPI/3
+    )
+
+    # Single mesh XDMF MPI tests
+    foreach(mesh bulk left right top bottom)
+        OgsTest(
+            PROJECTFILE
+                Parabolic/LiquidFlow/SimpleSynthetics/XDMF_MPI/3/${mesh}/LiquidFlow.prj
+            WRAPPER mpirun -np 3
+            PATCH_FILES ${mesh}.xml ../xdmfdiff_test_definition.xml
+            NAME_SUFFIX ${mesh}
+            EXECUTABLE_ARGS -m ${XDMF_MPI_MESH_DIR}
+        )
     endforeach()
-endforeach()
 
-# Three mesh XDMF MPI tests
-foreach(mesh1 bulk left right top bottom)
-    foreach(mesh2 bulk left right top bottom)
-        foreach(mesh3 bulk left right top bottom)
-            if(NOT "${mesh1}" STREQUAL "${mesh2}" AND NOT "${mesh1}" STREQUAL "${mesh3}" AND NOT "${mesh2}" STREQUAL "${mesh3}")
-                AddTest(
-                    NAME LiquidFlow_SimpleSynthetics_XDMF_MPI_${mesh1}_${mesh2}_${mesh3}
-                    PATH Parabolic/LiquidFlow/SimpleSynthetics/XDMF_MPI/3/${mesh1}_${mesh2}_${mesh3}
-                    EXECUTABLE ogs
-                    EXECUTABLE_ARGS ${mesh1}_${mesh2}_${mesh3}.xml -m ../
-                    WRAPPER mpirun
-                    WRAPPER_ARGS -np 3
-                    TESTER xdmfdiff
-                    REQUIREMENTS OGS_USE_MPI
-                    DIFF_DATA
-                    ${mesh1}_${mesh1}.xdmf  ${mesh1}_${mesh1}.xdmf  pressure pressure 1e-12 1e-12 1 1
-                    ${mesh1}_${mesh1}.xdmf  ${mesh1}_${mesh1}.xdmf  v v 1e-12 1e-12 1 1
-                    ${mesh1}_${mesh1}.xdmf  ${mesh1}_${mesh1}.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
-                    ${mesh1}_${mesh2}.xdmf  ${mesh1}_${mesh2}.xdmf  pressure pressure 1e-12 1e-12 1 1
-                    ${mesh1}_${mesh2}.xdmf  ${mesh1}_${mesh2}.xdmf  v v 1e-12 1e-12 1 1
-                    ${mesh1}_${mesh2}.xdmf  ${mesh1}_${mesh2}.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
-                    ${mesh1}_${mesh3}.xdmf  ${mesh1}_${mesh3}.xdmf  pressure pressure 1e-12 1e-12 1 1
-                    ${mesh1}_${mesh3}.xdmf  ${mesh1}_${mesh3}.xdmf  v v 1e-12 1e-12 1 1
-                    ${mesh1}_${mesh3}.xdmf  ${mesh1}_${mesh3}.xdmf  VolumetricFlowRate VolumetricFlowRate 1e-12 1e-12 1 1
+    # Two mesh XDMF MPI tests
+    foreach(mesh1 bulk left right top bottom)
+        foreach(mesh2 bulk left right top bottom)
+            if(NOT "${mesh1}" STREQUAL "${mesh2}")
+                OgsTest(
+                    PROJECTFILE
+                        Parabolic/LiquidFlow/SimpleSynthetics/XDMF_MPI/3/${mesh1}_${mesh2}/LiquidFlow.prj
+                    WRAPPER mpirun -np 3
+                    PATCH_FILES ${mesh1}_${mesh2}.xml
+                                ../xdmfdiff_test_definition.xml
+                    NAME_SUFFIX ${mesh1}_${mesh2}
+                    EXECUTABLE_ARGS -m ${XDMF_MPI_MESH_DIR}
                 )
             endif()
         endforeach()
     endforeach()
-endforeach()
+
+    # Three mesh XDMF MPI tests
+    foreach(mesh1 bulk left right top bottom)
+        foreach(mesh2 bulk left right top bottom)
+            foreach(mesh3 bulk left right top bottom)
+                if(NOT "${mesh1}" STREQUAL "${mesh2}" AND NOT "${mesh1}" STREQUAL "${mesh3}" AND NOT "${mesh2}" STREQUAL "${mesh3}")
+                    OgsTest(
+                        PROJECTFILE
+                            Parabolic/LiquidFlow/SimpleSynthetics/XDMF_MPI/3/${mesh1}_${mesh2}_${mesh3}/LiquidFlow.prj
+                        WRAPPER mpirun -np 3
+                        PATCH_FILES ${mesh1}_${mesh2}_${mesh3}.xml
+                                    ../xdmfdiff_test_definition.xml
+                        NAME_SUFFIX ${mesh1}_${mesh2}_${mesh3}
+                        EXECUTABLE_ARGS -m ${XDMF_MPI_MESH_DIR}
+                    )
+                endif()
+            endforeach()
+        endforeach()
+    endforeach()
+endif()
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_1.prj)

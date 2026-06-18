@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <xdmfdiff>
+                <regex>.*\.xdmf</regex>
+                <field>pressure</field>
+                <absolute_tolerance>1e-12</absolute_tolerance>
+                <relative_tolerance>1e-12</relative_tolerance>
+                <timestep>1</timestep>
+            </xdmfdiff>
+            <xdmfdiff>
+                <regex>.*\.xdmf</regex>
+                <field>v</field>
+                <absolute_tolerance>1e-12</absolute_tolerance>
+                <relative_tolerance>1e-12</relative_tolerance>
+                <timestep>1</timestep>
+            </xdmfdiff>
+            <xdmfdiff>
+                <regex>.*\.xdmf</regex>
+                <field>VolumetricFlowRate</field>
+                <absolute_tolerance>1e-12</absolute_tolerance>
+                <relative_tolerance>1e-12</relative_tolerance>
+                <timestep>1</timestep>
+            </xdmfdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
