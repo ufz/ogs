@@ -33,8 +33,7 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS) AND OGS_USE_MFRONT)
     OgsTest(PROJECTFILE RichardsMechanics/mfront_restart_part2.xml RUNTIME 1)
     OgsTest(PROJECTFILE RichardsMechanics/DoubleStructureBenchmark/double_porosity_swelling_RM.prj RUNTIME 1)
 endif()
-# Does not exist?
-# PROPERTIES DEPENDS ogs-RichardsMechanics_square_1e2_confined_compression-time-vtkdiff
+
 if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE RichardsMechanics/confined_compression_fully_saturated_restart.prj RUNTIME 4)
     OgsTest(PROJECTFILE RichardsMechanics/A2_total_stress0.xml RUNTIME 8)

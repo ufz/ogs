@@ -88,17 +88,15 @@ if(OGS_USE_PIP AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
             ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/*.prj
     )
     foreach(ht_invalid_prj_file ${HT_INVALID_PRJ_FILES})
-        string(
-            REPLACE ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT
-                    "invalid" ht_invalid_prj_file_short
-                    ${ht_invalid_prj_file}
+        file(
+            RELATIVE_PATH ht_invalid_prj_file_rel
+            ${Data_SOURCE_DIR}
+            ${ht_invalid_prj_file}
         )
-        AddTest(
-            NAME HT_${ht_invalid_prj_file_short}
-            PATH Parabolic/HT/InvalidProjectFiles
-            EXECUTABLE ogs
-            EXECUTABLE_ARGS ${ht_invalid_prj_file}
-            RUNTIME 1 PROPERTIES WILL_FAIL TRUE
+        OgsTest(
+            PROJECTFILE ${ht_invalid_prj_file_rel}
+            RUNTIME 1
+            PROPERTIES WILL_FAIL TRUE
         )
     endforeach()
 endif()

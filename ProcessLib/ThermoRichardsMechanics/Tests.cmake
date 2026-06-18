@@ -24,23 +24,15 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/LiakopoulosHM/liakopoulos_restart.xml RUNTIME 1)
 endif()
 
-AddTest(
-    NAME ThermoRichardsMechanics_LiakopoulosMixedElementsPETSc
-    PATH ThermoRichardsMechanics/LiakopoulosPETSc
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS liakopoulos_mixElem_mumps.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 2
-    TESTER vtkdiff
-    # Run on envinf only because PETSc MUMPS solver is used
-    REQUIREMENTS OGS_USE_PETSC
-    LABELS "petsc-mumps"
-    RUNTIME 2
-    DIFF_DATA
-    GLOB liakopoulosBulk_mixElem_t_*.vtu sigma sigma 1e-9 1e-12
-    GLOB liakopoulosBulk_mixElem_t_*.vtu displacement displacement 1e-10 1e-12
-    GLOB liakopoulosBulk_mixElem_t_*.vtu saturation saturation 1e-10 1e-12
-)
+if(OGS_USE_PETSC)
+    OgsTest(
+        PROJECTFILE ThermoRichardsMechanics/LiakopoulosPETSc/liakopoulos_mixElem_mumps.prj
+        WRAPPER mpirun -np 2
+        RUNTIME 2
+        LABELS "petsc-mumps"
+        NAME_SUFFIX LiakopoulosMixedElementsPETSc
+    )
+endif()
 
 if(NOT OGS_USE_MPI)
     OgsTest(

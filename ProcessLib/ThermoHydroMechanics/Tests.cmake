@@ -90,36 +90,14 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     )
 endif()
 
-AddTest(
-    NAME ParallelFEM_HeatingHomogeneousDomain
-    PATH ThermoHydroMechanics/HeatingHomogeneousDomain
-    RUNTIME 5
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS hex_THM.prj -m partitioned_mesh
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 3
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-#
-    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu displacement displacement 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu pressure pressure 1e-10 1.0e-7
-    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu temperature temperature 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu epsilon epsilon 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_0.vtu hex_ts_5_t_864000_000000_0.vtu sigma sigma 1e-8 1.0e-7
-#
-    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu displacement displacement 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu pressure pressure 1e-10 1.0e-7
-    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu temperature temperature 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu epsilon epsilon 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_1.vtu hex_ts_5_t_864000_000000_1.vtu sigma sigma 1e-8 1.0e-7
-#
-    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu displacement displacement 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu pressure pressure 1e-10 1.0e-7
-    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu temperature temperature 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu epsilon epsilon 1e-10 1.0e-9
-    hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu sigma sigma 1e-8 1.0e-7
-)
+if(OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE ThermoHydroMechanics/HeatingHomogeneousDomain/partitioned_mesh/hex_THM.prj
+        WRAPPER mpirun -np 3
+        RUNTIME 5
+        NAME_SUFFIX ParallelFEM_HeatingHomogeneousDomain
+    )
+endif()
 
 if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/TotalInitialStress/total_initial_stress_HM.prj RUNTIME 1)
