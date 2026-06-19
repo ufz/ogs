@@ -115,8 +115,8 @@ const std::string msg_fatal =
     "The local matrices M or K or the local vectors b assembled with the two "
     "different Jacobian assemblers differ.";
 
-//! Absolute and (symmetric) relative difference as Eigen::Array
-auto absDiffRelDiff(auto const& mat_or_vec1, auto const& mat_or_vec2)
+//! (Signed) absolute and (symmetric) relative difference as Eigen::Array
+auto signedAbsDiffRelDiff(auto const& mat_or_vec1, auto const& mat_or_vec2)
 {
     auto abs_diff = (mat_or_vec2 - mat_or_vec1).array().eval();
     auto const rel_diff =
@@ -153,9 +153,10 @@ bool isSimilar(auto const& mat_or_vec1, auto const& mat_or_vec2,
         return false;
     }
 
-    auto const [abs_diff, rel_diff] = absDiffRelDiff(mat_or_vec1, mat_or_vec2);
-    auto const abs_tol_exceeded = abs_diff > abs_tol;
-    auto const rel_tol_exceeded = rel_diff > rel_tol;
+    auto const [abs_diff, rel_diff] =
+        signedAbsDiffRelDiff(mat_or_vec1, mat_or_vec2);
+    auto const abs_tol_exceeded = abs_diff.abs() > abs_tol;
+    auto const rel_tol_exceeded = rel_diff.abs() > rel_tol;
 
     // similar if for no entry abs and rel tols are exceeded at the same time
     return !(abs_tol_exceeded && rel_tol_exceeded).any();
@@ -258,7 +259,8 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     auto const local_Jac2 =
         MathLib::toMatrix(local_Jac_data2, num_dof, num_dof);
 
-    auto const [abs_diff, rel_diff] = absDiffRelDiff(local_Jac1, local_Jac2);
+    auto const [abs_diff, rel_diff] =
+        signedAbsDiffRelDiff(local_Jac1, local_Jac2);
 
     auto const abs_diff_mask =
         oneIfAboveThresholdElseZero(abs_diff.abs(), _abs_tol_Jac);
