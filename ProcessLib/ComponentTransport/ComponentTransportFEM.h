@@ -1205,11 +1205,6 @@ public:
             vars.liquid_phase_pressure = p_int_pt;
             vars.temperature = T_int_pt;
 
-            if (_process_data.temperature)
-            {
-                vars.temperature = N.dot(local_T);
-            }
-
             // porosity
             {
                 vars_prev.porosity = porosity_prev;
@@ -1471,11 +1466,7 @@ public:
         auto const c_prev =
             local_x_prev.segment<concentration_size>(concentration_index);
 
-        NodalVectorType T;
-        if (_process_data.temperature)
-        {
-            T = _process_data.temperature->getNodalValuesOnElement(_element, t);
-        }
+        auto const local_T = getLocalTemperature(t, local_x);
 
         auto local_Jac = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_Jac_data, concentration_size, concentration_size);
@@ -1527,11 +1518,7 @@ public:
 
             vars.liquid_phase_pressure = p_ip;
             vars.concentration = c_ip;
-
-            if (_process_data.temperature)
-            {
-                vars.temperature = N.dot(T);
-            }
+            vars.temperature = N.dot(local_T);
 
             // porosity
             {

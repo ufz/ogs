@@ -269,6 +269,14 @@ void ComponentTransportProcess::assembleWithJacobianConcreteProcess(
             "implemented only for staggered scheme.");
     }
 
+    if (!_process_data.isothermal)
+    {
+        OGS_FATAL(
+            "The Newton-Raphson scheme (AssembleWithJacobian()) is not "
+            "implemented for non-isothermal ComponentTransport. Please use the "
+            "Picard scheme for non-isothermal setups.");
+    }
+
     AssemblyMixin<ComponentTransportProcess>::assembleWithJacobian(
         t, dt, x, x_prev, process_id, b, Jac);
 }
