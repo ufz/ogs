@@ -54,209 +54,37 @@ AddTest(
 )
 
 # variation of the test above with assembly optimization
-AddTest(
-        NAME 1D_HeatConduction_dirichlet_linear
-        PATH Parabolic/T/1D_dirichlet/linear
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_60_heat.xml
-        TESTER vtkdiff
-        DIFF_DATA
-        # numerical solution – ts 65
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        temperature temperature 2.2e-12 0
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        heat_flux heat_flux 2.1e-12 0
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        HeatFlowRate HeatFlowRate 4.4e-12 0
-        # numerical solution – ts 405
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        temperature temperature 1.3e-11 0
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        heat_flux heat_flux 5.7e-12 0
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        HeatFlowRate HeatFlowRate 5.9e-12 0
-        # numerical solution – ts 500
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        temperature temperature 1.5e-11 0
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        heat_flux heat_flux 7.5e-12 0
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        HeatFlowRate HeatFlowRate 9.8e-12 0
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/1D_dirichlet/linear/line_60_heat.xml)
+endif()
 
 # another variation with more optimizations
-AddTest(
-        NAME 1D_HeatConduction_dirichlet_linear_dt_change
-        PATH Parabolic/T/1D_dirichlet/linear_compute_only_on_dt_change
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_60_heat.xml
-        TESTER vtkdiff
-        DIFF_DATA
-        # numerical solution – ts 65
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        temperature temperature 2.2e-12 0
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        heat_flux heat_flux 2.1e-12 0
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        line_60_heat_ts_65_t_5078125.000000.vtu
-        HeatFlowRate HeatFlowRate 4.4e-12 0
-        # numerical solution – ts 405
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        temperature temperature 1.3e-11 0
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        heat_flux heat_flux 5.7e-12 0
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        line_60_heat_ts_405_t_31640625.000000.vtu
-        HeatFlowRate HeatFlowRate 5.9e-12 0
-        # numerical solution – ts 500
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        temperature temperature 1.5e-11 0
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        heat_flux heat_flux 7.5e-12 0
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        line_60_heat_ts_500_t_39062500.000000.vtu
-        HeatFlowRate HeatFlowRate 7.9e-12 0
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/1D_dirichlet/linear_compute_only_on_dt_change/line_60_heat.xml
+    )
+endif()
 
 # a variation with a varying time step size
-AddTest(
-        NAME 1D_HeatConduction_dirichlet_varying_dt
-        PATH Parabolic/T/1D_dirichlet/varying_dt
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_60_heat.xml
-        TESTER vtkdiff
-        DIFF_DATA
-        # numerical solution – ts 130
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        temperature temperature 6.3e-13 0
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        heat_flux heat_flux 7.8e-13 0
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        HeatFlowRate HeatFlowRate 7.5e-12 0
-        # numerical solution – ts 505
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        temperature temperature 9.9e-12 0
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        heat_flux heat_flux 5.7e-12 0
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        HeatFlowRate HeatFlowRate 5.7e-12 0
-        # numerical solution – ts 600
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        temperature temperature 1.3e-11 0
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        heat_flux heat_flux 6.8e-12 0
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        HeatFlowRate HeatFlowRate 6.8e-12 0
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/1D_dirichlet/varying_dt/line_60_heat.xml)
+endif()
 
 # a variation with a varying time step size and <linear> optimization
-AddTest(
-        NAME 1D_HeatConduction_dirichlet_varying_dt_linear
-        PATH Parabolic/T/1D_dirichlet/varying_dt_linear
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_60_heat.xml
-        TESTER vtkdiff
-        DIFF_DATA
-        # numerical solution – ts 130
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        temperature temperature 8.6e-13 0
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        heat_flux heat_flux 1.1e-12 0
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        HeatFlowRate HeatFlowRate 8.5e-12 0
-        # numerical solution – ts 505
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        temperature temperature 1.1e-11 0
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        heat_flux heat_flux 5.2e-12 0
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        HeatFlowRate HeatFlowRate 5.2e-12 0
-        # numerical solution – ts 600
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        temperature temperature 1.3e-11 0
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        heat_flux heat_flux 5.9e-12 0
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        HeatFlowRate HeatFlowRate 6.2e-12 0
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE Parabolic/T/1D_dirichlet/varying_dt_linear/line_60_heat.xml
+    )
+endif()
 
 # a variation with a varying time step size and more optimizations
-AddTest(
-        NAME 1D_HeatConduction_dirichlet_varying_dt_linear_compute_only_on_dt_change
-        PATH Parabolic/T/1D_dirichlet/varying_dt_linear_compute_only_on_dt_change
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_60_heat.xml
-        TESTER vtkdiff
-        DIFF_DATA
-        # numerical solution – ts 130
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        temperature temperature 8.6e-13 0
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        heat_flux heat_flux 1.1e-12 0
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        line_60_heat_ts_130_t_5078125.000000.vtu
-        HeatFlowRate HeatFlowRate 8.5e-12 0
-        # numerical solution – ts 505
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        temperature temperature 1.1e-11 0
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        heat_flux heat_flux 5.2e-12 0
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        line_60_heat_ts_505_t_31640625.000000.vtu
-        HeatFlowRate HeatFlowRate 5.2e-12 0
-        # numerical solution – ts 600
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        temperature temperature 1.3e-11 0
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        heat_flux heat_flux 5.9e-12 0
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        line_60_heat_ts_600_t_39062500.000000.vtu
-        HeatFlowRate HeatFlowRate 6.2e-12 0
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/1D_dirichlet/varying_dt_linear_compute_only_on_dt_change/line_60_heat.xml
+    )
+endif()
 
 AddTest(
         NAME 1D_HeatConduction_neumann_picard
@@ -372,29 +200,15 @@ AddTest(
 # SQUARE 1x1 HEAT CONDUCTION TEST -- AXIALLY SYMMETRIC
 # The results were compared to an analytical solution (method of manufactured
 # solutions). The vtkdiff comparison is against the numerical solution.
-AddTest(
-    NAME 2D_HeatConduction_axi
-    PATH Parabolic/T/2D_axially_symmetric
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2_axi.prj
-    TESTER vtkdiff
-    DIFF_DATA
-    square_1e2_axi_ts_10_t_1.000000.vtu square_1e2_axi_ts_10_t_1.000000.vtu temperature temperature 2e-15 0
-    square_1e2_axi_ts_10_t_1.000000.vtu square_1e2_axi_ts_10_t_1.000000.vtu heat_flux heat_flux 2e-14 0
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/2D_axially_symmetric/square_1e2_axi.prj)
+endif()
 # WEDGE 1x1 HEAT CONDUCTION TEST -- same setup as above test but in cartesian coordinates
-AddTest(
-    NAME 2D_HeatConduction_wedge
-    PATH Parabolic/T/2D_axially_symmetric
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
-    TESTER vtkdiff
-    DIFF_DATA
-    wedge_ang_0.02_ts_10_t_1.000000.vtu wedge_ang_0.02_ts_10_t_1.000000.vtu temperature temperature 2e-12 0
-    wedge_ang_0.02_ts_10_t_1.000000.vtu wedge_ang_0.02_ts_10_t_1.000000.vtu heat_flux heat_flux 1e-11 0
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE Parabolic/T/2D_axially_symmetric/wedge_1e2_axi_ang_0.02.prj
+    )
+endif()
 
 # The 25 BHE array benchmark
 # test results are compared to 2D simulation result
@@ -423,21 +237,13 @@ AddTest(
 )
 
 # test the source term on a subdomain - parallel version
-AddTest(
-    NAME 1D_HeatConduction_dirichlet_SourceTerm_Parallel2
-    PATH Parabolic/T/1D_dirichlet_source-term/2
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS line_1_line_1e2_source_term.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 2
-    REQUIREMENTS OGS_USE_MPI
-    TESTER vtkdiff
-    DIFF_DATA
-    line_1_line_1e2_ts_0_t_0_000000_0.vtu line_1_line_1e2_ts_0_t_0_000000_0.vtu temperature temperature 1e-15 0.0
-    line_1_line_1e2_ts_0_t_0_000000_1.vtu line_1_line_1e2_ts_0_t_0_000000_1.vtu temperature temperature 1e-15 0.0
-    line_1_line_1e2_ts_500_t_39062500_000000_0.vtu line_1_line_1e2_ts_500_t_39062500_000000_0.vtu temperature temperature 1.4e-9 0.0
-    line_1_line_1e2_ts_500_t_39062500_000000_1.vtu line_1_line_1e2_ts_500_t_39062500_000000_1.vtu temperature temperature 1.4e-9 0.0
-)
+if(OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/1D_dirichlet_source-term/2/line_1_line_1e2_source_term.prj
+        WRAPPER mpirun -np 2
+    )
+endif()
 
 # test the source term on a subdomain with the PETSc embedded executable file
 AddTest(
@@ -462,51 +268,21 @@ AddTest(
     PROPERTIES PASS_REGULAR_EXPRESSION "Could not read mesh from '.*' file[.] No mesh added[.]"
 )
 
-AddTest(
-        NAME HeatConduction_t1_1Dsource
-        PATH Parabolic/T/t1_1Dsource
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS t1_1Dsource.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        t1_1Dsource_ts_1_t_1.000000.vtu t1_1Dsource_ts_1_t_1.000000.vtu temperature temperature 10e-12 0.0
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/t1_1Dsource/t1_1Dsource.prj)
+endif()
 
-AddTest(
-        NAME HeatConduction_t1_1Dsteady
-        PATH Parabolic/T/t1_1Dsteady
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS t1_1Dsteady.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        t1_1Dsteady_ts_1_t_1.000000.vtu t1_1Dsteady_ts_1_t_1.000000.vtu temperature temperature 10e-12 0.0
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/t1_1Dsteady/t1_1Dsteady.prj)
+endif()
 
-AddTest(
-        NAME HeatConduction_t2_1D1bt
-        PATH Parabolic/T/t2_1D1bt
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS t2_1D1bt.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        t2_1D1bt_ts_500_t_21600.000000.vtu t2_1D1bt_ts_500_t_21600.000000.vtu temperature temperature 10e-12 0.0
-        t2_1D1bt_ts_1000_t_43200.000000.vtu t2_1D1bt_ts_1000_t_43200.000000.vtu temperature temperature 10e-12 0.0
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/t2_1D1bt/t2_1D1bt.prj)
+endif()
 
-AddTest(
-        NAME HeatConduction_t2_1D2bt
-        PATH Parabolic/T/t2_1D2bt
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS t2_1D2bt.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        t2_1D2bt_ts_3000_t_7776.000000.vtu t2_1D2bt_ts_3000_t_7776.000000.vtu temperature temperature 10e-12 0.0
-        t2_1D2bt_ts_1500_t_3888.000000.vtu t2_1D2bt_ts_1500_t_3888.000000.vtu temperature temperature 10e-12 0.0
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/t2_1D2bt/t2_1D2bt.prj)
+endif()
 
 AddTest(
         NAME HeatConduction_1D_LineSourceTerm
@@ -524,86 +300,53 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
 endif()
 
 # tests for line source term implementation
-AddTest(
-        NAME HeatConduction_2D_LineSourceTermLeft
-        PATH Parabolic/T/2D_source_term_tests/line_source_term_left
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS source_term_left.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        source_term_left_ts_1_t_1.000000.vtu source_term_left_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        source_term_left_ts_1_t_1.000000.vtu source_term_left_ts_1_t_1.000000.vtu heat_flux heat_flux 1e-15 0.0
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/2D_source_term_tests/line_source_term_left/source_term_left.prj
+    )
+endif()
 
 # tests for line source term implementation with inclined elements
-AddTest(
-        NAME HeatConduction_2D_LineSourceTermLeft_inclined_elements
-        PATH Parabolic/T/2D_source_term_tests/line_source_term_left
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS source_term_left_r.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        source_term_left_r_ts_1_t_1.000000.vtu source_term_left_r_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        source_term_left_r_ts_1_t_1.000000.vtu source_term_left_r_ts_1_t_1.000000.vtu heat_flux heat_flux 1e-15 0.0
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/2D_source_term_tests/line_source_term_left/source_term_left_r.prj
+    )
+endif()
 
 # For the special setup with a 'dirac' line source term at x=0.5 the
 # analytical solution in 2 dimensions is valid:
 # u(x,y) = -ln(sqrt((x-0.5)^2))/(2 * Pi)
-AddTest(
-        NAME HeatConduction_2D_LineSourceTermMiddle
-        PATH Parabolic/T/2D_source_term_tests/line_source_term_x_0.5
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_source_term_x_0.5.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        source_term_middle_ts_1_t_1.000000.vtu source_term_middle_ts_1_t_1.000000.vtu temperature temperature 2e-14 8e-14
-        source_term_middle_ts_1_t_1.000000.vtu source_term_middle_ts_1_t_1.000000.vtu heat_flux heat_flux 8e-14 0.0
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/2D_source_term_tests/line_source_term_x_0.5/line_source_term_x_0.5.prj
+    )
+endif()
 
-AddTest(
-        NAME HeatConduction_2D_LineSourceTermMiddle_Restricted
-        PATH
-        Parabolic/T/2D_source_term_tests/line_source_term_x_0.5_restricted_to_middle
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_source_term_x_0.5.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        source_term_middle_restricted_ts_1_t_1.000000.vtu source_term_middle_restricted_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        source_term_middle_restricted_ts_1_t_1.000000.vtu source_term_middle_restricted_ts_1_t_1.000000.vtu heat_flux heat_flux 3e-15 4e-7
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/2D_source_term_tests/line_source_term_x_0.5_restricted_to_middle/line_source_term_x_0.5.prj
+    )
+endif()
 
 # tests for line source term implementation on a cubic domain
-AddTest(
-        NAME HeatConduction_3D_LineSourceTermMiddle
-        PATH
-        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_middle
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_source_term_x_0.5_y_0.5.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        3D_line_source_term_ts_1_t_1.000000.vtu 3D_line_source_term_ts_1_t_1.000000.vtu temperature temperature 2e-15 0.0
-        3D_line_source_term_ts_1_t_1.000000.vtu 3D_line_source_term_ts_1_t_1.000000.vtu heat_flux heat_flux 7e-15 7e-13
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/3D_line_source_term_tests/3D_line_source_term_middle/line_source_term_x_0.5_y_0.5.prj
+    )
+endif()
 
 # tests for line source term implementation on a cubic domain
-AddTest(
-        NAME HeatConduction_3D_LineSourceTermMiddle_Restricted
-        PATH
-        Parabolic/T/3D_line_source_term_tests/3D_line_source_term_middle_restricted
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS line_source_term_x_0.5_y_0.5_restricted.prj
-        TESTER vtkdiff
-        DIFF_DATA
-        3D_line_source_term_restricted_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_ts_1_t_1.000000.vtu temperature temperature 1e-15 0.0
-        3D_line_source_term_restricted_ts_1_t_1.000000.vtu 3D_line_source_term_restricted_ts_1_t_1.000000.vtu heat_flux heat_flux 1.1e-14 5e-12
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/T/3D_line_source_term_tests/3D_line_source_term_middle_restricted/line_source_term_x_0.5_y_0.5_restricted.prj
+    )
+endif()
 
 # tests for line source term implementation on a cylindrical domain
 # For the special setup with a line source term at position (xi, eta) the

@@ -155,4 +155,18 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+<file>line_1_line_1e2_ts_0_t_0_000000.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>1e-15</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+<file>line_1_line_1e2_ts_500_t_39062500_000000.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>1.4e-9</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
