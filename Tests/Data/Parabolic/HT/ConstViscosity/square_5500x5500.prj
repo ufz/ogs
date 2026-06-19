@@ -340,4 +340,24 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu</file>
+            <field>T</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-9</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu</file>
+            <field>p</field>
+            <absolute_tolerance>1e-9</absolute_tolerance>
+            <relative_tolerance>1e-3</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu</file>
+            <field>darcy_velocity</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-16</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

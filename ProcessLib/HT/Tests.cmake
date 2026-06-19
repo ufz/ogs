@@ -1,18 +1,9 @@
 # Monolithic scheme
-AddTest(
-    NAME 2D_ThermalConvection_constviscosityMonolithic
-    PATH Parabolic/HT/ConstViscosity
-    RUNTIME 27
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_5500x5500.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    DIFF_DATA
-    ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu T T 1e-7 1e-9
-    ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu p p 1e-9 1e-3
-    ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu ConstViscosityThermalConvection_ts_149_t_50000000000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-16
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(PROJECTFILE Parabolic/HT/ConstViscosity/square_5500x5500.prj
+            RUNTIME 27
+    )
+endif()
 
 AddTest(
     NAME HT_SimpleSynthetics_IsothermalFluidFlow
@@ -318,20 +309,11 @@ AddTest(
     CoupledPressureParabolicTemperatureParabolic_ts_10_expected.vtu CoupledPressureParabolicTemperatureParabolicStaggered_ts_10_t_1.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-10
 )
 
-AddTest(
-    NAME HT_FaultedCube_rev0
-    PATH Parabolic/HT/FaultedCube
-    EXECUTABLE_ARGS Ra_795_fault_bcgs_jacobi.prj
-    RUNTIME 12
-    EXECUTABLE ogs
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    ThermalConvection_ts_1_t_0.000000.vtu ThermalConvection_ts_1_t_0.000000.vtu T T 1e-10 1e-16
-    ThermalConvection_ts_1_t_0.000000.vtu ThermalConvection_ts_1_t_0.000000.vtu p p 3e-6 2e-10
-    ThermalConvection_ts_1_t_0.000000.vtu ThermalConvection_ts_1_t_0.000000.vtu darcy_velocity darcy_velocity 1e-8 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/HT/FaultedCube/Ra_795_fault_bcgs_jacobi.prj
+            RUNTIME 12
+    )
+endif()
 
 # generateInvalidMediaForHT.py logic moved to PythonSetup.cmake
 
@@ -412,41 +394,21 @@ AddTest(
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_via_sub-coupling_ts_50_t_50000.000000.vtu pressure  pressure 2e-5 1e-5
 )
 
-AddTest(
-    NAME HT_ClassicalTransportExample
-    PATH Parabolic/HT/ClassicalTransportExample
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS classical_transport_example.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu velocity velocity 1.e-12 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/HT/ClassicalTransportExample/classical_transport_example.prj
+        RUNTIME 1
+    )
+endif()
 
-AddTest(
-    NAME HT_ClassicalTransportexample_full_upwind
-    PATH Parabolic/HT/ClassicalTransportExample
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS classical_transport_example_full_upwind.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_t_4800.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_t_4800.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_t_4800.00.vtu velocity velocity 1.e-12 1.0e-12
-    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/HT/ClassicalTransportExample/classical_transport_example_full_upwind.prj
+        RUNTIME 1
+    )
+endif()
 
 AddTest(
     NAME HT_ClassicalTransportexample_full_upwind_staggered
@@ -467,24 +429,14 @@ AddTest(
 )
 
 #MPI/PETSc
-AddTest(
-    NAME HT_ParallelComputing_HeatTransportInStationaryFlow_Staggered_Scheme
-    PATH Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
-    EXECUTABLE ogs
-    RUNTIME 2
-    EXECUTABLE_ARGS HeatTransportInStationaryFlow.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 3
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu temperature temperature 1.e-9 1.0e-8
-    HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_0.vtu pressure pressure 1.e-9 1.0e-8
-    HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu temperature temperature 1.e-9 1.0e-8
-    HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_1.vtu pressure pressure 1.e-9 1.0e-8
-    HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu temperature temperature 1.e-9 1.0e-8
-    HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu HeatTransportInStationaryFlow_ts_50_t_50000_000000_2.vtu pressure pressure 1.e-9 1.0e-8
-)
+if(OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj
+        WRAPPER mpirun -np 3
+        RUNTIME 2
+    )
+endif()
 
 if(OGS_USE_PIP AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
     if(NOT EXISTS ${Data_SOURCE_DIR}/Parabolic/HT/InvalidProjectFiles/HT_specific_heat_capacity_viscosity_porosity.prj)
