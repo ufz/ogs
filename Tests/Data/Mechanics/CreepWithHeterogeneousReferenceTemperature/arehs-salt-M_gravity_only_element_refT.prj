@@ -329,4 +329,18 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1.e-10</absolute_tolerance>
+            <relative_tolerance>1.e-10</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>arehs-salt-M_gravity_only_ts_10_t_31535999999.999996.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>1.e-9</absolute_tolerance>
+            <relative_tolerance>5.7e-7</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
