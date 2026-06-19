@@ -218,4 +218,42 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>classical_transport_example_t_4800.00.vtu</file>
+            <field>C</field>
+            <absolute_tolerance>1.e-9</absolute_tolerance>
+            <relative_tolerance>1.0e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>classical_transport_example_t_4800.00.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1.e-9</absolute_tolerance>
+            <relative_tolerance>1.0e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>classical_transport_example_t_4800.00.vtu</file>
+            <field>velocity</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.0e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>classical_transport_example_t_7200.00.vtu</file>
+            <field>C</field>
+            <absolute_tolerance>1.e-9</absolute_tolerance>
+            <relative_tolerance>1.0e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>classical_transport_example_t_7200.00.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1.e-9</absolute_tolerance>
+            <relative_tolerance>1.0e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>classical_transport_example_t_7200.00.vtu</file>
+            <field>velocity</field>
+            <absolute_tolerance>1.e-12</absolute_tolerance>
+            <relative_tolerance>1.0e-12</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
