@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProjectDiff base_file="M_2d_neumann.prj">
+   <remove sel="/*/test_definition"/>
    <replace msel="/*/processes/process/jacobian_assembler/type/text()">ForwardDifferences</replace>
    <replace msel="/*/time_loop/output/prefix/text()">result_TH2M_M_2d_neumann_fd_jac</replace>
 
