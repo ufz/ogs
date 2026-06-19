@@ -182,17 +182,17 @@ struct CompareJacobiansJacobianAssemblerImpl
         double rel_tol_res,
         bool fail_on_error,
         std::string const& log_file_path)
-        : _asm1{std::move(asm1)},
-          _asm2{std::move(asm2)},
-          _abs_tol_Jac{abs_tol_Jac},
-          _rel_tol_Jac{rel_tol_Jac},
-          _abs_tol_res{abs_tol_res},
-          _rel_tol_res{rel_tol_res},
-          _fail_on_error{fail_on_error},
-          _log_file{log_file_path}
+        : asm1_{std::move(asm1)},
+          asm2_{std::move(asm2)},
+          abs_tol_Jac_{abs_tol_Jac},
+          rel_tol_Jac_{rel_tol_Jac},
+          abs_tol_res_{abs_tol_res},
+          rel_tol_res_{rel_tol_res},
+          fail_on_error_{fail_on_error},
+          log_file_{log_file_path}
     {
-        _log_file.precision(std::numeric_limits<double>::max_digits10);
-        _log_file << "#!/usr/bin/env python\n"
+        log_file_.precision(std::numeric_limits<double>::max_digits10);
+        log_file_ << "#!/usr/bin/env python\n"
                      "import numpy as np\n"
                      "from numpy import nan\n"
                   << std::endl;
@@ -207,26 +207,26 @@ struct CompareJacobiansJacobianAssemblerImpl
                               std::vector<double>& local_Jac_data);
 
 private:
-    std::unique_ptr<AbstractJacobianAssembler> _asm1;
-    std::unique_ptr<AbstractJacobianAssembler> _asm2;
+    std::unique_ptr<AbstractJacobianAssembler> asm1_;
+    std::unique_ptr<AbstractJacobianAssembler> asm2_;
 
-    double const _abs_tol_Jac;
-    double const _rel_tol_Jac;
-    double const _abs_tol_res;
-    double const _rel_tol_res;
+    double const abs_tol_Jac_;
+    double const rel_tol_Jac_;
+    double const abs_tol_res_;
+    double const rel_tol_res_;
 
     //! Whether to abort if the tolerances are exceeded.
-    bool const _fail_on_error;
+    bool const fail_on_error_;
 
     //! Path where a Python script will be placed, which contains
     //! information about exceeded tolerances and assembled local
     //! matrices.
-    std::ofstream _log_file;
+    std::ofstream log_file_;
 
-    //! Counter used for identifying blocks in the \c _log_file. It is
+    //! Counter used for identifying blocks in the \c log_file_. It is
     //! incremented upon each call of the assembly routine, i.e., for
     //! each element in each iteration etc.
-    std::ptrdiff_t _counter = -1;
+    std::ptrdiff_t counter_ = -1;
 };
 
 void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
@@ -235,13 +235,13 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     std::vector<double> const& local_x_prev, std::vector<double>& local_b_data,
     std::vector<double>& local_Jac_data)
 {
-    ++_counter;
+    ++counter_;
 
     auto const num_dof = local_x.size();
 
     // First assembly -- the one whose results will be added to the global
     // equation system finally.
-    _asm1->assembleWithJacobian(mesh_item_id, local_assembler, t, dt, local_x,
+    asm1_->assembleWithJacobian(mesh_item_id, local_assembler, t, dt, local_x,
                                 local_x_prev, local_b_data, local_Jac_data);
 
     auto const local_b1 = MathLib::toVector(local_b_data);
@@ -250,7 +250,7 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     std::vector<double> local_Jac_data2;
 
     // Second assembly -- used for checking only.
-    _asm2->assembleWithJacobian(mesh_item_id, local_assembler, t, dt, local_x,
+    asm2_->assembleWithJacobian(mesh_item_id, local_assembler, t, dt, local_x,
                                 local_x_prev, local_b_data2, local_Jac_data2);
 
     auto const local_b2 = MathLib::toVector(local_b_data2);
@@ -263,9 +263,9 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
         signedAbsDiffRelDiff(local_Jac1, local_Jac2);
 
     auto const abs_diff_mask =
-        oneIfAboveThresholdElseZero(abs_diff.abs(), _abs_tol_Jac);
+        oneIfAboveThresholdElseZero(abs_diff.abs(), abs_tol_Jac_);
     auto const rel_diff_mask =
-        oneIfAboveThresholdElseZero(rel_diff.abs(), _rel_tol_Jac);
+        oneIfAboveThresholdElseZero(rel_diff.abs(), rel_tol_Jac_);
 
     auto const abs_diff_OK = !abs_diff_mask.any();
     auto const rel_diff_OK = !rel_diff_mask.any();
@@ -280,7 +280,7 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     }
     else
     {
-        msg_tolerance << "absolute tolerance of " << _abs_tol_Jac
+        msg_tolerance << "absolute tolerance of " << abs_tol_Jac_
                       << " exceeded";
     }
 
@@ -295,11 +295,11 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
             msg_tolerance << " and ";
         }
 
-        msg_tolerance << "relative tolerance of " << _rel_tol_Jac
+        msg_tolerance << "relative tolerance of " << rel_tol_Jac_
                       << " exceeded";
     }
 
-    fatal_error |= !isSimilar(local_b1, local_b2, _abs_tol_res, _rel_tol_res);
+    fatal_error |= !isSimilar(local_b1, local_b2, abs_tol_res_, rel_tol_res_);
 
     Eigen::VectorXd res1 = Eigen::VectorXd::Zero(num_dof);
     auto const x = MathLib::toVector(local_x);
@@ -315,7 +315,7 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
         res2.noalias() -= local_b2;
     }
 
-    fatal_error |= !isSimilar(res1, res2, _abs_tol_res, _rel_tol_res);
+    fatal_error |= !isSimilar(res1, res2, abs_tol_res_, rel_tol_res_);
 
     if (tol_exceeded)
     {
@@ -326,14 +326,14 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
 
     if (output)
     {
-        _log_file << "\n### counter: " << std::to_string(_counter)
+        log_file_ << "\n### counter: " << std::to_string(counter_)
                   << ", t: " << t << ", element_id: " << mesh_item_id
                   << " (begin)\n";
     }
 
     if (fatal_error)
     {
-        _log_file << '\n'
+        log_file_ << '\n'
                   << "#######################################################\n"
                   << "# FATAL ERROR: " << msg_fatal << '\n'
                   << "#              You cannot expect any meaningful insights "
@@ -350,81 +350,81 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
 
     if (tol_exceeded)
     {
-        _log_file << "# " << msg_tolerance.str() << "\n\n";
+        log_file_ << "# " << msg_tolerance.str() << "\n\n";
     }
 
     if (output)
     {
-        dump_py(_log_file, "counter", _counter);
-        dump_py(_log_file, "t", t);
-        dump_py(_log_file, "dt", dt);
-        dump_py(_log_file, "element_id", mesh_item_id);
+        dump_py(log_file_, "counter", counter_);
+        dump_py(log_file_, "t", t);
+        dump_py(log_file_, "dt", dt);
+        dump_py(log_file_, "element_id", mesh_item_id);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        dump_py(_log_file, "num_dof", num_dof);
-        dump_py(_log_file, "abs_tol", _abs_tol_Jac);
-        dump_py(_log_file, "rel_tol", _rel_tol_Jac);
+        dump_py(log_file_, "num_dof", num_dof);
+        dump_py(log_file_, "abs_tol", abs_tol_Jac_);
+        dump_py(log_file_, "rel_tol", rel_tol_Jac_);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        dump_py(_log_file, "local_x", local_x);
-        dump_py(_log_file, "local_x_prev", local_x_prev);
+        dump_py(log_file_, "local_x", local_x);
+        dump_py(log_file_, "local_x_prev", local_x_prev);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        dump_py(_log_file, "Jacobian_1", local_Jac1);
-        dump_py(_log_file, "Jacobian_2", local_Jac2);
+        dump_py(log_file_, "Jacobian_1", local_Jac1);
+        dump_py(log_file_, "Jacobian_2", local_Jac2);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        _log_file << "# Jacobian_2 - Jacobian_1\n";
-        dump_py(_log_file, "abs_diff", abs_diff);
-        _log_file << "# max(|abs_diff|) = " << abs_diff.abs().maxCoeff()
+        log_file_ << "# Jacobian_2 - Jacobian_1\n";
+        dump_py(log_file_, "abs_diff", abs_diff);
+        log_file_ << "# max(|abs_diff|) = " << abs_diff.abs().maxCoeff()
                   << '\n';
-        _log_file << "# Componentwise: 2 * abs_diff / (|Jacobian_1| + "
+        log_file_ << "# Componentwise: 2 * abs_diff / (|Jacobian_1| + "
                      "|Jacobian_2|)\n";
-        dump_py(_log_file, "rel_diff", rel_diff);
-        _log_file << "# max(|rel_diff|) = " << rel_diff.abs().maxCoeff()
+        dump_py(log_file_, "rel_diff", rel_diff);
+        log_file_ << "# max(|rel_diff|) = " << rel_diff.abs().maxCoeff()
                   << '\n';
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        _log_file << "# Masks: 0 ... tolerance met, 1 ... tolerance exceeded\n";
-        dump_py(_log_file, "abs_diff_mask", abs_diff_mask);
-        dump_py(_log_file, "rel_diff_mask", rel_diff_mask);
+        log_file_ << "# Masks: 0 ... tolerance met, 1 ... tolerance exceeded\n";
+        dump_py(log_file_, "abs_diff_mask", abs_diff_mask);
+        dump_py(log_file_, "rel_diff_mask", rel_diff_mask);
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        dump_py(_log_file, "b_1", local_b_data);
-        dump_py(_log_file, "b_2", local_b_data2);
+        dump_py(log_file_, "b_1", local_b_data);
+        dump_py(log_file_, "b_2", local_b_data2);
         if (fatal_error && local_b1.size() == local_b2.size())
         {
-            dump_py(_log_file, "delta_b", local_b2 - local_b1);
-            _log_file << '\n';
+            dump_py(log_file_, "delta_b", local_b2 - local_b1);
+            log_file_ << '\n';
         }
 
-        dump_py(_log_file, "res_1", res1);
-        dump_py(_log_file, "res_2", res2);
+        dump_py(log_file_, "res_1", res1);
+        dump_py(log_file_, "res_2", res2);
         if (fatal_error)
         {
-            dump_py(_log_file, "delta_res", res2 - res1);
+            dump_py(log_file_, "delta_res", res2 - res1);
         }
 
-        _log_file << '\n';
+        log_file_ << '\n';
 
-        _log_file << "### counter: " << std::to_string(_counter) << " (end)\n";
+        log_file_ << "### counter: " << std::to_string(counter_) << " (end)\n";
     }
 
     if (fatal_error)
     {
-        _log_file << std::flush;
+        log_file_ << std::flush;
         OGS_FATAL("{:s}", msg_fatal);
     }
 
-    if (tol_exceeded && _fail_on_error)
+    if (tol_exceeded && fail_on_error_)
     {
-        _log_file << std::flush;
+        log_file_ << std::flush;
         OGS_FATAL(
             "OGS failed, because the two Jacobian implementations returned "
             "different results.");
@@ -479,31 +479,31 @@ CompareJacobiansJacobianAssembler::copy() const
 void CompareJacobiansJacobianAssembler::checkPerturbationSize(
     int const max_non_deformation_dofs_per_node) const
 {
-    impl_->_asm1->checkPerturbationSize(max_non_deformation_dofs_per_node);
-    impl_->_asm2->checkPerturbationSize(max_non_deformation_dofs_per_node);
+    impl_->asm1_->checkPerturbationSize(max_non_deformation_dofs_per_node);
+    impl_->asm2_->checkPerturbationSize(max_non_deformation_dofs_per_node);
 }
 
 void CompareJacobiansJacobianAssembler::setNonDeformationComponentIDs(
     std::vector<int> const& non_deformation_component_ids)
 {
-    impl_->_asm1->setNonDeformationComponentIDs(non_deformation_component_ids);
-    impl_->_asm2->setNonDeformationComponentIDs(non_deformation_component_ids);
+    impl_->asm1_->setNonDeformationComponentIDs(non_deformation_component_ids);
+    impl_->asm2_->setNonDeformationComponentIDs(non_deformation_component_ids);
 }
 
 void CompareJacobiansJacobianAssembler::
     setNonDeformationComponentIDsNoSizeCheck(
         std::vector<int> const& non_deformation_component_ids)
 {
-    impl_->_asm1->setNonDeformationComponentIDsNoSizeCheck(
+    impl_->asm1_->setNonDeformationComponentIDsNoSizeCheck(
         non_deformation_component_ids);
-    impl_->_asm2->setNonDeformationComponentIDsNoSizeCheck(
+    impl_->asm2_->setNonDeformationComponentIDsNoSizeCheck(
         non_deformation_component_ids);
 }
 
 bool CompareJacobiansJacobianAssembler::needsPicardAssembly() const
 {
-    return impl_->_asm1->needsPicardAssembly() ||
-           impl_->_asm2->needsPicardAssembly();
+    return impl_->asm1_->needsPicardAssembly() ||
+           impl_->asm2_->needsPicardAssembly();
 }
 
 std::unique_ptr<CompareJacobiansJacobianAssembler>
