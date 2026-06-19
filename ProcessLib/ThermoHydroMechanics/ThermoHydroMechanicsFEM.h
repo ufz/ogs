@@ -167,7 +167,11 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
+        auto const [T, p, u] = localDOF(local_x);
         auto const [T_prev, p_prev, u_prev] = localDOF(local_x_prev);
+
+        // Stored sensible heat integrated over the element, for output.
+        double sensible_heat = 0.0;
 
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
@@ -182,8 +186,13 @@ public:
                         ShapeFunctionDisplacement,
                         ShapeMatricesTypeDisplacement>(_element, N_u))};
 
-            updateConstitutiveRelations(local_x, local_x_prev, x_position, t,
-                                        dt, _ip_data[ip], _ip_data_output[ip]);
+            auto const crv = updateConstitutiveRelations(
+                local_x, local_x_prev, x_position, t, dt, _ip_data[ip],
+                _ip_data_output[ip]);
+
+            // Stored sensible heat (latent already excluded).
+            sensible_heat += crv.sensible_volumetric_heat_capacity *
+                             ip_data.N.dot(T) * ip_data.integration_weight;
 
             auto const x_coord =
                 x_position.getCoordinates().value()[0];  // r for axisymmetry
@@ -201,6 +210,8 @@ public:
                     (eps_prev - _ip_data[ip].eps0_prev);
             _ip_data[ip].pushBackState();
         }
+
+        (*_process_data.cell_sensible_heat)[_element.getID()] = sensible_heat;
     }
 
     void computeSecondaryVariableConcrete(

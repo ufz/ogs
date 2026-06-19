@@ -264,7 +264,12 @@ struct ConstitutiveRelationsValues
     double beta;
     double beta_SR;
     double c_f;
-    double effective_volumetric_heat_capacity;
+    // Sensible contribution to the volumetric heat capacity. The effective
+    // value used in the temperature mass matrix is sensible - latent.
+    double sensible_volumetric_heat_capacity;
+    // Latent contribution L (effective = sensible - L). Zero without a
+    // frozen liquid phase.
+    double latent_volumetric_heat_capacity = 0.0;
     double fluid_compressibility;
     double rho;
     double drho_LR_dT;

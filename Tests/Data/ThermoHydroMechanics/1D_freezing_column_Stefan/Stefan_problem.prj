@@ -302,6 +302,7 @@
                 <variable> temperature </variable>
                 <variable> heat_flux </variable>
                 <variable>HeatFlowRate</variable>
+                <variable>sensible_heat</variable>
             </variables>
             <suffix>_ts_{:timestep}_t_{:time}</suffix>
         </output>
@@ -349,6 +350,19 @@
             <file>Stefan_problem_ts_427_t_427000000.000000.vtu</file>
             <field>HeatFlowRate</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <!--cell field-->
+        <vtkdiff>
+            <file>Stefan_problem_ts_46_t_46000000.000000.vtu</file>
+            <field>sensible_heat</field>
+            <absolute_tolerance>1e-4</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>Stefan_problem_ts_427_t_427000000.000000.vtu</file>
+            <field>sensible_heat</field>
+            <absolute_tolerance>1e-4</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>

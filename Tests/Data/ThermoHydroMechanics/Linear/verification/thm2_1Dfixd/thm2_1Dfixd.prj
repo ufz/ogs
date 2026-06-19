@@ -158,6 +158,7 @@
                 <variable>temperature</variable>
                 <variable>sigma</variable>
                 <variable>epsilon</variable>
+                <variable>sensible_heat</variable>
             </variables>
         </output>
     </time_loop>
@@ -353,6 +354,12 @@
             <field>temperature</field>
             <absolute_tolerance>1e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>thm2_1Dfixd_ts_.*.vtu</regex>
+            <field>sensible_heat</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
