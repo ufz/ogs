@@ -78,7 +78,10 @@ OutputConfig createOutputConfig(
         try
         {
             const std::map<std::string, OutputType> outputType_to_enum = {
-                {"VTK", OutputType::vtk}, {"XDMF", OutputType::xdmf}};
+                //! \ogs_file_param_special{prj__time_loop__output__VTK}
+                {"VTK", OutputType::vtk},
+                //! \ogs_file_param_special{prj__time_loop__output__XDMF}
+                {"XDMF", OutputType::xdmf}};
             auto type = outputType_to_enum.at(output_type);
 
             return type;

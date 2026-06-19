@@ -86,10 +86,12 @@ def replace_prefix(tag: str, typetag: str) -> str:
     "Replaces prefix to match the different docs structure for some tags."
 
     type_prefix = "" if typetag is None else typetag + "__"
-    if (prefix := "prj__processes__process__constitutive_relation__") in tag:
-        tag = tag.replace(
-            prefix, "material.solid.constitutive_relation__" + type_prefix
-        )
+    const_rel_src = "prj__processes__process__constitutive_relation"
+    const_rel_tgt = "material__solid__constitutive_relation"
+    if tag == const_rel_src:
+        tag = const_rel_tgt
+    elif (prefix := const_rel_src + "__") in tag:
+        tag = tag.replace(prefix, const_rel_tgt + "__" + type_prefix)
 
     for prefix_end in ["phases__phase__", "phases__", ""]:
         if (prefix := "prj__media__medium__" + prefix_end) in tag:
@@ -166,6 +168,7 @@ def print_tags(
     if page_name:
         fullpagename += "__" + page_name
 
+    # accumulate attributes
     attrs = ""
     for attr, value in sorted(node.attrib.items()):
         attrpath = tag_path + "." + attr
@@ -176,7 +179,7 @@ def print_tags(
             r" {0}=\"{2}\"",
             attrpagename,
             attr,
-            True,
+            False,
             escape(value),
         )
         if a_is_doc:
@@ -185,7 +188,7 @@ def print_tags(
     if len(node) > 0:  # node having child tag
         fmt = INDENT * level + "\\<{0}{2}\\><br>\n"
         filehandle.write(
-            format_if_documented(is_doc, fmt, fullpagename, tag, True, attrs)
+            format_if_documented(is_doc, fmt, fullpagename, tag, False, attrs)
         )
 
         if node.text and node.text.strip():
@@ -223,7 +226,7 @@ def print_tags(
                 fmt = INDENT * level + "\\<{0}{2}\\>{3}\\</{1}\\><br>\n"
                 filehandle.write(
                     format_if_documented(
-                        is_doc, fmt, fullpagename, tag, True, attrs,
+                        is_doc, fmt, fullpagename, tag, False, attrs,
                         escape(node.text.strip()),
                     )  # fmt: skip
                 )
@@ -236,8 +239,6 @@ def print_tags(
                     map_tag_to_prj_files[typetagpath].add(rel_filepath)
                 typepagename = "ogs_file_param__" + typepagename
 
-                # If the content of a type tag is undocumented no red
-                # "undocumented..." HTML code will be generated.
                 type_text_formatted = format_if_documented(
                     type_is_doc,
                     "{0}",
@@ -249,14 +250,14 @@ def print_tags(
                 fmt = INDENT * level + "\\<{0}{2}\\>{3}\\</{1}\\><br>\n"
                 filehandle.write(
                     format_if_documented(
-                        is_doc, fmt, fullpagename, tag, True, attrs,
+                        is_doc, fmt, fullpagename, tag, False, attrs,
                         type_text_formatted,
                     )  # fmt: skip
                 )
         else:
             fmt = INDENT * level + "\\<{0}{2} /\\><br>\n"
             filehandle.write(
-                format_if_documented(is_doc, fmt, fullpagename, tag, True, attrs)
+                format_if_documented(is_doc, fmt, fullpagename, tag, False, attrs)
             )
 
 

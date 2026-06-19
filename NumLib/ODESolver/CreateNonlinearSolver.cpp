@@ -28,6 +28,7 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
 
     if (type == "Picard")
     {
+        //! \ogs_file_param_special{prj__nonlinear_solvers__nonlinear_solver__Picard}
         auto const tag = NonlinearSolverTag::Picard;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(
@@ -36,10 +37,10 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     if (type == "Newton")
     {
         auto const recompute_jacobian =
-            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__recompute_jacobian}
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__Newton__recompute_jacobian}
             config.getConfigParameter<int>("recompute_jacobian", 1);
 
-        //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping}
+        //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__Newton__damping}
         auto const damping = config.getConfigParameter<double>("damping", 1.0);
         if (damping <= 0)
         {
@@ -50,7 +51,7 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
                 damping);
         }
         auto const damping_reduction =
-            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__damping_reduction}
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__Newton__damping_reduction}
             config.getConfigParameterOptional<double>("damping_reduction");
         std::unique_ptr<NewtonStepStrategy> standard_newton;
         if (damping_reduction)
@@ -74,7 +75,7 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     if (boost::iequals(type, "PETScSNES"))
     {
         auto prefix =
-            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__prefix}
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__PETScSNES__prefix}
             config.getConfigParameter<std::string>("prefix", "");
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = PETScNonlinearSolver;

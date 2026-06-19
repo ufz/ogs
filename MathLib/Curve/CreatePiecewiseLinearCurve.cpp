@@ -18,7 +18,8 @@ namespace MathLib
 PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
     BaseLib::ConfigTree const& config)
 {
-    const bool read_from_file =  //! \ogs_file_param{curve__read_from_file}
+    const bool read_from_file =
+        //! \ogs_file_param{prj__curves__curve__read_from_file}
         config.getConfigParameter<bool>("read_from_file", false);
 
     std::vector<double> x;
@@ -27,11 +28,11 @@ PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
     if (read_from_file == true)
     {
         auto const coords_file_name =
-            //! \ogs_file_param{curve__coords}
+            //! \ogs_file_param{prj__curves__curve__coords}
             config.getConfigParameter<std::string>("coords");
 
         auto const values_file_name =
-            //! \ogs_file_param{curve__values}
+            //! \ogs_file_param{prj__curves__curve__values}
             config.getConfigParameter<std::string>("values");
 
         x = BaseLib::readDoublesFromBinaryFile(
@@ -43,10 +44,10 @@ PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
     else
     {
         x =
-            //! \ogs_file_param{curve__coords}
+            //! \ogs_file_param{prj__curves__curve__coords}
             config.getConfigParameter<std::vector<double>>("coords");
         y =
-            //! \ogs_file_param{curve__values}
+            //! \ogs_file_param{prj__curves__curve__values}
             config.getConfigParameter<std::vector<double>>("values");
     }
 
