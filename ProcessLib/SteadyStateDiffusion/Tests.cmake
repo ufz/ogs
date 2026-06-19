@@ -82,11 +82,19 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
     endif()
 
     if(TEST ogs-SteadyStateDiffusion_cube_1x1x1_${mesh_size} AND DIFF_TOOL_PATH)
-        set(_processed_path Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_processed.prj)
-        add_test(NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
-            COMMAND ${DIFF_TOOL_PATH} ${Data_SOURCE_DIR}/${_processed_path} ${Data_BINARY_DIR}/${_processed_path})
-        set_tests_properties(SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
-            PROPERTIES LABELS "default" DEPENDS ogs-SteadyStateDiffusion_cube_1x1x1_${mesh_size})
+        set(_processed_path
+            Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_processed.prj
+        )
+        add_test(
+            NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
+            COMMAND ${DIFF_TOOL_PATH} ${Data_SOURCE_DIR}/${_processed_path}
+                    ${Data_BINARY_DIR}/${_processed_path}
+        )
+        set_tests_properties(
+            SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
+            PROPERTIES LABELS "default" DEPENDS
+                       ogs-SteadyStateDiffusion_cube_1x1x1_${mesh_size}
+        )
     endif()
 
     AddTest(
@@ -488,14 +496,22 @@ if(OGS_USE_MPI)
             WRAPPER mpirun -np 3
     )
 endif()
-if(TEST ogs-EllipticPETSc/quad_20x10_GroundWaterFlow-mpi AND XMLSTARLET_TOOL_PATH AND BASH_TOOL_PATH)
+if(TEST ogs-EllipticPETSc/quad_20x10_GroundWaterFlow-mpi
+   AND XMLSTARLET_TOOL_PATH AND BASH_TOOL_PATH
+)
     # Just checks if there are 3 <Piece>-elements in the pvtu
-    add_test(NAME ParallelFEM_GroundWaterFlow2D_pvtu
-             COMMAND ${BASH_TOOL_PATH} -c "if [[ $(xmlstarlet sel -t -v 'count(/VTKFile/PUnstructuredGrid/Piece)' Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu) == '3' ]] ; then exit 0; else cat Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu; exit 1; fi"
-             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    add_test(
+        NAME ParallelFEM_GroundWaterFlow2D_pvtu
+        COMMAND
+            ${BASH_TOOL_PATH} -c
+            "if [[ $(xmlstarlet sel -t -v 'count(/VTKFile/PUnstructuredGrid/Piece)' Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu) == '3' ]] ; then exit 0; else cat Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu; exit 1; fi"
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     )
-    set_tests_properties(ParallelFEM_GroundWaterFlow2D_pvtu
-            PROPERTIES LABELS "default" DEPENDS ogs-EllipticPETSc/quad_20x10_GroundWaterFlow-mpi)
+    set_tests_properties(
+        ParallelFEM_GroundWaterFlow2D_pvtu
+        PROPERTIES LABELS "default" DEPENDS
+                   ogs-EllipticPETSc/quad_20x10_GroundWaterFlow-mpi
+    )
 endif()
 
 AddTest(

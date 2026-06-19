@@ -468,19 +468,23 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27_ts_10_t_86400.000000.vtu
     )
     set(DIR_TO_CHECK
-        ${PROJECT_BINARY_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections_52a2ff3d)
-    set(FILE_PREFIX empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27_ts_)
+        ${PROJECT_BINARY_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections_52a2ff3d
+    )
+    set(FILE_PREFIX
+        empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27_ts_
+    )
     add_test(
         NAME check_files-ogs-Parabolic/LiquidFlow/Flux/3D/Hex
-        COMMAND ${CMAKE_COMMAND}
-        "-DEXPECTED_FILES=${EXPECTED_FILES}"
-        -DFILE_PREFIX=${FILE_PREFIX}
-        -DDIR_TO_CHECK=${DIR_TO_CHECK}
-        -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/CheckCreatedFiles.cmake
+        COMMAND
+            ${CMAKE_COMMAND} "-DEXPECTED_FILES=${EXPECTED_FILES}"
+            -DFILE_PREFIX=${FILE_PREFIX} -DDIR_TO_CHECK=${DIR_TO_CHECK} -P
+            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/CheckCreatedFiles.cmake
     )
     set_tests_properties(
         check_files-ogs-Parabolic/LiquidFlow/Flux/3D/Hex
-        PROPERTIES DEPENDS ogs-Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_empty_output_timesteps_only_fixed_output
+        PROPERTIES
+            DEPENDS
+            ogs-Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_empty_output_timesteps_only_fixed_output
     )
 endif()
 

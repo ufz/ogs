@@ -413,7 +413,7 @@ if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_confined_compression/confined_compression.prj RUNTIME 19)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/0d_resaturation/resaturation.prj RUNTIME 4)
 
-    if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         # Disabled for PETSc, because large numerical errors are observed occasionally.
         # The model is tested sufficiently in other configurations, and other tests are run with PETSc, too.
         OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/BentoniteBehaviourGeneralMod/1d_column_resaturation/bentonite_column.prj RUNTIME 295)

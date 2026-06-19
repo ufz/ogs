@@ -106,7 +106,7 @@ if (NOT OGS_USE_LIS)
     OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 18)
 endif()
 
-if (OGS_USE_MPI)
+if(OGS_USE_MPI)
     # OgsTest(WRAPPER mpirun -np 4 PROJECTFILE Mechanics/Linear/disc_with_hole.prj)
     OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Mechanics/InitialStates/soil_column_nonequilibrium_sigma_elementwise.prj)
     OgsTest(PROJECTFILE Mechanics/Ehlers/cube_1e0_SNES.prj)
@@ -114,12 +114,12 @@ if (OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/cube_1e0_SNES.prj)
 endif()
 
-if (OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
+if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/slope.prj RUNTIME 15
         PROPERTIES PASS_REGULAR_EXPRESSION "The nonlinear solver failed in time step #.* at t = 5.37.* s for process #0"
     )
     OgsTest(PROJECTFILE Mechanics/MohrCoulombAbboSloan/load_test_mc.prj)
-    if (OGS_USE_MPI)
+    if(OGS_USE_MPI)
         OgsTest(WRAPPER mpirun -np 4 PROJECTFILE Mechanics/MohrCoulombAbboSloan/PetscMpi/slope_hexa.prj
             RUNTIME 1200)
     endif()
@@ -198,7 +198,7 @@ if (OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
 
 endif()
 
-if (NOT OGS_USE_LIS)
+if(NOT OGS_USE_LIS)
     if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_1Dload/m1_1Dload.prj)
     endif()
