@@ -1,16 +1,6 @@
-AddTest(
-    NAME HeatTransportBHE_1U_3D_bhe_sandwich
-    PATH Parabolic/T/3D_BHE_Sandwich
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS sandwich.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 1
-    DIFF_DATA
-    sandwich_ts_10_t_600.000000.vtu sandwich_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    sandwich_ts_10_t_600.000000.vtu sandwich_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
-)
+if(NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Parabolic/T/3D_BHE_Sandwich/sandwich.prj RUNTIME 1)
+endif()
 
 AddTest(
     NAME HeatTransportBHE_1U_3D_bhe_sandwich_linear
@@ -68,19 +58,11 @@ AddTest(
     sandwich_ts_10_t_600.000000.vtu sandwich_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-9
 )
 
-AddTest(
-    NAME HeatTransportBHE_1U_3D_bhe_sandwich_fixed_power
-    PATH Parabolic/T/3D_BHE_Sandwich
-    RUNTIME 1
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS sandwich_fixed_power.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    sandwich_fixed_power_ts_10_t_600.000000.vtu sandwich_fixed_power_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    sandwich_fixed_power_ts_10_t_600.000000.vtu sandwich_fixed_power_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/3D_BHE_Sandwich/sandwich_fixed_power.prj
+            RUNTIME 1
+    )
+endif()
 
 AddTest(
     NAME HeatTransportBHE_1U_3D_bhe_sandwich_fixed_power_algebraicBC
@@ -110,19 +92,11 @@ AddTest(
     sandwich_fixed_power_ts_10_t_600.000000.vtu sandwich_fixed_power_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-6
 )
 
-AddTest(
-    NAME HeatTransportBHE_1U_3D_beier_sandbox
-    PATH Parabolic/T/3D_Beier_sandbox
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS beier_sandbox.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 10
-    DIFF_DATA
-    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/3D_Beier_sandbox/beier_sandbox.prj
+            RUNTIME 10
+    )
+endif()
 
 AddTest(
     NAME HeatTransportBHE_1U_3D_beier_sandbox_linear
@@ -208,19 +182,12 @@ AddTest(
     beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-10
 )
 
-AddTest(
-    NAME HeatTransportBHE_1U_beier_sandbox_fixed_power_constant_flow
-    PATH Parabolic/T/3D_Beier_sandbox
-    RUNTIME 125
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS fixed_power_constant_flow.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE Parabolic/T/3D_Beier_sandbox/fixed_power_constant_flow.prj
+        RUNTIME 125
+    )
+endif()
 
 AddTest(
     NAME HeatTransportBHE_1U_beier_sandbox_fixed_power_constant_flow_algebraicBC
@@ -250,61 +217,21 @@ AddTest(
     fixed_power_constant_flow_ts_10_t_600.000000.vtu fixed_power_constant_flow_algebraic_bc_LSCG_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 5e-9
 )
 
-AddTest(
-    NAME HeatTransportBHE_coaxial_pipe_3D_deep_BHE_CXA
-    PATH Parabolic/T/3D_deep_BHE
-    RUNTIME 19
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS 3D_deep_BHE_CXA.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    3D_deep_BHE_CXA_ts_10_t_600.000000.vtu 3D_deep_BHE_CXA_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    3D_deep_BHE_CXA_ts_10_t_600.000000.vtu 3D_deep_BHE_CXA_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/3D_deep_BHE/3D_deep_BHE_CXA.prj RUNTIME 19)
+endif()
 
-AddTest(
-    NAME HeatTransportBHE_coaxial_pipe_3D_deep_BHE_CXC
-    PATH Parabolic/T/3D_deep_BHE
-    RUNTIME 19
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS 3D_deep_BHE_CXC.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    3D_deep_BHE_CXC_ts_10_t_600.000000.vtu 3D_deep_BHE_CXC_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
-    3D_deep_BHE_CXC_ts_10_t_600.000000.vtu 3D_deep_BHE_CXC_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/3D_deep_BHE/3D_deep_BHE_CXC.prj RUNTIME 19)
+endif()
 
-AddTest(
-    NAME HeatTransportBHE_3D_2U_BHE
-    PATH Parabolic/T/3D_2U_BHE
-    RUNTIME 9
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS 3D_2U_BHE.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    3D_2U_BHE_ts_10_t_600.000000.vtu 3D_2U_BHE_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    3D_2U_BHE_ts_10_t_600.000000.vtu 3D_2U_BHE_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/3D_2U_BHE/3D_2U_BHE.prj RUNTIME 9)
+endif()
 
-AddTest(
-    NAME HeatTransportBHE_3D_2U_BHE_sections
-    PATH Parabolic/T/3D_2U_BHE
-    RUNTIME 14
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS 3D_2U_BHE_sections.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    3D_2U_BHE_sections_ts_10_t_600.000000.vtu 3D_2U_BHE_sections_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    3D_2U_BHE_sections_ts_10_t_600.000000.vtu 3D_2U_BHE_sections_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/3D_2U_BHE/3D_2U_BHE_sections.prj RUNTIME 14)
+endif()
 
 AddTest(
     NAME HeatTransportBHE_3D_3BHEs
@@ -378,35 +305,17 @@ AddTest(
     3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_id_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-12
 )
 
-AddTest(
-    NAME HeatTransportBHE_3D_3BHEs_BHE_id_1U_sections
-    PATH Parabolic/T/3D_3BHEs
-    RUNTIME 14
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS 3bhes_id_1U_sections.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 1e-12
-    3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 0 1e-12
-    3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 0 1e-12
-    3bhes_1U_id_sections_ts_10_t_600.000000.vtu 3bhes_1U_id_sections_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-12
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/3D_3BHEs/3bhes_id_1U_sections.prj
+            RUNTIME 14
+    )
+endif()
 
-AddTest(
-    NAME HeatTransportBHE_3D_BHE_groundwater_advection
-    PATH Parabolic/T/3D_BHE_GW_advection
-    RUNTIME 4
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS BHE_GW_advection.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    BHE_GW_advection_ts_10_t_500.000000.vtu BHE_GW_advection_ts_10_t_500.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    BHE_GW_advection_ts_10_t_500.000000.vtu BHE_GW_advection_ts_10_t_500.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/3D_BHE_GW_advection/BHE_GW_advection.prj
+            RUNTIME 4
+    )
+endif()
 
 # TODO: update to newer Python or remove!
 if("${Python_VERSION}" VERSION_LESS 3.9)
@@ -460,33 +369,13 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
     )
 endif()
 
-AddTest(
-    NAME HeatTransportBHE_single_pipe_flow_EUBHE
-    PATH Parabolic/T/BHE_1P
-    RUNTIME 27
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS BHE_1P.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    BHE_1P_ts_10_t_600.000000.vtu BHE_1P_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    BHE_1P_ts_10_t_600.000000.vtu BHE_1P_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/BHE_1P/BHE_1P.prj RUNTIME 27)
+endif()
 
-AddTest(
-    NAME HeatTransportBHE_single_pipe_flow_EUBHE_newton
-    PATH Parabolic/T/BHE_1P
-    RUNTIME 34
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS BHE_1P_newton.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    BHE_1P_newton_ts_10_t_600.000000.vtu BHE_1P_newton_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-12 1e-14
-    BHE_1P_newton_ts_10_t_600.000000.vtu BHE_1P_newton_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/BHE_1P/BHE_1P_newton.prj RUNTIME 34)
+endif()
 
 if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/T/BHE_1P/pipe_flow_ebhe.py RUNTIME 107)

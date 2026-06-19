@@ -255,4 +255,18 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>BHE_GW_advection_ts_10_t_500.000000.vtu</file>
+            <field>temperature_BHE1</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>BHE_GW_advection_ts_10_t_500.000000.vtu</file>
+            <field>temperature_soil</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
