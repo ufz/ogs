@@ -295,16 +295,12 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
 endif()
 
 # Serial XDMF output
-AddTest(
-    NAME SteadyStateDiffusion_cube_2
-    PATH Elliptic/cube_1x1x1_SteadyStateDiffusion/xdmf
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e4_anisotropic.prj
-    TESTER xdmfdiff
-    DIFF_DATA
-    cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf pressure pressure 1e-14 1e-14 0 0
-    cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf darcy_velocity darcy_velocity 1e-13 1e-13 0 0
-)
+if(TARGET xdmfdiff)
+    OgsTest(
+        PROJECTFILE
+            Elliptic/cube_1x1x1_SteadyStateDiffusion/xdmf/cube_1e4_anisotropic.prj
+    )
+endif()
 
 # MPI groundwater flow tests
 if(OGS_USE_MPI)
@@ -343,61 +339,24 @@ if(OGS_USE_MPI)
     OgsTest(PROJECTFILE EllipticPETSc/cube_1e3_neumann.prj WRAPPER mpirun -np 3)
 endif()
 
-AddTest(
-    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np3_1file
-    PATH EllipticPETSc
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e3_XDMF_np3.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 3
-    TESTER xdmfdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 1 1
-    cube_1e3_np3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 1 1
-)
-
-AddTest(
-    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np3_2files
-    PATH EllipticPETSc/XDMF_NP3_2
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ../cube_1e3_XDMF_np3_2files.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 3
-    TESTER xdmfdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    cube_1e3_np3_2files_0.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 1 1
-    cube_1e3_np3_2files_0.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 1 1
-)
-
-AddTest(
-    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np3_3files
-    PATH EllipticPETSc/XDMF_NP3_3
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ../cube_1e3_XDMF_np3_3files.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 3
-    TESTER xdmfdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 1 1
-    cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 1 1
-)
-
-AddTest(
-    NAME ParallelFEM_GroundWaterFlow3D_NeumannBC_XDMF_np2
-    PATH EllipticPETSc
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e3_XDMF_np2.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 2
-    TESTER xdmfdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    cube_1e3_np2.xdmf cube_1e3_np2_cube_1x1x1_hex_1e3.xdmf pressure pressure 1e-3 1e-3 1 1
-    cube_1e3_np2.xdmf cube_1e3_np2_cube_1x1x1_hex_1e3.xdmf v v 1e-3 1e-3 1 1
-)
+if(OGS_USE_MPI AND TARGET xdmfdiff)
+    OgsTest(
+        PROJECTFILE EllipticPETSc/cube_1e3_XDMF_np3.prj
+        WRAPPER mpirun -np 3
+    )
+    OgsTest(
+        PROJECTFILE EllipticPETSc/cube_1e3_XDMF_np3_2files.prj
+        WRAPPER mpirun -np 3
+    )
+    OgsTest(
+        PROJECTFILE EllipticPETSc/cube_1e3_XDMF_np3_3files.prj
+        WRAPPER mpirun -np 3
+    )
+    OgsTest(
+        PROJECTFILE EllipticPETSc/cube_1e3_XDMF_np2.prj
+        WRAPPER mpirun -np 2
+    )
+endif()
 
 if(OGS_USE_MPI)
     OgsTest(PROJECTFILE EllipticPETSc/square_1e1_neumann.prj WRAPPER mpirun -np 2)
@@ -545,18 +504,12 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e2_3d_submesh_output.xml)
 endif()
 
-AddTest(
-    NAME SteadyStateDiffusion_square_1x1_1e2_GMRES_GML_output_xdmf-hdf5
-    PATH Elliptic/square_1x1_SteadyStateDiffusion
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2_GMRES_GML_output_xdmf-hdf5.prj
-    WRAPPER time
-    TESTER xdmfdiff
-    REQUIREMENTS OGS_USE_EIGEN_UNSUPPORTED AND NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf pressure pressure 1e-14 1e-14 0 0
-    square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf pressure pressure 1e-14 1e-14 0 0
-)
+if(TARGET xdmfdiff AND OGS_USE_EIGEN_UNSUPPORTED AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_GMRES_GML_output_xdmf-hdf5.prj
+    )
+endif()
 
 if(OGS_USE_MPI)
     NotebookTest(NOTEBOOKFILE Notebooks/SimplePETSc.py RUNTIME 10)
