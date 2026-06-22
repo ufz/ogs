@@ -11,19 +11,12 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
 endif()
 
 # Staggered + XDMF
-AddTest(
-    NAME HT_SimpleSynthetics_CoupledPressureParabolicTemperatureParabolic_Staggered_XDMF
-    PATH Parabolic/HT/SimpleSynthetics/XDMF
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS CoupledPressureParabolicTemperatureParabolicStaggered.prj
-    WRAPPER time
-    TESTER xdmfdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf T T 1e-10 1e-10 1 1
-    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf p p 1e-10 1e-10 2 2
-    CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf darcy_velocity darcy_velocity 1e-10 1e-10 3 3
-)
+if(TARGET xdmfdiff AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/HT/SimpleSynthetics/XDMF/CoupledPressureParabolicTemperatureParabolicStaggered.prj
+    )
+endif()
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/calculatesurfaceflux_ht_cube_1e3.prj)
