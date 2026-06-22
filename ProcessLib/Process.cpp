@@ -484,6 +484,8 @@ void Process::preIteration(const unsigned iter, const GlobalVector& x)
 {
     MathLib::LinAlg::setLocalAccessibleVector(x);
     preIterationConcreteProcess(iter, x);
+
+    _jacobian_assembler->preIteration(iter);
 }
 
 NumLib::IterationResult Process::postIteration(const GlobalVector& x)

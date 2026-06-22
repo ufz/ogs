@@ -59,6 +59,8 @@ public:
         std::vector<int> const& non_deformation_component_ids) = 0;
 
     virtual bool needsPicardAssembly() const = 0;
+
+    virtual void preIteration(const unsigned /*iter*/) {};
 };
 
 }  // namespace ProcessLib

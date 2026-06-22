@@ -227,6 +227,8 @@ private:
     //! incremented upon each call of the assembly routine, i.e., for
     //! each element in each iteration etc.
     std::ptrdiff_t counter_ = -1;
+
+    unsigned iter_ = 0;
 };
 
 void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
@@ -356,6 +358,7 @@ void CompareJacobiansJacobianAssemblerImpl::assembleWithJacobian(
     if (output)
     {
         dump_py(log_file_, "counter", counter_);
+        dump_py(log_file_, "nonlinear_iteration", iter_);
         dump_py(log_file_, "t", t);
         dump_py(log_file_, "dt", dt);
         dump_py(log_file_, "element_id", mesh_item_id);
@@ -504,6 +507,11 @@ bool CompareJacobiansJacobianAssembler::needsPicardAssembly() const
 {
     return impl_->asm1_->needsPicardAssembly() ||
            impl_->asm2_->needsPicardAssembly();
+}
+
+void CompareJacobiansJacobianAssembler::preIteration(const unsigned iter)
+{
+    impl_->iter_ = iter;
 }
 
 std::unique_ptr<CompareJacobiansJacobianAssembler>

@@ -66,6 +66,8 @@ public:
 
     bool needsPicardAssembly() const override;
 
+    virtual void preIteration(const unsigned iter) override;
+
 private:
     // PIMPL idiom to enable copy()
     std::shared_ptr<detail::CompareJacobiansJacobianAssemblerImpl> impl_;
