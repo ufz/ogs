@@ -45,23 +45,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/HT/LowerDimensionalFracture/2D_single_fracture_HT.prj RUNTIME 11)
     OgsTest(PROJECTFILE Parabolic/HT/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField.prj RUNTIME 15)
-endif()
-
-AddTest(
-    NAME HT_HeatTransportInStationaryFlow_Staggered_Scheme
-    PATH Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS HeatTransportInStationaryFlow.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5.e-5 1.0e-4
-    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000_mono.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 2e-5 1e-5
-)
-
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj)
     OgsTest(
         PROJECTFILE Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow_via_sub-coupling.xml
         RUNTIME 1
@@ -78,7 +62,7 @@ endif()
 if(OGS_USE_MPI)
     OgsTest(
         PROJECTFILE
-            Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj
+            Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow_mpi.xml
         WRAPPER mpirun -np 3
         RUNTIME 2
     )

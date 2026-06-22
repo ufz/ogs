@@ -81,7 +81,7 @@
     </replace>
 
     <remove sel="/*/test_definition" />
-    <remove sel="/*/test_definition"/>
+
     <add sel="/*">
         <test_definition>
             <vtkdiff>

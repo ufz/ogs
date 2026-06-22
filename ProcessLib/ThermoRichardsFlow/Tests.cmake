@@ -69,20 +69,13 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsFlow/TaskCDECOVALEX2023/Decovalex-0-TRF_DeVries.xml RUNTIME 7)
 endif()
 
-AddTest(
-    NAME ThermoRichardsFlow_TaskCDECOVALEX2023_Picard
-    PATH ThermoRichardsFlow/TaskCDECOVALEX2023/WithPicardNonLinearSolverAndPETSc
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS Decovalex-0-TRF.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 9
-    DIFF_DATA
-    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu pressure pressure 3e5 15
-    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu saturation saturation 1e-2 2e-3
-    expected_Decovalex-0_ts_10_t_864000.000000.vtu Decovalex-THuni-0_ts_10_t_864000.000000.vtu temperature temperature 1e-2 1.0
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(
+        PROJECTFILE
+            ThermoRichardsFlow/TaskCDECOVALEX2023/WithPicardNonLinearSolverAndPETSc/Decovalex-0-TRF_picard.xml
+        RUNTIME 9
+    )
+endif()
 
 #PETSc
 if(OGS_USE_MPI)

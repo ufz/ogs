@@ -150,4 +150,13 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>line_1_line_1e2_ts_500_t_39062500.000000.vtu</file>
+            <reference_file>line_1_line_1e2_ts_500_t_39062500.000000_reference.vtu</reference_file>
+            <field>temperature</field>
+            <absolute_tolerance>1.4e-11</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

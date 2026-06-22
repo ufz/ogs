@@ -87,30 +87,17 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS) AND NOT ${CMAKE_HOST_SYSTEM_PROCESSOR} STREQ
 endif()
 
 # test the source term on a subdomain
-AddTest(
-    NAME 1D_HeatConduction_dirichlet_SourceTerm
-    PATH Parabolic/T/1D_dirichlet_source-term
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS line_1_line_1e2_source_term.prj
-    TESTER vtkdiff
-    DIFF_DATA
-    line_1_line_1e2_ts_500_t_39062500.000000_reference.vtu line_1_line_1e2_ts_500_t_39062500.000000.vtu temperature temperature 1.4e-11 0.0
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/T/1D_dirichlet_source-term/line_1_line_1e2_source_term.prj)
+endif()
 
 # test the source term on a subdomain with the PETSc embedded executable file
-AddTest(
-    NAME 1D_HeatConduction_dirichlet_SourceTerm_PETSc
-    PATH Parabolic/T/1D_dirichlet_source-term
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS line_1_line_1e2_source_term.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 1
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    line_1_line_1e2_ts_500_t_39062500.000000_reference.vtu line_1_line_1e2_ts_500_t_39062500.000000.vtu temperature temperature 1e-10 0.0
-)
+if(OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE Parabolic/T/1D_dirichlet_source-term/line_1_line_1e2_source_term_petsc.xml
+        WRAPPER mpirun -np 1
+    )
+endif()
 
 # failing test - mesh not found
 OgsTest(

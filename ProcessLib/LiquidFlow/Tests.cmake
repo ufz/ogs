@@ -1,18 +1,6 @@
 # Liquid flow
-AddTest(
-    NAME LiquidFlow_LineDirichletNeumannBC
-    PATH Parabolic/LiquidFlow/LineDirichletNeumannBC
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    sat1D.vtu sat_1D_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
-    sat1D.vtu sat_1D_ts_1_t_1.000000.vtu AnalyticVec v 1e-8 1e-8
-)
-
 if(NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/LineDirichletNeumannBC/line_dirichlet_neumannBC.prj)
     OgsTest(
         PROJECTFILE Parabolic/LiquidFlow/PressureBCatCornerOfAnisotropicSquare/pressureBC_at_corner_of_anisotropic_square.prj
     )
@@ -22,18 +10,9 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/DrainageExcavation/drainage_LiquidFlow.prj)
 endif()
 
-AddTest(
-    NAME LiquidFlow_GravityDriven
-    PATH Parabolic/LiquidFlow/GravityDriven
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS gravity_driven.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    mesh2D.vtu gravity_driven_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
-    mesh2D.vtu gravity_driven_ts_1_t_1.000000.vtu v_ref v 1e-8 1e-8
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/GravityDriven/gravity_driven.prj)
+endif()
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/GravityDriven/gravity_driven_XZ.prj RUNTIME 1)
@@ -58,34 +37,15 @@ endif()
 
 #===============================================================================
 # PETSc/MPI
-AddTest(
-    NAME LiquidFlow_LineDirichletNeumannBC
-    PATH Parabolic/LiquidFlow/LineDirichletNeumannBC
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS line_dirichlet_neumannBC.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 1
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    sat1D.vtu sat_1D_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
-#    sat1D.vtu sat_1D_ts_1_t_1_000000_0.vtu AnalyticVec v 1e-8 1e-8
-)
-AddTest(
-    NAME LiquidFlow_GravityDriven
-    PATH Parabolic/LiquidFlow/GravityDriven
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS gravity_driven.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 1
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    mesh2D.vtu gravity_driven_ts_1_t_1.000000.vtu AnalyticPressure pressure 1e-8 1e-8
-#    mesh2D.vtu gravity_driven_ts_1_t_1_000000_0.vtu v_ref v 1e-8 1e-8
-)
-
 if(OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE Parabolic/LiquidFlow/LineDirichletNeumannBC/line_dirichlet_neumannBC_petsc.xml
+        WRAPPER mpirun -np 1
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/LiquidFlow/GravityDriven/gravity_driven_petsc.xml
+        WRAPPER mpirun -np 1
+    )
     OgsTest(
         PROJECTFILE Parabolic/LiquidFlow/PressureBCatCornerOfAnisotropicSquare/pressureBC_at_corner_of_anisotropic_square.prj
         WRAPPER mpirun -np 1
@@ -306,17 +266,6 @@ foreach(mesh1 bulk left right top bottom)
         endforeach()
     endforeach()
 endforeach()
-
-#AddTest(
-#    NAME LiquidFlow_SimpleSynthetics_constraint_dirichlet_bc
-#    PATH Parabolic/LiquidFlow/SimpleSynthetics
-#    EXECUTABLE ogs
-#    EXECUTABLE_ARGS constraint_bc_1e3.prj
-#    TESTER vtkdiff
-#    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-#    DIFF_DATA
-#    GLOB LF_constraint_bc_1e3_ts_*.vtu p p 1e-15 1e-14
-#)
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_1.prj)

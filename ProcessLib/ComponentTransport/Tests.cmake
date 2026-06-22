@@ -59,47 +59,12 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/surfaceflux_component-transport_cube_1e3.prj)
 endif()
 
-AddTest(
-    NAME 2D_StaggeredScheme_ComponentTransport_TracerSimulation
-    PATH Parabolic/ComponentTransport/TracerSimulation
-    EXECUTABLE ogs
-    RUNTIME 3
-    EXECUTABLE_ARGS TracerSimulation.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    TracerSimulation_ts_20_t_20000.000000_expected_ogs5.vtu TracerSimulation_ts_20_t_20000.000000.vtu Cs Cs 4e-7 1e-10
-    TracerSimulation_ts_40_t_40000.000000_expected_ogs5.vtu TracerSimulation_ts_40_t_40000.000000.vtu Cs Cs 1.3e-7 1e-10
-    TracerSimulation_ts_60_t_60000.000000_expected_ogs5.vtu TracerSimulation_ts_60_t_60000.000000.vtu Cs Cs 1.3e-7 1e-10
-    TracerSimulation_ts_80_t_80000.000000_expected_ogs5.vtu TracerSimulation_ts_80_t_80000.000000.vtu Cs Cs 1.3e-7 1e-10
-    TracerSimulation_ts_100_t_100000.000000_expected_ogs5.vtu TracerSimulation_ts_100_t_100000.000000.vtu Cs Cs 1.3e-7 1e-10
-    TracerSimulation_ts_20_t_20000.000000_expected_ogs5.vtu TracerSimulation_ts_20_t_20000.000000.vtu pressure pressure 1.3e-7 1e-10
-    TracerSimulation_ts_40_t_40000.000000_expected_ogs5.vtu TracerSimulation_ts_40_t_40000.000000.vtu pressure pressure 1.3e-7 1e-10
-    TracerSimulation_ts_60_t_60000.000000_expected_ogs5.vtu TracerSimulation_ts_60_t_60000.000000.vtu pressure pressure 1.3e-7 1e-10
-    TracerSimulation_ts_80_t_80000.000000_expected_ogs5.vtu TracerSimulation_ts_80_t_80000.000000.vtu pressure pressure 1.3e-7 1e-10
-    TracerSimulation_ts_100_t_100000.000000_expected_ogs5.vtu TracerSimulation_ts_100_t_100000.000000.vtu pressure pressure 1.3e-7 1e-10
-)
-
-AddTest(
-    NAME Parallel_2D_StaggeredScheme_ComponentTransport_TracerSimulation
-    PATH Parabolic/ComponentTransport/TracerSimulation
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS TracerSimulation.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 4
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    TracerSimulation_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_ts_100_t_100000_000000_0.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_ts_100_t_100000_000000_0_expected.vtu TracerSimulation_ts_100_t_100000_000000_0.vtu pressure pressure 4.0e-5 2.7e-9
-    TracerSimulation_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_ts_100_t_100000_000000_1.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_ts_100_t_100000_000000_1_expected.vtu TracerSimulation_ts_100_t_100000_000000_1.vtu pressure pressure 4.0e-5 3.7e-9
-    TracerSimulation_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_ts_100_t_100000_000000_2.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_ts_100_t_100000_000000_2_expected.vtu TracerSimulation_ts_100_t_100000_000000_2.vtu pressure pressure 3.5e-5 2.5e-9
-    TracerSimulation_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_ts_100_t_100000_000000_3.vtu Cs Cs 1e-10 1e-16
-    TracerSimulation_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_ts_100_t_100000_000000_3.vtu pressure pressure 3.6e-5 4.7e-9
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/TracerSimulation/TracerSimulation.prj RUNTIME 3)
+endif()
+if(OGS_USE_MPI)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/TracerSimulation/TracerSimulation_mpi.xml WRAPPER mpirun -np 4)
+endif()
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/goswami/goswami_input.prj RUNTIME 291)

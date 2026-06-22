@@ -42,22 +42,13 @@ AddTest(
     GLOB liakopoulosBulk_mixElem_t_*.vtu saturation saturation 1e-10 1e-12
 )
 
-AddTest(
-    NAME ThermoRichardsMechanics_3D_ThermoElastic_Stress_Analysis
-    PATH ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e3.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 5
-    DIFF_DATA
-    stress_analytical.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu sigma sigma 1e-5 1e-12
-    expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu displacement displacement 1e-10 1e-12
-    expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu temperature temperature 1e-10 1e-12
-    expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu sigma sigma 1e-6 1e-12
-    expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu epsilon epsilon 1e-16 0
-)
+if(NOT OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE
+            ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM/cube_1e3_stress_analysis.xml
+        RUNTIME 5
+    )
+endif()
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(

@@ -153,98 +153,52 @@ if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     endif()
     OgsTest(PROJECTFILE Mechanics/PLLC/uniax_compression.prj)
 
-    # Linear elastic, no internal state variables, no external state variables.
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    if(NOT OGS_USE_MPI)
+        # Linear elastic, no internal state variables, no external state variables.
         OgsTest(PROJECTFILE Mechanics/Linear/MFront/disc_with_hole/disc_with_hole.prj)
+
+        # Tests that internal state variables work correctly.
+        OgsTest(PROJECTFILE Mechanics/Ehlers/MFront/cube_1e0_dp.prj)
+
+        # Tests that axial symmetry works correctly.
+        # NB: Currently (2018-11-06) the plane strain hypothesis is used within MFront!
+        OgsTest(PROJECTFILE Mechanics/Linear/MFront/axisymm_ring/ring_plane_strain.prj)
     endif()
-
-    # Tests that internal state variables work correctly.
-    AddTest(
-        NAME Mechanics_DruckerPrager_mfront
-        PATH Mechanics/Ehlers/MFront
-        WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/Ehlers/MFront
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_1e0_dp.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        # The reference solution has been computed by OGS's Ehlers model.
-        # See also the prj file.
-        DIFF_DATA
-        cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_ts_203_t_5.100000.vtu displacement displacement 1e-14 0
-        cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_ts_203_t_5.100000.vtu sigma sigma 2e-13 0
-        cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu cube_1e0_dp_ts_203_t_5.100000.vtu epsilon epsilon 1e-14 0
-    )
-
-    # Tests that axial symmetry works correctly.
-    # NB: Currently (2018-11-06) the plane strain hypothesis is used within MFront!
-    AddTest(
-        NAME SmallDeformation_ring_plane_strain_axi_mfront
-        PATH Mechanics/Linear/MFront/axisymm_ring
-        WORKING_DIRECTORY ${Data_SOURCE_DIR}/Mechanics/Linear/MFront/axisymm_ring
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS ring_plane_strain.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        ../../ring_plane_strain_ts_1_t_1.000000.vtu ring_plane_strain_ts_1_t_1.000000.vtu displacement displacement 1e-16 0
-        ../../ring_plane_strain_ts_1_t_1.000000.vtu ring_plane_strain_ts_1_t_1.000000.vtu sigma sigma 1e-15 0
-    )
 
 endif()
 
 if(NOT OGS_USE_LIS)
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    if(NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE Mechanics/m1_1Dload/m1_1Dload.prj)
-
         OgsTest(PROJECTFILE Mechanics/m1_1Dlozenge/m1_1Dlozenge.prj)
-
         OgsTest(PROJECTFILE Mechanics/m1_2Dload/m1_2Dload.prj)
-    endif()
 
-    if(OGS_USE_MFRONT AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
-        OgsTest(PROJECTFILE Mechanics/m1_3Dbottom/m1_3Dbottom.prj)
-    endif()
+        if(OGS_USE_MFRONT)
+            OgsTest(PROJECTFILE Mechanics/m1_3Dbottom/m1_3Dbottom.prj)
+        endif()
 
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_3Dgravity/m1_3Dgravity.prj)
-
         OgsTest(PROJECTFILE Mechanics/m1_3Dload/m1_3Dload.prj)
-
         OgsTest(PROJECTFILE Mechanics/m1_3Dsquare/m1_3Dsquare.prj RUNTIME 9)
-
         OgsTest(PROJECTFILE Mechanics/m1_3Dtopload/m1_3Dtopload.prj RUNTIME 3)
-    endif()
 
-    # Tests for Principal Stress Output
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+        # Tests for Principal Stress Output
         OgsTest(PROJECTFILE Mechanics/Linear/PrincipalStress/sphere.prj)
-    endif()
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/TransverseElasticModel/m_e_transiso_2D.prj)
-    endif()
-
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(
             PROJECTFILE
                 Mechanics/CreepWithHeterogeneousReferenceTemperature/arehs-salt-M_gravity_only_element_refT.prj
             RUNTIME 32
         )
-    endif()
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/AxisymmetryBbar/axisymmetry_bbar.prj RUNTIME 1)
-    endif()
-
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/Simple3DBbar/simple_3d_bbar.prj RUNTIME 1)
-    endif()
-
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(
             PROJECTFILE Mechanics/Linear/cube_1e0_fail_lin_solver.xml
             RUNTIME 1
             PROPERTIES PASS_REGULAR_EXPRESSION "Time stepper cannot reduce the time step size further[.]"
         )
     endif()
+
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.py RUNTIME 4 SKIP_WEB)
     OgsTest(PROJECTFILE Mechanics/Linear/test_ip_data/square_1e2_test_ip_data.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/NormalTraction/normal_traction.prj)
