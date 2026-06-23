@@ -68,7 +68,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     double const initial_time,
     std::set<std::string> const& output_variable_names,
     bool const use_compression, unsigned int const n_files,
-    unsigned int const chunk_size_bytes)
+    unsigned int const chunk_size_bytes, bool const separate_static_file)
 {
     // ogs meshes to vector of Xdmf/HDF meshes (we keep Xdmf and HDF together
     // because XDMF depends on HDF) to meta
@@ -163,11 +163,45 @@ XdmfHdfWriter::XdmfHdfWriter(
     // --------------- HDF ---------------------
     std::filesystem::path const hdf_filepath =
         filepath.parent_path() / (filepath.stem().string() + ".h5");
+    std::filesystem::path const static_hdf_filepath =
+        filepath.parent_path() / (filepath.stem().string() + "_static.h5");
 
     auto const is_file_manager = isFileManager();
-    _hdf_writer = std::make_unique<HdfWriter>(
-        std::move(hdf_meshes), time_step, initial_time, hdf_filepath,
-        use_compression, is_file_manager, n_files);
+
+    if (separate_static_file)
+    {
+        // Split hdf meshes into static (constant attributes only) and dynamic
+        // (variable attributes only).
+        std::vector<MeshHdfData> static_hdf_meshes;
+        std::vector<MeshHdfData> dynamic_hdf_meshes;
+        for (auto& m : hdf_meshes)  // move data out of m
+        {
+            static_hdf_meshes.push_back(MeshHdfData{
+                .constant_attributes = std::move(m.constant_attributes),
+                .variable_attributes = {},
+                .name = m.name});
+            dynamic_hdf_meshes.push_back(MeshHdfData{
+                .constant_attributes = {},
+                .variable_attributes = std::move(m.variable_attributes),
+                .name = std::move(m.name)});
+        }
+
+        _static_hdf_writer = std::make_unique<HdfWriter>(
+            std::move(static_hdf_meshes), time_step, initial_time,
+            static_hdf_filepath, use_compression, is_file_manager, n_files,
+            true);
+        _hdf_writer = std::make_unique<HdfWriter>(
+            std::move(dynamic_hdf_meshes), time_step, initial_time,
+            hdf_filepath, use_compression, is_file_manager, n_files, false);
+    }
+    else
+    {
+        // Backward-compatible single-file mode: all data goes to one file with
+        // time dimension.
+        _hdf_writer = std::make_unique<HdfWriter>(
+            std::move(hdf_meshes), time_step, initial_time, hdf_filepath,
+            use_compression, is_file_manager, n_files, false);
+    }
 
     // --------------- XDMF ---------------------
     // The light data is only written by just one process
@@ -182,7 +216,8 @@ XdmfHdfWriter::XdmfHdfWriter(
     // extract meta data relevant for XDMFWriter
     auto const transform_metamesh_to_xdmf =
         [&isVariableXdmfAttribute, &filepath, &hdf_filepath,
-         &initial_time](XdmfHdfMesh& metamesh)
+         &static_hdf_filepath, &initial_time,
+         separate_static_file](XdmfHdfMesh& metamesh)
     {
         std::string const xdmf_name = metamesh.name;
         std::filesystem::path const xdmf_filepath =
@@ -204,10 +239,16 @@ XdmfHdfWriter::XdmfHdfWriter(
                      back_inserter(xdmf_constant_attributes),
                      std::not_fn(isVariableXdmfAttribute));
 
+        // In backward compat mode, constant data also has a time dimension and
+        // shares the dynamic file.
+        auto const& static_fn =
+            separate_static_file
+                ? static_hdf_filepath.filename().string()
+                : hdf_filepath.filename().string();
         auto const xdmf_writer_fn =
             write_xdmf(metamesh.geometry.xdmf, metamesh.topology.xdmf,
                        xdmf_constant_attributes, xdmf_variable_attributes,
-                       hdf_filepath.filename().string(),
+                       static_fn, hdf_filepath.filename().string(),
                        GitInfoLib::GitInfo::ogs_version, xdmf_name);
         auto xdmf_writer = std::make_unique<XdmfWriter>(xdmf_filepath.string(),
                                                         xdmf_writer_fn);

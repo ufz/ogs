@@ -21,7 +21,8 @@ namespace MeshLib::IO
  * \param topology Metadata for the topology of the mesh
  * \param variable_attributes Meta data for attributes changing over time
  * \param constant_attributes Meta data for attributes NOT changing over time
- * \param h5filename Name of the file where the actual data was written
+ * \param static_h5filename Name of the file for static (constant) data
+ * \param dynamic_h5filename Name of the file for dynamic (variable) data
  * \param ogs_version OGS Version to be added to XdmfInformation tag
  * \param mesh_name Name of the output mesh
  * \return unary function with vector of time step values, returning XDMF string
@@ -30,6 +31,6 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     XdmfData const& geometry, XdmfData const& topology,
     std::vector<XdmfData> const& constant_attributes,
     std::vector<XdmfData> const& variable_attributes,
-    std::string const& h5filename, std::string const& ogs_version,
-    std::string const& mesh_name);
+    std::string const& static_h5filename, std::string const& dynamic_h5filename,
+    std::string const& ogs_version, std::string const& mesh_name);
 }  // namespace MeshLib::IO

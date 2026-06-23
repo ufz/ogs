@@ -102,8 +102,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     XdmfData const& geometry, XdmfData const& topology,
     std::vector<XdmfData> const& constant_attributes,
     std::vector<XdmfData> const& variable_attributes,
-    std::string const& h5filename, std::string const& ogs_version,
-    std::string const& mesh_name)
+    std::string const& static_h5filename, std::string const& dynamic_h5filename,
+    std::string const& ogs_version, std::string const& mesh_name)
 {
     // Generates function that writes <DataItem>. Late binding needed because
     // maximum number of steps unknown. Time step and h5filename are captured to
@@ -285,14 +285,15 @@ std::function<std::string(std::vector<double>)> write_xdmf(
 
     // Generates a function that either writes the data or points to existing
     // data
-    auto const time_step_fn = [time_dataitem_genfn, pointer_transfrom,
-                               h5filename,
-                               mesh_name](auto const& component_transform,
-                                          unsigned long long const time_step,
-                                          int const max_step,
-                                          time_attribute const variable)
+    auto const time_step_fn =
+        [pointer_transfrom, mesh_name](auto const& component_transform,
+                                       unsigned long long const time_step,
+                                       int const max_step,
+                                       time_attribute const variable,
+                                       std::string const& h5filename,
+                                       auto const& dataitem_genfn)
     {
-        return [component_transform, time_dataitem_genfn, pointer_transfrom,
+        return [component_transform, dataitem_genfn, pointer_transfrom,
                 variable, time_step, max_step, h5filename,
                 mesh_name](XdmfData const& attr, std::size_t const index)
         {
@@ -302,8 +303,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                  time_step == 0);
             if (changed)
             {
-                auto dataitem = time_dataitem_genfn(time_step, max_step,
-                                                    h5filename, mesh_name);
+                auto dataitem =
+                    dataitem_genfn(time_step, max_step, h5filename, mesh_name);
                 return component_transform(attr, dataitem);
             }
             // index + 3  0 Time, 1 Geometry 2 Topology
@@ -319,19 +320,34 @@ std::function<std::string(std::vector<double>)> write_xdmf(
 
     auto const time_grid_transform =
         [time_step_fn, m_bind_fn, string_join_fn, grid_transform,
-         geometry_transform, topology_transform, attribute_transform](
+         geometry_transform, topology_transform, attribute_transform,
+         time_dataitem_genfn](
             double const time, int const step, int const max_step,
             auto const& geometry, auto const& topology,
-            auto const& constant_attributes, auto const& variable_attributes)
+            auto const& constant_attributes, auto const& variable_attributes,
+            std::string const& static_h5filename,
+            std::string const& dynamic_h5filename)
     {
+        // Static datasets have exactly one time entry at index 0.
+        auto const constant_dataitem_genfn =
+            [&time_dataitem_genfn](unsigned long long const, int const,
+                                   std::string const& h5fn,
+                                   std::string const& mn)
+            -> std::function<std::string(XdmfData const&)>
+        { return time_dataitem_genfn(0, 1, h5fn, mn); };
+
         auto const time_step_geometry_transform = time_step_fn(
-            geometry_transform, step, max_step, time_attribute::constant);
+            geometry_transform, step, max_step, time_attribute::constant,
+            static_h5filename, constant_dataitem_genfn);
         auto const time_step_topology_transform = time_step_fn(
-            topology_transform, step, max_step, time_attribute::constant);
+            topology_transform, step, max_step, time_attribute::constant,
+            static_h5filename, constant_dataitem_genfn);
         auto const time_step_const_attribute_fn = time_step_fn(
-            attribute_transform, step, max_step, time_attribute::constant);
+            attribute_transform, step, max_step, time_attribute::constant,
+            static_h5filename, constant_dataitem_genfn);
         auto const time_step_variable_attribute_fn = time_step_fn(
-            attribute_transform, step, max_step, time_attribute::variable);
+            attribute_transform, step, max_step, time_attribute::variable,
+            dynamic_h5filename, time_dataitem_genfn);
 
         // lift both functions from handling single attributes to work with
         // collection of attributes
@@ -353,7 +369,9 @@ std::function<std::string(std::vector<double>)> write_xdmf(
     auto const temporal_grid_collection_transform =
         [time_grid_transform](
             auto const& times, auto const& geometry, auto const& topology,
-            auto const& constant_attributes, auto const& variable_attributes)
+            auto const& constant_attributes, auto const& variable_attributes,
+            std::string const& static_h5filename,
+            std::string const& dynamic_h5filename)
     {
         // c++20 ranges zip missing
         auto const max_step = times.size();
@@ -363,7 +381,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
         {
             grids.push_back(time_grid_transform(
                 times[time_step], time_step, max_step, geometry, topology,
-                constant_attributes, variable_attributes));
+                constant_attributes, variable_attributes, static_h5filename,
+                dynamic_h5filename));
         }
         return fmt::format(
             fmt::runtime(
@@ -374,16 +393,19 @@ std::function<std::string(std::vector<double>)> write_xdmf(
 
     // Generator function that return a function that represents complete xdmf
     // structure
-    auto const xdmf_writer_fn = [temporal_grid_collection_transform](
-                                    auto ogs_version, auto geometry,
-                                    auto topology, auto constant_attributes,
-                                    auto variable_attributes)
+    auto const xdmf_writer_fn = [temporal_grid_collection_transform,
+                                 static_h5filename,
+                                 dynamic_h5filename](auto ogs_version,
+                                                     auto geometry,
+                                                     auto topology,
+                                                     auto constant_attributes,
+                                                     auto variable_attributes)
     {
         // This function will be the return of the surrounding named function
         // capture by copy - it is the function that will survive this scope!!
         // Use generalized lambda capture to move for optimization
-        return [temporal_grid_collection_transform,
-                ogs_version = std::move(ogs_version),
+        return [temporal_grid_collection_transform, static_h5filename,
+                dynamic_h5filename, ogs_version = std::move(ogs_version),
                 geometry = std::move(geometry), topology = std::move(topology),
                 constant_attributes = std::move(constant_attributes),
                 variable_attributes = std::move(variable_attributes)](
@@ -397,7 +419,8 @@ std::function<std::string(std::vector<double>)> write_xdmf(
                 "ogs_version"_a = ogs_version,
                 "grid_collection"_a = temporal_grid_collection_transform(
                     times, geometry, topology, constant_attributes,
-                    variable_attributes));
+                    variable_attributes, static_h5filename,
+                    dynamic_h5filename));
         };
     };
 

@@ -37,6 +37,10 @@ public:
      * @param use_compression if true gzip compression is enabled
      * @param is_file_manager True if process (in parallel execution) is
      * @param n_files Number of output files
+     * @param static_file If true, only the constant_attributes of each mesh
+     * are written, the file is flushed and closed inside the constructor, and
+     * subsequent calls to writeStep() are no-ops. Use this for data that does
+     * not change over time (e.g. mesh geometry/topology).
      */
     HdfWriter(std::vector<MeshHdfData> const& meshes,
               unsigned long long initial_step,
@@ -44,7 +48,8 @@ public:
               std::filesystem::path const& filepath,
               bool use_compression,
               bool is_file_manager,
-              unsigned int n_files);
+              unsigned int n_files,
+              bool static_file);
     /**
      * \brief Writes attributes. The data
      * itself is hold by a structure outside of this class. The writer assumes
@@ -59,6 +64,11 @@ private:
     // internal data holder
     struct HdfMesh;
 
+    /// Closes the meshes group, flushes and closes the HDF5 file, logging a
+    /// diagnostic on any failure. Shared by the static-file constructor path
+    /// and the destructor.
+    void closeMeshesGroupAndFile();
+
     std::filesystem::path const _hdf5_filepath;
     hid_t const _file;
     hid_t const _meshes_group;
@@ -66,5 +76,6 @@ private:
     std::vector<double> _step_times;
     bool const _use_compression;
     bool const _is_file_manager;
+    bool const _static_file;
 };
 }  // namespace MeshLib::IO
