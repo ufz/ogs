@@ -34,8 +34,10 @@ def ogs_with_args(argv):
         return 0  # EXIT_SUCCESS, --help/--version
 
     return_code = sim.execute_simulation()
-    sim.close()
-    return return_code
+    close_return_code = sim.close()
+    if return_code != 0:
+        return return_code
+    return close_return_code
 
 
 def _program(name, args):
