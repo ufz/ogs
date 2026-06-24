@@ -195,10 +195,10 @@ public:
     {
     public:
         using iterator_category = std::input_iterator_tag;
-        using value_type = ConfigTree;
+        using value_type = ValueType;
         using difference_type = std::ptrdiff_t;
-        using pointer = ConfigTree*;
-        using reference = ConfigTree&;
+        using pointer = ValueType*;
+        using reference = ValueType;
 
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
