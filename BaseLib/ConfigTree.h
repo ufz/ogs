@@ -112,7 +112,7 @@ public:
         using value_type = ConfigTree;
         using difference_type = std::ptrdiff_t;
         using pointer = ConfigTree*;
-        using reference = ConfigTree&;
+        using reference = ConfigTree;
 
         using Iterator = boost::property_tree::ptree::const_assoc_iterator;
 
