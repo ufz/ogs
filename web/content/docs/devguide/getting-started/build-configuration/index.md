@@ -63,6 +63,12 @@ When you want to start over with a new configuration simply delete the build-dir
 
 [See this]({{< ref "configuration-options" >}}) for a list of commonly used available options.
 
+The example below shows how to create custom presets using the [`OGS_USE_PIP=ON`]({{< ref "python-env.md" >}}) CMake-option. Enabling this option is recommended if you want to execute or develop Jupyter notebooks for more interactive benchmarks.
+`OGS_USE_PIP=ON` requires [`uv`](https://docs.astral.sh/uv/getting-started/installation/),
+a tool that handles Python dependencies and virtual environments.
+I.e., please install `uv` if you want to set `OGS_USE_PIP=ON`.
+See the [Jupyter page]({{< ref "jupyter-docs.md" >}}) for more info.
+
 <div class='note'>
 
 ### User-defined presets
