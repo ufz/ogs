@@ -117,7 +117,7 @@ repair-wheel-command = "python {project}/scripts/python/repair_windows_wheel.py 
 [tool.cibuildwheel.macos]
 # Passing MACOSX_DEPLOYMENT_TARGET with a regular environment variable
 # via the calling environment did not work.
-environment = { MACOSX_DEPLOYMENT_TARGET="15.0" }
+environment = { MACOSX_DEPLOYMENT_TARGET="26.0" }
 
 [tool.ruff]
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
