@@ -4,6 +4,7 @@
 #include "Polygon.h"
 
 #include <algorithm>
+#include <iterator>
 
 #include "AnalyticalGeometry.h"
 #include "BaseLib/quicksort.h"
@@ -357,7 +358,8 @@ bool Polygon::getNextIntersectionPointPolygonLine(
 {
     if (_simple_polygon_list.size() == 1)
     {
-        for (auto seg_it(begin() + seg_num); seg_it != end(); ++seg_it)
+        for (auto seg_it(std::next(begin(), seg_num)); seg_it != end();
+             ++seg_it)
         {
             if (GeoLib::lineSegmentIntersect(*seg_it, seg, intersection_pnt))
             {

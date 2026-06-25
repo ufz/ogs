@@ -59,18 +59,6 @@ public:
 
         bool operator!=(SegmentIterator const& other) const;
 
-        SegmentIterator& operator+=(
-            std::vector<GeoLib::Point>::difference_type n);
-
-        SegmentIterator operator+(
-            std::vector<GeoLib::Point>::difference_type n);
-
-        SegmentIterator& operator-=(
-            std::vector<GeoLib::Point>::difference_type n);
-
-        SegmentIterator operator-(
-            std::vector<GeoLib::Point>::difference_type n);
-
     private:
         GeoLib::Polyline const* _polyline;
         std::vector<GeoLib::Point*>::size_type _segment_number;
