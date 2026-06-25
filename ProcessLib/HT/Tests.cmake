@@ -400,9 +400,7 @@ if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
             Parabolic/HT/ClassicalTransportExample/classical_transport_example.prj
         RUNTIME 1
     )
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(
         PROJECTFILE
             Parabolic/HT/ClassicalTransportExample/classical_transport_example_full_upwind.prj

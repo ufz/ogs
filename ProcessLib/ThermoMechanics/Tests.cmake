@@ -22,29 +22,19 @@ endif()
 
 if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dbeam/tm1_1Dbeam.prj RUNTIME 1)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dfixa/tm1_1Dfixa.prj RUNTIME 1)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dfixb/tm1_1Dfixb.prj RUNTIME 1)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_2Dbeam/tm1_2Dbeam.prj RUNTIME 1)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_2Dsquare/tm1_2Dsquare.prj RUNTIME 1)
 endif()
 
 if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dcube/tm1_3Dcube.prj RUNTIME 1)
-endif()
 
-if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dgravity/tm1_3Dgravity.prj
             RUNTIME 1
     )
@@ -52,19 +42,13 @@ endif()
 
 if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dorigin/tm1_3Dorigin.prj RUNTIME 2)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dsquare/tm1_3Dsquare.prj
             RUNTIME 55
     )
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm2_1D1bt/tm2_1D1bt.prj RUNTIME 10)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm2_1Dfixc/tm2_1Dfixc.prj RUNTIME 25)
 endif()
 #--

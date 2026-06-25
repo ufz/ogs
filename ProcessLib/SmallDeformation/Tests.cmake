@@ -201,13 +201,9 @@ endif()
 if(NOT OGS_USE_LIS)
     if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_1Dload/m1_1Dload.prj)
-    endif()
 
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_1Dlozenge/m1_1Dlozenge.prj)
-    endif()
 
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_2Dload/m1_2Dload.prj)
     endif()
 
@@ -217,17 +213,11 @@ if(NOT OGS_USE_LIS)
 
     if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_3Dgravity/m1_3Dgravity.prj)
-    endif()
 
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_3Dload/m1_3Dload.prj)
-    endif()
 
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_3Dsquare/m1_3Dsquare.prj RUNTIME 9)
-    endif()
 
-    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/m1_3Dtopload/m1_3Dtopload.prj RUNTIME 3)
     endif()
 

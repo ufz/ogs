@@ -219,17 +219,11 @@ AddTest(
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/3D_deep_BHE/3D_deep_BHE_CXA.prj RUNTIME 19)
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/3D_deep_BHE/3D_deep_BHE_CXC.prj RUNTIME 19)
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/3D_2U_BHE/3D_2U_BHE.prj RUNTIME 9)
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/3D_2U_BHE/3D_2U_BHE_sections.prj RUNTIME 14)
 endif()
 
@@ -309,9 +303,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/3D_3BHEs/3bhes_id_1U_sections.prj
             RUNTIME 14
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/3D_BHE_GW_advection/BHE_GW_advection.prj
             RUNTIME 4
     )
@@ -371,9 +363,7 @@ endif()
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/BHE_1P/BHE_1P.prj RUNTIME 27)
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/BHE_1P/BHE_1P_newton.prj RUNTIME 34)
 endif()
 

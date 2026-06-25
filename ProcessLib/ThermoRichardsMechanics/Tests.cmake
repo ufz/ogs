@@ -228,9 +228,7 @@ if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
         PROJECTFILE ThermoRichardsMechanics/TaskCDECOVALEX2023/Decovalex-0.prj
         RUNTIME 15
     )
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/CTF1/CTF1.prj RUNTIME 3)
 endif()
 
@@ -257,9 +255,7 @@ if(OGS_USE_MPI)
         WRAPPER mpirun -np 3
         RUNTIME 40 LABELS "petsc-mumps"
     )
-endif()
 
-if(OGS_USE_MPI)
     OgsTest(
         PROJECTFILE
             ThermoRichardsMechanics/FullySaturatedFlowMechanics/PETSc/flow_fully_saturated_petsc.prj
@@ -306,9 +302,7 @@ if(OGS_USE_MPI)
         WRAPPER mpirun -np 3
         RUNTIME 5 LABELS "petsc-mumps"
     )
-endif()
 
-if(OGS_USE_MPI)
     OgsTest(
         PROJECTFILE
             ThermoRichardsMechanics/TaskCDECOVALEX2023/Decovalex-0_mpi.xml

@@ -9,23 +9,15 @@ endif()
 
 if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture.prj RUNTIME 6)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE LIE/HydroMechanics/single_fracture_3D.prj RUNTIME 75)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE LIE/HydroMechanics/TaskB.prj RUNTIME 19)
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(
         PROJECTFILE LIE/HydroMechanics/single_fracture_3compartments_flow.prj
     )
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(
         PROJECTFILE
             LIE/HydroMechanics/single_fracture_3compartments_flow_linear_aperture0.prj
@@ -39,24 +31,18 @@ if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
         PROJECTFILE
             LIE/HydroMechanics/single_fracture_3compartments_flow_linear_aperture0_e.prj
     )
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(
         PROJECTFILE
             LIE/HydroMechanics/single_fracture_3compartments_flow_CHZ.prj
         RUNTIME 10
     )
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(
         PROJECTFILE
             LIE/HydroMechanics/single_fracture_3compartments_flow_CHZ_sigma0.prj
     )
-endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(
         PROJECTFILE
             LIE/HydroMechanics/GreatCellWithTrianglularMesh/great_cell_2d_HM_LIE_embedded_fracture.prj

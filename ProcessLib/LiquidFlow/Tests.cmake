@@ -138,27 +138,19 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE
             Parabolic/LiquidFlow/Verification/h1_1Dsource/h1_1Dsource.prj
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE
             Parabolic/LiquidFlow/Verification/h1_1Dsteady/h1_1Dsteady.prj
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE
             Parabolic/LiquidFlow/Verification/h1_3Dhydstat/h1_3Dhydstat.prj
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D1bt/h2_1D1bt.prj)
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D2bt/h2_1D2bt.prj)
 endif()
 
@@ -343,9 +335,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE
             Parabolic/LiquidFlow/TimeDependentHeterogeneousBoundaryConditions/TimeDependentHeterogeneousBoundaryConditions.prj
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE
             Parabolic/LiquidFlow/TimeDependentHeterogeneousSourceTerm/TimeDependentHeterogeneousSourceTerm.prj
@@ -638,32 +628,24 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE
             Parabolic/LiquidFlow/InclinedMeshElements/Inclined2DMesh/hydrostatic_flow_in_inclined_2D_plane.prj
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE
             Parabolic/LiquidFlow/InclinedMeshElements/Inclined2DMesh/transient_flow_in_inclined_2D_plane.prj
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE
             Parabolic/LiquidFlow/InclinedMeshElements/FractureIn3D/fractures_in_3D.prj
         RUNTIME 3
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE
             Parabolic/LiquidFlow/InclinedMeshElements/1Din3D/line_fractures_in_3D.prj
         RUNTIME 1
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Utils/GMSH2OGS/quadratic_mesh_assembly_test.prj
             RUNTIME 1
     )
@@ -715,8 +697,6 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
             Parabolic/LiquidFlow/RasterParameter/FineRasterHeterogeneous.xml
         RUNTIME 1
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/GasFlow/gas_flow.prj RUNTIME 1)
 endif()

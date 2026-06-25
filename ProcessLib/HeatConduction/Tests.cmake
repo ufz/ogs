@@ -270,17 +270,11 @@ AddTest(
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/t1_1Dsource/t1_1Dsource.prj)
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/t1_1Dsteady/t1_1Dsteady.prj)
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/t2_1D1bt/t2_1D1bt.prj)
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/T/t2_1D2bt/t2_1D2bt.prj)
 endif()
 
@@ -323,9 +317,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE
             Parabolic/T/2D_source_term_tests/line_source_term_x_0.5/line_source_term_x_0.5.prj
     )
-endif()
 
-if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE
             Parabolic/T/2D_source_term_tests/line_source_term_x_0.5_restricted_to_middle/line_source_term_x_0.5.prj
