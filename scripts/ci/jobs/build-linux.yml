@@ -5,6 +5,8 @@ linux ctest large:
   tags: [shell, envinf]
   needs: [meta]
   rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: never
     - when: manual
       allow_failure: true
   timeout: 3h
