@@ -180,4 +180,12 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

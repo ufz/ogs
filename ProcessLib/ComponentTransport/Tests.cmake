@@ -695,49 +695,9 @@ AddTest(
     vdbc_ts_25990_t_250000.000000_expected.vtu vdbc_ts_25990_t_250000.000000.vtu concentration Si 1e-5 1e-4
 )
 
-AddTest(
-    NAME ComponentTransport_Theis
-    PATH Parabolic/ComponentTransport/Theis
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS theis.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 45
-    DIFF_DATA
-    theis_ts_0_t_0.000000.vtu
-    theis_ts_0_t_0.000000.vtu pressure pressure 1e-3 1e-6
-    theis_ts_0_t_0.000000.vtu
-    theis_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
-    theis_ts_10_t_100.000000.vtu
-    theis_ts_10_t_100.000000.vtu pressure pressure 1e-3 1e-6
-    theis_ts_10_t_100.000000.vtu
-    theis_ts_10_t_100.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
-    theis_ts_20_t_400.000000.vtu
-    theis_ts_20_t_400.000000.vtu pressure pressure 1e-3 1e-6
-    theis_ts_20_t_400.000000.vtu
-    theis_ts_20_t_400.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
-    theis_ts_30_t_1000.000000.vtu
-    theis_ts_30_t_1000.000000.vtu pressure pressure 1e-3 1e-6
-    theis_ts_30_t_1000.000000.vtu
-    theis_ts_30_t_1000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
-    theis_ts_40_t_2000.000000.vtu
-    theis_ts_40_t_2000.000000.vtu pressure pressure 1e-3 1e-6
-    theis_ts_40_t_2000.000000.vtu
-    theis_ts_40_t_2000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
-    theis_ts_60_t_20000.000000.vtu
-    theis_ts_60_t_20000.000000.vtu pressure pressure 1e-3 1e-6
-    theis_ts_60_t_20000.000000.vtu
-    theis_ts_60_t_20000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
-    theis_ts_70_t_70000.000000.vtu
-    theis_ts_70_t_70000.000000.vtu pressure pressure 1e-3 1e-6
-    theis_ts_70_t_70000.000000.vtu
-    theis_ts_70_t_70000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
-    theis_ts_73_t_100000.000000.vtu
-    theis_ts_73_t_100000.000000.vtu pressure pressure 1e-3 1e-6
-    theis_ts_73_t_100000.000000.vtu
-    theis_ts_73_t_100000.000000.vtu darcy_velocity darcy_velocity 1e-10 1e-6
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/Theis/theis.prj RUNTIME 45)
+endif()
 
 AddTest(
     NAME ComponentTransport_ConTracer_2d
@@ -963,23 +923,13 @@ if (OGS_USE_MPI)
     OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/ParallelTest/RadionuclideSorption.prj RUNTIME 60)
 endif()
 
-AddTest(
-    NAME ComponentTransport_ClassicalTransportExample
-    PATH Parabolic/ComponentTransport/ClassicalTransportExample
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS classical_transport_example.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu velocity velocity 1.e-12 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/ComponentTransport/ClassicalTransportExample/classical_transport_example.prj
+        RUNTIME 1
+    )
+endif()
 
 if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/AxiSymTheis/axisym_theis.py RUNTIME 7)

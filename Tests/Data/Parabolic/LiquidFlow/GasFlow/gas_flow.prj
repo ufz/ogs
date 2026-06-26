@@ -171,4 +171,12 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>gas_flow_ts_1000_t_100.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-5</absolute_tolerance>
+            <relative_tolerance>5e-6</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

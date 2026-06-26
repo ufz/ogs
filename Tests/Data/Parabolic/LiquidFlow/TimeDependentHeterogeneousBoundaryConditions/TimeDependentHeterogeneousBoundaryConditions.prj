@@ -268,4 +268,36 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>time_dependent_heterogeneous_bcs_ts_1_t_10.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>time_dependent_heterogeneous_bcs_ts_118_t_1180.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>time_dependent_heterogeneous_bcs_ts_119_t_1190.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>time_dependent_heterogeneous_bcs_ts_120_t_1200.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>time_dependent_heterogeneous_bcs_ts_200_t_2000.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

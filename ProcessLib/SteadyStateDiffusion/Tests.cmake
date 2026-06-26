@@ -82,11 +82,19 @@ foreach(mesh_size 1e0 1e1 1e2 1e3)
     endif()
 
     if(TEST ogs-SteadyStateDiffusion_cube_1x1x1_${mesh_size} AND DIFF_TOOL_PATH)
-        set(_processed_path Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_processed.prj)
-        add_test(NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
-            COMMAND ${DIFF_TOOL_PATH} ${Data_SOURCE_DIR}/${_processed_path} ${Data_BINARY_DIR}/${_processed_path})
-        set_tests_properties(SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
-            PROPERTIES LABELS "default" DEPENDS SteadyStateDiffusion_cube_1x1x1_${mesh_size})
+        set(_processed_path
+            Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_${mesh_size}_processed.prj
+        )
+        add_test(
+            NAME SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
+            COMMAND ${DIFF_TOOL_PATH} ${Data_SOURCE_DIR}/${_processed_path}
+                    ${Data_BINARY_DIR}/${_processed_path}
+        )
+        set_tests_properties(
+            SteadyStateDiffusion_cube_1x1x1_${mesh_size}_prj_diff
+            PROPERTIES LABELS "default" DEPENDS
+                       ogs-SteadyStateDiffusion_cube_1x1x1_${mesh_size}
+        )
     endif()
 
     AddTest(
@@ -441,52 +449,34 @@ AddTest(
 # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC, 1e2
 # The results were compared to an analytical solution (method of manufactured
 # solutions). The vtkdiff comparison is against the numerical solution.
-AddTest(
-    NAME SteadyStateDiffusion_square_1x1_1e2_axi
-    PATH Elliptic/square_1x1_SteadyStateDiffusion
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2_axi.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    square_1e2_axi_ts_1_t_1.000000.vtu square_1e2_axi_ts_1_t_1.000000.vtu temperature temperature 3e-15 0
-)
+if(NOT OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e2_axi.prj
+    )
+endif()
 # WEDGE 1x1 GROUNDWATER FLOW TEST -- same setup as above test but in cartesian coordinates
-AddTest(
-    NAME SteadyStateDiffusion_wedge_1e2_ang_0.02
-    PATH Elliptic/square_1x1_SteadyStateDiffusion
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS wedge_1e2_axi_ang_0.02.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu wedge_1e2_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 4e-14 0
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Elliptic/square_1x1_SteadyStateDiffusion/wedge_1e2_axi_ang_0.02.prj
+    )
+endif()
 
 # SQUARE 1x1 GROUNDWATER FLOW TEST -- AXIALLY SYMMETRIC, 1e4
 # The results were compared to an analytical solution (method of manufactured
 # solutions). The vtkdiff comparison is against the numerical solution.
-AddTest(
-    NAME SteadyStateDiffusion_square_1x1_1e4_axi_ang_0.02
-    PATH Elliptic/square_1x1_SteadyStateDiffusion
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e4_axi.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_1e4_axi_ts_1_t_1.000000.vtu square_1e4_axi_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE Elliptic/square_1x1_SteadyStateDiffusion/square_1e4_axi.prj
+    )
+endif()
 # WEDGE 1x1 GROUNDWATER FLOW TEST -- same setup as above test but in cartesian coordinates
-AddTest(
-    NAME SteadyStateDiffusion_wedge_1e4_ang_0.02
-    PATH Elliptic/square_1x1_SteadyStateDiffusion
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS wedge_1e4_axi_ang_0.02.prj
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    wedge_1e4_axi_ang_0.02_ts_1_t_1.000000.vtu wedge_1e4_axi_ang_0.02_ts_1_t_1.000000.vtu temperature temperature 2e-14 0
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Elliptic/square_1x1_SteadyStateDiffusion/wedge_1e4_axi_ang_0.02.prj
+    )
+endif()
 
 # Serial XDMF output
 AddTest(
@@ -501,28 +491,27 @@ AddTest(
 )
 
 # MPI groundwater flow tests
-AddTest(
-    NAME ParallelFEM_GroundWaterFlow2D
-    PATH EllipticPETSc
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS quad_20x10_GroundWaterFlow.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 3
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_0.vtu quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_0.vtu pressure pressure 2e-15 1e-16
-    quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_1.vtu quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_1.vtu pressure pressure 2e-15 1e-16
-    quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_2.vtu quad_20x10_GroundWaterFlow_result_ts_1_t_1_000000_2.vtu pressure pressure 2e-15 1e-16
-)
-if(TEST ogs-ParallelFEM_GroundWaterFlow2D-mpirun AND XMLSTARLET_TOOL_PATH AND BASH_TOOL_PATH)
-    # Just checks if there are 3 <Piece>-elements in the pvtu
-    add_test(NAME ParallelFEM_GroundWaterFlow2D_pvtu
-             COMMAND ${BASH_TOOL_PATH} -c "if [[ $(xmlstarlet sel -t -v 'count(/VTKFile/PUnstructuredGrid/Piece)' Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu) == '3' ]] ; then exit 0; else cat Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu; exit 1; fi"
-             WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+if(OGS_USE_MPI)
+    OgsTest(PROJECTFILE EllipticPETSc/quad_20x10_GroundWaterFlow.prj
+            WRAPPER mpirun -np 3
     )
-    set_tests_properties(ParallelFEM_GroundWaterFlow2D_pvtu
-            PROPERTIES LABELS "default" DEPENDS ogs-ParallelFEM_GroundWaterFlow2D-mpirun)
+endif()
+if(TEST ogs-EllipticPETSc/quad_20x10_GroundWaterFlow-mpi
+   AND XMLSTARLET_TOOL_PATH AND BASH_TOOL_PATH
+)
+    # Just checks if there are 3 <Piece>-elements in the pvtu
+    add_test(
+        NAME ParallelFEM_GroundWaterFlow2D_pvtu
+        COMMAND
+            ${BASH_TOOL_PATH} -c
+            "if [[ $(xmlstarlet sel -t -v 'count(/VTKFile/PUnstructuredGrid/Piece)' Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu) == '3' ]] ; then exit 0; else cat Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu; exit 1; fi"
+        WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
+    )
+    set_tests_properties(
+        ParallelFEM_GroundWaterFlow2D_pvtu
+        PROPERTIES LABELS "default" DEPENDS
+                   ogs-EllipticPETSc/quad_20x10_GroundWaterFlow-mpi
+    )
 endif()
 
 AddTest(
@@ -631,19 +620,13 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE "Elliptic/cube_1x1x1_SteadyStateDiffusion/cube_1e4_anisotropic.prj")
 endif()
 
-AddTest(
-    NAME ParallelFEM_SteadyStateDiffusion_cube_2
-    PATH EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/2
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e4_anisotropic.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 2
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    cube_1e4_anisotropic_ts_1_t_1_000000_0.vtu cube_1e4_anisotropic_ts_1_t_1_000000_0.vtu pressure pressure 1e-14 0
-    cube_1e4_anisotropic_ts_1_t_1_000000_1.vtu cube_1e4_anisotropic_ts_1_t_1_000000_1.vtu pressure pressure 1e-14 0
-)
+if(OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE
+            EllipticPETSc/cube_1x1x1_SteadyStateDiffusion/2/cube_1e4_anisotropic_mpi.xml
+        WRAPPER mpirun -np 2
+    )
+endif()
 
 # Single core
 # CUBE 1x1x1 GROUNDWATER FLOW TESTS

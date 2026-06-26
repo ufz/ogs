@@ -44,22 +44,13 @@ AddTest(
 )
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, sealed, bimaterial
-AddTest(
-    NAME ThermoHydroMechanics_square_1e2_sealed_bimaterial
-    PATH ThermoHydroMechanics/Linear/Beam_sealed_bimaterial
-    RUNTIME 5
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_1e2_ts_10_t_100.000000.vtu square_1e2_ts_10_t_100.000000.vtu displacement displacement 1e-8 1e-8
-    square_1e2_ts_10_t_100.000000.vtu square_1e2_ts_10_t_100.000000.vtu pressure pressure 7e-8 1e-8
-    square_1e2_ts_10_t_100.000000.vtu square_1e2_ts_10_t_100.000000.vtu temperature temperature 1e-8 1e-8
-    square_1e2_ts_10_t_100.000000.vtu square_1e2_ts_10_t_100.000000.vtu epsilon epsilon 1e-8 1e-8
-    square_1e2_ts_10_t_100.000000.vtu square_1e2_ts_10_t_100.000000.vtu sigma sigma 5e-8 1e-8
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/Linear/Beam_sealed_bimaterial/square_1e2.prj
+        RUNTIME 5
+    )
+endif()
 
 # Same as above, but with function instead of group based parameter for Young's modulus
 AddTest(
@@ -80,91 +71,46 @@ square_1e2_ts_10_t_100.000000.vtu square_1e2_function_ts_10_t_100.000000.vtu sig
 )
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, unsealed, bimaterial
-AddTest(
-    NAME ThermoHydroMechanics_square_1e2_unsealed_bimaterial
-    PATH ThermoHydroMechanics/Linear/Beam_unsealed_bimaterial
-    RUNTIME 2
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e2.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu displacement displacement 1e-8 1e-8
-    square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu pressure pressure 1e-8 1e-8
-    square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu temperature temperature 1e-8 1e-8
-    square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu epsilon epsilon 5e-8 5e-8
-    square_1e2_ts_10_t_1000.000000.vtu square_1e2_ts_10_t_1000.000000.vtu sigma sigma 5e-8 5e-8
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/Linear/Beam_unsealed_bimaterial/square_1e2.prj
+        RUNTIME 2
+    )
+endif()
 
 # ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation
-AddTest(
-    NAME ThermoHydroMechanics_point_heat_injection
-    PATH ThermoHydroMechanics/Linear/Point_injection
-    RUNTIME 6
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS pointheatsource_quadratic-mesh.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu temperature temperature 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu epsilon epsilon 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu sigma sigma 1e-5 1e-5
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/Linear/Point_injection/pointheatsource_quadratic-mesh.prj
+        RUNTIME 6
+    )
+endif()
 # ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation, linear elements for displacement
-AddTest(
-    NAME ThermoHydroMechanics_point_heat_injection_lin
-    PATH ThermoHydroMechanics/Linear/Point_injection
-    RUNTIME 3
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS pointheatsource_linear-mesh.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
-    pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
-    pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu temperature temperature 1e-5 1e-5
-    pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu epsilon epsilon 1e-5 1e-5
-    pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu pointheatsource_linear-mesh_ts_10_t_50000.000000.vtu sigma sigma 1e-5 1e-5
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/Linear/Point_injection/pointheatsource_linear-mesh.prj
+        RUNTIME 3
+    )
+endif()
 # ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation, variation with a volumetric source term
-AddTest(
-    NAME ThermoHydroMechanics_point_heat_injection_vol_st
-    PATH ThermoHydroMechanics/Linear/Point_injection/with-volumetric-source-term
-    RUNTIME 6
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS pointheatsource_quadratic-mesh.xml
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu temperature temperature 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu epsilon epsilon 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu sigma sigma 1e-5 1e-5
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/Linear/Point_injection/with-volumetric-source-term/pointheatsource_quadratic-mesh.xml
+        RUNTIME 6
+    )
+endif()
 # ThermoHydroMechanics; Small deformation, linear poroelastic, point heat source consolidation, variation with a Python source term
-AddTest(
-    NAME ThermoHydroMechanics_point_heat_injection_py_st
-    PATH ThermoHydroMechanics/Linear/Point_injection/with-python-source-term
-    RUNTIME 6
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS pointheatsource_quadratic-mesh.xml
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu displacement displacement 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pressure pressure 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu temperature temperature 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu epsilon epsilon 1e-5 1e-5
-    pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu sigma sigma 1e-5 1e-5
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/Linear/Point_injection/with-python-source-term/pointheatsource_quadratic-mesh.xml
+        RUNTIME 6
+    )
+endif()
 # ThermoHydroMechanics; Small deformation, linear elastic, porosity=0, anisotropic thermal expansion
 AddTest(
     NAME ThermoHydroMechanics_cube_ortho-thermal-expansion-phi0
@@ -292,22 +238,13 @@ AddTest(
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature_interpolated 5e-3 1e-10
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure_interpolated 1e-10 1e-10
 )
-AddTest(
-    NAME ThermoHydroMechanics_BGRaCreepAndInitialStressAtIP_AREHS
-    PATH ThermoHydroMechanics/BGRaCreepAndInitialStressAtIP_AREHS
-    RUNTIME 29
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS arehs-salt-THM01_0.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu displacement displacement 1e-8 1e-8
-    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu pressure pressure 1e-8 1e-8
-    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu temperature temperature 1e-8 1e-8
-    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu epsilon epsilon 1e-8 1e-8
-    arehs-salt-THM0_ts_5_t_157680000000.000000.vtu arehs-salt-THM0_ts_5_t_157680000000.000000.vtu sigma sigma 1.0e-5 1e-6
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/BGRaCreepAndInitialStressAtIP_AREHS/arehs-salt-THM01_0.prj
+        RUNTIME 29
+    )
+endif()
 # ThermoHydroMechanics; thermo_osmosis and thermo_filtration effects, linear poroelastic, column consolidation
 AddTest(
     NAME ThermoHydroMechanics_thermo_osmosis_filtration_effects_Column
@@ -326,41 +263,19 @@ AddTest(
     expected_Column_ts_68_t_7200000.000000.vtu Column_ts_68_t_7200000.000000.vtu sigma sigma 1e-5 1e-5
 )
 
-AddTest(
-    NAME THM_HT_ClassicalTransportExample
-    PATH ThermoHydroMechanics/Linear/TH_ClassicalTransportExample
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS classical_transport_example.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_t_4800.00.vtu classical_transport_example_t_4800.00.vtu velocity velocity 1.e-12 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_t_7200.00.vtu classical_transport_example_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/Linear/TH_ClassicalTransportExample/classical_transport_example.prj
+        RUNTIME 1
+    )
 
-AddTest(
-    NAME THM_HT_ClassicalTransportExample_full_upwind
-    PATH ThermoHydroMechanics/Linear/TH_ClassicalTransportExample
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS classical_transport_example_full_upwind.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_t_4800.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_t_4800.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_full_upwind_t_4800.00.vtu classical_transport_example_full_upwind_t_4800.00.vtu velocity velocity 1.e-12 1.0e-12
-    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu C C 1.e-9 1.0e-12
-    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu pressure pressure 1.e-9 1.0e-12
-    classical_transport_example_full_upwind_t_7200.00.vtu classical_transport_example_full_upwind_t_7200.00.vtu velocity velocity 1.e-12 1.0e-12
-)
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/Linear/TH_ClassicalTransportExample/classical_transport_example_full_upwind.prj
+        RUNTIME 1
+    )
+endif()
 
 AddTest(
     NAME ParallelFEM_HeatingHomogeneousDomain
@@ -393,18 +308,10 @@ AddTest(
     hex_ts_5_t_864000_000000_2.vtu hex_ts_5_t_864000_000000_2.vtu sigma sigma 1e-8 1.0e-7
 )
 
-AddTest(
-    NAME ThermoHydroMechanicsTotalInitialStress
-    PATH ThermoHydroMechanics/TotalInitialStress
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS total_initial_stress_HM.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 1
-    DIFF_DATA
-    total_initial_stress_HM_ts_0_t_0.000000.vtu total_initial_stress_HM_ts_0_t_0.000000.vtu pressure pressure 1.0e-10 1.e-10
-    total_initial_stress_HM_ts_0_t_0.000000.vtu total_initial_stress_HM_ts_0_t_0.000000.vtu sigma sigma 1.0e-8 1.e-10
-    total_initial_stress_HM_ts_1_t_1000000.000000.vtu total_initial_stress_HM_ts_1_t_1000000.000000.vtu pressure pressure 1.0e-10 1.e-10
-    total_initial_stress_HM_ts_1_t_1000000.000000.vtu total_initial_stress_HM_ts_1_t_1000000.000000.vtu sigma sigma 1.0e-8 1.e-10
-)
+if(NOT OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/TotalInitialStress/total_initial_stress_HM.prj
+        RUNTIME 1
+    )
+endif()

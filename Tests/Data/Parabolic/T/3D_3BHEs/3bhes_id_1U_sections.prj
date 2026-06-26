@@ -265,4 +265,30 @@
             </values>
         </curve>
     </curves>
+    <test_definition>
+        <vtkdiff>
+            <file>3bhes_1U_id_sections_ts_10_t_600.000000.vtu</file>
+            <field>temperature_BHE1</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>3bhes_1U_id_sections_ts_10_t_600.000000.vtu</file>
+            <field>temperature_BHE2</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>3bhes_1U_id_sections_ts_10_t_600.000000.vtu</file>
+            <field>temperature_BHE3</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>3bhes_1U_id_sections_ts_10_t_600.000000.vtu</file>
+            <field>temperature_soil</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

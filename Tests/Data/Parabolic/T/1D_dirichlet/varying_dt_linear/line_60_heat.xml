@@ -35,4 +35,62 @@
             </pair>
         </timesteps>
     </add>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>line_60_heat_ts_130_t_5078125.000000.vtu</file>
+                <field>temperature</field>
+                <absolute_tolerance>8.6e-13</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>line_60_heat_ts_130_t_5078125.000000.vtu</file>
+                <field>heat_flux</field>
+                <absolute_tolerance>1.1e-12</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>line_60_heat_ts_130_t_5078125.000000.vtu</file>
+                <field>HeatFlowRate</field>
+                <absolute_tolerance>8.5e-12</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>line_60_heat_ts_505_t_31640625.000000.vtu</file>
+                <field>temperature</field>
+                <absolute_tolerance>1.1e-11</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>line_60_heat_ts_505_t_31640625.000000.vtu</file>
+                <field>heat_flux</field>
+                <absolute_tolerance>5.2e-12</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>line_60_heat_ts_505_t_31640625.000000.vtu</file>
+                <field>HeatFlowRate</field>
+                <absolute_tolerance>5.2e-12</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>line_60_heat_ts_600_t_39062500.000000.vtu</file>
+                <field>temperature</field>
+                <absolute_tolerance>1.3e-11</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>line_60_heat_ts_600_t_39062500.000000.vtu</file>
+                <field>heat_flux</field>
+                <absolute_tolerance>5.9e-12</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>line_60_heat_ts_600_t_39062500.000000.vtu</file>
+                <field>HeatFlowRate</field>
+                <absolute_tolerance>6.2e-12</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

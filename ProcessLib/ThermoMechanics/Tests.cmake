@@ -20,163 +20,37 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/CreepAfterExcavation/CreepAfterExcavation.prj RUNTIME 7)
 endif()
 
-AddTest(
-    NAME ThermoMechanics_tm1_1Dbeam
-    PATH ThermoMechanics/tm1_1Dbeam
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_1Dbeam.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    tm1_1Dbeam_ts_1_t_1.000000.vtu tm1_1Dbeam_ts_1_t_1.000000.vtu temperature temperature 1e-10 0.0
-    tm1_1Dbeam_ts_1_t_1.000000.vtu tm1_1Dbeam_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dbeam/tm1_1Dbeam.prj RUNTIME 1)
 
-AddTest(
-    NAME ThermoMechanics_tm1_1Dfixa
-    PATH ThermoMechanics/tm1_1Dfixa
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_1Dfixa.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    tm1_1Dfixa_ts_1_t_1.000000.vtu tm1_1Dfixa_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
-    tm1_1Dfixa_ts_1_t_1.000000.vtu tm1_1Dfixa_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
-)
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dfixa/tm1_1Dfixa.prj RUNTIME 1)
 
-AddTest(
-    NAME ThermoMechanics_tm1_1Dfixb
-    PATH ThermoMechanics/tm1_1Dfixb
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_1Dfixb.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    tm1_1Dfixb_ts_1_t_1.000000.vtu tm1_1Dfixb_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
-    tm1_1Dfixb_ts_1_t_1.000000.vtu tm1_1Dfixb_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
-)
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dfixb/tm1_1Dfixb.prj RUNTIME 1)
 
-AddTest(
-    NAME ThermoMechanics_tm1_2Dbeam
-    PATH ThermoMechanics/tm1_2Dbeam
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_2Dbeam.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    tm1_2Dbeam_ts_1_t_1.000000.vtu tm1_2Dbeam_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
-    tm1_2Dbeam_ts_1_t_1.000000.vtu tm1_2Dbeam_ts_1_t_1.000000.vtu displacement displacement 8e-11 0.0
-)
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_2Dbeam/tm1_2Dbeam.prj RUNTIME 1)
 
-AddTest(
-    NAME ThermoMechanics_tm1_2Dsquare
-    PATH ThermoMechanics/tm1_2Dsquare
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_2Dsquare.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 1
-    DIFF_DATA
-    tm1_2Dsquare_ts_1_t_1.000000.vtu tm1_2Dsquare_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
-    tm1_2Dsquare_ts_1_t_1.000000.vtu tm1_2Dsquare_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
-)
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_2Dsquare/tm1_2Dsquare.prj RUNTIME 1)
+endif()
 
-AddTest(
-    NAME ThermoMechanics_tm1_3Dcube
-    PATH ThermoMechanics/tm1_3Dcube
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_3Dcube.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 1
-    DIFF_DATA
-    tm1_3Dcube_ts_1_t_1.000000.vtu tm1_3Dcube_ts_1_t_1.000000.vtu temperature temperature 7e-11 0.0
-    tm1_3Dcube_ts_1_t_1.000000.vtu tm1_3Dcube_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
-)
+if(NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dcube/tm1_3Dcube.prj RUNTIME 1)
 
-AddTest(
-    NAME ThermoMechanics_tm1_3Dgravity
-    PATH ThermoMechanics/tm1_3Dgravity
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_3Dgravity.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    RUNTIME 1
-    DIFF_DATA
-    tm1_3Dgravity_ts_1_t_1.000000.vtu tm1_3Dgravity_ts_1_t_1.000000.vtu temperature temperature 4e-11 0.0
-    tm1_3Dgravity_ts_1_t_1.000000.vtu tm1_3Dgravity_ts_1_t_1.000000.vtu displacement displacement 1e-7 0.0
-)
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dgravity/tm1_3Dgravity.prj
+            RUNTIME 1
+    )
+endif()
 
-AddTest(
-    NAME ThermoMechanics_tm1_3Dorigin
-    PATH ThermoMechanics/tm1_3Dorigin
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_3Dorigin.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 2
-    DIFF_DATA
-    tm1_3Dorigin_ts_1_t_1.000000.vtu tm1_3Dorigin_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
-    tm1_3Dorigin_ts_1_t_1.000000.vtu tm1_3Dorigin_ts_1_t_1.000000.vtu displacement displacement 1e-11 0.0
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dorigin/tm1_3Dorigin.prj RUNTIME 2)
 
-AddTest(
-    NAME ThermoMechanics_tm1_3Dsquare
-    PATH ThermoMechanics/tm1_3Dsquare
-    RUNTIME 55
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm1_3Dsquare.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    DIFF_DATA
-    tm1_3Dsquare_ts_1_t_1.000000.vtu tm1_3Dsquare_ts_1_t_1.000000.vtu temperature temperature 1e-11 0.0
-    tm1_3Dsquare_ts_1_t_1.000000.vtu tm1_3Dsquare_ts_1_t_1.000000.vtu displacement displacement 1e-10 0.0
-)
+    OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dsquare/tm1_3Dsquare.prj
+            RUNTIME 55
+    )
 
-AddTest(
-    NAME ThermoMechanics_tm2_1D1bt
-    PATH ThermoMechanics/tm2_1D1bt
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm2_1D1bt.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 10
-    DIFF_DATA
-    tm2_1D1bt_ts_50_t_5.000000.vtu tm2_1D1bt_ts_50_t_5.000000.vtu temperature temperature 5e-8 0.0
-    tm2_1D1bt_ts_50_t_5.000000.vtu tm2_1D1bt_ts_50_t_5.000000.vtu displacement displacement 1e-10 0.0
-    tm2_1D1bt_ts_100_t_10.000000.vtu tm2_1D1bt_ts_100_t_10.000000.vtu temperature temperature 3e-7 0.0
-    tm2_1D1bt_ts_100_t_10.000000.vtu tm2_1D1bt_ts_100_t_10.000000.vtu displacement displacement 1e-10 0.0
-)
+    OgsTest(PROJECTFILE ThermoMechanics/tm2_1D1bt/tm2_1D1bt.prj RUNTIME 10)
 
-AddTest(
-    NAME ThermoMechanics_tm2_1Dfixc
-    PATH ThermoMechanics/tm2_1Dfixc
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS tm2_1Dfixc.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 25
-    DIFF_DATA
-    tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu temperature temperature 5e-08 0.0
-    tm2_1Dfixc_ts_50_t_5.000000.vtu tm2_1Dfixc_ts_50_t_5.000000.vtu displacement displacement 1e-11 0.0
-    tm2_1Dfixc_ts_100_t_10.000000.vtu tm2_1Dfixc_ts_100_t_10.000000.vtu temperature temperature 2e-7 0.0
-    tm2_1Dfixc_ts_100_t_10.000000.vtu tm2_1Dfixc_ts_100_t_10.000000.vtu displacement displacement 1e-10 0.0
-)
+    OgsTest(PROJECTFILE ThermoMechanics/tm2_1Dfixc/tm2_1Dfixc.prj RUNTIME 25)
+endif()
 #--
 
 AddTest(
@@ -299,20 +173,13 @@ AddTest(
     SimpleAxisymmetricCreepWithAnalyticSolutionMFront.vtu SimpleAxisymmetricCreepWithAnalyticalSolutionMFront_ts_1000_t_100.000000.vtu analytic_strain epsilon 2e-6 0
 )
 
-AddTest(
-    NAME ThermoMechanics_CreepAfterExcavation
-    PATH ThermoMechanics/CreepBGRa/CreepAfterExcavation
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS CreepAfterExcavation.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 8
-    DIFF_DATA
-    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu sigma sigma 5e-6 0
-    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu epsilon epsilon 1e-15 0
-    CreepAfterExcavation_ts_61_t_4320000.000000.vtu CreepAfterExcavation_ts_61_t_4320000.000000.vtu displacement displacement 1e-16 2e-9
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(
+        PROJECTFILE
+            ThermoMechanics/CreepBGRa/CreepAfterExcavation/CreepAfterExcavation.prj
+        RUNTIME 8
+    )
+endif()
 
 # Basic test that MFront models work for TM.
 # Linear elastic, no internal state variables, but external temperature.

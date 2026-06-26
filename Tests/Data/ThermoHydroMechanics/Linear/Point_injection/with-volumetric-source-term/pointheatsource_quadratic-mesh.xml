@@ -6,4 +6,39 @@
 
     <!-- axial symmetry would multiply with an integral measure of 0 at the center point, thereby disabling the heat source -->
     <remove sel="/*/meshes/mesh[text()='quarter_circle_geometry_center.vtu']/@axially_symmetric" />
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu</file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-5</absolute_tolerance>
+                <relative_tolerance>1e-5</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-5</absolute_tolerance>
+                <relative_tolerance>1e-5</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu</file>
+                <field>temperature</field>
+                <absolute_tolerance>1e-5</absolute_tolerance>
+                <relative_tolerance>1e-5</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu</file>
+                <field>epsilon</field>
+                <absolute_tolerance>1e-5</absolute_tolerance>
+                <relative_tolerance>1e-5</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>pointheatsource_quadratic-mesh_ts_10_t_50000.000000.vtu</file>
+                <field>sigma</field>
+                <absolute_tolerance>1e-5</absolute_tolerance>
+                <relative_tolerance>1e-5</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

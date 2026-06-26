@@ -697,4 +697,36 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>arehs-salt-THM0_ts_5_t_157680000000.000000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>1e-8</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>arehs-salt-THM0_ts_5_t_157680000000.000000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>1e-8</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>arehs-salt-THM0_ts_5_t_157680000000.000000.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>1e-8</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>arehs-salt-THM0_ts_5_t_157680000000.000000.vtu</file>
+            <field>epsilon</field>
+            <absolute_tolerance>1e-8</absolute_tolerance>
+            <relative_tolerance>1e-8</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>arehs-salt-THM0_ts_5_t_157680000000.000000.vtu</file>
+            <field>sigma</field>
+            <absolute_tolerance>1.0e-5</absolute_tolerance>
+            <relative_tolerance>1e-6</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

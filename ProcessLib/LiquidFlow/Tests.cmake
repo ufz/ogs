@@ -133,67 +133,26 @@ AddTest(
     mesh2D.vtu dirichlet_bc_wihin_interval_ts_4_t_20.000000.vtu analytical_solution_t_gt_10 pressure 1e-6 1e-12
 )
 
-AddTest(
-    NAME LiquidFlow_h1_1Dsource
-    PATH Parabolic/LiquidFlow/Verification/h1_1Dsource
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS h1_1Dsource.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    h1_1Dsource_ts_1_t_1.000000.vtu h1_1Dsource_ts_1_t_1.000000.vtu pressure pressure 5e-8 0.0
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/Verification/h1_1Dsource/h1_1Dsource.prj
+    )
 
-AddTest(
-    NAME LiquidFlow_h1_1Dsteady
-    PATH Parabolic/LiquidFlow/Verification/h1_1Dsteady
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS h1_1Dsteady.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    h1_1Dsteady_ts_1_t_1.000000.vtu h1_1Dsteady_ts_1_t_1.000000.vtu pressure pressure 1e-9 0.0
-)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/Verification/h1_1Dsteady/h1_1Dsteady.prj
+    )
 
-AddTest(
-    NAME LiquidFlow_h1_3Dhydstat
-    PATH Parabolic/LiquidFlow/Verification/h1_3Dhydstat
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS h1_3Dhydstat.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    h1_3Dhydstat_ts_1_t_1.000000.vtu h1_3Dhydstat_ts_1_t_1.000000.vtu pressure pressure 1e-5 0.0
-)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/Verification/h1_3Dhydstat/h1_3Dhydstat.prj
+    )
 
-AddTest(
-    NAME LiquidFlow_h2_1D1bt
-    PATH Parabolic/LiquidFlow/Verification/h2_1D1bt
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS h2_1D1bt.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    h2_1D1bt_ts_500_t_21600.000000.vtu h2_1D1bt_ts_500_t_21600.000000.vtu pressure pressure 1e-5 0.0
-    h2_1D1bt_ts_1000_t_43200.000000.vtu h2_1D1bt_ts_1000_t_43200.000000.vtu pressure pressure 1e-5 0.0
-)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D1bt/h2_1D1bt.prj)
 
-AddTest(
-    NAME LiquidFlow_h2_1D2bt
-    PATH Parabolic/LiquidFlow/Verification/h2_1D2bt
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS h2_1D2bt.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    h2_1D2bt_ts_1500_t_3888.000000.vtu h2_1D2bt_ts_1500_t_3888.000000.vtu pressure pressure 1e-5 0.0
-    h2_1D2bt_ts_3000_t_7776.000000.vtu h2_1D2bt_ts_3000_t_7776.000000.vtu pressure pressure 1e-5 0.0
-)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D2bt/h2_1D2bt.prj)
+endif()
 
 #===============================================================================
 # PETSc/MPI
@@ -371,37 +330,17 @@ AddTest(
     Dupuit_TestSet_01_ts_100_t_8640000.000000.vtu TestSet_01_ts_100_t_8640000.000000.vtu pressure pressure 3e-12 2e-13
 )
 
-AddTest(
-    NAME LiquidFlow_TimeDependentHeterogeneousDirichletBCs
-    PATH Parabolic/LiquidFlow/TimeDependentHeterogeneousBoundaryConditions
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS TimeDependentHeterogeneousBoundaryConditions.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    time_dependent_heterogeneous_bcs_ts_1_t_10.000000.vtu time_dependent_heterogeneous_bcs_ts_1_t_10.000000.vtu pressure pressure 1e-7 1e-13
-    time_dependent_heterogeneous_bcs_ts_118_t_1180.000000.vtu time_dependent_heterogeneous_bcs_ts_118_t_1180.000000.vtu pressure pressure 1e-7 1e-13
-    time_dependent_heterogeneous_bcs_ts_119_t_1190.000000.vtu time_dependent_heterogeneous_bcs_ts_119_t_1190.000000.vtu pressure pressure 1e-7 1e-13
-    time_dependent_heterogeneous_bcs_ts_120_t_1200.000000.vtu time_dependent_heterogeneous_bcs_ts_120_t_1200.000000.vtu pressure pressure 1e-7 1e-13
-    time_dependent_heterogeneous_bcs_ts_200_t_2000.000000.vtu time_dependent_heterogeneous_bcs_ts_200_t_2000.000000.vtu pressure pressure 1e-7 1e-13
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/TimeDependentHeterogeneousBoundaryConditions/TimeDependentHeterogeneousBoundaryConditions.prj
+    )
 
-AddTest(
-    NAME LiquidFlow_TimeDependentHeterogeneousSourceTerm
-    PATH Parabolic/LiquidFlow/TimeDependentHeterogeneousSourceTerm
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS TimeDependentHeterogeneousSourceTerm.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    time_dependent_heterogeneous_source_term_ts_1_t_10.000000.vtu time_dependent_heterogeneous_source_term_ts_1_t_10.000000.vtu pressure pressure 1e-7 1e-13
-    time_dependent_heterogeneous_source_term_ts_118_t_1180.000000.vtu time_dependent_heterogeneous_source_term_ts_118_t_1180.000000.vtu pressure pressure 1e-7 1e-13
-    time_dependent_heterogeneous_source_term_ts_119_t_1190.000000.vtu time_dependent_heterogeneous_source_term_ts_119_t_1190.000000.vtu pressure pressure 1e-7 1e-13
-    time_dependent_heterogeneous_source_term_ts_120_t_1200.000000.vtu time_dependent_heterogeneous_source_term_ts_120_t_1200.000000.vtu pressure pressure 1e-7 1e-13
-    time_dependent_heterogeneous_source_term_ts_200_t_2000.000000.vtu time_dependent_heterogeneous_source_term_ts_200_t_2000.000000.vtu pressure pressure 1e-7 1e-13
-)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/TimeDependentHeterogeneousSourceTerm/TimeDependentHeterogeneousSourceTerm.prj
+    )
+endif()
 
 AddTest(
     NAME LiquidFlow_Flux_3D_Hex
@@ -474,25 +413,9 @@ AddTest(
 )
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
-    AddTest(
-        NAME LiquidFlow_Flux_3D_HEX_MultipleOutputs_vtu
-        PATH Parabolic/LiquidFlow/Flux/3D/Hex
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS
-            cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs.xml
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400.000000.vtu
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400.000000.vtu
-            pressure pressure 1e-10 1e-15
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400.000000.vtu
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400.000000.vtu
-            pressure pressure 1e-7 1e-13
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400.000000.vtu
-            top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400.000000.vtu
-            pressure pressure 1e-7 1e-13
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/Flux/3D/Hex/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs.xml
     )
 
     AddTest(
@@ -514,7 +437,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
             top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf
             top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf
             pressure pressure 1e-7 1e-13 0 0
-        PROPERTIES DEPENDS ogs-LiquidFlow_Flux_3D_HEX_MultipleOutputs_vtu-time
+        PROPERTIES DEPENDS ogs-Parabolic/LiquidFlow/Flux/3D/Hex/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_multiple_outputs
     )
 
     AddTest(
@@ -535,45 +458,33 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27_ts_10_t_86400.000000.vtu
     )
     set(DIR_TO_CHECK
-        ${PROJECT_BINARY_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections_52a2ff3d)
-    set(FILE_PREFIX empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27_ts_)
+        ${PROJECT_BINARY_DIR}/Tests/Data/Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections_52a2ff3d
+    )
+    set(FILE_PREFIX
+        empty_output_timesteps_only_fixed_output_times_config_cuboid_1x1x1_hex_27_ts_
+    )
     add_test(
         NAME check_files-ogs-Parabolic/LiquidFlow/Flux/3D/Hex
-        COMMAND ${CMAKE_COMMAND}
-        "-DEXPECTED_FILES=${EXPECTED_FILES}"
-        -DFILE_PREFIX=${FILE_PREFIX}
-        -DDIR_TO_CHECK=${DIR_TO_CHECK}
-        -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/CheckCreatedFiles.cmake
+        COMMAND
+            ${CMAKE_COMMAND} "-DEXPECTED_FILES=${EXPECTED_FILES}"
+            -DFILE_PREFIX=${FILE_PREFIX} -DDIR_TO_CHECK=${DIR_TO_CHECK} -P
+            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/CheckCreatedFiles.cmake
     )
     set_tests_properties(
         check_files-ogs-Parabolic/LiquidFlow/Flux/3D/Hex
-        PROPERTIES DEPENDS ogs-Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_empty_output_timesteps_only_fixed_output
+        PROPERTIES
+            DEPENDS
+            ogs-Parabolic/LiquidFlow/Flux/3D/Hex/MultipleOutputsDifferentVariablesSections/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet_empty_output_timesteps_only_fixed_output
     )
 endif()
 
-AddTest(
-    NAME LiquidFlow_Flux_3D_HEX_Parallel_2
-    PATH Parabolic/LiquidFlow/Flux/3D/Hex/Parallel
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cuboid_1x1x1_hex_27_Dirichlet_Dirichlet.prj
-    WRAPPER mpirun
-    WRAPPER_ARGS -np 2
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MPI
-    DIFF_DATA
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400_000000_0.vtu pressure pressure 1e-10 1e-15
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_ts_2_t_86400_000000_1.vtu pressure pressure 1e-10 1e-15
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400_000000_0.vtu pressure pressure  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_bottom_boundary_ts_2_t_86400_000000_1.vtu pressure pressure  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400_000000_0.vtu pressure pressure  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_top_boundary_ts_2_t_86400_000000_1.vtu pressure pressure  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_0_t_0_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_0_t_0_000000_0.vtu specific_flux specific_flux  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_0_t_0_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_0_t_0_000000_1.vtu specific_flux specific_flux  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_1_t_43200_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_1_t_43200_000000_0.vtu specific_flux specific_flux  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_1_t_43200_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_1_t_43200_000000_1.vtu specific_flux specific_flux  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_2_t_86400_000000_0.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_2_t_86400_000000_0.vtu specific_flux specific_flux  1e-7 1e-13
-    top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_2_t_86400_000000_1.vtu top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_entire_boundary_ts_2_t_86400_000000_1.vtu specific_flux specific_flux  1e-7 1e-13
-)
+if(OGS_USE_MPI)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/Flux/3D/Hex/Parallel/cuboid_1x1x1_hex_27_Dirichlet_Dirichlet.prj
+        WRAPPER mpirun -np 2
+    )
+endif()
 
 AddTest(
     NAME LiquidFlow_SimpleSynthetics_XDMF
@@ -712,72 +623,33 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
 endif()
 
 # inclined mesh
-AddTest(
-    NAME LiquidFlow_HydrostaticFlowInInclined_2D_Plane
-    PATH Parabolic/LiquidFlow/InclinedMeshElements/Inclined2DMesh
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS hydrostatic_flow_in_inclined_2D_plane.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu pressure pressure 1e-07 1e-13
-    hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu hydrostatic_flow_in_inclined_2D_plane_ts_t_1.000000.vtu v v 1e-14 1e-14
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/InclinedMeshElements/Inclined2DMesh/hydrostatic_flow_in_inclined_2D_plane.prj
+    )
 
-AddTest(
-    NAME LiquidFlow_TransientFlowInInclined_2D_Plane
-    PATH Parabolic/LiquidFlow/InclinedMeshElements/Inclined2DMesh
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS transient_flow_in_inclined_2D_plane.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu pressure pressure 1e-14 1e-11
-    transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu transient_flow_in_inclined_2D_plane_ts_t_864000.000000.vtu v v 1e-11 1e-14
-)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/InclinedMeshElements/Inclined2DMesh/transient_flow_in_inclined_2D_plane.prj
+    )
 
-AddTest(
-    NAME LiquidFlow_fractures_in_3D
-    PATH Parabolic/LiquidFlow/InclinedMeshElements/FractureIn3D
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS fractures_in_3D.prj
-    RUNTIME 3
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    fractures_in_3D_ts_100_t_8640000.000000.vtu fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
-    fractures_in_3D_ts_100_t_8640000.000000.vtu fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
-)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/InclinedMeshElements/FractureIn3D/fractures_in_3D.prj
+        RUNTIME 3
+    )
 
-AddTest(
-    NAME LiquidFlow_line_fractures_in_3D
-    PATH Parabolic/LiquidFlow/InclinedMeshElements/1Din3D
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS line_fractures_in_3D.prj
-    RUNTIME 1
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu pressure pressure 1e-14 1e-14
-    line_fractures_in_3D_ts_100_t_8640000.000000.vtu line_fractures_in_3D_ts_100_t_8640000.000000.vtu v v 1e-14 1e-14
-)
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/InclinedMeshElements/1Din3D/line_fractures_in_3D.prj
+        RUNTIME 1
+    )
 
-AddTest(
-    NAME GMSH2OGS_quadratic_mesh_assembly_test
-    PATH Utils/GMSH2OGS
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS quadratic_mesh_assembly_test.prj
-    RUNTIME 1
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu quadratic_mesh_assembly_test_ts_1_t_1.000000.vtu pressure pressure 1e-8 1e-12
-)
+    OgsTest(PROJECTFILE Utils/GMSH2OGS/quadratic_mesh_assembly_test.prj
+            RUNTIME 1
+    )
+endif()
 
 AddTest(
     NAME LiquidFlow_CoarseRaster_HomogeneousValues
@@ -819,28 +691,12 @@ AddTest(
     fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu coarse_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu p p 1e-14 1e-14
 )
 
-AddTest(
-    NAME LiquidFlow_FineRaster_HeterogeneousValues
-    PATH Parabolic/LiquidFlow/RasterParameter
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS FineRasterHeterogeneous.xml
-    RUNTIME 1
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu p p 1e-14 1e-14
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE
+            Parabolic/LiquidFlow/RasterParameter/FineRasterHeterogeneous.xml
+        RUNTIME 1
+    )
 
-AddTest(
-    NAME LiquidFlow_GasFlow
-    PATH Parabolic/LiquidFlow/GasFlow
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS gas_flow.prj
-    RUNTIME 1
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    gas_flow_ts_1000_t_100.000000.vtu gas_flow_ts_1000_t_100.000000.vtu pressure pressure 1e-5 5e-6
-)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/GasFlow/gas_flow.prj RUNTIME 1)
+endif()

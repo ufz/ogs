@@ -251,4 +251,18 @@
             </values>
         </curve>
     </curves>
+    <test_definition>
+        <vtkdiff>
+            <file>3D_deep_BHE_CXC_ts_10_t_600.000000.vtu</file>
+            <field>temperature_BHE1</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>5e-15</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>3D_deep_BHE_CXC_ts_10_t_600.000000.vtu</file>
+            <field>temperature_soil</field>
+            <absolute_tolerance>0</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

@@ -143,4 +143,18 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>source_term_middle_ts_1_t_1.000000.vtu</file>
+            <field>temperature</field>
+            <absolute_tolerance>2e-14</absolute_tolerance>
+            <relative_tolerance>8e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>source_term_middle_ts_1_t_1.000000.vtu</file>
+            <field>heat_flux</field>
+            <absolute_tolerance>8e-14</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
