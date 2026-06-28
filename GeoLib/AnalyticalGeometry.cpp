@@ -6,6 +6,7 @@
 #include <Eigen/Geometry>
 #include <algorithm>
 #include <cmath>
+#include <iterator>
 #include <limits>
 
 #include "BaseLib/StringTools.h"
@@ -256,9 +257,10 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
     std::size_t const n_segs(ply->getNumberOfSegments());
     // Neighbouring segments always intersects at a common vertex. The algorithm
     // checks for intersections of non-neighbouring segments.
-    for (seg_it0 = ply->begin(); seg_it0 != ply->end() - 2; ++seg_it0)
+    for (seg_it0 = ply->begin(); seg_it0.getSegmentNumber() + 2 < n_segs;
+         ++seg_it0)
     {
-        seg_it1 = seg_it0 + 2;
+        seg_it1 = std::next(seg_it0, 2);
         std::size_t const seg_num_0 = seg_it0.getSegmentNumber();
         for (; seg_it1 != ply->end(); ++seg_it1)
         {

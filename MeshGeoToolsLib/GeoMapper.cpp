@@ -4,6 +4,7 @@
 #include "GeoMapper.h"
 
 #include <algorithm>
+#include <iterator>
 #include <numeric>
 #include <sstream>
 
@@ -533,7 +534,7 @@ static void insertSubSegments(
             new_pnts_cnt++;
         }
     }
-    segment_it += new_pnts_cnt;
+    std::advance(segment_it, new_pnts_cnt);
 }
 
 static void mapPolylineOnSurfaceMesh(

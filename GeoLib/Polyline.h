@@ -31,11 +31,11 @@ public:
     class SegmentIterator final
     {
     public:
-        using iterator_category = std::forward_iterator_tag;
+        using iterator_category = std::input_iterator_tag;
         using value_type = LineSegment;
         using difference_type = std::ptrdiff_t;
         using pointer = LineSegment*;
-        using reference = LineSegment&;
+        using reference = LineSegment;
 
         explicit SegmentIterator(Polyline const& polyline,
                                  std::size_t segment_number);
@@ -58,18 +58,6 @@ public:
         bool operator==(SegmentIterator const& other) const;
 
         bool operator!=(SegmentIterator const& other) const;
-
-        SegmentIterator& operator+=(
-            std::vector<GeoLib::Point>::difference_type n);
-
-        SegmentIterator operator+(
-            std::vector<GeoLib::Point>::difference_type n);
-
-        SegmentIterator& operator-=(
-            std::vector<GeoLib::Point>::difference_type n);
-
-        SegmentIterator operator-(
-            std::vector<GeoLib::Point>::difference_type n);
 
     private:
         GeoLib::Polyline const* _polyline;

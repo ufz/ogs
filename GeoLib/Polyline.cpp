@@ -405,62 +405,6 @@ bool Polyline::SegmentIterator::operator!=(SegmentIterator const& other) const
            other._polyline != _polyline;
 }
 
-Polyline::SegmentIterator& Polyline::SegmentIterator::operator+=(
-    std::vector<GeoLib::Point>::difference_type n)
-{
-    if (n < 0)
-    {
-        _segment_number -=
-            static_cast<std::vector<GeoLib::Point>::size_type>(-n);
-    }
-    else
-    {
-        _segment_number +=
-            static_cast<std::vector<GeoLib::Point>::size_type>(n);
-    }
-    if (_segment_number > _polyline->getNumberOfSegments())
-    {
-        OGS_FATAL("");
-    }
-    return *this;
-}
-
-Polyline::SegmentIterator Polyline::SegmentIterator::operator+(
-    std::vector<GeoLib::Point>::difference_type n)
-{
-    SegmentIterator t(*this);
-    t += n;
-    return t;
-}
-
-Polyline::SegmentIterator& Polyline::SegmentIterator::operator-=(
-    std::vector<GeoLib::Point>::difference_type n)
-{
-    if (n >= 0)
-    {
-        _segment_number -=
-            static_cast<std::vector<GeoLib::Point>::size_type>(n);
-    }
-    else
-    {
-        _segment_number +=
-            static_cast<std::vector<GeoLib::Point>::size_type>(-n);
-    }
-    if (_segment_number > _polyline->getNumberOfSegments())
-    {
-        OGS_FATAL("");
-    }
-    return *this;
-}
-
-Polyline::SegmentIterator Polyline::SegmentIterator::operator-(
-    std::vector<GeoLib::Point>::difference_type n)
-{
-    Polyline::SegmentIterator t(*this);
-    t -= n;
-    return t;
-}
-
 void resetPointIDs(Polyline& polyline, std::vector<std::size_t> const& mapping)
 {
     if (polyline.getPointsVec().size() != mapping.size())
