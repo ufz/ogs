@@ -11,9 +11,6 @@
 #   - TFEL_CXX_STANDARD
 #   - TFEL_VERSION
 
-#if(DEFINED ENV{TFELHOME})
-#    set(TFELHOME $ENV{TFELHOME})
-#endif()
 message(STATUS "tfelhome: ${TFELHOME}")
 
 foreach(tool mfront tfel-check tfel-config mfront-query)
