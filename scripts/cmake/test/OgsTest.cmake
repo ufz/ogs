@@ -57,12 +57,17 @@ function(OgsTest)
     set(_processors 1)
     # Add wrapper postfix (-mpi for mpirun).
     if(OgsTest_WRAPPER)
-        string(REGEX MATCH "^[^ ]+" WRAPPER ${OgsTest_WRAPPER})
+        list(GET OgsTest_WRAPPER 0 WRAPPER)
         if(WRAPPER STREQUAL "mpirun")
             set(TEST_NAME "${TEST_NAME}-mpi")
             list(APPEND OgsTest_WRAPPER --bind-to none)
-            if("${OgsTest_WRAPPER}" MATCHES "-np;([0-9]*)")
+            if("${OgsTest_WRAPPER}" MATCHES "-np?;([0-9]*)")
                 set(_processors ${CMAKE_MATCH_1})
+            else()
+                message(
+                    FATAL_ERROR
+                        "${TEST_NAME}: mpirun-wrapper requires -np argument"
+                )
             endif()
         endif()
     endif()
