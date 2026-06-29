@@ -58,8 +58,6 @@ test linux wheel via notebooks:
     - rm -rf .venv Tests/Data/.venv ../build/_skbuild  # cleanup build dirs
     - cd Tests/Data
     - uv run --group ${OGS_GROUP} ${UV_ARGS} pytest
-    # https://github.com/matplotlib/matplotlib/issues/25306:
-    - rm -rf "$(uv run python -c 'import matplotlib as mpl; print(mpl.get_cachedir())')"
     # TODO:
     #  - better timeout
     #  - run in parallel
