@@ -28,6 +28,53 @@ AddTest(
     HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 5e-3 1e-8
 )
 AddTest(
+    NAME ThermoRichardsFlow_HeatTransportInStationaryFlow_compare
+    PATH ThermoRichardsFlow/HT/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS <SOURCE_PATH>/HeatTransportInStationaryFlow_compare.xml -l debug
+    # auxiliary log files will be put there
+    WORKING_DIRECTORY <BUILD_PATH>
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    LABELS NO_PARALLEL_ASSEMBLY
+    RUNTIME 17
+    DIFF_DATA
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5e-3 1e-8
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 5e-3 1e-8
+)
+# like above but with strict Jacobian comparison tolerances to make the simulation fail
+AddTest(
+    NAME ThermoRichardsFlow_HeatTransportInStationaryFlow_compare_strict_fail
+    PATH ThermoRichardsFlow/HT/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS <SOURCE_PATH>/HeatTransportInStationaryFlow_compare_strict_fail.xml
+    # auxiliary log files will be put there
+    WORKING_DIRECTORY <BUILD_PATH>
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    LABELS NO_PARALLEL_ASSEMBLY
+    PROPERTIES
+        PASS_REGULAR_EXPRESSION
+        "OGS failed, because the two Jacobian implementations returned different results."
+)
+# strict Jacobian comparison tolerances but keep going
+AddTest(
+    NAME ThermoRichardsFlow_HeatTransportInStationaryFlow_compare_strict_nofail
+    PATH ThermoRichardsFlow/HT/HeatTransportInStationaryFlow
+    EXECUTABLE ogs
+    EXECUTABLE_ARGS <SOURCE_PATH>/HeatTransportInStationaryFlow_compare_strict_nofail.xml
+    # auxiliary log files will be put there
+    WORKING_DIRECTORY <BUILD_PATH>
+    WRAPPER time
+    TESTER vtkdiff
+    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
+    LABELS NO_PARALLEL_ASSEMBLY
+    RUNTIME 17
+    DIFF_DATA
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu temperature  temperature 5e-3 1e-8
+    HT_HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu HeatTransportInStationaryFlow_ts_50_t_50000.000000.vtu pressure  pressure 5e-3 1e-8
+)
+AddTest(
     NAME ThermoRichardsFlow_RichardsFlow2DSmall
     PATH ThermoRichardsFlow/RichardsFlow2D
     EXECUTABLE ogs

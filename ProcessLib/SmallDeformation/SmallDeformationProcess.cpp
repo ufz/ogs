@@ -38,7 +38,7 @@ SmallDeformationProcess<DisplacementDim>::SmallDeformationProcess(
       process_data_(std::move(process_data))
 {
     // If numerical Jacobian assembler is used.
-    if (this->_jacobian_assembler->isPerturbationEnabled())
+    if (this->_jacobian_assembler->needsPicardAssembly())
     {
         OGS_FATAL(
             "Numerical Jacobian assembly is not supported for the "

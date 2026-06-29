@@ -35,7 +35,7 @@ PhaseFieldProcess<DisplacementDim>::PhaseFieldProcess(
       _process_data(std::move(process_data))
 {
     // For numerical Jacobian assembler
-    if (this->_jacobian_assembler->isPerturbationEnabled())
+    if (this->_jacobian_assembler->needsPicardAssembly())
     {
         OGS_FATAL(
             "The numericial Jacobian assembler is not supported for the "

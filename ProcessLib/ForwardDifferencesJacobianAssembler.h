@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "AbstractJacobianAssembler.h"
+#include "NumericalJacobianAssembler.h"
 
 namespace ProcessLib
 {
 //! Assembles the Jacobian matrix using forward differences.
 class ForwardDifferencesJacobianAssembler final
-    : public AbstractJacobianAssembler
+    : public NumericalJacobianAssembler
 {
 public:
     //! Constructs a new instance.
@@ -37,7 +37,8 @@ public:
     //!
     //! \attention It is assumed that the local vectors and matrices are ordered
     //! by component.
-    void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
+    void assembleWithJacobian(std::size_t const mesh_item_id,
+                              LocalAssemblerInterface& local_assembler,
                               double const t, double const dt,
                               std::vector<double> const& local_x_data,
                               std::vector<double> const& local_x_prev_data,

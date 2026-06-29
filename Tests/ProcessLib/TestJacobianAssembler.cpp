@@ -386,11 +386,11 @@ private:
         std::vector<double> Jac_data_ana;
         double const t = 0.0;
 
-        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, b_data_cd,
-                                        Jac_data_cd);
+        jac_asm_cd.assembleWithJacobian(0 /* mesh_item_id */, loc_asm, t, dt, x,
+                                        xdot, b_data_cd, Jac_data_cd);
 
-        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, b_data_ana,
-                                         Jac_data_ana);
+        jac_asm_ana.assembleWithJacobian(0 /* mesh_item_id */, loc_asm, t, dt,
+                                         x, xdot, b_data_ana, Jac_data_ana);
 
         if (LocAsm::asmb)
         {
@@ -450,11 +450,11 @@ private:
         std::vector<double> Jac_data_ana;
         double const t = 0.0;
 
-        jac_asm_cd.assembleWithJacobian(loc_asm, t, dt, x, xdot, b_data_cd,
-                                        Jac_data_cd);
+        jac_asm_cd.assembleWithJacobian(0 /* mesh_item_id */, loc_asm, t, dt, x,
+                                        xdot, b_data_cd, Jac_data_cd);
 
-        jac_asm_ana.assembleWithJacobian(loc_asm, t, dt, x, xdot, b_data_ana,
-                                         Jac_data_ana);
+        jac_asm_ana.assembleWithJacobian(0 /* mesh_item_id */, loc_asm, t, dt,
+                                         x, xdot, b_data_ana, Jac_data_ana);
 
         if (LocAsm::asmb)
         {

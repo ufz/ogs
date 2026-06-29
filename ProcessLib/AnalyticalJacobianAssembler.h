@@ -22,7 +22,8 @@ public:
     //! \f$b\f$.
     //! In this implementation the call is only forwarded to the respective
     //! method of the given \c local_assembler.
-    void assembleWithJacobian(LocalAssemblerInterface& local_assembler,
+    void assembleWithJacobian(std::size_t const mesh_item_id,
+                              LocalAssemblerInterface& local_assembler,
                               double const t, double const dt,
                               std::vector<double> const& local_x,
                               std::vector<double> const& local_x_prev,
@@ -37,6 +38,23 @@ public:
         std::vector<double>& local_Jac_data) override;
 
     std::unique_ptr<AbstractJacobianAssembler> copy() const override;
+
+    void checkPerturbationSize(
+        int const /*max_non_deformation_dofs_per_node*/) const override
+    {
+    }
+
+    void setNonDeformationComponentIDs(
+        std::vector<int> const& /*non_deformation_component_ids*/) override
+    {
+    }
+
+    void setNonDeformationComponentIDsNoSizeCheck(
+        std::vector<int> const& /*non_deformation_component_ids*/) override
+    {
+    }
+
+    bool needsPicardAssembly() const override { return false; }
 };
 
 }  // namespace ProcessLib

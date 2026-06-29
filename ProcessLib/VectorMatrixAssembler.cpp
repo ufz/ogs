@@ -122,8 +122,8 @@ void VectorMatrixAssembler::assembleWithJacobian(
         auto const local_x = x[process_id]->get(indices);
         auto const local_x_prev = x_prev[process_id]->get(indices);
         _jacobian_assembler.assembleWithJacobian(
-            local_assembler, t, dt, local_x, local_x_prev, _local_b_data,
-            _local_Jac_data);
+            mesh_item_id, local_assembler, t, dt, local_x, local_x_prev,
+            _local_b_data, _local_Jac_data);
     }
     else  // Staggered scheme
     {

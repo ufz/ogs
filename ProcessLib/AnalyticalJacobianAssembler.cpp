@@ -8,6 +8,7 @@
 namespace ProcessLib
 {
 void AnalyticalJacobianAssembler::assembleWithJacobian(
+    std::size_t const /*mesh_item_id*/,
     LocalAssemblerInterface& local_assembler, double const t, double const dt,
     std::vector<double> const& local_x, std::vector<double> const& local_x_prev,
     std::vector<double>& local_b_data, std::vector<double>& local_Jac_data)

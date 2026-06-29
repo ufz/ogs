@@ -194,7 +194,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         config.getConfigParameter("linear", false);
 
     bool const use_numerical_jacobian =
-        jacobian_assembler->isPerturbationEnabled();
+        jacobian_assembler->needsPicardAssembly();
 
     RichardsMechanicsProcessData<DisplacementDim> process_data{
         materialIDs(mesh),

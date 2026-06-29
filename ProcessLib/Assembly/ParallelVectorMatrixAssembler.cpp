@@ -98,9 +98,9 @@ void assembleWithJacobianOneElement(
 
     auto const local_x = x.get(indices);
     auto const local_x_prev = x_prev.get(indices);
-    jacobian_assembler.assembleWithJacobian(local_assembler, t, dt, local_x,
-                                            local_x_prev, local_b_data,
-                                            local_Jac_data);
+    jacobian_assembler.assembleWithJacobian(mesh_item_id, local_assembler, t,
+                                            dt, local_x, local_x_prev,
+                                            local_b_data, local_Jac_data);
 
     if (local_Jac_data.empty())
     {
