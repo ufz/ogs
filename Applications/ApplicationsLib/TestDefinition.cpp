@@ -381,8 +381,44 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
 
 bool TestDefinition::runTests() const
 {
+    return runCommandLines(_command_lines, true);
+}
+
+bool TestDefinition::runTests(std::string_view const diff_tool_name) const
+{
+    std::vector<CommandLine> command_lines;
+    copy_if(begin(_command_lines), end(_command_lines),
+            back_inserter(command_lines),
+            [diff_tool_name](CommandLine const& command_line)
+            { return command_line.diff_tool_name == diff_tool_name; });
+
+    return runCommandLines(command_lines, true);
+}
+
+bool TestDefinition::runTestsExcluding(
+    std::string_view const diff_tool_name) const
+{
+    std::vector<CommandLine> command_lines;
+    copy_if(begin(_command_lines), end(_command_lines),
+            back_inserter(command_lines),
+            [diff_tool_name](CommandLine const& command_line)
+            { return command_line.diff_tool_name != diff_tool_name; });
+
+    return runCommandLines(command_lines, false);
+}
+
+bool TestDefinition::hasTests(std::string_view const diff_tool_name) const
+{
+    return any_of(begin(_command_lines), end(_command_lines),
+                  [diff_tool_name](CommandLine const& command_line)
+                  { return command_line.diff_tool_name == diff_tool_name; });
+}
+
+bool TestDefinition::runCommandLines(
+    std::vector<CommandLine> const& command_lines, bool const fail_on_empty)
+{
     std::vector<int> return_values;
-    transform(begin(_command_lines), end(_command_lines),
+    transform(begin(command_lines), end(command_lines),
               back_inserter(return_values),
               [](CommandLine const& command_line)
               {
@@ -399,9 +435,9 @@ bool TestDefinition::runTests() const
                        command_line.diff_tool_name);
                   return return_value;
               });
-    return !return_values.empty() &&
+    return (!return_values.empty() || !fail_on_empty) &&
            all_of(begin(return_values), end(return_values),
-                  [](int const& return_value) { return return_value == 0; });
+                  [](int const return_value) { return return_value == 0; });
 }
 
 std::vector<std::string> const& TestDefinition::getOutputFiles() const
