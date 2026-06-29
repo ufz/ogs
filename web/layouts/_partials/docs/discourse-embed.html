@@ -1,0 +1,21 @@
+{{/*
+  Full-app Discourse embed (https://discourse-full-embed.pages.dev/embed-test).
+  Renders one interactive embedded topic per page.
+*/}}
+<div class="mt-12 prose prose-sm lg:prose max-w-none lg:max-w-none" data-pagefind-ignore>
+  <h2>Discussion</h2>
+  <div id="discourse-comments"></div>
+</div>
+{{ $embedPath := printf "%s/" .Path }}
+<script type="text/javascript">
+  window.DiscourseEmbed = {
+    discourseUrl: '{{ site.Params.discourseUrl }}',
+    discourseEmbedUrl: window.location.origin + '{{ $embedPath }}',
+    fullApp: true
+  };
+  (function() {
+    var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
+    d.src = window.DiscourseEmbed.discourseUrl + 'javascripts/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
+  })();
+</script>

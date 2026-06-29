@@ -35,6 +35,9 @@ style = "monokailight"
 [params]
 alert = ""
 currentVersion = "dev"
+discourseUrl = "https://discourse.opengeosys.org/"
+discourseEmbedEnabled = true
+discourseEmbedHosts = ["www.opengeosys.org"]
 
 [[menu.main]]
 name = "Discourse"

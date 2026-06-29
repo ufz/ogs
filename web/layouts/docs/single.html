@@ -99,6 +99,10 @@
         {{ .Content }}
       </div>
 
+      {{ if and site.Params.discourseEmbedEnabled (in site.Params.discourseEmbedHosts (urls.Parse site.BaseURL).Host) (in .RelPermalink "/docs/benchmarks/") (not .IsSection) }}
+      {{ partial "docs/discourse-embed.html" . }}
+      {{ end }}
+
       <hr class="border my-4">
       {{ partial "footer-nav.html" . }}
 
