@@ -165,6 +165,8 @@ macro(_ogs_add_test TEST_NAME)
                    "${labels}"
                    PROCESSORS
                    ${_processors}
+                   WORKING_DIRECTORY
+                   ${OgsTest_BINARY_DIR}
                    ${timeout}
     )
 endmacro()
