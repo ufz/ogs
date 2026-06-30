@@ -499,12 +499,21 @@ endif()
 if(TEST ogs-EllipticPETSc/quad_20x10_GroundWaterFlow-mpi
    AND XMLSTARLET_TOOL_PATH AND BASH_TOOL_PATH
 )
+    get_test_property(
+        ogs-EllipticPETSc/quad_20x10_GroundWaterFlow-mpi
+        WORKING_DIRECTORY
+        _groundwater_flow_2d_output_dir
+    )
+    set(_groundwater_flow_2d_pvtu
+        "${_groundwater_flow_2d_output_dir}/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu"
+    )
+
     # Just checks if there are 3 <Piece>-elements in the pvtu
     add_test(
         NAME ParallelFEM_GroundWaterFlow2D_pvtu
         COMMAND
             ${BASH_TOOL_PATH} -c
-            "if [[ $(xmlstarlet sel -t -v 'count(/VTKFile/PUnstructuredGrid/Piece)' Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu) == '3' ]] ; then exit 0; else cat Tests/Data/EllipticPETSc/quad_20x10_GroundWaterFlow_result_ts_0_t_0_000000.pvtu; exit 1; fi"
+            "if [[ $(${XMLSTARLET_TOOL_PATH} sel -t -v 'count(/VTKFile/PUnstructuredGrid/Piece)' \"${_groundwater_flow_2d_pvtu}\") == '3' ]] ; then exit 0; else cat \"${_groundwater_flow_2d_pvtu}\"; exit 1; fi"
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
     )
     set_tests_properties(

@@ -63,10 +63,6 @@ set(OGS_PETSC_CONFIG_OPTIONS "" CACHE STRING
 option(OGS_BUILD_UTILS "Should the utilities programs be built?" ON)
 option(OGS_BUILD_TESTING "Should the tests be built?" ON)
 
-if(MSVC)
-    set(CMD_COMMAND "cmd;/c")
-endif()
-
 option(OGS_USE_MKL "Use Intel MKL" OFF)
 
 # Eigen

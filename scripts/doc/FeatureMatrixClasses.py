@@ -61,7 +61,6 @@ class FeatureMatrix:
                     )
                 }
             )
-            # lines[mat.lines.index[0]].sort
         return coverages, lines_no_feature
 
     @staticmethod
