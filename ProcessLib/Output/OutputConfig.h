@@ -32,6 +32,7 @@ struct OutputConfig
     bool compress_output = false;
     unsigned int number_of_files = 1;
     unsigned int chunk_size_bytes = 0;
+    bool store_static_data_separately = false;
     std::string data_mode;
     /// A list of repeat/step-count pairs. If the list is empty, and no
     /// fixed_output_times were specified, a default pair 1/1 will be inserted

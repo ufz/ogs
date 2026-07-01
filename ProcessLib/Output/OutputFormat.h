@@ -92,11 +92,13 @@ struct OutputXDMFHDF5Format final : public OutputFormat
     OutputXDMFHDF5Format(std::string const& directory, std::string prefix,
                          std::string suffix, bool const compression,
                          unsigned int const n_files,
-                         unsigned int const chunk_size_bytes)
+                         unsigned int const chunk_size_bytes,
+                         bool const store_static_data_separately)
         : OutputFormat(directory, std::move(prefix), std::move(suffix),
                        compression),
           n_files(n_files),
-          chunk_size_bytes(chunk_size_bytes)
+          chunk_size_bytes(chunk_size_bytes),
+          store_static_data_separately(store_static_data_separately)
     {
     }
 
@@ -120,6 +122,8 @@ struct OutputXDMFHDF5Format final : public OutputFormat
     unsigned int n_files;
     //! Specifies the chunks size in bytes per hdf5 output file.
     unsigned int const chunk_size_bytes;
+    //! split static and dynamic data output to separate files
+    bool const store_static_data_separately;
 
     void outputMeshXdmf(
         std::set<std::string> const& output_variables,

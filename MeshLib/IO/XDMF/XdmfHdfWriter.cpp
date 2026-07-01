@@ -68,7 +68,8 @@ XdmfHdfWriter::XdmfHdfWriter(
     double const initial_time,
     std::set<std::string> const& output_variable_names,
     bool const use_compression, unsigned int const n_files,
-    unsigned int const chunk_size_bytes, bool const separate_static_file)
+    unsigned int const chunk_size_bytes,
+    bool const store_static_data_separately)
 {
     // ogs meshes to vector of Xdmf/HDF meshes (we keep Xdmf and HDF together
     // because XDMF depends on HDF) to meta
@@ -168,7 +169,7 @@ XdmfHdfWriter::XdmfHdfWriter(
 
     auto const is_file_manager = isFileManager();
 
-    if (separate_static_file)
+    if (store_static_data_separately)
     {
         // Split hdf meshes into static (constant attributes only) and dynamic
         // (variable attributes only).
@@ -217,7 +218,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     auto const transform_metamesh_to_xdmf =
         [&isVariableXdmfAttribute, &filepath, &hdf_filepath,
          &static_hdf_filepath, &initial_time,
-         separate_static_file](XdmfHdfMesh& metamesh)
+         store_static_data_separately](XdmfHdfMesh& metamesh)
     {
         std::string const xdmf_name = metamesh.name;
         std::filesystem::path const xdmf_filepath =
@@ -241,10 +242,9 @@ XdmfHdfWriter::XdmfHdfWriter(
 
         // In backward compat mode, constant data also has a time dimension and
         // shares the dynamic file.
-        auto const& static_fn =
-            separate_static_file
-                ? static_hdf_filepath.filename().string()
-                : hdf_filepath.filename().string();
+        auto const static_fn = store_static_data_separately
+                                   ? static_hdf_filepath.filename().string()
+                                   : hdf_filepath.filename().string();
         auto const xdmf_writer_fn =
             write_xdmf(metamesh.geometry.xdmf, metamesh.topology.xdmf,
                        xdmf_constant_attributes, xdmf_variable_attributes,

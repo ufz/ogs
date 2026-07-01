@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="FunctionParameterTest_XDMF.prj">
+    <add sel="/*/time_loop/output/hdf">
+        <store_static_data_separately>true</store_static_data_separately>
+    </add>
+</OpenGeoSysProjectDiff>
