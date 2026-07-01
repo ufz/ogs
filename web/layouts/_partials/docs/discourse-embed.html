@@ -1,16 +1,38 @@
 {{/*
   Full-app Discourse embed (https://discourse-full-embed.pages.dev/embed-test).
   Renders one interactive embedded topic per page.
+  discourseEmbedUrl always points to the version-independent "/stable/"
+  release alias, so every environment (production, master, MR previews)
+  shares the same one topic per benchmark. That page may not exist there yet
+  (e.g. a benchmark only added in this MR), so a build-time request checks
+  it first and nothing is rendered if it doesn't resolve to 200.
 */}}
+{{ $stableUrl := printf "%s%s/" site.Params.discourseStableUrl .Path }}
+{{ $exists := false }}
+{{ with try (resources.GetRemote $stableUrl (dict "method" "GET")) }}
+  {{ with .Value }}
+    {{ if eq .Data.StatusCode 200 }}
+      {{ $exists = true }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ if $exists }}
+<hr class="mt-4">
 <div class="mt-12 prose prose-sm lg:prose max-w-none lg:max-w-none" data-pagefind-ignore>
-  <h2>Discussion</h2>
+  <h2 class="flex items-center gap-2 !mb-0 leading-tight">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Discourse_icon.svg" alt=""
+      class="m-0 h-6 w-6 no-fancybox" loading="lazy">
+    Community Discussion
+  </h2>
+  <p class="!-mt-3">The following comments are pulled in from our <a href="{{ site.Params.discourseUrl }}">Discourse
+      forum</a> and contain
+    community-generated content.</p>
   <div id="discourse-comments"></div>
 </div>
-{{ $embedPath := printf "%s/" .Path }}
 <script type="text/javascript">
   window.DiscourseEmbed = {
     discourseUrl: '{{ site.Params.discourseUrl }}',
-    discourseEmbedUrl: window.location.origin + '{{ $embedPath }}',
+    discourseEmbedUrl: '{{ $stableUrl }}',
     fullApp: true
   };
   (function() {
@@ -19,3 +41,4 @@
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
   })();
 </script>
+{{ end }}

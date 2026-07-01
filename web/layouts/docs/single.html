@@ -99,7 +99,7 @@
         {{ .Content }}
       </div>
 
-      {{ if and site.Params.discourseEmbedEnabled (in site.Params.discourseEmbedHosts (urls.Parse site.BaseURL).Host) (in .RelPermalink "/docs/benchmarks/") (not .IsSection) }}
+      {{ if and (ne (urls.Parse site.BaseURL).Hostname "localhost") (in .RelPermalink "/docs/benchmarks/") (not .IsSection) }}
       {{ partial "docs/discourse-embed.html" . }}
       {{ end }}
 
