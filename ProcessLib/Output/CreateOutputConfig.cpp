@@ -137,8 +137,8 @@ OutputConfig createOutputConfig(
         if (hdf)
         {
             return hdf
+                //! \ogs_file_param{prj__time_loop__output__hdf__store_static_data_separately}
                 ->getConfigParameterOptional<bool>(
-                    //! \ogs_file_param{prj__time_loop__output__hdf__store_static_data_separately}
                     "store_static_data_separately")
                 .value_or(false);
         }

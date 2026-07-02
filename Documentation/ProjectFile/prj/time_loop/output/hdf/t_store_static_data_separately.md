@@ -1,0 +1,1 @@
+\copydoc ProcessLib::OutputXDMFHDF5Format::store_static_data_separately
