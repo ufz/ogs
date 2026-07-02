@@ -11,15 +11,15 @@
         x-init="init()">
 
         <template x-if="preferred && isOutdated()">
-          <div class="w-full bg-yellow-50 border-b border-300 px-4 py-2 text-sm flex justify-between items-center">
-            <div>
+          <div class="w-full bg-yellow-50 border-b border-300 px-4 py-2 text-sm flex justify-center md:justify-between items-center">
+            <div class="hidden md:block">
               You are viewing documentation for version
               <strong x-text="currentVersion"></strong>.
               The latest stable version is
               <strong x-text="preferred.version"></strong>.
             </div>
             <a :href="buildTargetURL(preferred.version)"
-              class="ml-4 inline-flex items-center rounded-md bg-yellow-300 hover:bg-yellow-400 px-3 py-1 font-medium">
+              class="inline-flex items-center rounded-md bg-yellow-300 hover:bg-yellow-400 px-3 py-1 font-medium md:ml-4">
               Switch to latest release
             </a>
           </div>
