@@ -41,7 +41,7 @@ orig_dir = Path.cwd()
 # # DFN generating using Porepy
 #
 # > **Note:** This script generates the mesh for
-# > [DFNbyPorePy_to_OGS.py](DFNbyPorePy_to_OGS.py)
+# > [DFNbyPorePy_to_OGS.py](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy_to_OGS.py)
 
 # %% [markdown]
 # **PorePy** is an open-source Python library developed by the University of Bergen, designed for simulating multiphysics processes in fractured and porous media. It emphasizes discrete fracture network (DFN) modeling through a mixed-dimensional approach.
