@@ -57,11 +57,15 @@ void initOGSLogger(std::string const& log_level)
 {
     if (!console)
     {
-#ifdef USE_PETSC
+#if defined(USE_PETSC) || defined(_OPENMP)
+        // Thread-safe sink is required when OGS logs concurrently, e.g. from
+        // OpenMP assembly threads. Otherwise the non-thread-safe sink races and
+        // may corrupt output (e.g. console output interleaved into other
+        // files).
         console = spdlog::stdout_color_mt("ogs");
-#else   // USE_PETSC
+#else
         console = spdlog::stdout_color_st("ogs");
-#endif  // USE_PETSC
+#endif
         // Default pattern and error handler both for MPI and non-MPI builds.
         spdlog::set_pattern("%^%l:%$ %v");
         spdlog::set_error_handler(error_handler);
