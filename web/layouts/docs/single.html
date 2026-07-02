@@ -10,11 +10,11 @@
 {{ $baseSubsection = .Parent.Parent }}
 {{ end }}
 
-<div class="flex">
+<div class="flex flex-col md:flex-row">
 
   {{ partial "docs/sidebar.html" . }}
 
-  <div class="overflow-y-auto focus:outline-none">
+  <div class="min-w-0 flex-1 overflow-y-auto focus:outline-none">
 
     {{ if isset .Params "coupling" }}
     {{ $img := printf "images/coupling-icons/%s-tet.svg" .Params.coupling }}

@@ -1,10 +1,10 @@
 {{ define "main" }}
 
-<div class="flex">
+<div class="flex flex-col md:flex-row">
 
   {{ partial "docs/sidebar.html" . }}
 
-  <div class="bg-white">
+  <div class="min-w-0 flex-1 bg-white">
     {{ if .Params.breadcrumbs }}
     {{ partial "docs/breadcrumbs.html" . }}
     {{ end }}
