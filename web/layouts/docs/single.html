@@ -18,10 +18,10 @@
 
     {{ if isset .Params "coupling" }}
     {{ $img := printf "images/coupling-icons/%s-tet.svg" .Params.coupling }}
-    <img class="h-12 md:h-16 lg:h-20 float-right" src="{{ absURL $img }}" alt="">
+    <img class="hidden md:block md:h-16 lg:h-20 float-right" src="{{ absURL $img }}" alt="">
     {{ else if isset .Parent.Params "coupling" }}
     {{ $img := printf "images/coupling-icons/%s-tet.svg" .Parent.Params.coupling }}
-    <img class="h-12 md:h-16 lg:h-20 float-right" src="{{ absURL $img }}" alt="">
+    <img class="hidden md:block md:h-16 lg:h-20 float-right" src="{{ absURL $img }}" alt="">
     {{ end }}
 
     {{ if .Params.breadcrumbs }}

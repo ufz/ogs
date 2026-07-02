@@ -7,7 +7,7 @@
   <div class="min-w-0 flex-1 bg-white">
     {{ if isset .Params "coupling" }}
     {{ $img := printf "images/coupling-icons/%s-tet.svg" .Params.coupling }}
-    <img class="h-12 md:h-16 lg:h-20 float-right" data-pagefind-meta="image[src]" src="{{ absURL $img }}" alt="">
+    <img class="hidden md:block md:h-16 lg:h-20 float-right" data-pagefind-meta="image[src]" src="{{ absURL $img }}" alt="">
     {{ end }}
 
     {{ if .Page.Params.breadcrumbs }}
