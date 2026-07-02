@@ -26,7 +26,6 @@ add_custom_target(web
 
 add_custom_target(preview-web
     COMMAND yarn
-    COMMAND yarn build
     COMMAND yarn server
     WORKING_DIRECTORY ${OGS_WEB_WORKSPACE_DIR}
     USES_TERMINAL

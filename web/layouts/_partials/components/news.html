@@ -94,6 +94,7 @@
     return {
       topics: [],
       users: [],
+      disabled: false,
       reload() {
         sessionStorage.removeItem(category);
         this.topics = [];
@@ -101,6 +102,11 @@
         this.init();
       },
       init() {
+        if (["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)) {
+          this.disabled = true;
+          return;
+        }
+
         // Check if sessionData holds anything, so we don't need to hit the api
         const topics = JSON.parse(sessionStorage.getItem(category));
         const users = JSON.parse(sessionStorage.getItem(category + '_users'));
@@ -128,6 +134,10 @@
             let users = response.users;
             this.users = users;
             sessionStorage.setItem(category + '_users', JSON.stringify(this.users));
+          })
+          .catch(() => {
+            this.topics = [];
+            this.users = [];
           });
       },
       getUsername(topic) {
