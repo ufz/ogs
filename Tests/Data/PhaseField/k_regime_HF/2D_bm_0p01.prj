@@ -307,4 +307,20 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000.vtu</file>
+                <reference_file>expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000.vtu</reference_file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-05</absolute_tolerance>
+                <relative_tolerance>0.0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000.vtu</file>
+                <reference_file>expected_2D_PropagatingCrack_AT1_h0p01_ts_2_t_0_020000.vtu</reference_file>
+                <field>phasefield</field>
+                <absolute_tolerance>1e-06</absolute_tolerance>
+                <relative_tolerance>0.0</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

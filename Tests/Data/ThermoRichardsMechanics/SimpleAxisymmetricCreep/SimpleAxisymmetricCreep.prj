@@ -311,4 +311,27 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu</file>
+                <reference_file>expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu</reference_file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-13</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu</file>
+                <reference_file>expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu</reference_file>
+                <field>sigma</field>
+                <absolute_tolerance>2e-7</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu</file>
+                <reference_file>expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu</reference_file>
+                <field>epsilon</field>
+                <absolute_tolerance>1e-11</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

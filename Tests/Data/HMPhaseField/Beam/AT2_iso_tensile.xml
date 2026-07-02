@@ -6,4 +6,23 @@
     <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[3]/abstol/text()">1.e-1</replace>
     <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[3]/reltol/text()">1.e-1</replace>
     <replace sel="/*/curves/curve[name='dirichlet_time']/values/text()">0  0.8</replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>AT2_iso_tension_ts_10_t_1.000000.vtu</file>
+                <reference_file>expected_AT2_iso_tension_ts_10_t_1.000000.vtu</reference_file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-9</absolute_tolerance>
+                <relative_tolerance>1e-6</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>AT2_iso_tension_ts_10_t_1.000000.vtu</file>
+                <reference_file>expected_AT2_iso_tension_ts_10_t_1.000000.vtu</reference_file>
+                <field>phasefield</field>
+                <absolute_tolerance>1e-9</absolute_tolerance>
+                <relative_tolerance>1e-6</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

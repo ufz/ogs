@@ -1,4 +1,4 @@
-if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1D1bt/m2_1D1bt.prj)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1D2bt/m2_1D2bt.prj)
     OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/Verification/m2_1Dcreep/m2_1Dcreep.prj)
@@ -18,210 +18,64 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     # Staggered Scheme
     OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/TM_Quad/iglu_quarter_plane_strain_quad.prj RUNTIME 11)
     OgsTest(PROJECTFILE ThermoMechanics/StaggeredScheme/CreepAfterExcavation/CreepAfterExcavation.prj RUNTIME 7)
-endif()
-
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dbeam/tm1_1Dbeam.prj RUNTIME 1)
-
     OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dfixa/tm1_1Dfixa.prj RUNTIME 1)
-
     OgsTest(PROJECTFILE ThermoMechanics/tm1_1Dfixb/tm1_1Dfixb.prj RUNTIME 1)
-
     OgsTest(PROJECTFILE ThermoMechanics/tm1_2Dbeam/tm1_2Dbeam.prj RUNTIME 1)
-
     OgsTest(PROJECTFILE ThermoMechanics/tm1_2Dsquare/tm1_2Dsquare.prj RUNTIME 1)
 endif()
 
 if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dcube/tm1_3Dcube.prj RUNTIME 1)
-
     OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dgravity/tm1_3Dgravity.prj
             RUNTIME 1
     )
 endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dorigin/tm1_3Dorigin.prj RUNTIME 2)
-
     OgsTest(PROJECTFILE ThermoMechanics/tm1_3Dsquare/tm1_3Dsquare.prj
             RUNTIME 55
     )
-
     OgsTest(PROJECTFILE ThermoMechanics/tm2_1D1bt/tm2_1D1bt.prj RUNTIME 10)
-
     OgsTest(PROJECTFILE ThermoMechanics/tm2_1Dfixc/tm2_1Dfixc.prj RUNTIME 25)
+    #--
+    OgsTest(PROJECTFILE ThermoMechanics/cube_1e3.prj RUNTIME 2)
+    OgsTest(PROJECTFILE ThermoMechanics/iglu_quarter_plane_strain.prj RUNTIME 7)
+    OgsTest(PROJECTFILE ThermoMechanics/iglu_axisymmetric_plane_strain.prj)
+    OgsTest(PROJECTFILE ThermoMechanics/iglu_quarter_plane_strain_quad.prj RUNTIME 45)
+    OgsTest(PROJECTFILE ThermoMechanics/iglu_axisymmetric_plane_strain_quad.prj)
 endif()
-#--
 
-AddTest(
-    NAME ThermoMechanics_3D_ThermoElastic_Stress_Analysis
-    PATH ThermoMechanics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e3.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 2
-    DIFF_DATA
-    stress_analytical.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu sigma sigma 1e-5 1e-12
-    expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu displacement displacement 1e-10 1e-12
-    expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu temperature temperature 1e-10 1e-12
-    expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu sigma sigma 1e-6 1e-12
-    expected_cube_1e3_tm_ts_17_t_72000.000000.vtu cube_1e3_tm_ts_17_t_72000.000000.vtu epsilon epsilon 1e-16 0
-)
+if(NOT (OGS_USE_LIS OR OGS_USE_MPI OR ENABLE_ASAN))
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep/SimpleAxisymmetricCreep.prj RUNTIME 4)
+endif()
 
-AddTest(
-    NAME ThermoMechanics_2D_ThermoElastic_IGLU_Plane_Strain
-    PATH ThermoMechanics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS iglu_quarter_plane_strain.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 7
-    DIFF_DATA
-    expected_tm_q_ts_20_t_20000.000000.vtu tm_q_ts_20_t_20000.000000.vtu displacement displacement 1e-9 1e-15
-    expected_tm_q_ts_20_t_20000.000000.vtu tm_q_ts_20_t_20000.000000.vtu temperature temperature 2e-6 1e-15
-    expected_tm_q_ts_20_t_20000.000000.vtu tm_q_ts_20_t_20000.000000.vtu sigma sigma 5e-6 1e-15
-    expected_tm_q_ts_20_t_20000.000000.vtu tm_q_ts_20_t_20000.000000.vtu epsilon epsilon 5e-6 1e-15
-)
-
-AddTest(
-    NAME ThermoMechanics_2D_ThermoElastic_IGLU_Axisymmetric_Plane_Strain
-    PATH ThermoMechanics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS iglu_axisymmetric_plane_strain.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    DIFF_DATA
-    expected_tm_a_ts_20_t_20000.000000.vtu tm_a_ts_20_t_20000.000000.vtu displacement displacement 1e-9 1e-15
-    expected_tm_a_ts_20_t_20000.000000.vtu tm_a_ts_20_t_20000.000000.vtu temperature temperature 1e-10 1e-8
-    expected_tm_a_ts_20_t_20000.000000.vtu tm_a_ts_20_t_20000.000000.vtu sigma sigma 1e-6 0
-    expected_tm_a_ts_20_t_20000.000000.vtu tm_a_ts_20_t_20000.000000.vtu epsilon epsilon 1e-10 0
-)
-
-AddTest(
-    NAME ThermoMechanics_2D_ThermoElastic_IGLU_Plane_Strain_Quadratic_Mesh
-    PATH ThermoMechanics
-    RUNTIME 45
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS iglu_quarter_plane_strain_quad.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    DIFF_DATA
-    expected_tm_q_quad_ts_20_t_20000.000000.vtu tm_q_quad_ts_20_t_20000.000000.vtu displacement displacement 5e-10 1e-15
-    expected_tm_q_quad_ts_20_t_20000.000000.vtu tm_q_quad_ts_20_t_20000.000000.vtu temperature temperature 2e-6 1e-15
-    expected_tm_q_quad_ts_20_t_20000.000000.vtu tm_q_quad_ts_20_t_20000.000000.vtu sigma sigma 5e-6 0
-    expected_tm_q_quad_ts_20_t_20000.000000.vtu tm_q_quad_ts_20_t_20000.000000.vtu epsilon epsilon 6e-6 0
-)
-
-AddTest(
-    NAME ThermoMechanics_2D_ThermoElastic_IGLU_Axisymmetric_Plane_Strain_Quadratic_Mesh
-    PATH ThermoMechanics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS iglu_axisymmetric_plane_strain_quad.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    DIFF_DATA
-    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu displacement displacement 2e-7 1e-15
-    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu temperature temperature 5e-4 1e-7
-    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu sigma sigma 5e-4 0
-    expected_tm_a_quad_ts_20_t_20000.000000.vtu tm_a_quad_ts_20_t_20000.000000.vtu epsilon epsilon 1e-8 1e-8
-)
-
-AddTest(
-    NAME ThermoMechanics_CreepBGRa_SimpleAxisymmetricCreep
-    PATH ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS SimpleAxisymmetricCreep.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI OR ENABLE_ASAN)
-    RUNTIME 4
-    DIFF_DATA
-    expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu displacement displacement 1e-14 1e-10
-    expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu sigma sigma 1e-7 0
-    expected_SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu SimpleAxisymmetricCreep_ts_370_t_360.000000.vtu epsilon epsilon 1e-12 0
-)
-
-AddTest(
-    NAME ThermoMechanics_CreepBGRa_SimpleAxisymmetricCreepWithAnalyticSolution
-    PATH ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS SimpleAxisymmetricCreepWithAnalyticSolution.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 8
-    DIFF_DATA
-    SimpleAxisymmetricCreepWithAnalyticSolution.vtu SimpleAxisymmetricCreepWithAnalyticalSolution_ts_1000_t_100.000000.vtu analytic_strain epsilon 1e-7 0
-)
-
-AddTest(
-    NAME ThermoMechanics_CreepBGRa_SimpleAxisymmetricCreepWithAnalyticSolutionMFront
-    PATH ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS SimpleAxisymmetricCreepWithAnalyticSolutionMFront.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MFRONT AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    RUNTIME 6
-    DIFF_DATA
-    SimpleAxisymmetricCreepWithAnalyticSolutionMFront.vtu SimpleAxisymmetricCreepWithAnalyticalSolutionMFront_ts_1000_t_100.000000.vtu analytic_strain epsilon 2e-6 0
-)
-
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
-        PROJECTFILE
-            ThermoMechanics/CreepBGRa/CreepAfterExcavation/CreepAfterExcavation.prj
+        PROJECTFILE ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep/SimpleAxisymmetricCreepWithAnalyticSolution.prj
         RUNTIME 8
     )
 endif()
 
+if(OGS_USE_MFRONT AND NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(
+        PROJECTFILE ThermoMechanics/CreepBGRa/SimpleAxisymmetricCreep/SimpleAxisymmetricCreepWithAnalyticSolutionMFront.prj
+        RUNTIME 6
+    )
+endif()
+
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE ThermoMechanics/CreepBGRa/CreepAfterExcavation/CreepAfterExcavation.prj RUNTIME 8)
+endif()
+
 # Basic test that MFront models work for TM.
 # Linear elastic, no internal state variables, but external temperature.
-AddTest(
-    NAME ThermoMechanics_confined_thermal_expansion_mfront
-    PATH ThermoMechanics/LinearMFront
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e0_lin.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MFRONT AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    DIFF_DATA
-    cthex_ref.vtu  cube_1e0_lin_ts_1_t_1.000000.vtu   sigma_1  sigma 1e-16 0
-    cthex_ref.vtu  cube_1e0_lin_ts_2_t_2.000000.vtu   sigma_2  sigma 1e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_3_t_3.000000.vtu   sigma_3  sigma 2e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_4_t_4.000000.vtu   sigma_4  sigma 2e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_5_t_5.000000.vtu   sigma_5  sigma 1e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_6_t_6.000000.vtu   sigma_6  sigma 2e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_7_t_7.000000.vtu   sigma_7  sigma 2e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_8_t_8.000000.vtu   sigma_8  sigma 2e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_9_t_9.000000.vtu   sigma_9  sigma 2e-8  0
-    cthex_ref.vtu  cube_1e0_lin_ts_10_t_10.000000.vtu sigma_10 sigma 2e-8  0
-)
+if(OGS_USE_MFRONT AND NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(PROJECTFILE ThermoMechanics/LinearMFront/cube_1e0_lin.prj)
+endif()
 
 # Test of a creep law.
-AddTest(
-    NAME ThermoMechanics_BDT_mfront
-    PATH ThermoMechanics/BDT
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS cube_1e0_bdt.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS OGS_USE_MFRONT AND NOT (OGS_USE_LIS OR OGS_USE_MPI)
-    DIFF_DATA
-    bdt_ref.vtu  cube_1e0_bdt_ts_51_t_300.000000.vtu     epsilon_300   epsilon  1e-4   0
-    bdt_ref.vtu  cube_1e0_bdt_ts_51_t_300.000000.vtu     sigma_300     sigma    2e+1   0
-    bdt_ref.vtu  cube_1e0_bdt_ts_151_t_900.000000.vtu    epsilon_900   epsilon  1e-4   0
-    bdt_ref.vtu  cube_1e0_bdt_ts_151_t_900.000000.vtu    sigma_900     sigma    1e+0   0
-    bdt_ref.vtu  cube_1e0_bdt_ts_251_t_1500.000000.vtu   epsilon_1500  epsilon  1e-4   0
-    bdt_ref.vtu  cube_1e0_bdt_ts_251_t_1500.000000.vtu   sigma_1500    sigma    1e+0   0
-    bdt_ref.vtu  cube_1e0_bdt_ts_501_t_3000.000000.vtu   epsilon_3000  epsilon  1e-4  0
-    bdt_ref.vtu  cube_1e0_bdt_ts_501_t_3000.000000.vtu   sigma_3000    sigma    1e+0   0
-    bdt_ref.vtu  cube_1e0_bdt_ts_1001_t_6000.000000.vtu  epsilon_6000  epsilon  1e-4   0
-    bdt_ref.vtu  cube_1e0_bdt_ts_1001_t_6000.000000.vtu  sigma_6000    sigma    1e+0   0
-)
+if(OGS_USE_MFRONT AND NOT (OGS_USE_LIS OR OGS_USE_MPI))
+    OgsTest(PROJECTFILE ThermoMechanics/BDT/cube_1e0_bdt.prj)
+endif()

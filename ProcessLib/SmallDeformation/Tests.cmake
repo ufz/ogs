@@ -97,12 +97,12 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
 endif()
 
 # For EIGEN and LIS
-if (NOT OGS_USE_MPI)
+if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE Mechanics/Linear/ring_plane_strain.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/plain_strain_pipe.prj)
 endif()
 
-if (NOT OGS_USE_LIS)
+if(NOT OGS_USE_LIS)
     OgsTest(PROJECTFILE Mechanics/Linear/PythonPiston/piston.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/PythonHertzContact/hertz_contact.prj RUNTIME 18)
 endif()
@@ -154,16 +154,9 @@ if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     OgsTest(PROJECTFILE Mechanics/PLLC/uniax_compression.prj)
 
     # Linear elastic, no internal state variables, no external state variables.
-    AddTest(
-        NAME Mechanics_SDL_disc_with_hole_mfront
-        PATH Mechanics/Linear/MFront/disc_with_hole
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS disc_with_hole.prj
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        disc_with_hole_expected_ts_4_t_1.000000.vtu disc_with_hole_ts_4_t_1.000000.vtu displacement displacement 2e-16 1e-16
-    )
+    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+        OgsTest(PROJECTFILE Mechanics/Linear/MFront/disc_with_hole/disc_with_hole.prj)
+    endif()
 
     # Tests that internal state variables work correctly.
     AddTest(
@@ -226,18 +219,9 @@ if(NOT OGS_USE_LIS)
     if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE Mechanics/Linear/PrincipalStress/sphere.prj)
     endif()
-
-    AddTest(
-        NAME MechanicsTransverseElasticModel
-        PATH Mechanics/TransverseElasticModel
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS m_e_transiso_2D.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        DIFF_DATA
-        m_e_transiso_2D.vtu  transverse_E_ts_1_t_1.000000.vtu DISPLACEMENT displacement 1e-11 0
-    )
+    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+        OgsTest(PROJECTFILE Mechanics/TransverseElasticModel/m_e_transiso_2D.prj)
+    endif()
 
     if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(
@@ -246,53 +230,22 @@ if(NOT OGS_USE_LIS)
             RUNTIME 32
         )
     endif()
+    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+        OgsTest(PROJECTFILE Mechanics/AxisymmetryBbar/axisymmetry_bbar.prj RUNTIME 1)
+    endif()
 
-    AddTest(
-        NAME Mechanics_AxisymmetryBbar
-        PATH Mechanics/AxisymmetryBbar
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS axisymmetry_bbar.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        RUNTIME 1
-        DIFF_DATA
-        axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
-        axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.5e-5 5.e-7
-        axisymmetric_bbar_ts_1_t_1.000000.vtu axisymmetric_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
-    )
+    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+        OgsTest(PROJECTFILE Mechanics/Simple3DBbar/simple_3d_bbar.prj RUNTIME 1)
+    endif()
 
-    AddTest(
-        NAME Mechanics_Simple3DBbar
-        PATH Mechanics/Simple3DBbar
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS simple_3d_bbar.prj
-        WRAPPER time
-        TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        RUNTIME 1
-        DIFF_DATA
-        simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_displacement displacement 1.e-10 1.e-10
-        simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_sigma sigma 6.e-5 5.e-7
-        simple_3d_bbar_ts_1_t_1.000000.vtu simple_3d_bbar_ts_1_t_1.000000.vtu analytic_eps epsilon 1.e-9 5.e-7
-    )
-
-    AddTest(
-        NAME Mechanics_FailLinearSolverCompute
-        PATH Mechanics/Linear
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS cube_1e0_fail_lin_solver.xml
-        WRAPPER time
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        RUNTIME 1
-        PROPERTIES
-        PASS_REGULAR_EXPRESSION "Time stepper cannot reduce the time step size further[.]"
-    )
-    NotebookTest(
-        NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.py
-        RUNTIME 4
-        SKIP_WEB
-    )
+    if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+        OgsTest(
+            PROJECTFILE Mechanics/Linear/cube_1e0_fail_lin_solver.xml
+            RUNTIME 1
+            PROPERTIES PASS_REGULAR_EXPRESSION "Time stepper cannot reduce the time step size further[.]"
+        )
+    endif()
+    NotebookTest(NOTEBOOKFILE Mechanics/Linear/test_ip_data/2D-clamped-gravity.py RUNTIME 4 SKIP_WEB)
     OgsTest(PROJECTFILE Mechanics/Linear/test_ip_data/square_1e2_test_ip_data.prj)
     OgsTest(PROJECTFILE Mechanics/Linear/NormalTraction/normal_traction.prj)
 endif()
@@ -316,8 +269,5 @@ if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
 endif()
 
 if(OGS_USE_PETSC)
-NotebookTest(
-    NOTEBOOKFILE Mechanics/ReleaseNodalForceKirsch/mpi_parallel_run_kirsch.py
-    RUNTIME 30
-)
+NotebookTest(NOTEBOOKFILE Mechanics/ReleaseNodalForceKirsch/mpi_parallel_run_kirsch.py RUNTIME 30)
 endif()

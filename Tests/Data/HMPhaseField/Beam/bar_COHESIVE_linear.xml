@@ -21,6 +21,7 @@
     <replace sel="/*/parameters/parameter[name='ls']/value/text()">0.05</replace>
     <replace sel="/*/parameters/parameter[name='dirichlet_right']/value/text()">1.1e-4</replace>
     <replace sel="/*/curves/curve[name='dirichlet_time']/values/text()">0  1.0</replace>
+    <remove sel="/*/test_definition"/>
     <add sel="/*">
         <test_definition>
             <vtkdiff>
