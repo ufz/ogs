@@ -137,4 +137,13 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>cube_1e3_neumann_ts_1_t_1_000000.vtu</file>
+                <field>pressure</field>
+                <reference_field>D1_left_front_N1_right</reference_field>
+                <absolute_tolerance>0.01</absolute_tolerance>
+                <relative_tolerance>0.01</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
