@@ -52,10 +52,11 @@ features:
   carousel:
     slides:
       - permalink: features/vis/chaohu_paper_mesh.png
-        caption: Foo
+        caption: OpenGeoSys mesh visualisation
       - permalink: features/vis/ogsgui.png
-        caption: Bar
+        caption: OpenGeoSys Data Explorer interface
       - permalink: features/vis/DEMSelke3D.png
+        caption: Three-dimensional model visualisation
     play: false
 #  links:
 #    - text: "Learn More: Data Explorer"
@@ -70,10 +71,11 @@ features:
   carousel:
     slides:
       - permalink: features/vis/layeredview2.png
-        caption: Bar
+        caption: Layered model result visualisation
       - permalink: features/vis/vislab.png
         caption: Interactive exploration of river flow phenomenae at the TESSIN VISLab of the Helmholtz Centre for Environmental Research – UFZ
       - permalink: features/vis/contours2-bw.png
+        caption: Contour visualisation of simulation results
     play: true
   anchor: vis
 

@@ -42,7 +42,7 @@
       {{ partial "components/subfeatures" .feature.subfeatures }}
     </div>
     <div class="w-full">
-      <img src="{{ .feature.visual.permalink }}">
+      <img src="{{ .feature.visual.permalink }}" alt="{{ .feature.visual.alt }}">
     </div>
   </div>
   {{ if .feature.carousel }}
