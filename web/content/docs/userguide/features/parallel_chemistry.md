@@ -30,7 +30,7 @@ installation is required.
 
 ### Build
 
-See the [developer guide — build configuration](/docs/devguide/getting-started/build-configuration/).
+See the [developer guide — build configuration]({{< ref "/docs/devguide/getting-started/build-configuration" >}}).
 
 ### Run
 
@@ -68,7 +68,7 @@ for transport with OpenMP threads for chemistry within each rank:
 
 ### Build
 
-See the [developer guide — build configuration for MPI and PETSc](/docs/devguide/getting-started/build-configuration-for-mpi-and-petsc/).
+See the [developer guide — build configuration for MPI and PETSc]({{< ref "/docs/devguide/getting-started/build-configuration_for_MPI_PETSc" >}}).
 
 ### Run
 
