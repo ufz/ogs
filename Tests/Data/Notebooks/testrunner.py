@@ -29,23 +29,29 @@ def petsc_enabled():
     return value in {"1", "true", "yes", "on"}
 
 
+def get_website_output_path(notebook, exec_notebook_file):
+    if "Tests/Data" not in str(exec_notebook_file):
+        return None
+
+    first_cell = notebook.cells[0]
+    lines = first_cell.source.splitlines()
+    toml_begin = lines.index("+++")
+    toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
+    toml_lines = lines[toml_begin + 1 : toml_end]
+    parsed_frontmatter = toml.loads("\n".join(toml_lines))
+    return (
+        Path(build_dir)
+        / Path("web/content/docs/benchmarks")
+        / Path(parsed_frontmatter["web_subsection"])
+        / exec_notebook_file.stem.lower()
+    )
+
+
 def save_to_website(exec_notebook_file):
     output_path_arg = ""
-    output_path = ""
     notebook = nbformat.read(exec_notebook_file, as_version=4)
-    first_cell = notebook.cells[0]
-    if "Tests/Data" in str(exec_notebook_file):
-        lines = first_cell.source.splitlines()
-        toml_begin = lines.index("+++")
-        toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
-        toml_lines = lines[toml_begin + 1 : toml_end]
-        parsed_frontmatter = toml.loads("\n".join(toml_lines))
-        output_path = (
-            Path(build_dir)
-            / Path("web/content/docs/benchmarks")
-            / Path(parsed_frontmatter["web_subsection"])
-            / exec_notebook_file.stem.lower()
-        )
+    output_path = get_website_output_path(notebook, exec_notebook_file)
+    if output_path:
         output_path_arg = f"--output-dir={Path(output_path)}"
 
     template = Path(__file__).parent.resolve() / "nbconvert_templates/collapsed.md.j2"
@@ -63,7 +69,7 @@ def save_to_website(exec_notebook_file):
         check=True,
     )
 
-    if "Tests/Data" not in str(exec_notebook_file):
+    if not output_path:
         return
 
     Path(output_path).mkdir(parents=True, exist_ok=True)
@@ -77,12 +83,12 @@ def save_to_website(exec_notebook_file):
     for subfolder in ["figures", "images"]:
         figures_path = (Path(notebook_file_path).parent / subfolder).resolve()
         symlink_figures_path = to_copy_path / subfolder
-        if figures_path.exists() and not symlink_figures_path.exists():
+        if figures_path.exists():
             print(
                 f"{subfolder} folder detected, copying {figures_path} to "
                 f"{symlink_figures_path}"
             )
-            shutil.copytree(figures_path, symlink_figures_path)
+            shutil.copytree(figures_path, symlink_figures_path, dirs_exist_ok=True)
 
 
 def check_and_modify_frontmatter():
@@ -226,6 +232,12 @@ for notebook_file in args.notebooks:
         else:
             with notebook_file_path.open(encoding="utf-8") as f:
                 nb = nbformat.read(f, as_version=4)
+
+        website_output_path = (
+            get_website_output_path(nb, convert_notebook_file) if args.hugo else None
+        )
+        if args.hugo and website_output_path:
+            os.environ["OGS_TESTRUNNER_WEB_OUT_DIR"] = str(website_output_path)
 
         # Run the notebook
         print(f"[Start]  {notebook_filename}")

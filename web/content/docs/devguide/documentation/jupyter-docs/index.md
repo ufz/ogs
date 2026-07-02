@@ -91,6 +91,7 @@ web_subsection = "small-deformations" # required for notebooks in Tests/Data onl
 - Do not write anything into the source directories. Use an `out_dir` as above.
 - Assume that `ogs` and other tools are in the `PATH`.
 - Don't rely on Jupyter [magic commands](https://ipython.readthedocs.io/en/stable/interactive/magics.html) as the notebooks get executed as regular python scripts as well.
+- If you want to write files accessible to the converted web page, e.g. for writing gif-Animations, use the environment variable `OGS_TESTRUNNER_WEB_OUT_DIR`.
 
 ### Execution environment
 
