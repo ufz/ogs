@@ -260,4 +260,52 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>DiffusionAndStorage_ts_100_t_0.150000.vtu</file>
+                <reference_file>DiffusionAndStorage_ts_100_t_0.150000_expected.vtu</reference_file>
+                <field>Si</field>
+                <reference_field>concentration</reference_field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>DiffusionAndStorage_ts_100_t_0.150000.vtu</file>
+                <reference_file>DiffusionAndStorage_ts_100_t_0.150000_expected.vtu</reference_file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>DiffusionAndStorage_ts_100_t_0.150000.vtu</file>
+                <reference_file>DiffusionAndStorage_ts_100_t_0.150000_expected.vtu</reference_file>
+                <field>darcy_velocity</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>DiffusionAndStorage_ts_134_t_1.500000.vtu</file>
+                <reference_file>DiffusionAndStorage_ts_134_t_1.500000_expected.vtu</reference_file>
+                <field>Si</field>
+                <reference_field>concentration</reference_field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>DiffusionAndStorage_ts_134_t_1.500000.vtu</file>
+                <reference_file>DiffusionAndStorage_ts_134_t_1.500000_expected.vtu</reference_file>
+                <field>pressure</field>
+                <reference_field>zero</reference_field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>DiffusionAndStorage_ts_134_t_1.500000.vtu</file>
+                <reference_file>DiffusionAndStorage_ts_134_t_1.500000_expected.vtu</reference_file>
+                <field>darcy_velocity</field>
+                <reference_field>zero_vector_2d</reference_field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

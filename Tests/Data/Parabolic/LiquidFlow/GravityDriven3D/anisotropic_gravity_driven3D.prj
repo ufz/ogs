@@ -184,4 +184,14 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>anisotropic_gravity_driven3D_ts_1_t_1.000000.vtu</file>
+                <reference_file>hex.vtu</reference_file>
+                <field>pressure</field>
+                <reference_field>analytic_pressure</reference_field>
+                <absolute_tolerance>1e-6</absolute_tolerance>
+                <relative_tolerance>1e-6</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

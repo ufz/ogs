@@ -139,4 +139,14 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>3D_line_source_term_in_cylinder_286k_ts_1_t_1.000000.vtu</file>
+                <reference_file>Cylinder_r_1_h_1_prism_286k.vtu</reference_file>
+                <field>temperature</field>
+                <reference_field>analytical_solution_temperature</reference_field>
+                <absolute_tolerance>4e-3</absolute_tolerance>
+                <relative_tolerance>0.0</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

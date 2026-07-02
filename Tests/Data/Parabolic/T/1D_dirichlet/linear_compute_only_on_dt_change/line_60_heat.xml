@@ -4,6 +4,7 @@
         <linear>true</linear>
         <linear_solver_compute_only_upon_timestep_change>true</linear_solver_compute_only_upon_timestep_change>
     </add>
+    <remove sel="/*/test_definition"/>
     <add sel="/*">
         <test_definition>
             <vtkdiff>

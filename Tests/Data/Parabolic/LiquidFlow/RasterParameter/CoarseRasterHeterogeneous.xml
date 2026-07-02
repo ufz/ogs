@@ -5,4 +5,15 @@
     <replace sel='/*/parameters/parameter[type="Raster"]/name/text()'>coarse_raster_heterogeneous_values_1</replace>
     <replace sel='/*/process_variables/process_variable/boundary_conditions/boundary_condition[type="Neumann"]/parameter/text()'>coarse_raster_heterogeneous_values_1</replace>
     <replace sel="/*/time_loop/outputs/output/prefix/text()" after_includes="true">coarse_raster_heterogeneous_{:meshname}</replace>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>coarse_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu</file>
+                <reference_file>fine_raster_heterogeneous_Subsurface_ts_02_t_2.000000.vtu</reference_file>
+                <field>p</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>1e-14</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

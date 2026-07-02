@@ -244,4 +244,29 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu</file>
+                <reference_file>PressureDiffusionTemperatureDiffusion_expected.vtu</reference_file>
+                <field>T</field>
+                <reference_field>linear_top2_to_bottom1</reference_field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-16</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu</file>
+                <reference_file>PressureDiffusionTemperatureDiffusion_expected.vtu</reference_file>
+                <field>p</field>
+                <reference_field>Linear_1_to_minus1</reference_field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-16</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>PressureDiffusionTemperatureDiffusion_ts_1_t_1.000000.vtu</file>
+                <reference_file>PressureDiffusionTemperatureDiffusion_expected.vtu</reference_file>
+                <field>darcy_velocity</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-16</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

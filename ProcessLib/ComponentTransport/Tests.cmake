@@ -1,396 +1,44 @@
-if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/InclinedElements/Inclined2DMesh/inclined_2D_mesh_HC.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ClassicalTransportExample/classical_transport_example_full_upwind.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/Theis_Axisymmetric/axisym_theis_CT.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC.prj RUNTIME 29)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC_Monolithic.prj RUNTIME 1
         PROPERTIES WILL_FAIL true)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionOnly.prj)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/ConcentrationDiffusionOnly.prj)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionOnly_3Components.prj)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionAndStorage.prj)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/ConcentrationDiffusionAndStorage.prj RUNTIME 3)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvection.prj RUNTIME 10)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/MassConservation/mass_conservation.prj RUNTIME 18)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/OpenBoundaryWithTets/box_flow.prj RUNTIME 4)
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndGravityAndDispersionHalf.prj
+        RUNTIME 17
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvectionAndDispersion.prj
+        RUNTIME 10
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/open_boundary_component-transport_cube_1e3.prj
+        RUNTIME 1
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/open_boundary_component-transport_cube_1e3_advective_form.prj
+        RUNTIME 1
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvectionAndDecay.prj
+        RUNTIME 9
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/DiffusionAndStorageAndAdvectionAndDispersionHalf.prj
+        RUNTIME 9
+    )
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/surfaceflux_component-transport_cube_1e3.prj)
 endif()
-
-AddTest(
-    NAME 2D_ComponentTransport_ConcentrationDiffusionOnly
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ConcentrationDiffusionOnly.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu linear_1_to_0 Si 1e-7 1e-10
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu zero pressure 1e-7 1e-10
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu zero_vector_2d darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_StaggeredScheme_ConcentrationDiffusionOnly
-    PATH Parabolic/ComponentTransport/StaggeredScheme
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ConcentrationDiffusionOnly.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu Si Si 1e-7 1e-10
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu pressure pressure 1e-7 1e-10
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_ts_1_t_1.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_MultiComponentTransport_ConcentrationDiffusionOnly
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ConcentrationDiffusionOnly_3Components.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu linear_1_to_0 Si 1e-7 1e-10
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu linear_1_to_0 Al 1e-7 1e-10
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu linear_1_to_0 Cl 1e-7 1e-10
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu zero pressure 1e-7 1e-10
-    DiffusionOnly_ts_1_t_1.000000_expected.vtu DiffusionOnly_3Components_ts_1_t_1.000000.vtu zero_vector_2d darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_ConcentrationDiffusionAndStorage
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu concentration Si 1e-7 1e-10
-    DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu concentration Si 1e-7 1e-10
-    DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu zero pressure 1e-7 1e-10
-    DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu zero_vector_2d darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_StaggeredScheme_ConcentrationDiffusionAndStorage
-    PATH Parabolic/ComponentTransport/StaggeredScheme
-    EXECUTABLE ogs
-    RUNTIME 3
-    EXECUTABLE_ARGS ConcentrationDiffusionAndStorage.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorage_ts_100_t_0.150000_expected.vtu DiffusionAndStorage_ts_100_t_0.150000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorage_ts_134_t_1.500000_expected.vtu DiffusionAndStorage_ts_134_t_1.500000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvection
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS DiffusionAndStorageAndAdvection.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 10
-    DIFF_DATA
-    DiffusionAndStorageAndAdvection_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_300_t_155.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_400_t_315.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_500_t_495.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_600_t_720.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvection_ts_672_t_900.000000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_100_t_5.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_200_t_35.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_300_t_155.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_400_t_315.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_500_t_495.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_600_t_720.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvection_ts_672_t_900.000000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_100_t_5.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_200_t_35.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_300_t_155.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_400_t_315.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvection_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvection_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvection_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_ImpermeableBoundaries
-    PATH Parabolic/ComponentTransport/MassConservation
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS mass_conservation.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 18
-    DIFF_DATA
-    mass_conservation_ogsOutput_ts_0_t_0.000000_expected.vtu mass_conservation_ogsOutput_ts_0_t_0.000000.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_300_t_34895.986246_expected.vtu mass_conservation_ogsOutput_ts_300_t_34895.986246.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_600_t_81993.310506_expected.vtu mass_conservation_ogsOutput_ts_600_t_81993.310506.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_900_t_145558.519328_expected.vtu mass_conservation_ogsOutput_ts_900_t_145558.519328.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1200_t_231349.715241_expected.vtu mass_conservation_ogsOutput_ts_1200_t_231349.715241.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1500_t_347138.358629_expected.vtu mass_conservation_ogsOutput_ts_1500_t_347138.358629.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1800_t_503413.251350_expected.vtu mass_conservation_ogsOutput_ts_1800_t_503413.251350.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_2100_t_714330.672786_expected.vtu mass_conservation_ogsOutput_ts_2100_t_714330.672786.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_2323_t_1000000.000000_expected.vtu mass_conservation_ogsOutput_ts_2323_t_1000000.000000.vtu concentration concentration 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_0_t_0.000000_expected.vtu mass_conservation_ogsOutput_ts_0_t_0.000000.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_300_t_34895.986246_expected.vtu mass_conservation_ogsOutput_ts_300_t_34895.986246.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_600_t_81993.310506_expected.vtu mass_conservation_ogsOutput_ts_600_t_81993.310506.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_900_t_145558.519328_expected.vtu mass_conservation_ogsOutput_ts_900_t_145558.519328.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1200_t_231349.715241_expected.vtu mass_conservation_ogsOutput_ts_1200_t_231349.715241.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1500_t_347138.358629_expected.vtu mass_conservation_ogsOutput_ts_1500_t_347138.358629.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1800_t_503413.251350_expected.vtu mass_conservation_ogsOutput_ts_1800_t_503413.251350.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_2100_t_714330.672786_expected.vtu mass_conservation_ogsOutput_ts_2100_t_714330.672786.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_2323_t_1000000.000000_expected.vtu mass_conservation_ogsOutput_ts_2323_t_1000000.000000.vtu pressure pressure 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_0_t_0.000000_expected.vtu mass_conservation_ogsOutput_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_300_t_34895.986246_expected.vtu mass_conservation_ogsOutput_ts_300_t_34895.986246.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_600_t_81993.310506_expected.vtu mass_conservation_ogsOutput_ts_600_t_81993.310506.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_900_t_145558.519328_expected.vtu mass_conservation_ogsOutput_ts_900_t_145558.519328.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1200_t_231349.715241_expected.vtu mass_conservation_ogsOutput_ts_1200_t_231349.715241.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1500_t_347138.358629_expected.vtu mass_conservation_ogsOutput_ts_1500_t_347138.358629.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_1800_t_503413.251350_expected.vtu mass_conservation_ogsOutput_ts_1800_t_503413.251350.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_2100_t_714330.672786_expected.vtu mass_conservation_ogsOutput_ts_2100_t_714330.672786.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    mass_conservation_ogsOutput_ts_2323_t_1000000.000000_expected.vtu mass_conservation_ogsOutput_ts_2323_t_1000000.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 3D_ComponentTransport_NonAdvective_OpenBoundary
-    PATH Parabolic/ComponentTransport/OpenBoundaryWithTets
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS box_flow.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 4
-    DIFF_DATA
-    box_ogsOutput_ts_0_t_0.000000_expected.vtu box_ogsOutput_ts_0_t_0.000000.vtu concentration concentration 5e-7 5e-10
-    box_ogsOutput_ts_20_t_100000.000000_expected.vtu box_ogsOutput_ts_20_t_100000.000000.vtu concentration concentration 5e-7 5e-10
-    box_ogsOutput_ts_0_t_0.000000_expected.vtu box_ogsOutput_ts_0_t_0.000000.vtu pressure pressure 5e-7 5e-10
-    box_ogsOutput_ts_20_t_100000.000000_expected.vtu box_ogsOutput_ts_20_t_100000.000000.vtu pressure pressure 5e-7 5e-10
-    box_ogsOutput_ts_0_t_0.000000_expected.vtu box_ogsOutput_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 5e-7 5e-10
-    box_ogsOutput_ts_20_t_100000.000000_expected.vtu box_ogsOutput_ts_20_t_100000.000000.vtu darcy_velocity darcy_velocity 5e-7 5e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_DiffusionAndStorageAndGravityAndDispersionHalf
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS DiffusionAndStorageAndGravityAndDispersionHalf.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 17
-    DIFF_DATA
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000.vtu Si Si 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1100_t_5000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1100_t_5000.000000.vtu Si Si 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1200_t_7500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1200_t_7500.000000.vtu Si Si 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1300_t_10000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1300_t_10000.000000.vtu Si Si 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1400_t_12500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1400_t_12500.000000.vtu Si Si 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000.vtu Si Si 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000.vtu pressure pressure 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1100_t_5000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1100_t_5000.000000.vtu pressure pressure 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1200_t_7500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1200_t_7500.000000.vtu pressure pressure 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1300_t_10000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1300_t_10000.000000.vtu pressure pressure 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1400_t_12500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1400_t_12500.000000.vtu pressure pressure 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000.vtu pressure pressure 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1000_t_2500.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1100_t_5000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1100_t_5000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1200_t_7500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1200_t_7500.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1300_t_10000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1300_t_10000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1400_t_12500.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1400_t_12500.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
-    DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000_expected.vtu DiffusionAndStorageAndGravityAndDispersionHalf_ts_1500_t_15000.000000.vtu darcy_velocity darcy_velocity 1e-5 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDispersion
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersion.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 10
-    DIFF_DATA
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_300_t_155.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_400_t_315.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_500_t_495.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_600_t_720.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_200_t_35.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_300_t_155.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_400_t_315.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_500_t_495.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_600_t_720.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000.vtu pressure pressure 2e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_100_t_5.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_200_t_35.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_300_t_155.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_400_t_315.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersion_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_OpenBoundaryBC
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS open_boundary_component-transport_cube_1e3.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 1
-    DIFF_DATA
-    DiffusionAndAdvection_surfaceflux_ts_0_t_0.000000_expected.vtu OpenBoundaryBC_ts_0_t_0.000000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_1_t_0.020000_expected.vtu OpenBoundaryBC_ts_1_t_0.020000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_2_t_0.040000_expected.vtu OpenBoundaryBC_ts_2_t_0.040000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_3_t_0.060000_expected.vtu OpenBoundaryBC_ts_3_t_0.060000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_4_t_0.080000_expected.vtu OpenBoundaryBC_ts_4_t_0.080000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_5_t_0.100000_expected.vtu OpenBoundaryBC_ts_5_t_0.100000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_0_t_0.000000_expected.vtu OpenBoundaryBC_ts_0_t_0.000000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_1_t_0.020000_expected.vtu OpenBoundaryBC_ts_1_t_0.020000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_2_t_0.040000_expected.vtu OpenBoundaryBC_ts_2_t_0.040000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_3_t_0.060000_expected.vtu OpenBoundaryBC_ts_3_t_0.060000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_4_t_0.080000_expected.vtu OpenBoundaryBC_ts_4_t_0.080000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_5_t_0.100000_expected.vtu OpenBoundaryBC_ts_5_t_0.100000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_0_t_0.000000_expected.vtu OpenBoundaryBC_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_1_t_0.020000_expected.vtu OpenBoundaryBC_ts_1_t_0.020000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_2_t_0.040000_expected.vtu OpenBoundaryBC_ts_2_t_0.040000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_3_t_0.060000_expected.vtu OpenBoundaryBC_ts_3_t_0.060000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_4_t_0.080000_expected.vtu OpenBoundaryBC_ts_4_t_0.080000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_5_t_0.100000_expected.vtu OpenBoundaryBC_ts_5_t_0.100000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_Advective_and_NonAdvective_comparison
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS open_boundary_component-transport_cube_1e3_advective_form.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 1
-    DIFF_DATA
-    DiffusionAndAdvection_surfaceflux_ts_0_t_0.000000_expected.vtu AdvectiveNonAdvectiveComparison_ts_0_t_0.000000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_1_t_0.020000_expected.vtu AdvectiveNonAdvectiveComparison_ts_1_t_0.020000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_2_t_0.040000_expected.vtu AdvectiveNonAdvectiveComparison_ts_2_t_0.040000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_3_t_0.060000_expected.vtu AdvectiveNonAdvectiveComparison_ts_3_t_0.060000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_4_t_0.080000_expected.vtu AdvectiveNonAdvectiveComparison_ts_4_t_0.080000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_5_t_0.100000_expected.vtu AdvectiveNonAdvectiveComparison_ts_5_t_0.100000.vtu Si Si 5e-6 5e-6
-    DiffusionAndAdvection_surfaceflux_ts_0_t_0.000000_expected.vtu AdvectiveNonAdvectiveComparison_ts_0_t_0.000000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_1_t_0.020000_expected.vtu AdvectiveNonAdvectiveComparison_ts_1_t_0.020000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_2_t_0.040000_expected.vtu AdvectiveNonAdvectiveComparison_ts_2_t_0.040000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_3_t_0.060000_expected.vtu AdvectiveNonAdvectiveComparison_ts_3_t_0.060000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_4_t_0.080000_expected.vtu AdvectiveNonAdvectiveComparison_ts_4_t_0.080000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_5_t_0.100000_expected.vtu AdvectiveNonAdvectiveComparison_ts_5_t_0.100000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_0_t_0.000000_expected.vtu AdvectiveNonAdvectiveComparison_ts_0_t_0.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_1_t_0.020000_expected.vtu AdvectiveNonAdvectiveComparison_ts_1_t_0.020000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_2_t_0.040000_expected.vtu AdvectiveNonAdvectiveComparison_ts_2_t_0.040000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_3_t_0.060000_expected.vtu AdvectiveNonAdvectiveComparison_ts_3_t_0.060000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_4_t_0.080000_expected.vtu AdvectiveNonAdvectiveComparison_ts_4_t_0.080000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndAdvection_surfaceflux_ts_5_t_0.100000_expected.vtu AdvectiveNonAdvectiveComparison_ts_5_t_0.100000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDecay
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDecay.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 9
-    DIFF_DATA
-    DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_100_t_5.700000.vtu liquid_density liquid_density 1e-9 1e-12
-    DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_200_t_35.700000.vtu liquid_density liquid_density 1e-9 1e-12
-    DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_300_t_155.700000.vtu liquid_density liquid_density 1e-9 1e-12
-    DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_400_t_315.700000.vtu liquid_density liquid_density 1e-9 1e-12
-    DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_500_t_495.700000.vtu liquid_density liquid_density 1e-9 1e-12
-    DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_600_t_720.700000.vtu liquid_density liquid_density 1e-9 1e-12
-    DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDecay_ts_672_t_900.000000.vtu liquid_density liquid_density 1e-9 1e-12
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_DiffusionAndStorageAndAdvectionAndDispersionHalf
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS DiffusionAndStorageAndAdvectionAndDispersionHalf.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 9
-    DIFF_DATA
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_200_t_35.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_300_t_155.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_400_t_315.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_500_t_495.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_600_t_720.700000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000.vtu Si Si 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_200_t_35.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_300_t_155.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_400_t_315.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_500_t_495.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_600_t_720.700000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000.vtu pressure pressure 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_100_t_5.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_200_t_35.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_200_t_35.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_300_t_155.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_300_t_155.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_400_t_315.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_400_t_315.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_500_t_495.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_500_t_495.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_600_t_720.700000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_600_t_720.700000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-    DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000_expected.vtu DiffusionAndStorageAndAdvectionAndDispersionHalf_ts_672_t_900.000000.vtu darcy_velocity darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 3D_ComponentTransport_surfaceflux
-    PATH Parabolic/ComponentTransport/SimpleSynthetics
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS surfaceflux_component-transport_cube_1e3.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    cube_1x1x1_hex_1e3_complete_surface_expected_specificflux.vtu cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu concentration Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu concentration Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu pressure pressure 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu pressure pressure 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu concentration Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu concentration Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu pressure pressure 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu pressure pressure 1e-10 1e-16
-)
 
 AddTest(
     NAME 3D_ComponentTransport_surfaceflux_pvd
@@ -407,21 +55,9 @@ AddTest(
     cube_1x1x1_hex_1e3_complete_surface.pvd
 )
 
-AddTest(
-    NAME 3D_StaggeredScheme_ComponentTransport_surfaceflux
-    PATH Parabolic/ComponentTransport/StaggeredScheme
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS surfaceflux_component-transport_cube_1e3.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    flux_1e3_t_1.000000.vtu cube_1x1x1_hex_1e3_complete_surface_ts_1_t_1.000000.vtu specific_flux specific_flux 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_left_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_left_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu cube_1x1x1_hex_1e3_right_ts_0_t_0.000000.vtu Si Si 1e-10 1e-16
-    cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu cube_1x1x1_hex_1e3_right_ts_1_t_1.000000.vtu Si Si 1e-10 1e-16
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/surfaceflux_component-transport_cube_1e3.prj)
+endif()
 
 AddTest(
     NAME 2D_StaggeredScheme_ComponentTransport_TracerSimulation
@@ -465,275 +101,16 @@ AddTest(
     TracerSimulation_ts_100_t_100000_000000_3_expected.vtu TracerSimulation_ts_100_t_100000_000000_3.vtu pressure pressure 3.6e-5 4.7e-9
 )
 
-AddTest(
-    NAME 2D_ComponentTransport_Goswami
-    PATH Parabolic/ComponentTransport/goswami
-    RUNTIME 291
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS goswami_input.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    Goswami_Component_Transport_ts_1185_t_600.000000_expected.vtu Goswami_Component_Transport_ts_1185_t_600.000000.vtu Si Si 1e-1 1e-5
-    Goswami_Component_Transport_ts_1785_t_1200.000000_expected.vtu Goswami_Component_Transport_ts_1785_t_1200.000000.vtu Si Si 1e-1 1e-5
-    Goswami_Component_Transport_ts_2385_t_1800.000000_expected.vtu Goswami_Component_Transport_ts_2385_t_1800.000000.vtu Si Si 1e-1 1e-5
-    Goswami_Component_Transport_ts_2985_t_2400.000000_expected.vtu Goswami_Component_Transport_ts_2985_t_2400.000000.vtu Si Si 1e-1 1e-5
-    Goswami_Component_Transport_ts_3585_t_3000.000000_expected.vtu Goswami_Component_Transport_ts_3585_t_3000.000000.vtu Si Si 1e-1 1e-5
-    Goswami_Component_Transport_ts_4185_t_3600.000000_expected.vtu Goswami_Component_Transport_ts_4185_t_3600.000000.vtu Si Si 1e-1 1e-5
-    Goswami_Component_Transport_ts_4785_t_4200.000000_expected.vtu Goswami_Component_Transport_ts_4785_t_4200.000000.vtu Si Si 1e-1 1e-5
-    Goswami_Component_Transport_ts_5385_t_4800.000000_expected.vtu Goswami_Component_Transport_ts_5385_t_4800.000000.vtu Si Si 1e-1 1e-5
-    Goswami_Component_Transport_ts_1185_t_600.000000_expected.vtu Goswami_Component_Transport_ts_1185_t_600.000000.vtu pressure pressure 1e-1 1e-5
-    Goswami_Component_Transport_ts_1785_t_1200.000000_expected.vtu Goswami_Component_Transport_ts_1785_t_1200.000000.vtu pressure pressure 1e-1 1e-5
-    Goswami_Component_Transport_ts_2385_t_1800.000000_expected.vtu Goswami_Component_Transport_ts_2385_t_1800.000000.vtu pressure pressure 1e-1 1e-5
-    Goswami_Component_Transport_ts_2985_t_2400.000000_expected.vtu Goswami_Component_Transport_ts_2985_t_2400.000000.vtu pressure pressure 1e-1 1e-5
-    Goswami_Component_Transport_ts_3585_t_3000.000000_expected.vtu Goswami_Component_Transport_ts_3585_t_3000.000000.vtu pressure pressure 1e-1 1e-5
-    Goswami_Component_Transport_ts_4185_t_3600.000000_expected.vtu Goswami_Component_Transport_ts_4185_t_3600.000000.vtu pressure pressure 1e-1 1e-5
-    Goswami_Component_Transport_ts_4785_t_4200.000000_expected.vtu Goswami_Component_Transport_ts_4785_t_4200.000000.vtu pressure pressure 1e-1 1e-5
-    Goswami_Component_Transport_ts_5385_t_4800.000000_expected.vtu Goswami_Component_Transport_ts_5385_t_4800.000000.vtu pressure pressure 1e-1 1e-5
-    Goswami_Component_Transport_ts_1185_t_600.000000_expected.vtu Goswami_Component_Transport_ts_1185_t_600.000000.vtu darcy_velocity darcy_velocity 1e-1 1e-5
-    Goswami_Component_Transport_ts_1785_t_1200.000000_expected.vtu Goswami_Component_Transport_ts_1785_t_1200.000000.vtu darcy_velocity darcy_velocity 1e-1 1e-5
-    Goswami_Component_Transport_ts_2385_t_1800.000000_expected.vtu Goswami_Component_Transport_ts_2385_t_1800.000000.vtu darcy_velocity darcy_velocity 1e-1 1e-5
-    Goswami_Component_Transport_ts_2985_t_2400.000000_expected.vtu Goswami_Component_Transport_ts_2985_t_2400.000000.vtu darcy_velocity darcy_velocity 1e-1 1e-5
-    Goswami_Component_Transport_ts_3585_t_3000.000000_expected.vtu Goswami_Component_Transport_ts_3585_t_3000.000000.vtu darcy_velocity darcy_velocity 1e-1 1e-5
-    Goswami_Component_Transport_ts_4185_t_3600.000000_expected.vtu Goswami_Component_Transport_ts_4185_t_3600.000000.vtu darcy_velocity darcy_velocity 1e-1 1e-5
-    Goswami_Component_Transport_ts_4785_t_4200.000000_expected.vtu Goswami_Component_Transport_ts_4785_t_4200.000000.vtu darcy_velocity darcy_velocity 1e-1 1e-5
-    Goswami_Component_Transport_ts_5385_t_4800.000000_expected.vtu Goswami_Component_Transport_ts_5385_t_4800.000000.vtu darcy_velocity darcy_velocity 1e-1 1e-5
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_Elder
-    PATH Parabolic/ComponentTransport/elder
-    RUNTIME 1068
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS elder.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    elder_ts_0_t_0.000000_reference.vtu elder_ts_0_t_0.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_100_t_26298000.000000_reference.vtu elder_ts_100_t_26298000.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_120_t_31557600.000000_reference.vtu elder_ts_120_t_31557600.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_140_t_36817200.000000_reference.vtu elder_ts_140_t_36817200.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_160_t_42076800.000000_reference.vtu elder_ts_160_t_42076800.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_180_t_47336400.000000_reference.vtu elder_ts_180_t_47336400.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_200_t_52596000.000000_reference.vtu elder_ts_200_t_52596000.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_20_t_5259600.000000_reference.vtu elder_ts_20_t_5259600.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_220_t_57855600.000000_reference.vtu elder_ts_220_t_57855600.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_240_t_63115200.000000_reference.vtu elder_ts_240_t_63115200.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_260_t_68374800.000000_reference.vtu elder_ts_260_t_68374800.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_280_t_73634400.000000_reference.vtu elder_ts_280_t_73634400.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_300_t_78894000.000000_reference.vtu elder_ts_300_t_78894000.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_320_t_84153600.000000_reference.vtu elder_ts_320_t_84153600.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_340_t_89413200.000000_reference.vtu elder_ts_340_t_89413200.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_360_t_94672800.000000_reference.vtu elder_ts_360_t_94672800.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_380_t_99932400.000000_reference.vtu elder_ts_380_t_99932400.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_400_t_105192000.000000_reference.vtu elder_ts_400_t_105192000.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_40_t_10519200.000000_reference.vtu elder_ts_40_t_10519200.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_420_t_110451600.000000_reference.vtu elder_ts_420_t_110451600.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_440_t_115711200.000000_reference.vtu elder_ts_440_t_115711200.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_460_t_120970800.000000_reference.vtu elder_ts_460_t_120970800.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_480_t_126230400.000000_reference.vtu elder_ts_480_t_126230400.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_500_t_131490000.000000_reference.vtu elder_ts_500_t_131490000.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_60_t_15778800.000000_reference.vtu elder_ts_60_t_15778800.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_80_t_21038400.000000_reference.vtu elder_ts_80_t_21038400.000000.vtu pressure pressure 1e-1 1e-5
-    elder_ts_0_t_0.000000_reference.vtu elder_ts_0_t_0.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_100_t_26298000.000000_reference.vtu elder_ts_100_t_26298000.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_120_t_31557600.000000_reference.vtu elder_ts_120_t_31557600.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_140_t_36817200.000000_reference.vtu elder_ts_140_t_36817200.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_160_t_42076800.000000_reference.vtu elder_ts_160_t_42076800.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_180_t_47336400.000000_reference.vtu elder_ts_180_t_47336400.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_200_t_52596000.000000_reference.vtu elder_ts_200_t_52596000.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_20_t_5259600.000000_reference.vtu elder_ts_20_t_5259600.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_220_t_57855600.000000_reference.vtu elder_ts_220_t_57855600.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_240_t_63115200.000000_reference.vtu elder_ts_240_t_63115200.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_260_t_68374800.000000_reference.vtu elder_ts_260_t_68374800.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_280_t_73634400.000000_reference.vtu elder_ts_280_t_73634400.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_300_t_78894000.000000_reference.vtu elder_ts_300_t_78894000.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_320_t_84153600.000000_reference.vtu elder_ts_320_t_84153600.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_340_t_89413200.000000_reference.vtu elder_ts_340_t_89413200.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_360_t_94672800.000000_reference.vtu elder_ts_360_t_94672800.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_380_t_99932400.000000_reference.vtu elder_ts_380_t_99932400.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_400_t_105192000.000000_reference.vtu elder_ts_400_t_105192000.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_40_t_10519200.000000_reference.vtu elder_ts_40_t_10519200.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_420_t_110451600.000000_reference.vtu elder_ts_420_t_110451600.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_440_t_115711200.000000_reference.vtu elder_ts_440_t_115711200.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_460_t_120970800.000000_reference.vtu elder_ts_460_t_120970800.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_480_t_126230400.000000_reference.vtu elder_ts_480_t_126230400.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_500_t_131490000.000000_reference.vtu elder_ts_500_t_131490000.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_60_t_15778800.000000_reference.vtu elder_ts_60_t_15778800.000000.vtu Si Si 1e-1 1e-5
-    elder_ts_80_t_21038400.000000_reference.vtu elder_ts_80_t_21038400.000000.vtu Si Si 1e-1 1e-5
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_ElderPython
-    PATH Parabolic/ComponentTransport/elder
-    RUNTIME 1094
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS elder-python.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    elder_ts_0_t_0.000000_reference.vtu            elder_python_ts_0_t_0.000000.vtu            pressure  pressure  1e-1  1e-5
-    elder_ts_100_t_26298000.000000_reference.vtu   elder_python_ts_100_t_26298000.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_120_t_31557600.000000_reference.vtu   elder_python_ts_120_t_31557600.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_140_t_36817200.000000_reference.vtu   elder_python_ts_140_t_36817200.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_160_t_42076800.000000_reference.vtu   elder_python_ts_160_t_42076800.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_180_t_47336400.000000_reference.vtu   elder_python_ts_180_t_47336400.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_200_t_52596000.000000_reference.vtu   elder_python_ts_200_t_52596000.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_20_t_5259600.000000_reference.vtu     elder_python_ts_20_t_5259600.000000.vtu     pressure  pressure  1e-1  1e-5
-    elder_ts_220_t_57855600.000000_reference.vtu   elder_python_ts_220_t_57855600.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_240_t_63115200.000000_reference.vtu   elder_python_ts_240_t_63115200.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_260_t_68374800.000000_reference.vtu   elder_python_ts_260_t_68374800.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_280_t_73634400.000000_reference.vtu   elder_python_ts_280_t_73634400.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_300_t_78894000.000000_reference.vtu   elder_python_ts_300_t_78894000.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_320_t_84153600.000000_reference.vtu   elder_python_ts_320_t_84153600.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_340_t_89413200.000000_reference.vtu   elder_python_ts_340_t_89413200.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_360_t_94672800.000000_reference.vtu   elder_python_ts_360_t_94672800.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_380_t_99932400.000000_reference.vtu   elder_python_ts_380_t_99932400.000000.vtu   pressure  pressure  1e-1  1e-5
-    elder_ts_400_t_105192000.000000_reference.vtu  elder_python_ts_400_t_105192000.000000.vtu  pressure  pressure  1e-1  1e-5
-    elder_ts_40_t_10519200.000000_reference.vtu    elder_python_ts_40_t_10519200.000000.vtu    pressure  pressure  1e-1  1e-5
-    elder_ts_420_t_110451600.000000_reference.vtu  elder_python_ts_420_t_110451600.000000.vtu  pressure  pressure  1e-1  1e-5
-    elder_ts_440_t_115711200.000000_reference.vtu  elder_python_ts_440_t_115711200.000000.vtu  pressure  pressure  1e-1  1e-5
-    elder_ts_460_t_120970800.000000_reference.vtu  elder_python_ts_460_t_120970800.000000.vtu  pressure  pressure  1e-1  1e-5
-    elder_ts_480_t_126230400.000000_reference.vtu  elder_python_ts_480_t_126230400.000000.vtu  pressure  pressure  1e-1  1e-5
-    elder_ts_500_t_131490000.000000_reference.vtu  elder_python_ts_500_t_131490000.000000.vtu  pressure  pressure  1e-1  1e-5
-    elder_ts_60_t_15778800.000000_reference.vtu    elder_python_ts_60_t_15778800.000000.vtu    pressure  pressure  1e-1  1e-5
-    elder_ts_80_t_21038400.000000_reference.vtu    elder_python_ts_80_t_21038400.000000.vtu    pressure  pressure  1e-1  1e-5
-    elder_ts_0_t_0.000000_reference.vtu            elder_python_ts_0_t_0.000000.vtu            Si      Si      1e-1  1e-5
-    elder_ts_100_t_26298000.000000_reference.vtu   elder_python_ts_100_t_26298000.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_120_t_31557600.000000_reference.vtu   elder_python_ts_120_t_31557600.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_140_t_36817200.000000_reference.vtu   elder_python_ts_140_t_36817200.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_160_t_42076800.000000_reference.vtu   elder_python_ts_160_t_42076800.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_180_t_47336400.000000_reference.vtu   elder_python_ts_180_t_47336400.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_200_t_52596000.000000_reference.vtu   elder_python_ts_200_t_52596000.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_20_t_5259600.000000_reference.vtu     elder_python_ts_20_t_5259600.000000.vtu     Si      Si      1e-1  1e-5
-    elder_ts_220_t_57855600.000000_reference.vtu   elder_python_ts_220_t_57855600.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_240_t_63115200.000000_reference.vtu   elder_python_ts_240_t_63115200.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_260_t_68374800.000000_reference.vtu   elder_python_ts_260_t_68374800.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_280_t_73634400.000000_reference.vtu   elder_python_ts_280_t_73634400.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_300_t_78894000.000000_reference.vtu   elder_python_ts_300_t_78894000.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_320_t_84153600.000000_reference.vtu   elder_python_ts_320_t_84153600.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_340_t_89413200.000000_reference.vtu   elder_python_ts_340_t_89413200.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_360_t_94672800.000000_reference.vtu   elder_python_ts_360_t_94672800.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_380_t_99932400.000000_reference.vtu   elder_python_ts_380_t_99932400.000000.vtu   Si      Si      1e-1  1e-5
-    elder_ts_400_t_105192000.000000_reference.vtu  elder_python_ts_400_t_105192000.000000.vtu  Si      Si      1e-1  1e-5
-    elder_ts_40_t_10519200.000000_reference.vtu    elder_python_ts_40_t_10519200.000000.vtu    Si      Si      1e-1  1e-5
-    elder_ts_420_t_110451600.000000_reference.vtu  elder_python_ts_420_t_110451600.000000.vtu  Si      Si      1e-1  1e-5
-    elder_ts_440_t_115711200.000000_reference.vtu  elder_python_ts_440_t_115711200.000000.vtu  Si      Si      1e-1  1e-5
-    elder_ts_460_t_120970800.000000_reference.vtu  elder_python_ts_460_t_120970800.000000.vtu  Si      Si      1e-1  1e-5
-    elder_ts_480_t_126230400.000000_reference.vtu  elder_python_ts_480_t_126230400.000000.vtu  Si      Si      1e-1  1e-5
-    elder_ts_500_t_131490000.000000_reference.vtu  elder_python_ts_500_t_131490000.000000.vtu  Si      Si      1e-1  1e-5
-    elder_ts_60_t_15778800.000000_reference.vtu    elder_python_ts_60_t_15778800.000000.vtu    Si      Si      1e-1  1e-5
-    elder_ts_80_t_21038400.000000_reference.vtu    elder_python_ts_80_t_21038400.000000.vtu    Si      Si      1e-1  1e-5
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_HeterogeneousPermeability
-    PATH Elliptic/square_100x100_ComponentTransport
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS square_1e4_heterogeneity.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu pressure_expected pressure 2e-2 1e-10
-    square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu darcy_velocity_expected darcy_velocity 1e-7 1e-10
-)
-
-AddTest(
-    NAME 2D_ComponentTransport_HeterogeneousPermeability_Comparison_OGS5
-    PATH Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ogs5_H_2d.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    2D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_1_t_10000000.000000.vtu pressure_OGS5 pressure 1e-1 1e-3
-    2D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_1_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 2e-11 0
-)
-
-AddTest(
-    NAME 3D_ComponentTransport_HeterogeneousPermeability_Comparison_OGS5
-    PATH Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ogs5_H_3d.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 20
-    DIFF_DATA
-    3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu pressure_ogs5 pressure 2.4e1 1.4e-2
-    3D1P-GWFlow_1_reference.vtu out_ogs5_H_ts_10_t_10000000.000000.vtu NODAL_VELOCITY1 darcy_velocity 1e-10 1.4e-2
-)
-
-AddTest(
-    NAME 1D_ComponentTransport_VariableDependentBoundary
-    PATH Parabolic/ComponentTransport/VariableNeumannBoundary
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS vdbc_input.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 7
-    DIFF_DATA
-    vdbc_ts_0_t_0.000000_expected.vtu vdbc_ts_0_t_0.000000.vtu pressure pressure 1e-5 1e-4
-    vdbc_ts_1590_t_6000.000000_expected.vtu vdbc_ts_1590_t_6000.000000.vtu pressure pressure 1e-5 1e-4
-    vdbc_ts_3990_t_30000.000000_expected.vtu vdbc_ts_3990_t_30000.000000.vtu pressure pressure 1e-5 1e-4
-    vdbc_ts_9990_t_90000.000000_expected.vtu vdbc_ts_9990_t_90000.000000.vtu pressure pressure 1e-5 1e-4
-    vdbc_ts_15990_t_150000.000000_expected.vtu vdbc_ts_15990_t_150000.000000.vtu pressure pressure 1e-5 1e-4
-    vdbc_ts_21990_t_210000.000000_expected.vtu vdbc_ts_21990_t_210000.000000.vtu pressure pressure 1e-5 1e-4
-    vdbc_ts_25990_t_250000.000000_expected.vtu vdbc_ts_25990_t_250000.000000.vtu pressure pressure 1e-5 1e-4
-    vdbc_ts_0_t_0.000000_expected.vtu vdbc_ts_0_t_0.000000.vtu pressure pressure 1e-5 1e-4
-    vdbc_ts_1590_t_6000.000000_expected.vtu vdbc_ts_1590_t_6000.000000.vtu concentration Si 1e-5 1e-4
-    vdbc_ts_3990_t_30000.000000_expected.vtu vdbc_ts_3990_t_30000.000000.vtu concentration Si 1e-5 1e-4
-    vdbc_ts_9990_t_90000.000000_expected.vtu vdbc_ts_9990_t_90000.000000.vtu concentration Si 1e-5 1e-4
-    vdbc_ts_15990_t_150000.000000_expected.vtu vdbc_ts_15990_t_150000.000000.vtu concentration Si 1e-5 1e-4
-    vdbc_ts_21990_t_210000.000000_expected.vtu vdbc_ts_21990_t_210000.000000.vtu concentration Si 1e-5 1e-4
-    vdbc_ts_25990_t_250000.000000_expected.vtu vdbc_ts_25990_t_250000.000000.vtu concentration Si 1e-5 1e-4
-)
-
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/goswami/goswami_input.prj RUNTIME 291)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/elder/elder.prj RUNTIME 1068)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/elder/elder-python.prj RUNTIME 1094)
+    OgsTest(PROJECTFILE Elliptic/square_100x100_ComponentTransport/square_1e4_heterogeneity.prj)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/heterogeneous/ogs5_H_2D/ogs5_H_2d.prj)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/heterogeneous/ogs5_H_3D/ogs5_H_3d.prj RUNTIME 20)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/VariableNeumannBoundary/vdbc_input.prj RUNTIME 7)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/Theis/theis.prj RUNTIME 45)
-endif()
-
-AddTest(
-    NAME ComponentTransport_ConTracer_2d
-    PATH Parabolic/ComponentTransport/ConTracer
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS ConTracer_2d.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    RUNTIME 12
-    DIFF_DATA
-    ConTracer_2d_ts_30_t_108000.000000_expected.vtu ConTracer_2d_ts_30_t_108000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_60_t_216000.000000_expected.vtu ConTracer_2d_ts_60_t_216000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_90_t_324000.000000_expected.vtu ConTracer_2d_ts_90_t_324000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_120_t_432000.000000_expected.vtu ConTracer_2d_ts_120_t_432000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_150_t_540000.000000_expected.vtu ConTracer_2d_ts_150_t_540000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_180_t_648000.000000_expected.vtu ConTracer_2d_ts_180_t_648000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_210_t_756000.000000_expected.vtu ConTracer_2d_ts_210_t_756000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_240_t_864000.000000_expected.vtu ConTracer_2d_ts_240_t_864000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_270_t_972000.000000_expected.vtu ConTracer_2d_ts_270_t_972000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_300_t_1080000.000000_expected.vtu ConTracer_2d_ts_300_t_1080000.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_329_t_1184400.000000_expected.vtu ConTracer_2d_ts_329_t_1184400.000000.vtu pressure pressure 1e-6 1e-10
-    ConTracer_2d_ts_30_t_108000.000000_expected.vtu ConTracer_2d_ts_30_t_108000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_60_t_216000.000000_expected.vtu ConTracer_2d_ts_60_t_216000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_90_t_324000.000000_expected.vtu ConTracer_2d_ts_90_t_324000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_120_t_432000.000000_expected.vtu ConTracer_2d_ts_120_t_432000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_150_t_540000.000000_expected.vtu ConTracer_2d_ts_150_t_540000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_180_t_648000.000000_expected.vtu ConTracer_2d_ts_180_t_648000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_210_t_756000.000000_expected.vtu ConTracer_2d_ts_210_t_756000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_240_t_864000.000000_expected.vtu ConTracer_2d_ts_240_t_864000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_270_t_972000.000000_expected.vtu ConTracer_2d_ts_270_t_972000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_300_t_1080000.000000_expected.vtu ConTracer_2d_ts_300_t_1080000.000000.vtu Cs Cs 1e-10 1e-16
-    ConTracer_2d_ts_329_t_1184400.000000_expected.vtu ConTracer_2d_ts_329_t_1184400.000000.vtu Cs Cs 1e-10 1e-16
-)
-
-if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ConTracer/ConTracer_2d.prj RUNTIME 12)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ConTracer/ConTracer_1d.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/1D_DiffusionSorptionDecay.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/AdvectionDiffusionSorptionDecay/1D_AdvectionDiffusionSorptionDecay.prj RUNTIME 6)
@@ -741,14 +118,6 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
 
     # variation that will fail because material ids are missing in the input
     # mesh
-    AddTest(
-        NAME 1D_MultiLayerDiffusion_fail_no_mat_ids
-        PATH Parabolic/ComponentTransport/MultiLayerDiffusion
-        EXECUTABLE ogs
-        EXECUTABLE_ARGS 1D_MultiLayerDiffusion_fail_no_mat_ids.xml
-        PROPERTIES
-        PASS_REGULAR_EXPRESSION "More than one porous medium definition.*but no MaterialIDs are present in the bulk mesh"
-    )
     OgsTest(
         PROJECTFILE Parabolic/ComponentTransport/MultiLayerDiffusion/1D_MultiLayerDiffusion_fail_no_mat_ids.xml
         PROPERTIES
@@ -861,69 +230,25 @@ if(NOT (OGS_USE_PETSC OR OGS_USE_LIS) AND
         PYTHON_PACKAGES porepy@git+https://github.com/pmgbergen/porepy.git@v1.12
     )
 endif()
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS) AND ("${HOSTNAME}" MATCHES "envinf1" OR APPLE OR MSVC))
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents/KineticReactant2_2d.prj
+        RUNTIME 3300
+    )
+endif()
 
-AddTest(
-    NAME 2D_ReactiveMassTransport_Phreeqc_KineticReactantBlockTest_AllAsComponents
-    PATH Parabolic/ComponentTransport/ReactiveTransport/KineticReactant_AllAsComponents
-    RUNTIME 3300
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS KineticReactant2_2d.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS) AND ("${HOSTNAME}" MATCHES "envinf1" OR APPLE OR MSVC)
-    DIFF_DATA
-    KineticReactant2_2d_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu pressure pressure 1e-6 1e-10
-    KineticReactant2_2d_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_2d_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_2d_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu Synthetica Synthetica 1e-10 1e-16
-    KineticReactant2_2d_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_2d_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_2d_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu Syntheticb Syntheticb 1e-10 1e-16
-    KineticReactant2_2d_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_2d_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_2d_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu Productd Productd 1e-10 1e-16
-    KineticReactant2_2d_ts_4_t_400.000000_expected.vtu KineticReactant2_2d_ts_4_t_400.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_2d_ts_8_t_800.000000_expected.vtu KineticReactant2_2d_ts_8_t_800.000000.vtu H H 1e-10 1e-16
-    KineticReactant2_2d_ts_12_t_1200.000000_expected.vtu KineticReactant2_2d_ts_12_t_1200.000000.vtu H H 1e-10 1e-16
-)
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/Wetland/Wetland_1d.prj RUNTIME 15)
+endif()
 
-AddTest(
-    NAME 1D_ReactiveMassTransport_Wetland
-    PATH Parabolic/ComponentTransport/ReactiveTransport/Wetland
-    EXECUTABLE ogs
-    EXECUTABLE_ARGS Wetland_1d.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-    DIFF_DATA
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu pressure pressure 1e-6 1e-10
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu H H 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Do Do 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sf Sf 3e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sa Sa 2e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sin Sin 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Xs_m Xs_m 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Xi_m Xi_m 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Snh Snh 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sno Sno 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sso Sso 1e-10 1e-16
-    Wetland_1d_ts_4_t_28800.000000_expected.vtu Wetland_1d_ts_4_t_28800.000000.vtu Sulphide Sulphide 1e-10 1e-16
-    RUNTIME 15
-)
-
-if (OGS_USE_MPI)
+if(OGS_USE_MPI)
     OgsTest(WRAPPER mpirun -np 1 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcitePorosityChange.prj RUNTIME 25)
     OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite_mpi.xml RUNTIME 60)
     OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/EquilibriumPhase/calcite_mpi_chem_threads.xml RUNTIME 60)
     OgsTest(WRAPPER mpirun -np 2 PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SurfaceComplexation/ParallelTest/RadionuclideSorption.prj RUNTIME 60)
 endif()
 
-if(NOT (OGS_USE_LIS OR OGS_USE_MPI))
+if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE
             Parabolic/ComponentTransport/ClassicalTransportExample/classical_transport_example.prj

@@ -276,4 +276,20 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>buildup_test_ts_107_t_424800.000000.vtu</file>
+                <reference_file>standard_solution_buildup_test_ts_107_t_424800.000000.vtu</reference_file>
+                <field>pressure</field>
+                <absolute_tolerance>1.7e-5</absolute_tolerance>
+                <relative_tolerance>0.0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>buildup_test_ts_211_t_720000.000000.vtu</file>
+                <reference_file>standard_solution_buildup_test_ts_211_t_720000.000000.vtu</reference_file>
+                <field>pressure</field>
+                <absolute_tolerance>5.8e-5</absolute_tolerance>
+                <relative_tolerance>0.0</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>
