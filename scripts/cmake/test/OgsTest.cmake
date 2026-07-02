@@ -4,7 +4,7 @@ function(OgsTest)
         return()
     endif()
 
-    set(options DISABLED)
+    set(options DISABLED NO_TEST_DEFINITION)
     set(oneValueArgs PROJECTFILE RUNTIME)
     set(multiValueArgs WRAPPER PROPERTIES LABELS)
     cmake_parse_arguments(
@@ -72,9 +72,13 @@ function(OgsTest)
         endif()
     endif()
 
-    set(_exe_args -r ${OgsTest_SOURCE_DIR}
-                  ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
-    )
+    if(OgsTest_NO_TEST_DEFINITION)
+        set(_exe_args ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
+    else()
+        set(_exe_args -r ${OgsTest_SOURCE_DIR}
+                      ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
+        )
+    endif()
 
     current_dir_as_list(ProcessLib labels)
     if(OgsTest_LABELS)
