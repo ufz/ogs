@@ -163,8 +163,12 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             //! \ogs_file_param{prj__test_definition__vtkdiff__field}
             vtkdiff_config.getConfigParameter<std::string>("field");
         DBUG("vtkdiff will compare field '{:s}'.", field_name);
+        std::string const reference_field_name =
+            vtkdiff_config
+                //! \ogs_file_param{prj__test_definition__vtkdiff__reference_field}
+                .getConfigParameter<std::string>("reference_field", field_name);
 
-        std::vector<std::string> filenames;
+        std::vector<std::pair<std::string, std::string>> filenames;
         if (auto const regex_string =
                 //! \ogs_file_param{prj__test_definition__vtkdiff__regex}
             vtkdiff_config.getConfigParameterOptional<std::string>("regex"))
@@ -179,7 +183,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
                 if (std::regex_match(filename, regex))
                 {
                     DBUG("        -> matched '{}'", filename);
-                    filenames.push_back(filename);
+                    filenames.emplace_back(filename, filename);
                 }
             }
         }
@@ -188,6 +192,11 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             std::string filename =
                 //! \ogs_file_param{prj__test_definition__vtkdiff__file}
                 vtkdiff_config.getConfigParameter<std::string>("file");
+            std::string reference_filename =
+                vtkdiff_config
+                    //! \ogs_file_param{prj__test_definition__vtkdiff__reference_file}
+                    .getConfigParameterOptional<std::string>("reference_file")
+                    .value_or(filename);
 #ifdef USE_PETSC
             BaseLib::MPI::Mpi mpi;
             if (mpi.size > 1)
@@ -196,9 +205,13 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
                     MeshLib::IO::getVtuFileNameForPetscOutputWithoutExtension(
                         filename) +
                     "_" + std::to_string(mpi.rank) + ".vtu";
+                reference_filename =
+                    MeshLib::IO::getVtuFileNameForPetscOutputWithoutExtension(
+                        reference_filename) +
+                    "_" + std::to_string(mpi.rank) + ".vtu";
             }
 #endif  // OGS_USE_PETSC
-            filenames.push_back(filename);
+            filenames.emplace_back(reference_filename, filename);
         }
 
         if (empty(filenames))
@@ -239,13 +252,13 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         std::string const relative_tolerance_parameter =
             "--rel " + relative_tolerance;
 
-        for (auto const& filename : filenames)
+        for (auto const& [reference_file, output_file] : filenames)
         {
             std::string output_filename =
-                BaseLib::joinPaths(output_directory, filename);
+                BaseLib::joinPaths(output_directory, output_file);
             _output_files.push_back(output_filename);
             std::string reference_filename =
-                BaseLib::joinPaths(reference_path, filename);
+                BaseLib::joinPaths(reference_path, reference_file);
 #if _WIN32
             // vtk does not handle Windows long paths:
             // https://gitlab.kitware.com/vtk/vtk/-/blob/master/Utilities/KWSys/vtksys/SystemTools.cxx#L1519-1521
@@ -271,7 +284,7 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
             // Construct command line.
             //
             std::string command_line =
-                vtkdiff + " -a " + safeString(field_name) + " -b " +
+                vtkdiff + " -a " + safeString(reference_field_name) + " -b " +
                 safeString(field_name) + " " + reference_filename + " " +
                 output_filename + " " + absolute_tolerance_parameter + " " +
                 relative_tolerance_parameter;
