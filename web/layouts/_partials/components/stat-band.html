@@ -1,0 +1,20 @@
+{{ $pubCount := len (where .Site.RegularPages "Section" "publications") }}
+{{ $pubRounded := mul (math.Floor (div (float $pubCount) 10)) 10 }}
+<div
+  class="grid grid-cols-2 divide-x divide-y divide-gray-200 border-y border-gray-200 bg-gray-50 lg:grid-cols-4 lg:divide-y-0">
+  <div class="px-6 py-6 sm:px-8">
+    <div class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ .Site.Params.currentVersion }}</div>
+    <div class="mt-1 font-mono text-[11px] tracking-wide text-gray-500">CURRENT RELEASE</div>
+  </div>
+  <div class="px-6 py-6 sm:px-8">
+    <div class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ printf "%.0f" $pubRounded
+      }}<span class="text-teal-600">+</span></div>
+    <div class="mt-1 font-mono text-[11px] tracking-wide text-gray-500">PUBLICATIONS</div>
+  </div>
+  {{ range .Params.stats }}
+  <div class="px-6 py-6 sm:px-8">
+    <div class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ .value }}</div>
+    <div class="mt-1 font-mono text-[11px] tracking-wide text-gray-500">{{ upper .label }}</div>
+  </div>
+  {{ end }}
+</div>

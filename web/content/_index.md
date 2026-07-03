@@ -6,20 +6,58 @@ authors:
 date: 2017-01-13T14:24:23+01:00
 
 hero:
-  headline: Open-source multi-physics
-  textline: OpenGeoSys (OGS) is a scientific [open source project](https://gitlab.opengeosys.org/ogs/ogs) for the development of numerical methods for the simulation of thermo-hydro-mechanical-chemical (THMC) processes in porous and fractured media. Current version is OpenGeoSys-6 which is documented on this page. For information about OpenGeoSys-5, see [its dedicated section](/ogs-5). OGS has been successfully applied in the fields of regional, contaminant and coastal hydrology, fundamental and geothermal energy systems, geotechnical engineering, energy storage, CO2 sequestration/storage and nuclear waste management and disposal.
-  quicklinks:
-    - name: Tools
-      anchor: tools
-    - name: HPC
-      anchor: hpc
-    - name: Vis
-      anchor: vis
+  eyebrow: Open-source multi-physics · OGS-6
+  headline: Simulating coupled processes in porous & fractured media
+  textline: OpenGeoSys (OGS) is a scientific [open-source](https://gitlab.opengeosys.org/ogs/ogs) finite-element framework for the numerical simulation of thermo-hydro-mechanical-chemical (THMC) processes in the subsurface.
+  images:
+    - permalink: features/vis/layeredview2.png
+      alt: Layered geological model
+      caption: layered geological model · ParaView / VTK
+    - permalink: features/vis/DEMSelke3D.png
+      alt: Discrete element groundwater model
+      caption: discrete element model · groundwater domain
+    - permalink: features/vis/contours2-bw.png
+      alt: Simulation contour visualisation
+      caption: contour visualisation of simulation results
+  cta:
+    - text: Download OGS-6
+      url: /releases
+    - text: Read the docs
+      url: /docs
 
-feature_intro: OpenGeoSys' adaptable and modular architecture enables a wide variety of use cases and flexible workflows. In the following we highlight some of its most important features.
+stats:
+  - value: 4×
+    label: Coupled THMC processes
+  - value: GPL
+    label: Free & open source
+
+application_areas_intro: The same THMC framework underpins research questions across the geosciences — three of the most active fields are shown below.
+
+application_areas:
+  - eyebrow: 01 / Subsurface water
+    headline: Hydrology
+    textline: From regional groundwater flow to contaminant and coastal transport, OGS resolves how water and solutes move through complex subsurface domains.
+    visual:
+      permalink: features/vis/DEMSelke3D.png
+      alt: Groundwater model
+  - eyebrow: 02 / Deep heat
+    headline: Geothermal energy
+    textline: Model heat extraction and storage in the deep subsurface, capturing the coupled thermal, hydraulic and mechanical response of geothermal reservoirs.
+    visual:
+      permalink: features/vis/layeredview2.png
+      alt: Geothermal reservoir model
+  - eyebrow: 03 / Long-term safety
+    headline: Nuclear-waste disposal
+    textline: Assess deep geological repositories over long timescales, resolving the full THMC evolution of the host rock and engineered barrier system.
+    visual:
+      permalink: features/vis/contours2-bw.png
+      alt: Repository simulation contours
+
+feature_intro: An adaptable, modular architecture enabling a wide variety of use cases and flexible research workflows.
 
 features:
-- headline: Comprehensive Pre-Processing Tools
+- headline: Pre-processing tools
+  summary: Convert data sets, build and analyse meshes, and parametrize models with boundary conditions and source terms.
   textline: |
     A wide range of helper tools exist to get your model up and running with OpenGeoSys.
 
@@ -31,55 +69,35 @@ features:
   visual:
     permalink: "docs/tools/meshing-submeshes/extract-surface/TopBottomSideSurface.png"
     alt: Extracted surfaces
-  # links:
-  #   - text: See Docs
-  #     url: "/docs/tools"
-  layout: left
-  anchor: tools
 
-- headline: Process Coupling
+- headline: Process coupling
+  summary: Solve coupled systems monolithically or with the staggered scheme for thermo-hydraulic, hydro-mechanical and phase-field problems.
   textline: |
     A coupled system of equations can be either solved in a fully coupled way of the monolithic method, or in the sequential manner of the staggered scheme. The monolithic scheme is applied for all coupled processes, while the staggered scheme are available for the coupled processes of thermo-hydraulic, hydro-mechanical, and phase field mechanical problems.
   visual:
     permalink: features/StaggeredCouplingScheme.png
     alt: Staggered coupling scheme
-  layout: right
 
 - headline: Data integration
+  summary: Assess, integrate and visualize data sets with the OGS Data Explorer to catch artefacts and inconsistencies early.
   textline: |
     Integrate and visualize data sets for OpenGeoSys by using the OpenGeoSys Data Explorer. It provides functionality to visually assess the data and see possible artefacts, inconsistencies between data sets or missing information.
-  layout: left
-  carousel:
-    slides:
-      - permalink: features/vis/chaohu_paper_mesh.png
-        caption: OpenGeoSys mesh visualisation
-      - permalink: features/vis/ogsgui.png
-        caption: OpenGeoSys Data Explorer interface
-      - permalink: features/vis/DEMSelke3D.png
-        caption: Three-dimensional model visualisation
-    play: false
-#  links:
-#    - text: "Learn More: Data Explorer"
-#      url: "features/data-explorer"
+  visual:
+    permalink: features/vis/chaohu_paper_mesh.png
+    alt: OpenGeoSys mesh visualisation
 
 - headline: Visualize results
+  summary: Standard VTK output integrates directly with ParaView and VR-enabled visualization for intuitive exploration.
   textline: |
     By using VTK data formats visualizing simulation result data sets becomes an easy task. The de-facto standard software for scientific visualizations [ParaView](https://www.paraview.org) can be used to explore and analyze complex data in a visual way.
 
     [Virtual reality enabled visualization](https://www.ufz.de/vislab) brings your data onto the large screen for intuitive exploration and assessment.
-  layout: right
-  carousel:
-    slides:
-      - permalink: features/vis/layeredview2.png
-        caption: Layered model result visualisation
-      - permalink: features/vis/vislab.png
-        caption: Interactive exploration of river flow phenomenae at the TESSIN VISLab of the Helmholtz Centre for Environmental Research – UFZ
-      - permalink: features/vis/contours2-bw.png
-        caption: Contour visualisation of simulation results
-    play: true
-  anchor: vis
+  visual:
+    permalink: features/vis/layeredview2.png
+    alt: Layered model result visualisation
 
-- headline: High performance computing
+- headline: High-performance computing
+  summary: Domain-decomposition parallelism built on PETSc and MPI scales across a wide variety of HPC architectures.
   textline: |
     High performance computing (HPC) has became a necessity in the modelling of environmental and geotechnical problems for better characterization of the complexity of geo-systems as well as predicting their evolution in time. Parallel computing is the most efficient method in the high performance computing. In OGS, the parallalization of the finite element (FE) computation is based on the domain decomposition method (DDC).
 
@@ -89,55 +107,50 @@ features:
   visual:
     permalink: "features/HPC-DDC.png"
     alt: Domain decomposition for parallel processing
-    rounded: true
-# links:
-#    - text: Learn more
-#      url: "features/hpc"
-  anchor: hpc
 
-- headline: Transparent development workflows
+- headline: Transparent development
+  summary: A community-driven, fully open workflow with automated CI testing and mentored code review for every contribution.
   textline: |
     OpenGeoSys is an open-source project developed by a community of researchers. We try to be
     open-minded and and make team decisions. We try to help users and developers as best as we can.
 
     We invite you to take part in this journey, shape the future of OpenGeoSys together and happily welcome any contribution.
-  subfeatures:
-    - headline: Setup a development environment
-      textline: |
-        [Learn how to](/docs/devguide) obtain the source code, how to install required other software (e.g. compilers and tools), how to configure the software and how to generate the application binary.
-    - headline: Contribute code
-      textline: |
-        Implement your new feature and [let the CI system](/docs/devguide/development-workflows/continuous-integration) run sophisticated tests automatically for you incorporating multiple computing platforms, a magnitude of software configurations and a whole array of CPU intensive complex test simulation runs.
-    - headline: Get help from core developers
-      textline: |
-        Once your feature is ready the [code review process](/docs/devguide/development-workflows/code-reviews/) starts. A helpful [core developer](https://gitlab.opengeosys.org/ogs/ogs/-/graphs/master) checks the proposed change for general acceptance and may give hints for improvement (of e.g. the computational performance or the code structure). Once the iterative feedback loop between you, code reviewer(s) and the automated test system satisfies all aspects the proposed change is merged into the main development line.
   visual:
     permalink: "features/OGS-Software-Engineering-Small.png"
     alt: Dev workflow
-  layout: right
-#   class: inverse
 
-- headline: Ready to dive in?
-  textline: |
-  subfeatures:
+workflow_intro: The tools above are not isolated — they chain into a single reproducible pipeline. Every stage reads and writes open, standard formats, so a model flows from raw field data to published results without ever leaving the OGS ecosystem.
+
+workflow_steps:
+  - number: "01"
+    headline: Input data
+    textline: Field measurements, geological models and geometry imported into OGS data formats.
+  - number: "02"
+    headline: Mesh & parametrize
+    textline: Build and refine meshes, then assign material parameters, boundary conditions and source terms.
+  - number: "03"
+    headline: Coupled simulation
+    textline: Solve THMC processes monolithically or staggered, in parallel on HPC through PETSc and MPI.
+  - number: "04"
+    headline: Results & visualization
+    textline: Export VTK for ParaView and VR — analysis, verification and publication-ready figures.
+
+get_started:
+  headline: Ready to dive in?
+  items:
     - headline: Using OpenGeoSys
-      textline: |
-        Start using OpenGeoSys by [downloading](/releases) a prebuilt package.
-#       links:
-#         - text: <i class="far fa-download"></i> Download OpenGeoSys
-#           url: /releases
+      textline: Start by downloading a prebuilt package for your platform and running the benchmarks.
+      link:
+        text: Download
+        url: /releases
     - headline: Developing OpenGeoSys
-      textline: |
-        Getting started developing OpenGeoSys at the [Developer Guide](/docs/devguide).
-#      links:
-#        - text: <i class="far fa-book"></i> Read the Developer Guide
-#          url: /docs/devguide
-    - headline: Become part of the Community
-      textline: |
-        Get in touch with the OpenGeoSys Community via our [Discussion forum](https://discourse.opengeosys.org), [GitLab](https://gitlab.opengeosys.org/ogs/ogs) or by [email](mailto:info@opengeosys.org).
-#      links:
-#        - text: <i class="fab fa-gitlab"></i> GitLab
-#          url: https://gitlab.opengeosys.org/ogs/ogs
-  layout: vertical
-#   class: inverse
+      textline: Obtain the source, configure your toolchain and build the application from the Developer Guide.
+      link:
+        text: Developer Guide
+        url: /docs/devguide
+    - headline: Join the community
+      textline: Get in touch through the Discourse forum, GitLab or email — every contribution is welcome.
+      link:
+        text: Discussion forum
+        url: https://discourse.opengeosys.org
 ---

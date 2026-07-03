@@ -16,61 +16,35 @@
 */}}
 
 {{ define "discours-posts" }}
-{{/*
-<h2 class="mb-2 lg:mb-4 text-2xl lg:text-3xl">
+<h3 class="font-mono text-xs font-semibold uppercase tracking-widest text-gray-500">
   {{ if .heading }}
   {{ .heading }}
   {{ else }}
   {{ .category | humanize }}
   {{ end }}
-</h2>
-*/}}
-<div class="mt-2 grid md:grid-cols-3 lg:gap-x-5 md:gap-4" x-data="categoryData('{{ .category }}', {{ .count }})"
-  x-init="init()">
+</h3>
+<div class="mt-4 grid gap-5 md:grid-cols-3" x-data="categoryData('{{ .category }}', {{ .count }})" x-init="init()">
   <template x-for="topic in topics" :key="topic.id">
-    <div class="p-1 px-2 md:p-4 md:mb-3 md:border-b-2 lg:border-b-o lg:shadow lg:rounded-lg">
-      <a x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug" class="block">
-        <h3 x-text="topic.title"
-          class="text-l lg:text-xl font-bold leading-7 text-blue-800 underline mt-3 line-clamp-1 lg:line-clamp-2">
-        </h3>
-        <div class="mt-2 flex items-center">
-          <div class="shrink-0">
-            <img class="h-10 w-10 rounded-full" x-bind:src="getUserAvatar(topic)" alt="author avatar">
-          </div>
-          <div class="ml-3">
-            <p x-text="'by ' + getUsername(topic)" class="text-sm leading-5 font-medium text-gray-800">
-            </p>
-            <div class="flex text-sm leading-5 text-gray-500">
-              <time datetime="2020-03-15"
-                x-text="(new Date(topic.created_at)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })">
-              </time>
-              <template x-if="topic.tags.length > 0">
-                <div class="float-right lg:float-none hidden">
-                  <span x-text="topic.tags.slice(0, 1)" x-bind:class="{
-                      'bg-indigo-100 text-indigo-800': topic.tags.slice(0, 1) == 'ogs6',
-                      'bg-green-100 text-green-800': topic.tags.slice(0, 1) == 'ogs5',
-                      'bg-pink-100 text-pink-800': topic.tags.slice(0, 1) == 'infrastructure' }"
-                    class="inline-flex items-center mx-1 px-2 py-0.1 rounded-full text-sm font-medium leading-5">
-                  </span>
-                </div>
-              </template>
-              <template x-if="topic.posts_count > 1">
-                <span class="hidden lg:inline">
-                  <span class="mx-1">
-                    &middot;
-                  </span>
-                  <span x-text="(topic.posts_count - 1) + ' comment' + ((topic.posts_count - 1) === 1 ? '' : 's')">
-                  </span>
-                </span>
-              </template>
-            </div>
+    <article class="rounded-xl border border-gray-200 bg-white p-5 transition hover:-translate-y-1 hover:shadow-md">
+      <a class="flex h-full flex-col" x-bind:href="'https://discourse.opengeosys.org/t/' + topic.slug">
+        <div class="flex items-center gap-2">
+          <img class="h-6 w-6 rounded-full" x-bind:src="getUserAvatar(topic)" alt="">
+          <div class="font-mono text-[11px] tracking-wide text-teal-600">
+            <span x-text="getUsername(topic)"></span>
+            &middot;
+            <time x-text="(new Date(topic.created_at)).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })"></time>
           </div>
         </div>
+        <h4 x-text="topic.title" class="mt-2.5 text-base font-semibold leading-snug text-gray-900 line-clamp-2">
+        </h4>
+        <template x-if="topic.posts_count > 1">
+          <p class="mt-2 text-sm leading-relaxed text-gray-500"
+            x-text="(topic.posts_count - 1) + ' comment' + ((topic.posts_count - 1) === 1 ? '' : 's')">
+          </p>
+        </template>
       </a>
+    </article>
   </template>
-  <button class="hidden py-2 px-4 rounded bg-blue-500 text-white grow-0" type="button" x-on:click="reload()">
-    Reload
-  </button>
 </div>
 {{ end }}
 
@@ -104,6 +78,7 @@
       init() {
         if (["localhost", "127.0.0.1", "::1"].includes(window.location.hostname)) {
           this.disabled = true;
+          this.loadDummyData(category, limit);
           return;
         }
 
@@ -151,7 +126,50 @@
       },
       getUserAvatar(topic) {
         let user = this.users.find(author => author.id === topic.posters[0].user_id);
+        if (this.disabled) {
+          return this.dummyAvatar(this.getUsername(topic));
+        }
         return 'https://discourse.opengeosys.org' + user.avatar_template.replace('{size}', '90');
+      },
+      dummyAvatar(name) {
+        const initials = name.split(/[\s-]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+        const colors = ['#104EB2', '#0f8b93', '#0E46A0', '#7a8694'];
+        let hash = 0;
+        for (const ch of name) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+        const color = colors[hash % colors.length];
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90'>`
+          + `<rect width='100%' height='100%' rx='45' fill='${color}'/>`
+          + `<text x='50%' y='52%' font-family='sans-serif' font-size='32' font-weight='600' fill='#fff' `
+          + `text-anchor='middle' dominant-baseline='middle'>${initials}</text></svg>`;
+        return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+      },
+      loadDummyData(category, limit) {
+        // Placeholder content only — real posts are fetched from Discourse in production.
+        // Discourse is unreachable from localhost, so this keeps the preview representative.
+        const dummyTopics = {
+          announcements: [
+            { title: 'OpenGeoSys 6.5.8 released', slug: 'opengeosys-6-5-8-released', posts_count: 12, daysAgo: 3, user: 'Tom Fischer' },
+            { title: 'New tutorial: THM coupling in fractured rock', slug: 'new-tutorial-thm-coupling-fractured-rock', posts_count: 4, daysAgo: 9, user: 'Renchao Lu' },
+            { title: 'Call for contributions: OGS Workshop 2026', slug: 'call-for-contributions-ogs-workshop-2026', posts_count: 7, daysAgo: 16, user: 'Dmitri Naumov' },
+          ],
+          usability: [
+            { title: 'Best practices for meshing layered domains', slug: 'best-practices-meshing-layered-domains', posts_count: 15, daysAgo: 2, user: 'Joerg Buchwald' },
+            { title: 'Help interpreting staggered scheme convergence', slug: 'help-interpreting-staggered-scheme-convergence', posts_count: 6, daysAgo: 6, user: 'Wenqing Wang' },
+            { title: 'How to set up Robin boundary conditions?', slug: 'how-to-set-up-robin-boundary-conditions', posts_count: 3, daysAgo: 12, user: 'Dominik Kern' },
+          ],
+        };
+        const source = (dummyTopics[category] || dummyTopics.announcements).slice(0, limit);
+        const now = Date.now();
+        this.users = source.map((t, idx) => ({ id: idx, name: t.user, username: t.user }));
+        this.topics = source.map((t, idx) => ({
+          id: idx,
+          title: t.title,
+          slug: t.slug,
+          tags: [],
+          posts_count: t.posts_count,
+          created_at: new Date(now - t.daysAgo * 86400000).toISOString(),
+          posters: [{ user_id: idx }],
+        }));
       },
     };
   }
