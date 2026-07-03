@@ -191,6 +191,35 @@ for notebook_file in args.notebooks:
     os.environ["TQDM_DISABLE"] = "1"  # Disable progress bars
     os.environ["OGS_TESTRUNNER"] = "1"
     os.environ["PYVISTA_OFF_SCREEN"] = "true"
+    os.environ.pop("OGS_TESTRUNNER_WEB_OUT_DIR", None)
+
+    notebook_filename = notebook_file_path.name
+    convert_notebook_file = notebook_output_path
+    if not is_jupytext:
+        convert_notebook_file = convert_notebook_file / Path(notebook_filename).stem
+    convert_notebook_file = convert_notebook_file.with_suffix(".ipynb")
+
+    nb = None
+    executes_with_papermill = (
+        not coverage_enabled() or notebook_file_path.suffix == ".md"
+    )
+    if "run-skip" not in str(notebook_file_path) and (
+        args.hugo or executes_with_papermill
+    ):
+        if is_jupytext:
+            nb = jupytext.read(notebook_file_path)
+            convert_notebook_file = Path(
+                str(convert_notebook_file).replace("notebook-", "")
+            )
+        else:
+            with notebook_file_path.open(encoding="utf-8") as f:
+                nb = nbformat.read(f, as_version=4)
+
+        website_output_path = (
+            get_website_output_path(nb, convert_notebook_file) if args.hugo else None
+        )
+        if args.hugo and website_output_path:
+            os.environ["OGS_TESTRUNNER_WEB_OUT_DIR"] = str(website_output_path)
 
     if coverage_enabled() and notebook_file_path.suffix != ".md":
         os.environ["MPLBACKEND"] = "AGG"
@@ -217,27 +246,8 @@ for notebook_file in args.notebooks:
             sys.exit(1)
 
     elif "run-skip" not in str(notebook_file_path):
-        notebook_filename = notebook_file_path.name
-        convert_notebook_file = notebook_output_path
-        if not is_jupytext:
-            convert_notebook_file = convert_notebook_file / Path(notebook_filename).stem
-        convert_notebook_file = convert_notebook_file.with_suffix(".ipynb")
-
         if is_jupytext:
-            nb = jupytext.read(notebook_file_path)
-            convert_notebook_file = Path(
-                str(convert_notebook_file).replace("notebook-", "")
-            )
             jupytext.write(nb, convert_notebook_file)
-        else:
-            with notebook_file_path.open(encoding="utf-8") as f:
-                nb = nbformat.read(f, as_version=4)
-
-        website_output_path = (
-            get_website_output_path(nb, convert_notebook_file) if args.hugo else None
-        )
-        if args.hugo and website_output_path:
-            os.environ["OGS_TESTRUNNER_WEB_OUT_DIR"] = str(website_output_path)
 
         # Run the notebook
         print(f"[Start]  {notebook_filename}")
