@@ -12,7 +12,7 @@
     {{ range .Params.features }}
     <div class="overflow-hidden rounded-xl border border-gray-200">
       {{ with .visual }}
-      <div class="aspect-[16/9]">
+      <div class="aspect-[21/9] md:aspect-[16/9]">
         <img src="{{ .permalink }}" alt="{{ .alt }}" loading="lazy" class="h-full w-full object-cover">
       </div>
       {{ end }}

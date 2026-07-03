@@ -19,7 +19,11 @@ target = 'static'
 [[module.mounts]]
 source = '@OGS_WEB_WORKSPACE_DIR@/static'
 target = 'static'
+[[module.mounts]]
+source = '@PROJECT_SOURCE_DIR@/web/data'
+target = 'data'
 @OGS_WEB_GENERATED_CONTENT_MOUNTS@
+@OGS_WEB_GENERATED_DATA_MOUNTS@
 
 [markup.goldmark.renderer]
 unsafe = true

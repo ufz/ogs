@@ -26,10 +26,9 @@ hero:
       url: /docs
 
 stats:
-  - value: 4×
-    label: Coupled THMC processes
-  - value: GPL
+  - value: BSD-3-Clause
     label: Free & open source
+    link: https://gitlab.opengeosys.org/ogs/ogs
 
 application_areas_intro: The same THMC framework underpins research questions across the geosciences — three of the most active fields are shown below.
 
