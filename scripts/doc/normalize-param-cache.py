@@ -99,9 +99,6 @@ def merge_lines(it):
     if buf_fn:
         yield buf_fn, buf_lno, buf
 
-    return
-    yield
-
 
 state = "getter"
 path = ""

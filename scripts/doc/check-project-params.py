@@ -128,7 +128,6 @@ def run():
 
     # remove false positives from unneeded_md_files
     if unneeded_md_files:
-        qa_status = False
         for tagpath, _ in good_tagpaths:
             tagpath = tagpath.split(".")
             while tagpath:
@@ -255,7 +254,6 @@ def run():
 
 
 if __name__ == "__main__":
-    success = False
     try:
         qa_status = run()
     except:

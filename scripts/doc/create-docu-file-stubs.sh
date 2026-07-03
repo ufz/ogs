@@ -53,11 +53,5 @@ done \
     elif [ "$param_or_attr" = attr ] && [ ! -f "$dn/a_$bn.md" ]; then
         echo "creating $dn/a_$bn.md"
         echo '\ogs_missing_documentation' >"$dn/a_$bn.md"
-    # else
-    #     echo "OK $path"
     fi
-
-    # if [ -d "$path" ] && [ -f "$path.md" ]; then
-    #     echo "ERROR: both $path and $path.md exist!" >&2
-    # fi
 done
