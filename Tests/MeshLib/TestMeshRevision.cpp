@@ -45,6 +45,143 @@ TEST(MeshEditing, Tri)
     delete result;
 }
 
+TEST(MeshEditing, NodePropertyAfterCollapse)
+{
+    // Triangle whose nodes 1 and 2 are within eps and get collapsed, so the
+    // three input nodes are reduced to two output nodes. The surviving node is
+    // always the one with the lower index (node 2 collapses into node 1).
+    std::vector<MeshLib::Node*> nodes;
+    nodes.push_back(new MeshLib::Node(1, 0, 0));
+    nodes.push_back(new MeshLib::Node(0, 0, 0));
+    nodes.push_back(new MeshLib::Node(0, 0, 0.1));
+
+    std::array<MeshLib::Node*, 3> const nodes_array = {
+        {nodes[0], nodes[1], nodes[2]}};
+    std::vector<MeshLib::Element*> elements;
+    elements.push_back(new MeshLib::Tri(nodes_array));
+    MeshLib::Mesh mesh("testmesh", nodes, elements);
+
+    // One property per value type supported by the revision, to cover all of
+    // them for node properties.
+    auto* const double_prop =
+        mesh.getProperties().createNewPropertyVector<double>(
+            "NodeValuesDouble", MeshLib::MeshItemType::Node, 1);
+    ASSERT_NE(nullptr, double_prop);
+    double_prop->assign(std::vector<double>{100.0, 200.0, 300.0});
+
+    auto* const float_prop =
+        mesh.getProperties().createNewPropertyVector<float>(
+            "NodeValuesFloat", MeshLib::MeshItemType::Node, 1);
+    ASSERT_NE(nullptr, float_prop);
+    float_prop->assign(std::vector<float>{1.5f, 2.5f, 3.5f});
+
+    auto* const int_prop = mesh.getProperties().createNewPropertyVector<int>(
+        "NodeValuesInt", MeshLib::MeshItemType::Node, 1);
+    ASSERT_NE(nullptr, int_prop);
+    int_prop->assign(std::vector<int>{10, 20, 30});
+
+    MeshToolsLib::MeshRevision rev(mesh);
+    MeshLib::Mesh* const result = rev.simplifyMesh("new_mesh", 0.2);
+
+    ASSERT_EQ(2u, result->getNumberOfNodes());
+
+    auto const* new_double_prop =
+        result->getProperties().getPropertyVector<double>("NodeValuesDouble");
+    ASSERT_NE(nullptr, new_double_prop);
+    // The property must be compacted to match the reduced node array: one value
+    // per surviving node, in the new node order (no gaps, no stale size).
+    ASSERT_EQ(result->getNumberOfNodes(), new_double_prop->getNumberOfTuples());
+    ASSERT_EQ(100.0, (*new_double_prop)[0]);  // original node 0
+    ASSERT_EQ(200.0,
+              (*new_double_prop)[1]);  // original node 1 (node 2 collapsed
+                                       // here)
+
+    auto const* new_float_prop =
+        result->getProperties().getPropertyVector<float>("NodeValuesFloat");
+    ASSERT_NE(nullptr, new_float_prop);
+    ASSERT_EQ(result->getNumberOfNodes(), new_float_prop->getNumberOfTuples());
+    ASSERT_EQ(1.5f, (*new_float_prop)[0]);
+    ASSERT_EQ(2.5f, (*new_float_prop)[1]);
+
+    auto const* new_int_prop =
+        result->getProperties().getPropertyVector<int>("NodeValuesInt");
+    ASSERT_NE(nullptr, new_int_prop);
+    ASSERT_EQ(result->getNumberOfNodes(), new_int_prop->getNumberOfTuples());
+    ASSERT_EQ(10, (*new_int_prop)[0]);
+    ASSERT_EQ(20, (*new_int_prop)[1]);
+
+    delete result;
+}
+
+TEST(MeshEditing, CellPropertyAfterSubdivision)
+{
+    // Non-planar quad which is subdivided into two triangles, i.e. the revised
+    // mesh has more elements than the input mesh. Every new element takes the
+    // value of the element it originates from.
+    std::vector<MeshLib::Node*> nodes;
+    nodes.push_back(new MeshLib::Node(0, 0, 0));
+    nodes.push_back(new MeshLib::Node(0, 1, 0));
+    nodes.push_back(new MeshLib::Node(1, 1, 0.1));
+    nodes.push_back(new MeshLib::Node(1, 0, 0));
+
+    std::array<MeshLib::Node*, 4> const nodes_array = {
+        {nodes[0], nodes[1], nodes[2], nodes[3]}};
+    std::vector<MeshLib::Element*> elements;
+    elements.push_back(new MeshLib::Quad(nodes_array));
+    MeshLib::Mesh mesh("testmesh", nodes, elements);
+
+    // One property per value type supported by the revision, to cover all of
+    // them for cell properties.
+    auto* const int_prop = mesh.getProperties().createNewPropertyVector<int>(
+        "CellValuesInt", MeshLib::MeshItemType::Cell, 1);
+    ASSERT_NE(nullptr, int_prop);
+    int_prop->assign(std::vector<int>{42});
+
+    auto* const float_prop =
+        mesh.getProperties().createNewPropertyVector<float>(
+            "CellValuesFloat", MeshLib::MeshItemType::Cell, 1);
+    ASSERT_NE(nullptr, float_prop);
+    float_prop->assign(std::vector<float>{4.25f});
+
+    auto* const double_prop =
+        mesh.getProperties().createNewPropertyVector<double>(
+            "CellValuesDouble", MeshLib::MeshItemType::Cell, 1);
+    ASSERT_NE(nullptr, double_prop);
+    double_prop->assign(std::vector<double>{13.75});
+
+    MeshToolsLib::MeshRevision rev(mesh);
+    MeshLib::Mesh* const result = rev.simplifyMesh("new_mesh", 0.2);
+
+    ASSERT_EQ(2u, result->getNumberOfElements());
+
+    auto const* new_int_prop =
+        result->getProperties().getPropertyVector<int>("CellValuesInt");
+    ASSERT_NE(nullptr, new_int_prop);
+    // One value per element of the revised mesh, not per element of the input
+    // mesh.
+    ASSERT_EQ(result->getNumberOfElements(), new_int_prop->getNumberOfTuples());
+    ASSERT_EQ(42, (*new_int_prop)[0]);
+    ASSERT_EQ(42, (*new_int_prop)[1]);
+
+    auto const* new_float_prop =
+        result->getProperties().getPropertyVector<float>("CellValuesFloat");
+    ASSERT_NE(nullptr, new_float_prop);
+    ASSERT_EQ(result->getNumberOfElements(),
+              new_float_prop->getNumberOfTuples());
+    ASSERT_EQ(4.25f, (*new_float_prop)[0]);
+    ASSERT_EQ(4.25f, (*new_float_prop)[1]);
+
+    auto const* new_double_prop =
+        result->getProperties().getPropertyVector<double>("CellValuesDouble");
+    ASSERT_NE(nullptr, new_double_prop);
+    ASSERT_EQ(result->getNumberOfElements(),
+              new_double_prop->getNumberOfTuples());
+    ASSERT_EQ(13.75, (*new_double_prop)[0]);
+    ASSERT_EQ(13.75, (*new_double_prop)[1]);
+
+    delete result;
+}
+
 TEST(MeshEditing, NonPlanarQuad)
 {
     std::vector<MeshLib::Node*> nodes;
