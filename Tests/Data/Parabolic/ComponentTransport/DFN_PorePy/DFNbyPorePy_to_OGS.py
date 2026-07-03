@@ -94,7 +94,7 @@ orig_dir = Path.cwd()
 
 # %% [markdown]
 #
-# See [DFNbyPorePy.py](DFNbyPorePy.py) how to generate
+# See [DFNbyPorePy.py](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/Tests/Data/Parabolic/ComponentTransport/DFN_PorePy/DFNbyPorePy.py) how to generate
 # the DFN mesh and geometry data required by this notebook.
 #
 # #### Preparing the mesh (`.vtu`) for OpenGeosys simulation
@@ -171,7 +171,7 @@ ot.cli().identifySubdomains(
     "-s",
     str(1e-10),
     "--",
-    f"borehole_left_Layer{n_fractures+1}.vtu",
+    f"borehole_left_Layer{n_fractures + 1}.vtu",
     f"borehole_right_Layer{n_fractures}.vtu",
 )
 
@@ -666,7 +666,7 @@ project.run_model(args=f"-o {out_dir} -m {out_dir}", logfile=Path(out_dir, "run.
 # ## Post-processing
 
 # %%
-ms = ot.MeshSeries(f'{out_dir}/{user_parameters["prefix"]}.pvd')
+ms = ot.MeshSeries(f"{out_dir}/{user_parameters['prefix']}.pvd")
 mesh = ms[-1]
 
 # %%
@@ -707,7 +707,9 @@ domain_size = max(mesh.bounds[1::2]) - min(mesh.bounds[::2])
 scale_factor = domain_size * 0.1 / vmax if vmax > 0 else 1.0
 
 arrows = mesh.glyph(
-    scale="darcy_velocity_magnitude", orient="darcy_velocity", factor=scale_factor
+    scale="darcy_velocity_magnitude",
+    orient="darcy_velocity",
+    factor=scale_factor,
 )
 
 scalar_bar_args = base_scalar_bar_args.copy()
@@ -790,7 +792,7 @@ plotter.close()
 # the temporal evolution of tracer concentration at a downstream monitoring point in a flow-through porous medium,
 
 # %%
-mesh_series = ot.MeshSeries(f'{out_dir}/{user_parameters["prefix"]}.pvd')
+mesh_series = ot.MeshSeries(f"{out_dir}/{user_parameters['prefix']}.pvd")
 print("Scalar fields available in mesh:", mesh.array_names)
 
 observation_points = np.array(

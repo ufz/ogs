@@ -89,7 +89,12 @@ build linux petsc (py-cov):
 build linux arch lis:
   <<: *common-linux-arch-base
   tags: [shell, envinf]
-  rules: *common-arch-cpp-rules
+  rules:
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/'
+      when: never
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/'
+      when: never
+    - when: on_success
   variables:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: "-DOGS_USE_LIS=ON"

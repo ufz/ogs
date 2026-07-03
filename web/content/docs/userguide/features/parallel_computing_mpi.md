@@ -8,7 +8,7 @@ weight = 4
 <!-- vale off -->
 The executable OGS for MPI parallel computing is compiled with a special
 build configuration. If you need to compile the source code, please read
-[Build configuration for MPI and PETSc]({{<relref "configure_for_mpi_and_petsc.md">}}).
+[Build configuration for MPI and PETSc]({{< ref "/docs/devguide/getting-started/build-configuration_for_MPI_PETSc" >}}).
 <!-- vale on -->
 
 To conduct DDC enabled parallel computing with OGS, following steps are required:

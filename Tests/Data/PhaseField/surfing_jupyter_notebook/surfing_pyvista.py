@@ -522,8 +522,9 @@ plt.show()
 # %%
 plotter = pv.Plotter(off_screen=True)
 
-(out_dir / "figures").mkdir(parents=True, exist_ok=True)
-plotter.open_gif(out_dir / "figures/surfing.gif")
+figures_dir = Path(os.environ["OGS_TESTRUNNER_WEB_OUT_DIR"]) / "figures"
+figures_dir.mkdir(parents=True, exist_ok=True)
+plotter.open_gif(figures_dir / "surfing.gif")
 for time_value in reader.time_values:
     reader.set_active_time_value(time_value)
     mesh = reader.read()[0]  # This dataset only has 1 block
