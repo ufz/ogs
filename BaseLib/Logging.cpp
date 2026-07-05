@@ -7,7 +7,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
-#ifdef _WIN32
+#if defined(_WIN32) && defined(OGS_BUILD_WHEEL)
 #include <io.h>
 #include <spdlog/details/null_mutex.h>
 #include <spdlog/sinks/base_sink.h>
@@ -25,8 +25,8 @@
 
 namespace
 {
-#ifdef _WIN32
-// Windows-only stdout sink resolving the target on every write.
+#if defined(_WIN32) && defined(OGS_BUILD_WHEEL)
+// Stdout sink for Windows wheel builds resolving the target on every write.
 //
 // spdlog's built-in Windows stdout sinks (wincolor_sink and
 // stdout_sink_base) cache the stdout OS HANDLE once at sink creation and
@@ -34,7 +34,9 @@ namespace
 // pybind wheel) and the host redirects fd 1/2 afterwards (pytest fd capture
 // does dup2 per test), the CRT closes the previously cached handle. Windows
 // recycles handle values, so subsequent console writes can land in an
-// arbitrary file OGS opened later.
+// arbitrary file OGS opened later. Standalone executables are unaffected -
+// their std handles are fixed at process startup - so the stock colour sink
+// is kept there.
 //
 // _write(_fileno(stdout), ...) goes through the live CRT fd table at call
 // time, so it always follows the current redirection target. spdlog's
@@ -60,7 +62,7 @@ protected:
         // _write is unbuffered; nothing to flush.
     }
 };
-#endif  // _WIN32
+#endif  // defined(_WIN32) && defined(OGS_BUILD_WHEEL)
 
 #ifdef USE_PETSC
 static int mpi_rank = -1;
@@ -103,7 +105,7 @@ void initOGSLogger(std::string const& log_level)
 {
     if (!console)
     {
-#ifdef _WIN32
+#if defined(_WIN32) && defined(OGS_BUILD_WHEEL)
         // Custom sink re-resolving stdout per write; see Fd1StdoutSink above.
         // No colour on Windows console as a consequence.
 #if defined(USE_PETSC) || defined(_OPENMP)
@@ -125,7 +127,7 @@ void initOGSLogger(std::string const& log_level)
 #else
         console = spdlog::stdout_color_st("ogs");
 #endif
-#endif  // _WIN32
+#endif  // defined(_WIN32) && defined(OGS_BUILD_WHEEL)
         // Default pattern and error handler both for MPI and non-MPI builds.
         spdlog::set_pattern("%^%l:%$ %v");
         spdlog::set_error_handler(error_handler);
