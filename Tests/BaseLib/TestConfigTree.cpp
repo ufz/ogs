@@ -672,6 +672,307 @@ TEST(BaseLibConfigTree, MoveAssign)
     EXPECT_ERR_WARN(cbs, false, false);
 }
 
+TEST(BaseLibConfigTree, GetAllChildrenEmptyTreeReturnsNoChildren)
+{
+    boost::property_tree::ptree ptree;
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+        EXPECT_TRUE(children.empty());
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+// Every non-attribute child is returned, in document order; <xmlattr> storage
+// is never reported as a child; and reading each child's full content
+// (immediate data plus attributes) consumes it, so nothing warns.
+TEST(BaseLibConfigTree, GetAllChildrenReturnsEveryNonAttributeChildInOrder)
+{
+    const char xml[] =
+        "<val a=\"x\" b=\"y\">z</val>"
+        "<val2>w</val2>"
+        "<val3 p=\"q\"/>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+
+        EXPECT_EQ(3, children.size());
+        // Tag order must be preserved.
+        EXPECT_EQ("val", children[0].first);
+        EXPECT_EQ("val2", children[1].first);
+        EXPECT_EQ("val3", children[2].first);
+
+        // <xmlattr> must not be among the children.
+        for (auto const& [tag, _] : children)
+        {
+            EXPECT_NE("<xmlattr>", tag);
+        }
+
+        // Consume every child's content: 'val' has data and two attributes,
+        // 'val2' has data, 'val3' has only one attribute (and is still
+        // returned as a child).
+        EXPECT_EQ("z", children[0].second->getValue<std::string>());
+        EXPECT_EQ("x",
+                  children[0].second->getConfigAttribute<std::string>("a"));
+        EXPECT_EQ("y",
+                  children[0].second->getConfigAttribute<std::string>("b"));
+        // Dereference via operator* (equivalent to operator->).
+        EXPECT_EQ("w", (*children[1].second).getValue<std::string>());
+        EXPECT_EQ("q",
+                  children[2].second->getConfigAttribute<std::string>("p"));
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+// Regression: peeking children without consuming them must warn, exactly like
+// an unread getConfigSubtree() result. getAllChildren() hands out each child as
+// its own subtree; a child left unread reports its own unread content on
+// destruction.
+TEST(BaseLibConfigTree, GetAllChildrenUnreadChildWarns)
+{
+    const char xml[] =
+        "<a>1</a>"
+        "<b>2</b>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+        // Only inspect the tags; read none of the children's values.
+        EXPECT_EQ(2, children.size());
+        EXPECT_EQ("a", children[0].first);
+        EXPECT_EQ("b", children[1].first);
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    // Both children carry unread immediate data -> warning.
+    EXPECT_ERR_WARN(cbs, false, true);
+}
+
+// A child can be descended into: reading a nested subtree through the child
+// (child->getConfigSubtree(...)) consumes it.
+TEST(BaseLibConfigTree, GetAllChildrenChildCanBeDescendedInto)
+{
+    const char xml[] =
+        "<outer1><inner>alpha</inner></outer1>"
+        "<outer2><inner>beta</inner></outer2>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+
+        EXPECT_EQ(2, children.size());
+        auto inner1 = children[0].second->getConfigSubtree("inner");
+        EXPECT_EQ("alpha", inner1.getValue<std::string>());
+        auto inner2 = children[1].second->getConfigSubtree("inner");
+        EXPECT_EQ("beta", inner2.getValue<std::string>());
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+// getAllChildren() works on a subtree (not only the root), and duplicate
+// sibling tags are each returned as a separate entry. The subtree's own
+// <xmlattr> storage is skipped; consuming everything warns nothing.
+TEST(BaseLibConfigTree, GetAllChildrenOnSubtreeWithDuplicateSiblingTags)
+{
+    const char xml[] =
+        "<root a=\"1\">"
+        "<dup>x</dup>"
+        "<dup>y</dup>"
+        "</root>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto const sub = conf.getConfigSubtree("root");
+        // Consume the subtree's own attribute so it does not warn.
+        EXPECT_EQ(1, sub.getConfigAttribute<int>("a"));
+
+        auto children = sub.getAllChildren();
+        // Only the two <dup> elements are returned; <xmlattr> is skipped.
+        EXPECT_EQ(2, children.size());
+        EXPECT_EQ("dup", children[0].first);
+        EXPECT_EQ("x", children[0].second->getValue<std::string>());
+        EXPECT_EQ("dup", children[1].first);
+        EXPECT_EQ("y", children[1].second->getValue<std::string>());
+
+        for (auto const& [tag, _] : children)
+        {
+            EXPECT_NE("<xmlattr>", tag);
+        }
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+// Partial consume: reading some children but not all leaves the unread ones to
+// warn, while the consumed ones stay silent.
+TEST(BaseLibConfigTree, GetAllChildrenPartialConsumeWarnsForUnread)
+{
+    const char xml[] =
+        "<a>1</a>"
+        "<b>2</b>"
+        "<c>3</c>"
+        "<d>4</d>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+        // Consume 'a' and 'c'; 'b' and 'd' remain unconsumed.
+        EXPECT_EQ(4, children.size());
+        EXPECT_EQ("1", children[0].second->getValue<std::string>());
+        EXPECT_EQ("3", children[2].second->getValue<std::string>());
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    // 'b' and 'd' are unconsumed children -> warning.
+    EXPECT_ERR_WARN(cbs, false, true);
+}
+
+// Duplicate sibling tags with partial consume: each occurrence is tracked
+// separately, so consuming one of three same-tag children leaves the other two
+// unread -> warning.
+TEST(BaseLibConfigTree, GetAllChildrenDuplicateTagsPartialConsumeWarns)
+{
+    const char xml[] =
+        "<a>1</a>"
+        "<a>2</a>"
+        "<a>3</a>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+        EXPECT_EQ(3, children.size());
+        // Consume only the first <a>; the other two remain unread.
+        EXPECT_EQ("1", children[0].second->getValue<std::string>());
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    // Two unread <a> siblings -> warning.
+    EXPECT_ERR_WARN(cbs, false, true);
+}
+
+// A consumed child must consume ALL of its attributes: reading 'a' but not 'b'
+// leaves 'b' unread -> warning.
+TEST(BaseLibConfigTree, GetAllChildrenUnreadAttributeWarns)
+{
+    const char xml[] = "<val a=\"x\" b=\"y\"/>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+        EXPECT_EQ(1, children.size());
+        // Read only 'a'; 'b' is left unread.
+        EXPECT_EQ("x",
+                  children[0].second->getConfigAttribute<std::string>("a"));
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    // Attribute 'b' was not read -> warning.
+    EXPECT_ERR_WARN(cbs, false, true);
+}
+
+// A content-less child (no immediate data, no attributes, no sub-children)
+// left unread still warns: a returned child that is never dereferenced counts
+// as unread regardless of content. This is what lets getAllChildren() flag a
+// child whose tag name was mistyped that would otherwise be silently
+// ignored.
+TEST(BaseLibConfigTree, GetAllChildrenContentlessChildUnreadWarns)
+{
+    const char xml[] =
+        "<a/>"
+        "<b/>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+        // Only inspect the tags; access neither child.
+        EXPECT_EQ(2, children.size());
+        EXPECT_EQ("a", children[0].first);
+        EXPECT_EQ("b", children[1].first);
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    // Both content-less children went unread (never dereferenced) -> warning.
+    EXPECT_ERR_WARN(cbs, false, true);
+}
+
+// Dereferencing a content-less child marks it read, so it is silent: touching
+// the child is the signal that the tag was expected.
+TEST(BaseLibConfigTree, GetAllChildrenContentlessChildAccessedStaysSilent)
+{
+    const char xml[] = "<a/>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+        EXPECT_EQ(1, children.size());
+        // Dereference the (content-less) child; nothing to read inside it.
+        [[maybe_unused]] auto const& ct = *children[0].second;
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    // The child was accessed, so no unread-child warning.
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
+// Partial consume, subtree flavour: descending into one child but leaving a
+// sibling subtree untouched warns for the unread sibling, mirroring the scalar
+// case in GetAllChildrenPartialConsumeWarnsForUnread.
+TEST(BaseLibConfigTree, GetAllChildrenPartialConsumeSubtreeWarns)
+{
+    const char xml[] =
+        "<outer1><inner>alpha</inner></outer1>"
+        "<outer2><inner>beta</inner></outer2>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        auto const conf = makeConfigTree(std::move(ptree), cbs);
+        auto children = conf.getAllChildren();
+        EXPECT_EQ(2, children.size());
+        // Descend into 'outer1' only; 'outer2' remains unread.
+        auto inner1 = children[0].second->getConfigSubtree("inner");
+        EXPECT_EQ("alpha", inner1.getValue<std::string>());
+        EXPECT_ERR_WARN(cbs, false, false);
+    }
+    // 'outer2' (and its unread <inner>) -> warning.
+    EXPECT_ERR_WARN(cbs, false, true);
+}
+
+// Lifetime: a Child owns its subtree (via the shared top-level pointer), so it
+// may outlive the ConfigTree it came from. Here a single child is moved out and
+// kept alive after the parent (and the Children vector) are destroyed; it is
+// still readable and consuming it afterwards warns nothing.
+TEST(BaseLibConfigTree, GetAllChildrenChildOutlivesParent)
+{
+    const char xml[] = "<a>1</a>";
+    auto ptree = Tests::readXml(xml);
+    Callbacks cbs;
+    {
+        std::optional<BaseLib::ConfigTree::Child> kept;
+        {
+            auto const conf = makeConfigTree(std::move(ptree), cbs);
+            auto children = conf.getAllChildren();
+            EXPECT_EQ(1, children.size());
+            kept.emplace(std::move(children[0].second));
+        }  // parent and Children vector destroyed here
+        // Parent tore down cleanly: getAllChildren() marked the tag
+        // consumed, and the moved-from entry left in the vector is inert.
+        EXPECT_ERR_WARN(cbs, false, false);
+
+        // The surviving child is still usable after its parent is gone.
+        EXPECT_EQ("1", (*kept)->getValue<std::string>());
+        EXPECT_ERR_WARN(cbs, false, false);
+    }  // kept child destroyed here; its value was read -> no warning
+    EXPECT_ERR_WARN(cbs, false, false);
+}
+
 TEST(BaseLibConfigTree, ChildLivesOnIfParentDies)
 {
     const char xml[] =

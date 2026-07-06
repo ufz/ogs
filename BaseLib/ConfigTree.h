@@ -495,6 +495,21 @@ public:
      */
     Range<SubtreeIterator> getConfigSubtreeList(std::string const& root) const;
 
+    /*! Read-only view of a child returned by getAllChildren().
+     */
+    class Child;
+
+    //! Return type of getAllChildren(): an owning vector of (tag, view) pairs.
+    using Children = std::vector<std::pair<std::string, Child>>;
+
+    /*! Get all children of this ConfigTree.
+     *
+     * Returns a vector of (tag, subtree) pairs for all children (subtrees and
+     * parameters) in the order they appear in the configuration tree. The
+     * return value is suitable for range-based for-loops and random access.
+     */
+    Children getAllChildren() const;
+
     //!\}
 
     /*! \name Methods for ignoring parameters

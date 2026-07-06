@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <forward_list>
 #include <utility>
+#include <vector>
 
 #include "Error.h"
 #include "Logging.h"
@@ -207,6 +208,31 @@ Range<ConfigTree::SubtreeIterator> ConfigTree::getConfigSubtreeList(
 
     return Range<SubtreeIterator>(SubtreeIterator(p.first, root, *this),
                                   SubtreeIterator(p.second, root, *this));
+}
+
+ConfigTree::Children ConfigTree::getAllChildren() const
+{
+    Children children;
+
+    // Hand out every child as its own subtree, mirroring getConfigSubtree():
+    // mark each child tag as consumed in this (parent) tree so the parent does
+    // not warn about the tags, then return a ConfigTree per child.  Each child
+    // validates its own content on destruction, so any child whose sub-children
+    // / attributes / immediate data are left unread warns exactly like an
+    // unread getConfigSubtree() result.  <xmlattr> is skipped: attribute
+    // storage is not a child element.  Duplicate tags are handled by
+    // markVisited(), which increments the consumed count once per occurrence.
+    for (auto const& [tag, subtree] : *tree_)
+    {
+        if (tag == "<xmlattr>")
+        {
+            continue;
+        }
+        markVisited(tag, Attr::TAG, false);
+        children.emplace_back(tag, Child{ConfigTree(subtree, *this, tag)});
+    }
+
+    return children;
 }
 
 void ConfigTree::ignoreConfigParameter(const std::string& param) const

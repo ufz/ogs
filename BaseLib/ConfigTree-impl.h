@@ -3,8 +3,10 @@
 
 // IWYU pragma: private, include "ConfigTree.h"
 
+#include <exception>
 #include <sstream>
 #include <utility>
+#include <vector>
 
 #include "ConfigTree.h"
 #include "DemangleTypeInfo.h"
@@ -30,6 +32,81 @@ public:
 private:
     Iterator begin_;
     Iterator end_;
+};
+
+/*! Read-only view of a child produced by getAllChildren().
+ *
+ * A thin move-only wrapper around the child's own ConfigTree subtree.
+ * getAllChildren() marks every child tag as consumed in the parent, so the
+ * parent does not additionally warn about the tags themselves; instead each
+ * child polices itself.
+ *
+ * A child counts as read once it is dereferenced via operator->() /
+ * operator*(). A child that is never dereferenced warns on destruction as
+ * unread whatever its content - this catches a whole child that was silently
+ * ignored, e.g. one whose tag name was mistyped. Once dereferenced,
+ * the child behaves exactly like a ConfigTree obtained from getConfigSubtree():
+ * it owns its subtree and runs the normal checkAndInvalidate() on destruction,
+ * so any of its sub-children / attributes / immediate data that were not read
+ * produce the usual unread-element warnings.
+ *
+ * Like a getConfigSubtree() result, a Child keeps the underlying tree alive
+ * through its shared top-level pointer, so it may safely outlive the ConfigTree
+ * it came from.
+ */
+class ConfigTree::Child
+{
+public:
+    Child(Child&& other) noexcept
+        : ct_(std::move(other.ct_)), accessed_(other.accessed_)
+    {
+    }
+    Child(Child const&) = delete;
+
+    ConfigTree const* operator->() const
+    {
+        accessed_ = true;
+        return &ct_;
+    }
+    ConfigTree const& operator*() const
+    {
+        accessed_ = true;
+        return ct_;
+    }
+
+    /*! A child returned by getAllChildren() but never dereferenced counts as
+     * unread and warns on destruction, whatever its content.
+     *
+     * This is what makes getAllChildren() catch a whole child that was silently
+     * ignored - e.g. one whose tag name was mistyped - which the
+     * subtree's own content check cannot: a content-less child has nothing to
+     * report. A dereferenced child instead defers to that content check (its
+     * unread sub-children / attributes / immediate data warn as usual), so the
+     * warning here is suppressed and not duplicated.
+     */
+    ~Child()
+    {
+        // ct_.tree_ == nullptr means this Child was moved from (the moved-to
+        // Child owns the subtree now); std::uncaught_exceptions() > 0 mirrors
+        // ConfigTree's own destructor, which stays silent during unwinding.
+        if (!accessed_ && ct_.tree_ != nullptr &&
+            std::uncaught_exceptions() == 0)
+        {
+            ct_.warning(
+                "This child, returned by getAllChildren(), has not been "
+                "read.");
+            ct_.tree_ = nullptr;  // skip the subtree's own redundant check
+        }
+    }
+
+private:
+    friend class ConfigTree;
+    explicit Child(ConfigTree&& ct) : ct_(std::move(ct)) {}
+
+    ConfigTree ct_;
+    //! Whether operator->() / operator*() was ever called. Mutable because both
+    //! are const accessors; a Child is logically const while being read.
+    mutable bool accessed_ = false;
 };
 
 template <typename T>
