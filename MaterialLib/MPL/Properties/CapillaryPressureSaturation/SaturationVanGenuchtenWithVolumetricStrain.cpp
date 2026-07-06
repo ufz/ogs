@@ -35,7 +35,7 @@ SaturationVanGenuchtenWithVolumetricStrain::
 {
     name_ = std::move(name);
 
-    if (!(m_ > 0 && m_ < 1))
+    if (m_ <= 0 || m_ >= 1)
     {
         OGS_FATAL("The exponent value m = {:g}, is out of its range of (0, 1)",
                   m_);

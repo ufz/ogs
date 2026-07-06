@@ -25,7 +25,7 @@ PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
     std::vector<double> x;
     std::vector<double> y;
 
-    if (read_from_file == true)
+    if (read_from_file)
     {
         auto const coords_file_name =
             //! \ogs_file_param{prj__curves__curve__coords}

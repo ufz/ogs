@@ -23,7 +23,7 @@ RelPermVanGenuchten::RelPermVanGenuchten(
 {
     name_ = std::move(name);
 
-    if (!(m_ > 0 && m_ < 1))
+    if (m_ <= 0 || m_ >= 1)
     {
         OGS_FATAL(
             "The exponent value m = {:g} of van Genuchten relative "

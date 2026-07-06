@@ -185,11 +185,8 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
         //! \ogs_file_param{prj__processes__process__linear}
         config.getConfigParameter("linear", false);
 
-    const bool use_TaylorHood_elements =
-        variable_p->getShapeFunctionOrder() !=
-                variable_u->getShapeFunctionOrder()
-            ? true
-            : false;
+    const bool use_TaylorHood_elements = variable_p->getShapeFunctionOrder() !=
+                                         variable_u->getShapeFunctionOrder();
 
     ThermoRichardsMechanicsProcessData<DisplacementDim, ConstitutiveTraits>
         process_data{materialIDs(mesh),

@@ -47,7 +47,7 @@ PropertyDataType CapillaryPressureRegularizedVanGenuchten::value(
     checkSaturationRange(Sl);
 
     double const Sg = 1 - Sl;
-    if (!(Sg < Sg_r_ || Sg > Sg_max_))
+    if (Sg >= Sg_r_ && Sg <= Sg_max_)
     {
         return getPcBarvGSg(Sg);
     }
@@ -76,7 +76,7 @@ PropertyDataType CapillaryPressureRegularizedVanGenuchten::dValue(
     checkSaturationRange(Sl);
 
     double const Sg = 1 - Sl;
-    if (!(Sg < Sg_r_ || Sg > Sg_max_))
+    if (Sg >= Sg_r_ && Sg <= Sg_max_)
     {
         return -getdPcdSvGBar(Sg);
     }

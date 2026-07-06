@@ -26,6 +26,7 @@ WarningsAsErrors: >
   readability-braces-around-statements,
   readability-else-after-return,
   cppcoreguidelines-pro-type-member-init,
+  readability-simplify-boolean-expr,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:

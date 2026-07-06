@@ -52,19 +52,19 @@ bool isPointInTetrahedron(MathLib::Point3d const& p, MathLib::Point3d const& a,
         bool const d0_sign(d0 > 0);
         // if p is on the same side of bcd as a
         double const d1(MathLib::orientation3d(d, p, b, c));
-        if (!(d0_sign == (d1 >= 0) || std::abs(d1) < eps))
+        if (d0_sign != (d1 >= 0) && std::abs(d1) >= eps)
         {
             return false;
         }
         // if p is on the same side of acd as b
         double const d2(MathLib::orientation3d(d, a, p, c));
-        if (!(d0_sign == (d2 >= 0) || std::abs(d2) < eps))
+        if (d0_sign != (d2 >= 0) && std::abs(d2) >= eps)
         {
             return false;
         }
         // if p is on the same side of abd as c
         double const d3(MathLib::orientation3d(d, a, b, p));
-        if (!(d0_sign == (d3 >= 0) || std::abs(d3) < eps))
+        if (d0_sign != (d3 >= 0) && std::abs(d3) >= eps)
         {
             return false;
         }
@@ -168,7 +168,7 @@ bool barycentricPointInTriangle(MathLib::Point3d const& p,
         return false;
     }
     double const gamma(1 - alpha - beta);
-    return !(gamma < -eps_pnt_out_of_tri || gamma > 1 + eps_pnt_out_of_tri);
+    return gamma >= -eps_pnt_out_of_tri && gamma <= 1 + eps_pnt_out_of_tri;
 }
 
 bool isPointInTriangleXY(MathLib::Point3d const& p,

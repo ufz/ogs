@@ -680,7 +680,7 @@ unsigned reduceHex(MeshLib::Element const* const org_elem,
                     {
                         for (unsigned l = k + 1; l < 8; ++l)
                         {
-                            if (!(i == k && j == l) && org_elem->isEdge(i, j) &&
+                            if ((i != k || j != l) && org_elem->isEdge(i, j) &&
                                 org_elem->isEdge(k, l) &&
                                 org_elem->getNode(k)->getID() ==
                                     org_elem->getNode(l)->getID())

@@ -474,7 +474,8 @@ private:
 
             // TODO enabling this check needs a refactoring of postTimestep(),
             // computeSecondaryVariable() etc. hooks.
-            if (/*copy_residua_to_mesh*/ true)
+            constexpr bool copy_residua_to_mesh = true;
+            if (copy_residua_to_mesh)
             {
                 AssemblyMixinBase::copyResiduumVectorsToSubmesh(
                     process_id, *b_submesh, *(dof_tables[process_id]), sad);

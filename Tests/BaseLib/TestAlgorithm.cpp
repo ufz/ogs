@@ -87,35 +87,35 @@ TEST(BaseLibAlgorithm, AnyOf)
     // empty array
     {
         constexpr std::array<bool, 0> arr = {};
-        static_assert(BL::any_of(arr) == false);
+        static_assert(!BL::any_of(arr));
     }
 
     // single element
     {
         constexpr std::array<bool, 1> arr = {false};
-        static_assert(BL::any_of(arr) == false);
+        static_assert(!BL::any_of(arr));
     }
     {
         constexpr std::array<bool, 1> arr = {true};
-        static_assert(BL::any_of(arr) == true);
+        static_assert(BL::any_of(arr));
     }
 
     // multiple elements
     {
         constexpr std::array<bool, 5> arr = {false, false, false, false, false};
-        static_assert(BL::any_of(arr) == false);
+        static_assert(!BL::any_of(arr));
     }
     {
         constexpr std::array<bool, 4> arr = {true, true, false, false};
-        static_assert(BL::any_of(arr) == true);
+        static_assert(BL::any_of(arr));
     }
     {
         constexpr std::array<bool, 3> arr = {false, true};
-        static_assert(BL::any_of(arr) == true);
+        static_assert(BL::any_of(arr));
     }
     {
         constexpr std::array<bool, 5> arr = {false, false, false, false, true};
-        static_assert(BL::any_of(arr) == true);
+        static_assert(BL::any_of(arr));
     }
 }
 
@@ -126,39 +126,39 @@ TEST(BaseLibAlgorithm, AllOf)
     // empty array
     {
         constexpr std::array<bool, 0> arr = {};
-        static_assert(BL::all_of(arr) == true);
+        static_assert(BL::all_of(arr));
     }
 
     // single element
     {
         constexpr std::array<bool, 1> arr = {false};
-        static_assert(BL::all_of(arr) == false);
+        static_assert(!BL::all_of(arr));
     }
     {
         constexpr std::array<bool, 1> arr = {true};
-        static_assert(BL::all_of(arr) == true);
+        static_assert(BL::all_of(arr));
     }
 
     // multiple elements
     {
         constexpr std::array<bool, 4> arr = {true, true, true, true};
-        static_assert(BL::all_of(arr) == true);
+        static_assert(BL::all_of(arr));
     }
     {
         constexpr std::array<bool, 5> arr = {false, true, true, true, true};
-        static_assert(BL::all_of(arr) == false);
+        static_assert(!BL::all_of(arr));
     }
     {
         constexpr std::array<bool, 4> arr = {true, false, true, true};
-        static_assert(BL::all_of(arr) == false);
+        static_assert(!BL::all_of(arr));
     }
     {
         constexpr std::array<bool, 5> arr = {true, true, true, true, false};
-        static_assert(BL::all_of(arr) == false);
+        static_assert(!BL::all_of(arr));
     }
     {
         constexpr std::array<bool, 5> arr = {true, false, false, true, false};
-        static_assert(BL::all_of(arr) == false);
+        static_assert(!BL::all_of(arr));
     }
 }
 
@@ -169,38 +169,38 @@ TEST(BaseLibAlgorithm, NoneOf)
     // empty array
     {
         constexpr std::array<bool, 0> arr = {};
-        static_assert(BL::none_of(arr) == true);
+        static_assert(BL::none_of(arr));
     }
 
     // single element
     {
         constexpr std::array<bool, 1> arr = {false};
-        static_assert(BL::none_of(arr) == true);
+        static_assert(BL::none_of(arr));
     }
     {
         constexpr std::array<bool, 1> arr = {true};
-        static_assert(BL::none_of(arr) == false);
+        static_assert(!BL::none_of(arr));
     }
 
     // multiple elements
     {
         constexpr std::array<bool, 4> arr = {false, false, false, false};
-        static_assert(BL::none_of(arr) == true);
+        static_assert(BL::none_of(arr));
     }
     {
         constexpr std::array<bool, 4> arr = {true, false, false, false};
-        static_assert(BL::none_of(arr) == false);
+        static_assert(!BL::none_of(arr));
     }
     {
         constexpr std::array<bool, 3> arr = {false, true, false};
-        static_assert(BL::none_of(arr) == false);
+        static_assert(!BL::none_of(arr));
     }
     {
         constexpr std::array<bool, 5> arr = {false, false, false, false, true};
-        static_assert(BL::none_of(arr) == false);
+        static_assert(!BL::none_of(arr));
     }
     {
         constexpr std::array<bool, 5> arr = {false, true, false, false, true};
-        static_assert(BL::none_of(arr) == false);
+        static_assert(!BL::none_of(arr));
     }
 }
