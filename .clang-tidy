@@ -28,6 +28,7 @@ WarningsAsErrors: >
   cppcoreguidelines-pro-type-member-init,
   readability-simplify-boolean-expr,
   readability-named-parameter,
+  readability-inconsistent-declaration-parameter-name,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:
