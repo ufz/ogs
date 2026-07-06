@@ -110,7 +110,7 @@ ConfigTree::~ConfigTree()
     catch (std::exception& e)
     {
         ERR("{:s}", e.what());
-        configtree_destructor_error_messages.push_front(e.what());
+        configtree_destructor_error_messages.emplace_front(e.what());
     }
 }
 

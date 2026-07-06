@@ -29,6 +29,7 @@ WarningsAsErrors: >
   readability-simplify-boolean-expr,
   readability-named-parameter,
   readability-inconsistent-declaration-parameter-name,
+  modernize-use-emplace,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:

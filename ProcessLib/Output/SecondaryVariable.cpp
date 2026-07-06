@@ -19,10 +19,9 @@ void SecondaryVariableCollection::addSecondaryVariable(
     std::string const& internal_name, SecondaryVariableFunctions&& fcts)
 {
     if (!_configured_secondary_variables
-             .emplace(std::make_pair(
-                 internal_name,
-                 SecondaryVariable{internal_name /* TODO change */,
-                                   std::move(fcts)}))
+             .emplace(internal_name,
+                      SecondaryVariable{internal_name /* TODO change */,
+                                        std::move(fcts)})
              .second)
     {
         OGS_FATAL(

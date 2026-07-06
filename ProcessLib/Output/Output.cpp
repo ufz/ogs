@@ -152,7 +152,7 @@ Output::Output(std::unique_ptr<OutputFormat>&& output_format,
 
 void Output::addProcess(ProcessLib::Process const& process)
 {
-    _output_processes.push_back(process);
+    _output_processes.emplace_back(process);
     if (_mesh_names_for_output.empty())
     {
         _mesh_names_for_output.push_back(process.getMesh().getName());

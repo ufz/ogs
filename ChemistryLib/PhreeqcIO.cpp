@@ -971,7 +971,7 @@ std::vector<std::string> const PhreeqcIO::getComponentList() const
                    std::back_inserter(component_names),
                    [](auto const& c) { return c.name; });
 
-    component_names.push_back("H");
+    component_names.emplace_back("H");
 
     return component_names;
 }

@@ -49,8 +49,7 @@ TEST_F(GeoLibSortLineSegments, SortSubSegments)
                 (1 - t) * s0.getBeginPoint()[0] + t * s0.getEndPoint()[0],
                 (1 - t) * s0.getBeginPoint()[1] + t * s0.getEndPoint()[1],
                 (1 - t) * s0.getBeginPoint()[2] + t * s0.getEndPoint()[2]});
-            sub_segments.emplace_back(
-                GeoLib::LineSegment{sub_seg_begin_pnt, sub_seg_end_pnt, true});
+            sub_segments.emplace_back(sub_seg_begin_pnt, sub_seg_end_pnt, true);
         }
     };
 

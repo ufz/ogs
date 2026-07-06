@@ -61,7 +61,7 @@ Process::Process(
               pcs_BCs.reserve(number_of_process_variables);
               for (std::size_t i = 0; i < number_of_process_variables; i++)
               {
-                  pcs_BCs.emplace_back(BoundaryConditionCollection(parameters));
+                  pcs_BCs.emplace_back(parameters);
               }
               return pcs_BCs;
           }(_process_variables.size())),
@@ -73,7 +73,7 @@ Process::Process(
               pcs_sts.reserve(number_of_processes);
               for (std::size_t i = 0; i < number_of_processes; i++)
               {
-                  pcs_sts.emplace_back(SourceTermCollection(parameters));
+                  pcs_sts.emplace_back(parameters);
               }
               return pcs_sts;
           }(_process_variables.size()))

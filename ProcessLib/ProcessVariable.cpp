@@ -91,7 +91,7 @@ std::vector<std::reference_wrapper<const MeshLib::Mesh>> findMeshInConfig(
     std::vector<std::reference_wrapper<const MeshLib::Mesh>> bc_meshes;
     for (auto const& mesh_name : mesh_names)
     {
-        bc_meshes.push_back(MeshLib::findMeshByName(meshes, mesh_name));
+        bc_meshes.emplace_back(MeshLib::findMeshByName(meshes, mesh_name));
         DBUG("Found mesh '{:s}' with id {:d}.", mesh_name,
              bc_meshes.back().get().getID());
     }

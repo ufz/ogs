@@ -39,7 +39,7 @@ std::vector<std::string> Properties::getPropertyVectorNames(
     {
         if (p.second->getMeshItemType() == t)
         {
-            names.push_back(std::string(p.first));
+            names.emplace_back(p.first);
         }
     }
     return names;
