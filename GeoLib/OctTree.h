@@ -139,7 +139,7 @@ private:
     /// vector of pointers to POINT objects
     std::vector<POINT*> _pnts;
     /// flag if this OctTree is a leaf
-    bool _is_leaf;
+    bool _is_leaf = true;
     /// threshold for point uniqueness
     double const _eps;
 };

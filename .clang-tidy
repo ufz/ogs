@@ -30,6 +30,7 @@ WarningsAsErrors: >
   readability-named-parameter,
   readability-inconsistent-declaration-parameter-name,
   modernize-use-emplace,
+  modernize-use-default-member-init,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:

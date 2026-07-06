@@ -16,7 +16,6 @@ namespace GeoLib
 EarClippingTriangulation::EarClippingTriangulation(
     GeoLib::Polygon const& polygon, std::list<GeoLib::Triangle>& triangles,
     bool rot)
-    : _original_orientation{GeoLib::Orientation::COLLINEAR}
 {
     copyPolygonPoints(polygon);
 

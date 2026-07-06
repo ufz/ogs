@@ -365,7 +365,6 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
-      _num_chemical_systems(0),
       _concentration_warning_threshold(concentration_warning_threshold),
       num_chemistry_threads_(num_chemistry_threads),
       _use_stream_mode(use_stream_mode)

@@ -143,7 +143,7 @@ protected:
     void setElementNeighbors();
 
     std::size_t const _id;
-    unsigned _mesh_dimension;
+    unsigned _mesh_dimension = 0;
     /// The minimal and maximal distance of nodes within an element over all
     /// elements in the mesh
     std::pair<double, double> _node_distance;

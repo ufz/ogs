@@ -48,6 +48,6 @@ private:
      */
     std::list<GeoLib::Triangle> _triangles;
 
-    GeoLib::Orientation _original_orientation;
+    GeoLib::Orientation _original_orientation = GeoLib::Orientation::COLLINEAR;
 };
 }  // end namespace GeoLib

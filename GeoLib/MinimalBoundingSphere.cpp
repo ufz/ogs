@@ -115,7 +115,7 @@ MinimalBoundingSphere::MinimalBoundingSphere(MathLib::Point3d const& p,
 
 MinimalBoundingSphere::MinimalBoundingSphere(
     std::vector<MathLib::Point3d*> const& points)
-    : _radius(-1), _center({0, 0, 0})
+    : _center{{0, 0, 0}}
 {
     const std::vector<MathLib::Point3d*>& sphere_points(points);
     MinimalBoundingSphere const bounding_sphere =

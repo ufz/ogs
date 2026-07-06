@@ -74,8 +74,8 @@ private:
     std::string& _geo_name;
 
     /// only necessary for mapping on mesh
-    MeshLib::Mesh* _surface_mesh;
-    GeoLib::Grid<MeshLib::Node>* _grid;
+    MeshLib::Mesh* _surface_mesh = nullptr;
+    GeoLib::Grid<MeshLib::Node>* _grid = nullptr;
 
     /// only necessary for mapping on DEM
     std::unique_ptr<GeoLib::Raster const> _raster;

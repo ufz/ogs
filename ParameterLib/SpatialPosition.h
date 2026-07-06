@@ -82,9 +82,9 @@ public:
 private:
     std::size_t _node_id = 0;
     std::size_t _element_id = 0;
-    MathLib::Point3d _coordinates{};
+    MathLib::Point3d _coordinates;
 
-    std::bitset<3> flags{};
+    std::bitset<3> flags;
     static constexpr std::size_t node_bit = 0;
     static constexpr std::size_t element_bit = 1;
     static constexpr std::size_t coordinates_bit = 2;

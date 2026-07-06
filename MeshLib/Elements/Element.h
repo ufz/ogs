@@ -190,7 +190,7 @@ protected:
 
     std::size_t _id;
 
-    Element** _neighbors;
+    Element** _neighbors = nullptr;
     /// Sets the neighbor over the face with \c face_id to the given \c
     /// neighbor.
     void setNeighbor(Element* neighbor, unsigned const face_id);
