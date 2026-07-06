@@ -6,7 +6,7 @@ authors:
 date: 2017-01-13T14:24:23+01:00
 
 hero:
-  eyebrow: Open-source multi-physics · OGS-6
+  eyebrow: OpenGeoSys · Open-source multi-physics
   headline: Simulating coupled processes in porous & fractured media
   textline: OpenGeoSys (OGS) is a scientific [open-source](https://gitlab.opengeosys.org/ogs/ogs) finite-element framework for the numerical simulation of thermo-hydro-mechanical-chemical (THMC) processes in the subsurface.
   images:
@@ -30,22 +30,22 @@ stats:
     label: Free & open source
     link: https://gitlab.opengeosys.org/ogs/ogs
 
-application_areas_intro: The same THMC framework underpins research questions across the geosciences — three of the most active fields are shown below.
+application_areas_intro: The same simulation framework underpins research questions across the geosciences — three of the most active fields are shown below.
 
 application_areas:
-  - eyebrow: 01 / Subsurface water
+  - eyebrow:
     headline: Hydrology
     textline: From regional groundwater flow to contaminant and coastal transport, OGS resolves how water and solutes move through complex subsurface domains.
     visual:
       permalink: features/vis/DEMSelke3D.png
       alt: Groundwater model
-  - eyebrow: 02 / Deep heat
+  - eyebrow:
     headline: Geothermal energy
     textline: Model heat extraction and storage in the deep subsurface, capturing the coupled thermal, hydraulic and mechanical response of geothermal reservoirs.
     visual:
       permalink: features/vis/layeredview2.png
       alt: Geothermal reservoir model
-  - eyebrow: 03 / Long-term safety
+  - eyebrow:
     headline: Nuclear-waste disposal
     textline: Assess deep geological repositories over long timescales, resolving the full THMC evolution of the host rock and engineered barrier system.
     visual:
@@ -121,16 +121,16 @@ features:
 workflow_intro: The tools above are not isolated — they chain into a single reproducible pipeline. Every stage reads and writes open, standard formats, so a model flows from raw field data to published results without ever leaving the OGS ecosystem.
 
 workflow_steps:
-  - number: "01"
+  - number:
     headline: Input data
     textline: Field measurements, geological models and geometry imported into OGS data formats.
-  - number: "02"
+  - number:
     headline: Mesh & parametrize
     textline: Build and refine meshes, then assign material parameters, boundary conditions and source terms.
-  - number: "03"
+  - number:
     headline: Coupled simulation
     textline: Solve THMC processes monolithically or staggered, in parallel on HPC through PETSc and MPI.
-  - number: "04"
+  - number:
     headline: Results & visualization
     textline: Export VTK for ParaView and VR — analysis, verification and publication-ready figures.
 
