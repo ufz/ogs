@@ -40,7 +40,7 @@ TEST(MeshLib, GetElementRotationMatrices3DMesh)
     std::vector<MeshLib::Element*> elements;
 
     // One hexahedral element:
-    std::array<MeshLib::Node*, 8> hex_element_nodes;
+    std::array<MeshLib::Node*, 8> hex_element_nodes{};
     std::copy_n(nodes.begin(), 8, hex_element_nodes.begin());
     elements.push_back(new MeshLib::Hex(hex_element_nodes));
 

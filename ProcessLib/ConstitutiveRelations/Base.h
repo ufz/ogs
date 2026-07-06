@@ -89,8 +89,8 @@ void assign(std::tuple<PrevState<Ts>...>& prev_states,
 struct SpaceTimeData
 {
     ParameterLib::SpatialPosition x;
-    double t;
-    double dt;
+    double t = 0;
+    double dt = 0;
 };
 
 /// Convenience alias for not a number.

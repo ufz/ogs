@@ -25,7 +25,7 @@ namespace SmallDeformation
 template <int DisplacementDim>
 struct SmallDeformationProcessData
 {
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
 
     /// The constitutive relation for the mechanical part.
     std::map<int, std::shared_ptr<
@@ -36,11 +36,11 @@ struct SmallDeformationProcessData
         fracture_model;
     std::vector<FractureProperty> fracture_properties;
 
-    double const reference_temperature;
+    double const reference_temperature = 0;
 
     /// An indicator to use the B bar method \cite hughes1980generalization to
     /// tackle the  volumetric locking.
-    const bool use_b_bar;
+    const bool use_b_bar = false;
 
     std::vector<JunctionProperty> junction_properties = {};
 

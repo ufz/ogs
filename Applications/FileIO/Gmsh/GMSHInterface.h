@@ -16,7 +16,7 @@ namespace GeoLib
 {
 class GEOObjects;
 class Polygon;
-}
+}  // namespace GeoLib
 
 namespace FileIO
 {
@@ -27,9 +27,10 @@ namespace GMSH
 class GMSHPolygonTree;
 class GMSHMeshDensityStrategy;
 
-enum class MeshDensityAlgorithm {
-    FixedMeshDensity, //!< set the parameter with a fixed value
-    AdaptiveMeshDensity //!< computing the mesh density employing a QuadTree
+enum class MeshDensityAlgorithm
+{
+    FixedMeshDensity,    //!< set the parameter with a fixed value
+    AdaptiveMeshDensity  //!< computing the mesh density employing a QuadTree
 };
 
 /**
@@ -67,9 +68,9 @@ public:
                   bool rotate, bool keep_preprocessed_geometry);
 
     GMSHInterface(GMSHInterface const&) = delete;
-    GMSHInterface(GMSHInterface &&) = delete;
+    GMSHInterface(GMSHInterface&&) = delete;
     GMSHInterface& operator=(GMSHInterface const&) = delete;
-    GMSHInterface& operator=(GMSHInterface &&) = delete;
+    GMSHInterface& operator=(GMSHInterface&&) = delete;
 
     ~GMSHInterface() override;
 
@@ -87,12 +88,12 @@ private:
      * i.e. 0 = okay, 1 = geo_objects is empty, 2 = error while merging,
      * 3 = error writing file
      */
-    int writeGMSHInputFile(std::ostream & out);
+    int writeGMSHInputFile(std::ostream& out);
 
-    std::size_t _n_lines;
-    std::size_t _n_plane_sfc;
+    std::size_t _n_lines = 0;
+    std::size_t _n_plane_sfc = 0;
 
-    GeoLib::GEOObjects & _geo_objs;
+    GeoLib::GEOObjects& _geo_objs;
     std::vector<std::string> const& _selected_geometries;
     std::string _gmsh_geo_name;
     std::list<GMSH::GMSHPolygonTree*> _polygon_tree_list;
@@ -109,5 +110,5 @@ private:
     bool _keep_preprocessed_geometry = true;
     bool _write_physical_groups = false;
 };
-} // end namespace GMSH
-} // end namespace FileIO
+}  // end namespace GMSH
+}  // end namespace FileIO

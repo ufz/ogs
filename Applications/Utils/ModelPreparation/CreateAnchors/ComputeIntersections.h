@@ -18,8 +18,8 @@ namespace AU = ApplicationUtils;
 struct IntersectionResult
 {
     Eigen::Vector3d point;
-    double t;  // parameter along the line from p0 to p1, i.e. p = p0 + t*(p1 -
-               // p0) used for sorting
+    double t = 0;  // parameter along the line from p0 to p1, i.e. p = p0 +
+                   // t*(p1 - p0) used for sorting
 };
 
 /// @brief  Finds intersection points of a line segment with the cells of a

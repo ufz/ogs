@@ -32,7 +32,7 @@ template <int DisplacementDim>
 auto vectorizedTensorToMatrixMapping()
 {
     static constexpr int size = VectorizedTensor::size(DisplacementDim);
-    ac::randomEigenMatrixGenerator<double, size, 1> generator;
+    ac::randomEigenMatrixGenerator<double, size, 1> generator{};
 
     auto to_tensor_and_back =
         [](VectorizedTensor::Type<DisplacementDim> const& v)
@@ -190,7 +190,7 @@ template <int DisplacementDim>
 auto vectorizedTensorDeterminant()
 {
     static constexpr int size = VectorizedTensor::size(DisplacementDim);
-    ac::randomEigenMatrixGenerator<double, size, 1> generator;
+    ac::randomEigenMatrixGenerator<double, size, 1> generator{};
 
     auto f = [](VectorizedTensor::Type<DisplacementDim> const& v)
     {

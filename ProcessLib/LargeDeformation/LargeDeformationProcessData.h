@@ -38,18 +38,19 @@ struct LargeDeformationProcessData
 
     /// Optional, initial stress field. A symmetric tensor, short vector
     /// representation of length 4 or 6, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const* const initial_stress;
+    ParameterLib::Parameter<double> const* const initial_stress = nullptr;
 
     /// Specific body forces applied to the solid.
     /// It is usually used to apply gravitational forces.
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    ParameterLib::Parameter<double> const* const reference_temperature;
+    ParameterLib::Parameter<double> const* const reference_temperature =
+        nullptr;
 
     /// Method type to compute \f$\det(\mathbf F)\f$ for the F bar method to
     /// tackle the  volumetric locking.
-    NonLinearFbar::BarDetFType const bar_det_f_type;
+    NonLinearFbar::BarDetFType const bar_det_f_type{};
 
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {
         nullptr, nullptr, nullptr};

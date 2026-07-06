@@ -47,9 +47,7 @@ GMSHInterface::GMSHInterface(
     std::size_t const max_pnts_per_leaf,
     std::vector<std::string> const& selected_geometries, bool const rotate,
     bool const keep_preprocessed_geometry)
-    : _n_lines(0),
-      _n_plane_sfc(0),
-      _geo_objs(geo_objs),
+    : _geo_objs(geo_objs),
       _selected_geometries(selected_geometries),
       _rotate(rotate),
       _keep_preprocessed_geometry(keep_preprocessed_geometry)

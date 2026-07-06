@@ -47,7 +47,7 @@ struct ThermoHydroMechanicsProcessData
     /// the Neumann boundary condition for the fluid phase is m/s. Otherwise,
     /// the unit of the Neumann boundary condition is kg/m^3*m/s = kg/m^2/s.
     /// Default value is `volume`.
-    bool const is_volume_balance_equation_type;
+    bool const is_volume_balance_equation_type = false;
 
     InitialStress const initial_stress;
 

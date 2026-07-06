@@ -34,7 +34,7 @@ template <typename BMatricesType, typename ShapeMatricesType,
           int DisplacementDim>
 struct IntegrationPointData final
 {
-    double integration_weight;
+    double integration_weight = 0;
     typename ShapeMatricesType::NodalRowVectorType N_u;
     typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx_u;
 

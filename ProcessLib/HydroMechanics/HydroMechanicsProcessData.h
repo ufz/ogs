@@ -71,19 +71,19 @@ struct HydroMechanicsProcessData
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
     /// If set mass lumping will be applied to the pressure equation.
-    bool const mass_lumping;
+    bool const mass_lumping = false;
 
     CouplingScheme coupling_scheme;
 
     /// ID of hydraulic process.
-    int const hydraulic_process_id;
+    int const hydraulic_process_id = 0;
 
     /// ID of the processes that contains mechanical process.
-    int const mechanics_related_process_id;
+    int const mechanics_related_process_id = 0;
 
-    const bool use_taylor_hood_elements;
+    const bool use_taylor_hood_elements = false;
 
-    MaterialPropertyLib::Variable const phase_variable;
+    MaterialPropertyLib::Variable const phase_variable{};
 
     MeshLib::PropertyVector<double>* pressure_interpolated = nullptr;
     std::array<MeshLib::PropertyVector<double>*, 3> principal_stress_vector = {

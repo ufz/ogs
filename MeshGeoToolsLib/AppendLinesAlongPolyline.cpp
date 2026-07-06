@@ -58,7 +58,7 @@ std::unique_ptr<MeshLib::Mesh> appendLinesAlongPolylines(
         // add line elements
         for (std::size_t i = 0; i < vec_nodes_on_ply.size() - 1; i++)
         {
-            std::array<MeshLib::Node*, 2> element_nodes;
+            std::array<MeshLib::Node*, 2> element_nodes{};
             element_nodes[0] = vec_new_nodes[vec_nodes_on_ply[i]];
             element_nodes[1] = vec_new_nodes[vec_nodes_on_ply[i + 1]];
             vec_new_eles.push_back(

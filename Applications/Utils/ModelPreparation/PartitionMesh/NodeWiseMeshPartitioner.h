@@ -19,11 +19,11 @@ namespace ApplicationUtils
 struct Partition
 {
     std::vector<MeshLib::Node const*> nodes;  ///< nodes.
-    std::size_t number_of_regular_base_nodes;
-    std::size_t number_of_regular_nodes;
-    std::size_t number_of_base_nodes;
-    std::size_t number_of_mesh_base_nodes;
-    std::size_t number_of_mesh_all_nodes;
+    std::size_t number_of_regular_base_nodes = 0;
+    std::size_t number_of_regular_nodes = 0;
+    std::size_t number_of_base_nodes = 0;
+    std::size_t number_of_mesh_base_nodes = 0;
+    std::size_t number_of_mesh_all_nodes = 0;
     /// Non ghost elements
     std::vector<const MeshLib::Element*> regular_elements;
     std::vector<const MeshLib::Element*> ghost_elements;

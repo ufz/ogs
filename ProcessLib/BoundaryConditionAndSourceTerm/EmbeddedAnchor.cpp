@@ -259,7 +259,7 @@ void EmbeddedAnchor<GlobalDim>::integrate(const double /*t*/,
         std::vector<GlobalIndexType> global_indices;
         Eigen::Vector<double, 2 * GlobalDim> local_x;
         std::vector<Eigen::RowVectorXd> shape_matrices;
-        std::array<std::size_t, 2> nodes_per_element;
+        std::array<std::size_t, 2> nodes_per_element{};
         ParameterLib::SpatialPosition pos;
         getShapeMatricesAndGlobalIndicesAndDisplacements(
             anchor_element, nodes_per_element, shape_matrices, global_indices,

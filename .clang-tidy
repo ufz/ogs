@@ -25,6 +25,7 @@ WarningsAsErrors: >
   modernize-loop-convert,
   readability-braces-around-statements,
   readability-else-after-return,
+  cppcoreguidelines-pro-type-member-init,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:

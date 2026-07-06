@@ -57,8 +57,8 @@ struct MatrixElementCacheEntry
         default;
     MatrixElementCacheEntry& operator=(MatrixElementCacheEntry&&) = default;
 
-    std::array<GlobalIndexType, Dim> indices;
-    double value;
+    std::array<GlobalIndexType, Dim> indices{};
+    double value = 0;
 };
 
 template <std::size_t Dim>
@@ -120,7 +120,7 @@ private:
     // Overload for vectors.
     void addToCacheImpl(std::vector<double> const& values,
                         std::vector<GlobalIndexType> const& indices,
-                        std::integral_constant<std::size_t, 1>)
+                        std::integral_constant<std::size_t, 1> /*dim*/)
     {
         auto const num_r_c = indices.size();
         auto const* const __restrict val = values.data();
@@ -155,7 +155,7 @@ private:
     // Overload for matrices.
     void addToCacheImpl(std::vector<double> const& values,
                         std::vector<GlobalIndexType> const& indices,
-                        std::integral_constant<std::size_t, 2>)
+                        std::integral_constant<std::size_t, 2> /*dim*/)
     {
         auto const num_r_c = indices.size();
         auto const total_entries = num_r_c * num_r_c;

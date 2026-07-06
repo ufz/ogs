@@ -20,6 +20,6 @@ struct ComputeNaturalCoordsResult
     Eigen::VectorXd anchor_stiffness;
     Eigen::VectorX<vtkIdType> bulk_element_ids;
     Eigen::VectorX<vtkIdType> point_cloud_node_ids;
-    bool success;
+    bool success = false;
 };
 }  // namespace ApplicationUtils

@@ -31,7 +31,7 @@ template <typename Shp>
 static std::array<double, 3> interpolateNodeCoordinates(
     MeshLib::Element const& e, Shp const& N)
 {
-    std::array<double, 3> res;
+    std::array<double, 3> res{};
 
     auto const* const nodes = e.getNodes();
     auto node_coords = N;

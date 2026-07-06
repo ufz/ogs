@@ -30,7 +30,7 @@ struct IntegrationPointData final
     double dry_density_pellet_unsaturated =
         std::numeric_limits<double>::quiet_NaN();
 
-    double integration_weight;
+    double integration_weight = 0;
 
     void pushBackState()
     {

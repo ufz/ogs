@@ -11,8 +11,8 @@ namespace ProcessLib::ThermoRichardsMechanics
 template <int DisplacementDim>
 struct PermeabilityData
 {
-    double k_rel;
-    double dk_rel_dS_L;
+    double k_rel = 0;
+    double dk_rel_dS_L = 0;
     GlobalDimMatrix<DisplacementDim> Ki;
 
     static auto reflect()

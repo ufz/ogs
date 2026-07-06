@@ -15,7 +15,7 @@ namespace ac = autocheck;
 struct MaterialLibSolidsKelvinVector4 : public ::testing::Test
 {
     static const int size = 4;
-    ac::randomEigenMatrixGenerator<double, size, 1> kelvinVectorGenerator;
+    ac::randomEigenMatrixGenerator<double, size, 1> kelvinVectorGenerator{};
 
     ac::gtest_reporter gtest_reporter;
 };
@@ -23,7 +23,7 @@ struct MaterialLibSolidsKelvinVector4 : public ::testing::Test
 struct MaterialLibSolidsKelvinVector6 : public ::testing::Test
 {
     static const int size = 6;
-    ac::randomEigenMatrixGenerator<double, size, 1> kelvinVectorGenerator;
+    ac::randomEigenMatrixGenerator<double, size, 1> kelvinVectorGenerator{};
 
     ac::gtest_reporter gtest_reporter;
 };
@@ -31,7 +31,7 @@ struct MaterialLibSolidsKelvinVector6 : public ::testing::Test
 struct MaterialLibSolidsVector2 : public ::testing::Test
 {
     static const int size = 2;
-    ac::randomEigenMatrixGenerator<double, size, 1> VectorGenerator;
+    ac::randomEigenMatrixGenerator<double, size, 1> VectorGenerator{};
 
     ac::gtest_reporter gtest_reporter;
 };
@@ -39,7 +39,7 @@ struct MaterialLibSolidsVector2 : public ::testing::Test
 struct MaterialLibSolidsVector3 : public ::testing::Test
 {
     static const int size = 3;
-    ac::randomEigenMatrixGenerator<double, size, 1> VectorGenerator;
+    ac::randomEigenMatrixGenerator<double, size, 1> VectorGenerator{};
 
     ac::gtest_reporter gtest_reporter;
 };

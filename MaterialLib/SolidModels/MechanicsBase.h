@@ -68,7 +68,8 @@ struct MechanicsBase
     virtual void initializeInternalStateVariables(
         double const /*t*/,
         ParameterLib::SpatialPosition const& /*x*/,
-        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&) const
+        typename MechanicsBase<DisplacementDim>::MaterialStateVariables&
+        /*material_state_variables*/) const
     {
     }
 
@@ -105,7 +106,7 @@ struct MechanicsBase
         std::string const name;
 
         /// number of components of the internal variable
-        int const num_components;
+        int const num_components = 0;
 
         /// function accessing the internal variable
         Getter const getter;

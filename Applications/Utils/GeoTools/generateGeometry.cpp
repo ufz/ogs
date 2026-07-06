@@ -106,7 +106,7 @@ int generateQuadGeometry(GeoLib::Point const& point0,
     std::array<GeoLib::Point, 4> edge_points;
     edge_points[0] = point0;
     edge_points[2] = point1;
-    std::array<int, 4> number_of_subdivisions;
+    std::array<int, 4> number_of_subdivisions{};
     if (point0[0] != point1[0] && point0[1] != point1[1] &&
         point0[2] == point1[2])
     {

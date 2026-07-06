@@ -42,9 +42,9 @@ struct TH2MProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    bool const apply_mass_lumping;
+    bool const apply_mass_lumping = false;
 
-    const bool use_TaylorHood_elements;
+    const bool use_TaylorHood_elements = false;
 
     InitializePorosityFromMediumProperty const
         initialize_porosity_from_medium_property;

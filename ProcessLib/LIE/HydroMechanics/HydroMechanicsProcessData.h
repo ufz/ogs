@@ -28,7 +28,7 @@ namespace HydroMechanics
 template <int DisplacementDim>
 struct HydroMechanicsProcessData
 {
-    MeshLib::PropertyVector<int> const* const material_ids;
+    MeshLib::PropertyVector<int> const* const material_ids = nullptr;
     std::map<int, std::shared_ptr<
                       MaterialLib::Solids::MechanicsBase<DisplacementDim>>>
         solid_materials;
@@ -43,11 +43,11 @@ struct HydroMechanicsProcessData
     ParameterLib::Parameter<double> const& initial_effective_stress;
     ParameterLib::Parameter<double> const& initial_fracture_effective_stress;
 
-    bool const deactivate_matrix_in_flow;
+    bool const deactivate_matrix_in_flow = false;
 
     /// An indicator to use the B bar method \cite hughes1980generalization to
     /// tackle the  volumetric locking.
-    const bool use_b_bar;
+    const bool use_b_bar = false;
 
     std::vector<JunctionProperty> junction_properties = {};
 

@@ -12,7 +12,8 @@
 namespace GeoLib
 {
 class Point;
-template <typename T> class QuadTree;
+template <typename T>
+class QuadTree;
 #ifndef NDEBUG
 class GEOObjects;
 #endif
@@ -35,8 +36,8 @@ public:
     void addPoints(std::vector<GeoLib::Point const*> const& pnts);
     double getMeshDensityAtStation(
         GeoLib::Point const* const /*unused*/) const override;
-    void getSteinerPoints (std::vector<GeoLib::Point*> & pnts,
-                           std::size_t additional_levels = 0) const;
+    void getSteinerPoints(std::vector<GeoLib::Point*>& pnts,
+                          std::size_t additional_levels = 0) const;
 #ifndef NDEBUG
     std::string getQuadTreeGeometry(GeoLib::GEOObjects& geo_objs) const;
 #endif
@@ -45,8 +46,8 @@ private:
     double _pnt_density;
     double _station_density;
     std::size_t _max_pnts_per_leaf;
-    GeoLib::QuadTree<GeoLib::Point> *_quad_tree;
+    GeoLib::QuadTree<GeoLib::Point>* _quad_tree = nullptr;
 };
 
 }  // namespace GMSH
-} // end namespace FileIO
+}  // end namespace FileIO

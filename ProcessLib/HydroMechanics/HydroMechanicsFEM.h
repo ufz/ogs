@@ -55,7 +55,7 @@ struct IntegrationPointData final
     std::unique_ptr<typename MaterialLib::Solids::MechanicsBase<
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
-    double integration_weight;
+    double integration_weight = 0;
 
     // previous pressure rate for the fixed stress splitting
     // approach in the staggered scheme.

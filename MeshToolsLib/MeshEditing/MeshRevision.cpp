@@ -67,7 +67,7 @@ std::unique_ptr<MeshLib::Element> createElement(
                                         { return values[n]; });
     };
 
-    std::array<MeshLib::Node*, ElementType::n_all_nodes> new_nodes;
+    std::array<MeshLib::Node*, ElementType::n_all_nodes> new_nodes{};
     ranges::copy(local_ids | lookup_in(element_nodes) | ids | lookup_in(nodes),
                  begin(new_nodes));
 
@@ -174,7 +174,7 @@ MeshLib::Element* constructTri(MeshLib::Element const* const element,
     // In theory three unique nodes could also be reduced to two lines e.g. with
     // a quad where two diametral nodes collapse. This case is currently not
     // implemented!
-    std::array<MeshLib::Node*, 3> tri_nodes;
+    std::array<MeshLib::Node*, 3> tri_nodes{};
     tri_nodes[0] = nodes[element->getNode(0)->getID()];
     tri_nodes[2] = nullptr;
     for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)
@@ -207,7 +207,7 @@ MeshLib::Element* constructFourNodeElement(
     std::vector<MeshLib::Node*> const& nodes,
     unsigned const min_elem_dim = 1)
 {
-    std::array<MeshLib::Node*, 4> new_nodes;
+    std::array<MeshLib::Node*, 4> new_nodes{};
     unsigned count(0);
     new_nodes[count++] = nodes[element->getNode(0)->getID()];
     for (unsigned i = 1; i < element->getNumberOfBaseNodes(); ++i)

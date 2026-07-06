@@ -110,7 +110,7 @@ public:
     {
         auto* nodes = _ele->getNodes();
         typename ShapeMatrices::ShapeType rs(N.size());
-        std::array<double, 3> interpolated_coords;
+        std::array<double, 3> interpolated_coords{};
         for (int d = 0; d < 3; ++d)
         {
             for (int i = 0; i < rs.size(); ++i)

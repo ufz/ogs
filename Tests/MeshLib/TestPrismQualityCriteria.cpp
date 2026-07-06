@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 
+#include <limits>
 #include <memory>
 #include <numeric>
 #include <random>
@@ -37,8 +38,9 @@ public:
         return element_quality.getQualityVector();
     }
 
-    std::array<double, 3> lengths;
-    std::array<int, 3> n_subdivisions;
+    static constexpr double nan = std::numeric_limits<double>::quiet_NaN();
+    std::array<double, 3> lengths = {nan, nan, nan};
+    std::array<int, 3> n_subdivisions = {-1, -1, -1};
 };
 
 TEST_F(PrismElementQuality, ElementSize)

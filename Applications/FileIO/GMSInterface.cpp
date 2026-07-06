@@ -235,7 +235,7 @@ MeshLib::Mesh* GMSInterface::readMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 mat_id;
-            std::array<MeshLib::Node*, 3> tri_nodes;
+            std::array<MeshLib::Node*, 3> tri_nodes{};
             for (unsigned k(0); k < 3; k++)
             {
                 tri_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -247,7 +247,7 @@ MeshLib::Mesh* GMSInterface::readMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[3] >> node_idx[1] >>
                 node_idx[4] >> node_idx[2] >> node_idx[5] >> mat_id;
-            std::array<MeshLib::Node*, 3> tri_nodes;
+            std::array<MeshLib::Node*, 3> tri_nodes{};
             for (unsigned k(0); k < 3; k++)
             {
                 tri_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -259,7 +259,7 @@ MeshLib::Mesh* GMSInterface::readMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> node_idx[4] >> node_idx[5] >> mat_id;
-            std::array<MeshLib::Node*, 6> prism_nodes;
+            std::array<MeshLib::Node*, 6> prism_nodes{};
             for (unsigned k(0); k < 6; k++)
             {
                 prism_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -271,7 +271,7 @@ MeshLib::Mesh* GMSInterface::readMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> mat_id;
-            std::array<MeshLib::Node*, 4> tet_nodes;
+            std::array<MeshLib::Node*, 4> tet_nodes{};
             for (unsigned k(0); k < 4; k++)
             {
                 tet_nodes[k] = nodes[id_map.find(node_idx[k])->second];
@@ -284,7 +284,7 @@ MeshLib::Mesh* GMSInterface::readMesh(const std::string& filename)
         {
             str >> dummy >> id >> node_idx[0] >> node_idx[1] >> node_idx[2] >>
                 node_idx[3] >> node_idx[4] >> mat_id;
-            std::array<MeshLib::Node*, 5> pyramid_nodes;
+            std::array<MeshLib::Node*, 5> pyramid_nodes{};
             for (unsigned k(0); k < 5; k++)
             {
                 pyramid_nodes[k] = nodes[id_map.find(node_idx[k])->second];

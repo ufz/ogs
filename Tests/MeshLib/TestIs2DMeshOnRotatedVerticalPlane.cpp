@@ -78,7 +78,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
 
     // 3D mesh:
     {
-        std::array<MeshLib::Node*, 4> element_nodes;
+        std::array<MeshLib::Node*, 4> element_nodes{};
         element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
         element_nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0, 1);
         element_nodes[2] = new MeshLib::Node(0.0, 1.0, 0.0, 2);
@@ -97,7 +97,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
     // Inclined 2D mesh but it is not on a plane rotated around the vertical
     // axis:
     {
-        std::array<MeshLib::Node*, 4> element_nodes;
+        std::array<MeshLib::Node*, 4> element_nodes{};
         element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
         element_nodes[1] = new MeshLib::Node(1.0, 1.0, 0.0, 1);
         element_nodes[2] = new MeshLib::Node(0.2, 0.5, 1.0, 2);
@@ -115,7 +115,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
 
     // 1D mesh:
     {
-        std::array<MeshLib::Node*, 2> element_nodes;
+        std::array<MeshLib::Node*, 2> element_nodes{};
         element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
         element_nodes[1] = new MeshLib::Node(0.2, 0.5, 1.0, 1);
 
@@ -131,7 +131,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
 
     // 2D mesh on x-y plane:
     {
-        std::array<MeshLib::Node*, 4> element_nodes;
+        std::array<MeshLib::Node*, 4> element_nodes{};
         element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
         element_nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0, 1);
         element_nodes[2] = new MeshLib::Node(1.0, 1.0, 0.0, 2);
@@ -143,7 +143,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
 
     // 2D mesh on y-z plane:
     {
-        std::array<MeshLib::Node*, 4> element_nodes;
+        std::array<MeshLib::Node*, 4> element_nodes{};
         element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
         element_nodes[1] = new MeshLib::Node(0.0, 1.0, 0.0, 1);
         element_nodes[2] = new MeshLib::Node(0.0, 1.0, 1.0, 2);
@@ -155,7 +155,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
 
     // 2D mesh on x-z plane:
     {
-        std::array<MeshLib::Node*, 4> element_nodes;
+        std::array<MeshLib::Node*, 4> element_nodes{};
         element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
         element_nodes[1] = new MeshLib::Node(1.0, 0.0, 0.0, 1);
         element_nodes[2] = new MeshLib::Node(1.0, 0.0, 1.0, 2);
@@ -167,7 +167,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
 
     // 2D mesh on the plane rotated around y axis:
     {
-        std::array<MeshLib::Node*, 4> element_nodes;
+        std::array<MeshLib::Node*, 4> element_nodes{};
         element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
         element_nodes[1] = new MeshLib::Node(0.2, 0.0, 0.5, 1);
         element_nodes[2] = new MeshLib::Node(0.2, 1.0, 0.5, 2);
@@ -179,7 +179,7 @@ TEST(MeshLib, Is2DMeshOnRotatedVerticalPlane)
 
     // 2D mesh on the plane rotated around z axis:
     {
-        std::array<MeshLib::Node*, 4> element_nodes;
+        std::array<MeshLib::Node*, 4> element_nodes{};
         element_nodes[0] = new MeshLib::Node(0.0, 0.0, 0.0, 0);
         element_nodes[1] = new MeshLib::Node(0.2, 0.5, 0.0, 1);
         element_nodes[2] = new MeshLib::Node(0.2, 0.5, 1.0, 2);

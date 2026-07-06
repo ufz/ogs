@@ -16,12 +16,12 @@ namespace GeoLib
 /// Contains the relevant information when storing a geoscientific raster data
 struct RasterHeader final
 {
-    std::size_t n_cols;       // width
-    std::size_t n_rows;       // height
-    std::size_t n_depth;      // depth (for 3d image)
+    std::size_t n_cols = 0;   // width
+    std::size_t n_rows = 0;   // height
+    std::size_t n_depth = 0;  // depth (for 3d image)
     MathLib::Point3d origin;  // lower left corner
-    double cell_size;         // edge length of each pixel
-    double no_data;           // no data value
+    double cell_size = 0;     // edge length of each pixel
+    double no_data = 0;       // no data value
 
     bool operator==(RasterHeader const&) const = default;
 };

@@ -86,7 +86,7 @@ public:
 
 private:
     double weight_;
-    std::array<double, 3> coords_;
+    std::array<double, 3> coords_{};
     std::size_t dim_;
 };
 

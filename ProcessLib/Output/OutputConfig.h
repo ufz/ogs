@@ -26,12 +26,12 @@ struct OutputConfig
     /// are written to a `.h5` HDF5 file and a `.xdmf` file references the
     /// actual data in the `.h5` file.  Both, the `.pvd` and the `.xdmf` files
     /// can be loaded by Paraview and other VTK based post-processing tools.
-    OutputType output_type;
+    OutputType output_type = OutputType::vtk;
     std::string prefix;
     std::string suffix;
-    bool compress_output;
-    unsigned int number_of_files;
-    unsigned int chunk_size_bytes;
+    bool compress_output = false;
+    unsigned int number_of_files = 1;
+    unsigned int chunk_size_bytes = 0;
     std::string data_mode;
     /// A list of repeat/step-count pairs. If the list is empty, and no
     /// fixed_output_times were specified, a default pair 1/1 will be inserted
@@ -48,7 +48,7 @@ struct OutputConfig
     /// for restart) for example `sigma_ip`.  Available names are process and
     /// material models specific and can not be listed here.
     std::set<std::string> output_variables;
-    bool output_extrapolation_residuals;
+    bool output_extrapolation_residuals = false;
     std::vector<std::string> mesh_names_for_output;
     /// A list of points in time for output. These fixed output times are taken
     /// by the simulation independent of what time stepping scheme is specified.
@@ -56,6 +56,6 @@ struct OutputConfig
     /// Often used to arrive at some critical points in the simulation like load
     /// change.
     std::vector<double> fixed_output_times;
-    bool output_iteration_results;
+    bool output_iteration_results = false;
 };
 }  // namespace ProcessLib

@@ -53,7 +53,7 @@ struct IntegrationPointData final
         DisplacementDim>::MaterialStateVariables>
         material_state_variables;
 
-    double integration_weight;
+    double integration_weight = 0;
     typename ShapeMatricesType::NodalRowVectorType N;
     typename ShapeMatricesType::GlobalDimNodalMatrixType dNdx;
 

@@ -15,7 +15,8 @@ ConvergenceCriterionResidual::ConvergenceCriterionResidual(
     const MathLib::VecNormType norm_type)
     : ConvergenceCriterion(norm_type),
       _abstol(std::move(absolute_tolerance)),
-      _reltol(std::move(relative_tolerance))
+      _reltol(std::move(relative_tolerance)),
+      _residual_norm_0{0.0}
 {
     if ((!_abstol) && (!_reltol))
     {

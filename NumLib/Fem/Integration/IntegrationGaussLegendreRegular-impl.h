@@ -10,7 +10,7 @@ inline std::array<unsigned, 1>
 IntegrationGaussLegendreRegular<1>::getPositionIndices(unsigned /*order*/,
                                                        unsigned igp)
 {
-    std::array<unsigned, 1> result;
+    std::array<unsigned, 1> result{};
     result[0] = igp;
     return result;
 }
@@ -21,7 +21,7 @@ IntegrationGaussLegendreRegular<2>::getPositionIndices(unsigned order,
                                                        unsigned igp)
 {
     assert(igp < order * order);
-    std::array<unsigned, 2> result;
+    std::array<unsigned, 2> result{};
     result[0] = igp / order;
     result[1] = igp % order;
     return result;
@@ -35,7 +35,7 @@ IntegrationGaussLegendreRegular<3>::getPositionIndices(unsigned order,
     assert(igp < order * order * order);
     unsigned const gp_r = igp / (order * order);
     unsigned const gp_s = igp % (order * order);
-    std::array<unsigned, 3> result;
+    std::array<unsigned, 3> result{};
     result[0] = gp_r;
     result[1] = gp_s / order;
     result[2] = gp_s % order;
@@ -70,7 +70,7 @@ inline MathLib::WeightedPoint
 IntegrationGaussLegendreRegular<N_DIM>::getWeightedPoint(
     std::array<unsigned, N_DIM> const& pos)
 {
-    std::array<double, N_DIM> coords;
+    std::array<double, N_DIM> coords{};
     double weight = 1;
     for (unsigned d = 0; d < N_DIM; d++)
     {

@@ -14,12 +14,12 @@ namespace ac = autocheck;
 
 struct MathLibPoint3d : public ::testing::Test
 {
-    ac::randomTupleGenerator<double, 3> tupleGen;
+    ac::randomTupleGenerator<double, 3> tupleGen{};
     ac::cons_generator<MathLib::Point3d, ac::randomTupleGenerator<double, 3>>
         pointGenerator{tupleGen};
 
     ac::randomCoordinateIndexGenerator<unsigned, 3>
-        coordGenerator;  // any of {0, 1, 2}
+        coordGenerator{};  // any of {0, 1, 2}
     ac::gtest_reporter gtest_reporter;
 };
 
