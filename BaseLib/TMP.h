@@ -39,14 +39,17 @@ struct List
 namespace detail
 {
 template <typename Pred, template <typename...> typename SomeListOfTypes>
-constexpr List<> filter(Pred, SomeListOfTypes<>*)
+constexpr List<> filter(Pred /*pred*/, SomeListOfTypes<>* /*list*/)
 {
     return {};
 }
 
-template <typename Pred, template <typename...> typename SomeListOfTypes,
-          typename Head, typename... Tail>
-constexpr decltype(auto) filter(Pred pred, SomeListOfTypes<Head, Tail...>*)
+template <typename Pred,
+          template <typename...> typename SomeListOfTypes,
+          typename Head,
+          typename... Tail>
+constexpr decltype(auto) filter(Pred pred,
+                                SomeListOfTypes<Head, Tail...>* /*list*/)
 {
     constexpr auto tail_arg = static_cast<List<Tail...>*>(nullptr);
     using TailFiltered = decltype(filter(pred, tail_arg));
@@ -97,9 +100,12 @@ using Map_t = typename Map<MapFromTypeToType, List>::type;
 // map_to_array ----------------------------------------------------------------
 namespace detail
 {
-template <template <typename... /*Types*/> typename List, typename Function,
-          typename Head, typename... Tail>
-constexpr decltype(auto) map_to_array(Function&& f, List<Head, Tail...>*)
+template <template <typename... /*Types*/> typename List,
+          typename Function,
+          typename Head,
+          typename... Tail>
+constexpr decltype(auto) map_to_array(Function&& f,
+                                      List<Head, Tail...>* /*list*/)
 {
     using CommonType =
         std::common_type_t<std::invoke_result_t<Function, Head*>,
@@ -110,7 +116,8 @@ constexpr decltype(auto) map_to_array(Function&& f, List<Head, Tail...>*)
 }
 
 template <template <typename... /*Types*/> typename List, typename Function>
-constexpr std::array<std::nullptr_t, 0> map_to_array(Function&& /*f*/, List<>*)
+constexpr std::array<std::nullptr_t, 0> map_to_array(Function&& /*f*/,
+                                                     List<>* /*list*/)
 {
     return {};
 }
@@ -132,9 +139,10 @@ constexpr decltype(auto) map_to_array(Function&& f)
 // foreach ---------------------------------------------------------------------
 namespace detail
 {
-template <template <typename... /*Types*/> typename List, typename Function,
+template <template <typename... /*Types*/> typename List,
+          typename Function,
           typename... Types>
-void foreach (Function&& f, List<Types...>*)
+void foreach (Function&& f, List<Types...>* /*list*/)
 {
     (..., f((Types*)nullptr));
 }

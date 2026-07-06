@@ -13,7 +13,7 @@ namespace ShapeFunctionUtils
 template <unsigned GlobalDim, typename ElementType, typename PointsContainer>
 auto computeShapeMatricesImpl(MeshLib::Element const& element,
                               PointsContainer const& points,
-                              Type<ElementType>)
+                              Type<ElementType> /*unused*/)
 {
     using ET = NumLib::ElementTraitsLagrange<ElementType>;
     using ShpFct = typename ET::ShapeFunction;

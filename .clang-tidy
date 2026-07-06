@@ -27,6 +27,7 @@ WarningsAsErrors: >
   readability-else-after-return,
   cppcoreguidelines-pro-type-member-init,
   readability-simplify-boolean-expr,
+  readability-named-parameter,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:

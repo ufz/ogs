@@ -12,8 +12,9 @@
 namespace
 {
 template <typename ShapeFunction>
-static auto initShapeMatrices(unsigned const integration_order,
-                              boost::mp11::mp_identity<ShapeFunction>)
+static auto initShapeMatrices(
+    unsigned const integration_order,
+    boost::mp11::mp_identity<ShapeFunction> /*shape_function_tag*/)
 {
     using namespace boost::mp11;
 

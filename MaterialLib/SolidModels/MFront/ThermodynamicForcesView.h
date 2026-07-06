@@ -109,7 +109,7 @@ public:
 
     /// Overload taking a std::vector.
     template <typename Force>
-    auto block(Force, std::vector<double> const& data) const
+    auto block(Force /*force*/, std::vector<double> const& data) const
     {
         constexpr std::size_t data_size =
             Force::template size<DisplacementDim>();
@@ -138,7 +138,7 @@ public:
     /// Overload taking a std::vector.
     template <typename Force,
               std::enable_if_t<SizeOf<Force>::value == 1, bool> = true>
-    double& block(Force, std::vector<double>& data) const
+    double& block(Force /*force*/, std::vector<double>& data) const
     {
         return asDouble<Force>(data);
     }
@@ -157,7 +157,7 @@ public:
     /// Overload taking a std::vector.
     template <typename Force,
               std::enable_if_t<SizeOf<Force>::value != 1, bool> = true>
-    auto block(Force, std::vector<double>& data) const
+    auto block(Force /*force*/, std::vector<double>& data) const
     {
         return asEigenMap<Force>(data);
     }

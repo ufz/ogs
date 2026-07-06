@@ -52,11 +52,12 @@ struct ComputeDerivativeWrtOneScalar_CD
     template <typename Function, typename TupleOfArgs,
               typename PerturbationStrategy, std::size_t PerturbedArgIdx,
               std::size_t... AllArgIdcs>
-    auto operator()(Function const& f, TupleOfArgs const& args,
-                    PerturbationStrategy const& pert_strat,
-                    std::integral_constant<std::size_t, PerturbedArgIdx>,
-                    Eigen::Index const perturbed_arg_component,
-                    std::index_sequence<AllArgIdcs...>) const
+    auto operator()(
+        Function const& f, TupleOfArgs const& args,
+        PerturbationStrategy const& pert_strat,
+        std::integral_constant<std::size_t, PerturbedArgIdx> /*unused*/,
+        Eigen::Index const perturbed_arg_component,
+        std::index_sequence<AllArgIdcs...> /*unused*/) const
     {
         auto const value_plus = f(pert_strat.perturbIf(
             std::bool_constant<PerturbedArgIdx == AllArgIdcs>{},
@@ -92,11 +93,12 @@ struct ComputeDerivativeWrtOneScalar_FD
     template <typename Function, typename TupleOfArgs,
               typename PerturbationStrategy, std::size_t PerturbedArgIdx,
               std::size_t... AllArgIdcs>
-    Value operator()(Function const& f, TupleOfArgs const& args,
-                     PerturbationStrategy const& pert_strat,
-                     std::integral_constant<std::size_t, PerturbedArgIdx>,
-                     Eigen::Index const perturbed_arg_component,
-                     std::index_sequence<AllArgIdcs...>) const
+    Value operator()(
+        Function const& f, TupleOfArgs const& args,
+        PerturbationStrategy const& pert_strat,
+        std::integral_constant<std::size_t, PerturbedArgIdx> /*unused*/,
+        Eigen::Index const perturbed_arg_component,
+        std::index_sequence<AllArgIdcs...> /*unused*/) const
     {
         auto const value_plus = f(pert_strat.perturbIf(
             std::bool_constant<PerturbedArgIdx == AllArgIdcs>{},
@@ -136,22 +138,22 @@ struct DefaultPerturbationStrategy
     }
 
     template <typename T>
-    static T const& perturbIf(std::false_type, T const& value,
+    static T const& perturbIf(std::false_type /*unused*/, T const& value,
                               double const /*plus_or_minus*/,
                               Eigen::Index /*comp*/)
     {
         return value;
     }
 
-    double perturbIf(std::true_type, double value, double const plus_or_minus,
-                     Eigen::Index /*comp*/) const
+    double perturbIf(std::true_type /*unused*/, double value,
+                     double const plus_or_minus, Eigen::Index /*comp*/) const
     {
         return value + plus_or_minus * getPerturbation(value);
     }
 
     template <int N>
     Eigen::Vector<double, N> perturbIf(
-        std::true_type,
+        std::true_type /*unused*/,
         Eigen::Matrix<double, N, 1, Eigen::ColMajor, N, 1> const& vec,
         double const plus_or_minus,
         Eigen::Index comp) const
@@ -280,7 +282,8 @@ private:
     auto differentiateWrtAllVectorComponents(
         Function const& f, TupleOfArgs const& args,
         DByDScalar const& d_by_dScalar,
-        std::integer_sequence<Eigen::Index, PerturbedArgComponents...>,
+        std::integer_sequence<Eigen::Index,
+                              PerturbedArgComponents...> /*unused*/,
         std::integral_constant<std::size_t, PerturbedArgIdx> perturbed_arg_idx,
         std::index_sequence<AllArgIdcs...> all_arg_idcs) const
     {

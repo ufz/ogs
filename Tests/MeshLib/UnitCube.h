@@ -43,7 +43,8 @@ inline VTKCellType toVtk(MeshLib::CellType const cell_type)
 }
 
 template <typename ElementRule>
-MeshLib::CellType getCellType(Type<MeshLib::TemplateElement<ElementRule>>)
+MeshLib::CellType getCellType(
+    Type<MeshLib::TemplateElement<ElementRule>> /*unused*/)
 {
     return ElementRule::cell_type;
 }

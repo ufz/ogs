@@ -32,8 +32,8 @@ template <typename... Ns_t,
           int... Offsets,
           int... Sizes>
 auto localDOFImpl(ElementDOFVector const& x,
-                  boost::mp11::mp_list_c<int, Offsets...>,
-                  boost::mp11::mp_list_c<int, Sizes...>)
+                  boost::mp11::mp_list_c<int, Offsets...> /*unused*/,
+                  boost::mp11::mp_list_c<int, Sizes...> /*unused*/)
 {
     static_assert(((Sizes > 0) && ...));
     static_assert(((Offsets >= 0) && ...));

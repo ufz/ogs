@@ -82,9 +82,10 @@ struct GetFunctionReturnType<Result (*)(Args...)>
 template <typename Object,
           typename... Tuples,
           typename... MemberFunctionArgumentTypesPlain>
-auto unpackAndInvoke(boost::mp11::mp_list<MemberFunctionArgumentTypesPlain...>,
-                     Object&& o,
-                     Tuples&... ts) ->
+auto unpackAndInvoke(
+    boost::mp11::mp_list<MemberFunctionArgumentTypesPlain...> /*unused*/,
+    Object&& o,
+    Tuples&... ts) ->
     // std::decay_t "decays" lambdas
     typename GetFunctionReturnType<
         decltype(&std::decay_t<Object>::operator())>::type
@@ -100,7 +101,7 @@ template <typename Result,
           typename... Tuples,
           typename... MemberFunctionArgumentTypesPlain>
 Result unpackAndInvoke(
-    boost::mp11::mp_list<MemberFunctionArgumentTypesPlain...>,
+    boost::mp11::mp_list<MemberFunctionArgumentTypesPlain...> /*unused*/,
     Result (Object::*m)(Args...),
     Object& o,
     Tuples&... ts)
@@ -116,7 +117,7 @@ template <typename Result,
           typename... Tuples,
           typename... MemberFunctionArgumentTypesPlain>
 Result unpackAndInvoke(
-    boost::mp11::mp_list<MemberFunctionArgumentTypesPlain...>,
+    boost::mp11::mp_list<MemberFunctionArgumentTypesPlain...> /*unused*/,
     Result (Object::*m)(Args...),
     Object&& o,
     Tuples&... ts)
@@ -132,7 +133,7 @@ template <typename Result,
           typename... Tuples,
           typename... MemberFunctionArgumentTypesPlain>
 Result unpackAndInvoke(
-    boost::mp11::mp_list<MemberFunctionArgumentTypesPlain...>,
+    boost::mp11::mp_list<MemberFunctionArgumentTypesPlain...> /*unused*/,
     Result (Object::*m)(Args...) const,
     Object const& o,
     Tuples&... ts)
@@ -146,9 +147,10 @@ template <typename Result,
           typename... Args,
           typename... Tuples,
           typename... FunctionArgumentTypesPlain>
-Result unpackAndInvoke(boost::mp11::mp_list<FunctionArgumentTypesPlain...>,
-                       Result (*fct)(Args...),
-                       Tuples&... ts)
+Result unpackAndInvoke(
+    boost::mp11::mp_list<FunctionArgumentTypesPlain...> /*unused*/,
+    Result (*fct)(Args...),
+    Tuples&... ts)
 {
     return fct(ProcessLib::Graph::get<FunctionArgumentTypesPlain>(ts...)...);
 }

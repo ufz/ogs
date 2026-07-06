@@ -13,19 +13,21 @@ struct RigidElasticityModel : SimplifiedElasticityModel
 {
     RigidElasticityModel() { DBUG("using rigid mechanics model"); }
 
-    double storageContribution(MaterialPropertyLib::Phase const&,
-                               MaterialPropertyLib::VariableArray const&,
-                               ParameterLib::SpatialPosition const&,
-                               double const, double const) override
+    double storageContribution(
+        MaterialPropertyLib::Phase const& /*unused*/,
+        MaterialPropertyLib::VariableArray const& /*unused*/,
+        ParameterLib::SpatialPosition const& /*unused*/,
+        double const /*unused*/, double const /*unused*/) override
     {
         return 0.0;
     }
 
     double thermalExpansivityContribution(
-        Eigen::Matrix<double, 3, 3> const&, MaterialPropertyLib::Phase const&,
-        MaterialPropertyLib::VariableArray const&,
-        ParameterLib::SpatialPosition const&, double const,
-        double const) override
+        Eigen::Matrix<double, 3, 3> const& /*unused*/,
+        MaterialPropertyLib::Phase const& /*unused*/,
+        MaterialPropertyLib::VariableArray const& /*unused*/,
+        ParameterLib::SpatialPosition const& /*unused*/,
+        double const /*unused*/, double const /*unused*/) override
     {
         return 0.0;
     }

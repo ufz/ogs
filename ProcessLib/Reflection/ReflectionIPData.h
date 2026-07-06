@@ -94,13 +94,10 @@ struct NumberOfComponents
 };
 
 template <typename T>
-concept has_reflect = requires
-{
-    T::reflect();
-};
+concept has_reflect = requires { T::reflect(); };
 
 template <typename... Ts>
-auto reflect(std::type_identity<std::tuple<Ts...>>)
+auto reflect(std::type_identity<std::tuple<Ts...>> /*unused*/)
 {
     using namespace boost::mp11;
 
@@ -114,26 +111,20 @@ auto reflect(std::type_identity<std::tuple<Ts...>>)
 }
 
 template <has_reflect T>
-auto reflect(std::type_identity<T>)
+auto reflect(std::type_identity<T> /*unused*/)
 {
     return T::reflect();
 }
 
 template <typename T>
-concept has_ioName = requires(T* t)
-{
-    ioName(t);
-};
+concept has_ioName = requires(T* t) { ioName(t); };
 
 template <typename T, typename Tag>
-auto reflect(std::type_identity<BaseLib::StrongType<T, Tag>>)
+auto reflect(std::type_identity<BaseLib::StrongType<T, Tag>> /*unused*/)
 {
     using ST = BaseLib::StrongType<T, Tag>;
 
-    auto accessor = [](auto& o) -> auto&
-    {
-        return *o;
-    };
+    auto accessor = [](auto& o) -> auto& { return *o; };
 
     // Maybe in the future we might want to lift the following two constraints.
     // But beware: that generalization has to be tested thoroughly such that we
@@ -161,8 +152,7 @@ auto reflect(std::type_identity<BaseLib::StrongType<T, Tag>>)
 }
 
 template <typename T>
-concept is_reflectable = requires
-{
+concept is_reflectable = requires {
     ProcessLib::Reflection::detail::reflect(std::type_identity<T>{});
 };
 
@@ -487,9 +477,7 @@ void forEachReflectedFlattenedIPDataAccessor(ReflData const& reflection_data,
             auto accessor_ip_data_vec_in_loc_asm =
                 [ip_data_vector_accessor =
                      refl_data.accessor](LocAsmIF const& loc_asm) -> auto const&
-            {
-                return ip_data_vector_accessor(loc_asm);
-            };
+            { return ip_data_vector_accessor(loc_asm); };
 
             if constexpr (detail::is_reflectable<Member>)
             {

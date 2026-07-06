@@ -81,7 +81,8 @@ constexpr bool isElementEnabledImpl(bool is_group_enabled)
     return BaseLib::TMP::contains<Elements, Element>() && is_group_enabled;
 }
 
-auto constexpr isElementEnabled = []<typename ElementTraits>(ElementTraits*)
+auto constexpr isElementEnabled =
+    []<typename ElementTraits>(ElementTraits* /*element_traits*/)
 {
     using Element = typename ElementTraits::Element;
 

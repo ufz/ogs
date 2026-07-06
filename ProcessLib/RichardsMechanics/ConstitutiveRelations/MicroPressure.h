@@ -11,7 +11,7 @@ namespace ProcessLib::RichardsMechanics
 {
 using MicroPressure = BaseLib::StrongType<double, struct MicroPressureTag>;
 
-constexpr std::string_view ioName(struct MicroPressureTag*)
+constexpr std::string_view ioName(struct MicroPressureTag* /*unused*/)
 {
     return "micro_pressure";
 }

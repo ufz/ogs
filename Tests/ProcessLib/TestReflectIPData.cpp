@@ -69,7 +69,7 @@ using Kelvin1Data =
     BaseLib::StrongType<MathLib::KelvinVector::KelvinVectorType<Dim>,
                         struct Kelvin1DataTag>;
 
-constexpr std::string_view ioName(struct Kelvin1DataTag*)
+constexpr std::string_view ioName(struct Kelvin1DataTag* /*tag*/)
 {
     return "kelvin1";
 }
@@ -108,7 +108,7 @@ struct Level1b
 
 using ScalarData = BaseLib::StrongType<double, struct ScalarDataTag>;
 
-constexpr std::string_view ioName(struct ScalarDataTag*)
+constexpr std::string_view ioName(struct ScalarDataTag* /*tag*/)
 {
     return "scalar";
 }

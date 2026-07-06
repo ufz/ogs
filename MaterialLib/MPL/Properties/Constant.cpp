@@ -7,38 +7,42 @@ namespace MaterialPropertyLib
 {
 struct ZeroInitPropertyDataType
 {
-    PropertyDataType operator()(double) const { return 0.; }
+    PropertyDataType operator()(double /*t*/) const { return 0.; }
 
-    PropertyDataType operator()(Eigen::Vector2d) const
+    PropertyDataType operator()(Eigen::Vector2d /*variable_array*/) const
     {
         return Eigen::Vector2d::Zero().eval();
     }
 
-    PropertyDataType operator()(Eigen::Vector3d) const
+    PropertyDataType operator()(Eigen::Vector3d /*variable_array*/) const
     {
         return Eigen::Vector3d::Zero().eval();
     }
 
-    PropertyDataType operator()(Eigen::Matrix<double, 2, 2>) const
+    PropertyDataType operator()(
+        Eigen::Matrix<double, 2, 2> /*variable_array*/) const
     {
         return Eigen::Matrix<double, 2, 2>::Zero().eval();
     }
-    PropertyDataType operator()(Eigen::Matrix<double, 3, 3>) const
+    PropertyDataType operator()(
+        Eigen::Matrix<double, 3, 3> /*variable_array*/) const
     {
         return Eigen::Matrix<double, 3, 3>::Zero().eval();
     }
 
-    PropertyDataType operator()(Eigen::Matrix<double, 4, 1>) const
+    PropertyDataType operator()(
+        Eigen::Matrix<double, 4, 1> /*variable_array*/) const
     {
         return Eigen::Matrix<double, 4, 1>::Zero().eval();
     }
 
-    PropertyDataType operator()(Eigen::Matrix<double, 6, 1>) const
+    PropertyDataType operator()(
+        Eigen::Matrix<double, 6, 1> /*variable_array*/) const
     {
         return Eigen::Matrix<double, 6, 1>::Zero().eval();
     }
 
-    PropertyDataType operator()(Eigen::MatrixXd) const
+    PropertyDataType operator()(Eigen::MatrixXd /*variable_array*/) const
     {
         return Eigen::MatrixXd(0, 0);
     }

@@ -13,7 +13,7 @@ template <int DisplacementDim>
 using DarcyLawData = BaseLib::StrongType<Eigen::Vector<double, DisplacementDim>,
                                          struct DarcyLawDataTag>;
 
-constexpr std::string_view ioName(struct DarcyLawDataTag*)
+constexpr std::string_view ioName(struct DarcyLawDataTag* /*unused*/)
 {
     return "velocity";
 }

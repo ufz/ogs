@@ -11,7 +11,7 @@ namespace ProcessLib::RichardsMechanics
 {
 using MicroSaturation = BaseLib::StrongType<double, struct MicroSaturationTag>;
 
-constexpr std::string_view ioName(struct MicroSaturationTag*)
+constexpr std::string_view ioName(struct MicroSaturationTag* /*unused*/)
 {
     return "micro_saturation";
 }

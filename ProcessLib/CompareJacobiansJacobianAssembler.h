@@ -43,7 +43,7 @@ public:
 
     explicit CompareJacobiansJacobianAssembler(
         std::shared_ptr<detail::CompareJacobiansJacobianAssemblerImpl> impl,
-        Key);
+        Key /*key*/);
 
     void assembleWithJacobian(std::size_t const mesh_item_id,
                               LocalAssemblerInterface& local_assembler,

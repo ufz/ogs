@@ -155,8 +155,8 @@ public:
     /// If the block is not provided by the MFront behavior, the returned data
     /// is all zero.
     template <typename Force, typename GradOrExtStateVar>
-    auto block(Force,
-               GradOrExtStateVar,
+    auto block(Force /*force*/,
+               GradOrExtStateVar /*grad_or_ext_state_var*/,
                OGSMFrontTangentOperatorData const& data) const
     {
         static_assert(
