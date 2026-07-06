@@ -10,6 +10,7 @@
 #include <utility>
 
 #include "BaseLib/Algorithm.h"
+#include "BaseLib/Error.h"
 #include "IterationNumberBasedTimeStepping.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseConstantInterpolation.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
@@ -97,24 +98,27 @@ double findMultiplier(
     std::vector<double> const& multipliers,
     MultiplyerInterpolationType const multiplier_interpolation_type)
 {
-    double multiplier = multipliers.front();
-    switch (multiplier_interpolation_type)
+    double const multiplier = [&]
     {
-        case MultiplyerInterpolationType::PiecewiseLinear:
+        switch (multiplier_interpolation_type)
         {
-            auto const& pwli = MathLib::PiecewiseLinearInterpolation(
-                nonlinear_iteration_numbers, multipliers, false);
-            multiplier = pwli.getValue(number_iterations);
-            break;
+            case MultiplyerInterpolationType::PiecewiseLinear:
+            {
+                auto const& pwli = MathLib::PiecewiseLinearInterpolation(
+                    nonlinear_iteration_numbers, multipliers, false);
+                return pwli.getValue(number_iterations);
+            }
+            case MultiplyerInterpolationType::PiecewiseConstant:
+            {
+                auto const& piecewise_constant_interpolation =
+                    MathLib::PiecewiseConstantInterpolation(
+                        nonlinear_iteration_numbers, multipliers);
+                return piecewise_constant_interpolation.value(
+                    number_iterations);
+            }
         }
-        case MultiplyerInterpolationType::PiecewiseConstant:
-            auto const& piecewise_constant_interpolation =
-                MathLib::PiecewiseConstantInterpolation(
-                    nonlinear_iteration_numbers, multipliers);
-            multiplier =
-                piecewise_constant_interpolation.value(number_iterations);
-            break;
-    }
+        OGS_FATAL("Unknown multiplier interpolation type.");
+    }();
 
     if (!current_time_step_is_accepted && (multiplier >= 1.0))
     {

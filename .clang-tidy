@@ -31,6 +31,7 @@ WarningsAsErrors: >
   readability-inconsistent-declaration-parameter-name,
   modernize-use-emplace,
   modernize-use-default-member-init,
+  clang-analyzer-deadcode.DeadStores,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:

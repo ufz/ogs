@@ -303,9 +303,6 @@ TEST(NumLib, TimeSteppingIterationNumberBased1)
     ASSERT_TRUE(current_timestep.isAccepted());
     NumLib::updateTimeSteps(timestepper_dt6, previous_timestep,
                             current_timestep);
-    timestepper_dt6 = (current_timestep.current() + timestepper_dt6 > end_time)
-                          ? end_time() - current_timestep.current()()
-                          : timestepper_dt6;
     ASSERT_EQ(7u, current_timestep.timeStepNumber());
     ASSERT_EQ(9., current_timestep.previous()());
     ASSERT_EQ(10, current_timestep.current()());
