@@ -3,7 +3,6 @@
 {{ $primaryIdentifiers := slice "userguide" "benchmarks" "devguide" }}
 {{ $primaryLabels := dict "userguide" "Start here" "benchmarks" "Examples" "devguide" "Contribute" }}
 
-{{ if eq .RelPermalink "/docs/" }}
 <section class="border-b border-gray-200 bg-gray-50">
   <div class="mx-auto w-full px-4 py-12 sm:px-6 lg:max-w-7xl lg:py-16">
     <div class="font-mono text-xs font-semibold tracking-widest text-teal-700 sm:text-sm">
@@ -106,40 +105,4 @@
 </section>
 {{ end }}
 {{ end }}
-
-{{ else }}
-
-<div class="flex w-full">
-  {{ .Content }}
-</div>
-
-{{ range slice "User" "Developer" }}
-<div class="mb-12">
-  <div class="text-xl text-center text-gray-800 font-bold">
-    <h2>{{ . }}</h2>
-  </div>
-  <div class="grid gap-4 p-4 md:grid-cols-2 xl:grid-cols-3">
-
-    {{ range where $.Site.Menus.docs "Params.category" . }}
-    <div class="mt-2">
-      <a href="{{ .URL }}">
-        <div class="p-4 bg-gray-100 hover:bg-white rounded-lg shadow h-full">
-          <h3 class="text-xl mb-2 border-b text-blue-800">
-            {{ .Name }}
-            {{ $url_first_char := substr .URL 0 1 }}
-            {{ if not (eq $url_first_char "/") }}
-            <i class="far fa-external-link text-xs align-top"></i>
-            {{ end }}
-          </h3>
-          <p class="leading-relaxed text-gray-700">{{ .Post }}</p>
-        </div>
-      </a>
-    </div>
-    {{ end }}
-  </div>
-</div>
-{{ end }}
-
-{{ end }}
-
 {{ end }}
