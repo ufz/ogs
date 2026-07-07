@@ -18,24 +18,42 @@ function selectOS(os) {
     var current_os = os_list[i];
     if (current_os == os) {
       $("." + current_os).show();
-      $("#btn-" + current_os).addClass("active");
     }
     else {
       $("." + current_os).hide();
-      $("#btn-" + current_os).removeClass("active");
     }
+    $("#btn-" + current_os).removeClass("active");
   }
+  $("[data-os]").hide();
+  $("[data-os~='all'], [data-os~='" + os + "']").show();
+  $("#btn-" + os).addClass("active");
   window.localStorage.setItem("selectedOS", os);
 }
 
-if ($(".win").length > 0) {
+function hasOS(os) {
+  return $("." + os).length > 0 || $("[data-os~='all']").length > 0 || $("[data-os~='" + os + "']").length > 0;
+}
+
+var available_os = ['win', 'linux', 'mac'].filter(function (os) { return hasOS(os); });
+
+for (var i = 0; i < ['win', 'linux', 'mac'].length; i++) {
+  var os = ['win', 'linux', 'mac'][i];
+  if (hasOS(os)) {
+    $("#btn-" + os).show();
+  }
+  else {
+    $("#btn-" + os).hide();
+  }
+}
+
+if (available_os.length > 0) {
   $("#os-selector").visible();
   var os = window.localStorage.getItem("selectedOS");
-  if (os) {
+  if (os && available_os.indexOf(os) !== -1) {
     $("#btn-" + os).click();
   }
   else {
-    $("#btn-win").click();
+    $("#btn-" + available_os[0]).click();
   }
 }
 else {

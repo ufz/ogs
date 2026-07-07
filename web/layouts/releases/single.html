@@ -1,6 +1,17 @@
 {{ define "main" }}
-<div class="prose prose-sm lg:prose max-w-none lg:max-w-none">
-  <h1 data-pagefind-meta="image:/images/OGS-Logo.png">{{ .Title }} </h1>
-  {{ partial "releases/single.html" . }}
+<div class="bg-white">
+  <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="mb-8">
+      <div class="font-mono text-xs font-semibold tracking-widest text-brand-600">RELEASE</div>
+      <h1 class="mt-3 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl"
+        data-pagefind-meta="image:/images/OGS-Logo.png">
+        {{ .Title }}
+      </h1>
+      <a class="mt-4 inline-flex text-sm font-semibold text-brand-600 hover:text-brand-700" href="{{ relURL "releases" }}">
+        Back to releases
+      </a>
+    </div>
+    {{ partial "releases/single.html" . }}
+  </div>
 </div>
 {{ end }}
