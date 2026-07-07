@@ -28,6 +28,20 @@ cite::before {
   @apply mt-2;
 }
 
+.section-docs :not(pre)>code,
+.release-dev-note code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.section-docs pre {
+  @apply py-0;
+}
+
+.release-dev-note a {
+  @apply text-blue-600;
+}
+
 /* The sticky class is added to the header with JS when it reaches its scroll position */
 #theHeader.sticky {
   position: fixed;
@@ -60,7 +74,7 @@ cite::before {
 }
 
 .linux {
-  @apply border-yellow-200;
+  @apply border-green-200;
   @apply border-l-2;
   @apply -ml-4;
   @apply pl-4;
@@ -75,29 +89,29 @@ cite::before {
 
 #btn-win.active {
   @apply text-blue-500;
-  @apply border-brand-500;
+  @apply border-blue-500;
 }
 
 #btn-linux.active {
-  @apply text-yellow-500;
-  @apply border-brand-500;
+  @apply text-green-600;
+  @apply border-green-600;
 }
 
 #btn-mac.active {
   @apply text-gray-600;
-  @apply border-brand-500;
+  @apply border-gray-600;
 }
 
 #btn-win:hover {
-  @apply border-brand-500;
+  @apply border-blue-500;
 }
 
 #btn-linux:hover {
-  @apply border-brand-500;
+  @apply border-green-600;
 }
 
 #btn-mac:hover {
-  @apply border-brand-500;
+  @apply border-gray-600;
 }
 
 /* -- Misc -- */
@@ -191,11 +205,12 @@ img[src$='#two-third'] {
   @apply px-2;
   @apply py-1;
   @apply border-b-2;
+  @apply border-transparent;
   @apply cursor-pointer;
 }
 
 .btn.active {
-  @apply border-yellow-500;
+  @apply font-semibold;
 }
 
 .note {
