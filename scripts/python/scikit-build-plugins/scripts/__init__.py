@@ -27,16 +27,25 @@ def __dir__() -> list[str]:
     return __all__
 
 
-def dynamic_metadata(
-    field: str,
-    settings: dict[str, object] | None = None,
-) -> str:
-    if field != "scripts":
-        msg = "Only the 'scripts' field is supported"
-        raise ValueError(msg)
+def dynamic_metadata(*args: object) -> dict[str, object]:
+    if args and isinstance(args[0], str):
+        field = args[0]
+        settings = args[1] if len(args) > 1 else None
+        if field != "scripts":
+            msg = "Only the 'scripts' field is supported"
+            raise ValueError(msg)
+        if settings:
+            msg = "No inline configuration is supported"
+            raise ValueError(msg)
+        return pyproject_get_binaries()
 
+    if len(args) != 2:
+        msg = "Expected dynamic metadata settings and project metadata"
+        raise TypeError(msg)
+
+    settings = args[0]
     if settings:
         msg = "No inline configuration is supported"
         raise ValueError(msg)
 
-    return pyproject_get_binaries()
+    return {"scripts": pyproject_get_binaries()}
