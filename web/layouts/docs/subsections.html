@@ -1,6 +1,7 @@
 {{ define "main" }}
 
 {{ $eyebrow := default .Title .LinkTitle }}
+{{ $isBenchmarkPage := hasPrefix .RelPermalink "/docs/benchmarks/" }}
 
 <div class="mx-auto flex w-full flex-col md:flex-row">
 
@@ -13,11 +14,17 @@
     {{ end }}
     <article class="mx-auto max-w-6xl">
       <div class="space-y-8">
+        {{ if .Params.breadcrumbs }}
+        {{ partial "docs/breadcrumbs.html" . }}
+        {{ end }}
+
         <header>
+          {{ if not $isBenchmarkPage }}
           <div class="font-mono text-xs font-semibold tracking-widest text-teal-700">
             {{ upper $eyebrow }}
           </div>
-          <h1 class="mt-3 text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl lg:text-5xl"
+          {{ end }}
+          <h1 class="{{ if not $isBenchmarkPage }}mt-3 {{ end }}text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl lg:text-5xl"
             style="line-height: 1.1;">
             {{ .Title }}
           </h1>

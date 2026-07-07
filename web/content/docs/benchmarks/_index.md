@@ -1,9 +1,11 @@
 +++
-title = "Processes"
+title = "Benchmarks"
+linkTitle = "Benchmarks"
 layout = "subsections"
 models = "processes"
 show_recent = true
 show_featured = false
+breadcrumbs = true
 
 [cascade]
 breadcrumbs = true

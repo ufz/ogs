@@ -1,7 +1,7 @@
 $(document).ready(function () {
   MicroModal.init();
 
-  $('#nav-link-search').click(function (ev) {
+  $('#nav-link-search, .js-open-search').click(function (ev) {
     ev.preventDefault();
 
     MicroModal.show('modal-2', {

@@ -3,15 +3,16 @@
 {{ $section := index $segments 1 }}
 {{ $subsection := index $segments 2 }}
 
-<div class="py-2 px-2 md:px-4">
-  <div x-data="{ mobileMenuOpen: false }" class="relative bg-white">
-    <div class="max-w-7xl mx-auto">
+<header class="border-b border-gray-200 bg-white">
+  <div x-data="{ mobileMenuOpen: false }" class="relative">
+    <div class="xl:container xl:mx-auto px-2">
       <div
         x-data="useDocsVersioning('{{ site.Params.currentVersion }}', 'https://www.opengeosys.org/_static/versions.json')"
         x-init="init()">
 
         <template x-if="preferred && isOutdated()">
-          <div class="w-full bg-yellow-50 border-b border-300 px-4 py-2 text-sm flex justify-center md:justify-between items-center">
+          <div
+            class="my-2 flex w-full items-center justify-center rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-2 text-sm md:justify-between">
             <div class="hidden md:block">
               You are viewing documentation for version
               <strong x-text="currentVersion"></strong>.
@@ -25,34 +26,35 @@
           </div>
         </template>
       </div>
-      <div class="flex justify-between items-center border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
-        <div class="lg:w-0 lg:flex-1 text-lg lg:text-xl xl:text-2xl">
-          <a href='{{ relURL "" }}' class="flex {{ if .IsHome }} hidden{{ end }}">
+      <div class="flex items-center justify-between py-4 md:justify-start md:space-x-8">
+        <div class="lg:w-0 lg:flex-1 text-xl font-semibold tracking-tight lg:text-2xl">
+          <a href='{{ relURL "" }}' class="inline-flex text-gray-950 transition hover:text-brand-700">
             Open<span class="text-brand-500">GeoSys</span>
           </a>
         </div>
         <div class="-mr-2 -my-2 md:hidden">
           <button @click="mobileMenuOpen = true" type="button"
-            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+            class="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 transition hover:border-brand-300 hover:text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
               </path>
             </svg>
           </button>
         </div>
-        <nav class="hidden md:flex space-x-10">
+        <nav class="hidden md:flex md:items-center md:gap-2">
 
           {{ range .Site.Menus.main }}
           {{ $url_trimmed := trim .URL "/" }}
           <a href="{{ .URL }}"
-            class="text-base leading-6 font-medium text-gray-500 hover:text-gray-900 focus:outline-none focus:text-gray-900 transition ease-in-out duration-150{{if (eq $section $url_trimmed) }} text-brand-500{{end}}">{{.Name}}</a>
+            class="rounded-lg px-3 py-2 text-sm font-semibold text-gray-600 transition hover:bg-gray-50 hover:text-gray-950 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2{{if (eq $section $url_trimmed) }} bg-brand-50 text-brand-700{{end}}">{{.Name}}</a>
           {{ end }}
 
         </nav>
-        <div class="flex items-center justify-end space-x-4 md:space-x-8 flex-1 lg:w-0">
+        <div class="flex flex-1 items-center justify-end gap-3 lg:w-0">
           {{ partial "version-switcher.html" . }}
-          <a href="#" id="nav-link-search">
-            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+          <a href="#" id="nav-link-search"
+            class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-50 hover:text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
+            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd"
                 d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                 clip-rule="evenodd"></path>
@@ -66,17 +68,18 @@
       x-transition:enter="duration-200 ease-out" x-transition:enter-start="opacity-0 scale-95"
       x-transition:enter-end="opacity-100 scale-100" x-transition:leave="duration-100 ease-in"
       x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-      class="absolute top-0 inset-x-0 p-2 transition transform origin-top-right md:hidden z-10" style="display: none;">
+      class="absolute inset-x-0 top-0 z-10 p-2 transition origin-top-right transform md:hidden" style="display: none;">
       <div class="rounded-lg shadow-lg">
-        <div class="rounded-lg ring-1 ring-black ring-opacity-5 bg-white divide-y-2 divide-gray-50">
+        <div class="rounded-lg bg-white ring-1 ring-black ring-opacity-5 divide-y-2 divide-gray-50">
           <div class="pt-5 pb-6 px-5 space-y-6">
             <div class="flex items-center justify-between border-b">
               <div>
-                <a href='{{ relURL "" }}'>Open<span class="text-brand-500">GeoSys</span></a>
+                <a href='{{ relURL "" }}' class="text-xl font-semibold tracking-tight">Open<span
+                    class="text-brand-500">GeoSys</span></a>
               </div>
               <div class="-mr-2">
                 <button @click="mobileMenuOpen = false" type="button"
-                  class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                  class="inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white p-2 text-gray-500 transition hover:border-brand-300 hover:text-brand-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2">
                   <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
@@ -89,7 +92,7 @@
                 {{ range .Site.Menus.main }}
                 {{ $url_trimmed := trim .URL "/" }}
                 <a href="{{ .URL }}"
-                  class="text-base leading-6 font-medium text-gray-900 -m-3 p-3 flex items-center space-x-3 rounded-md hover:bg-gray-50 transition ease-in-out duration-150{{if (eq $section $url_trimmed) }} text-brand-500{{end}}">
+                  class="-m-3 flex items-center rounded-lg p-3 text-base font-semibold leading-6 text-gray-900 transition hover:bg-gray-50{{if (eq $section $url_trimmed) }} text-brand-600{{end}}">
                   {{ .Name }}
                 </a>
                 {{ if eq $section $url_trimmed }}
@@ -98,7 +101,7 @@
                 {{ $url_trimmed := trim .URL "/" }}
                 {{ $url_first_char := substr .URL 0 1 }}
                 {{ if eq $url_first_char "/" }}
-                <a class="px-4 text-gray-700 text-sm hover:text-gray-900 {{if eq $subsection .Identifier }} text-brand-500{{ end }}"
+                <a class="px-4 text-sm text-gray-700 hover:text-gray-900 {{if eq $subsection .Identifier }} text-brand-600{{ end }}"
                   href="{{ .URL }}">
                   {{ .Name }}
                 </a>
@@ -113,4 +116,4 @@
       </div>
     </div>
   </div>
-</div>
+</header>
