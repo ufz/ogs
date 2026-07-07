@@ -1,69 +1,177 @@
 {{ define "main" }}
-<div class="mb-8 flex w-full flex-col items-center text-center prose prose-sm max-w-none lg:prose lg:max-w-none">
-  {{ .Content }}
-</div>
-
 {{ $pagesWithImage := where .RegularPagesRecursive "Params.image" "ne" nil }}
 {{ $paginator := .Paginate ($pagesWithImage.ByDate.Reverse) }}
-{{ if gt (len $paginator.Pages) 0 }}
-<section class="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 pb-8 sm:px-6 lg:px-8">
-  {{ range $paginator.Pages }}
-  {{ $page := . }}
-  {{ $authors := .Params.authors | default (slice) }}
-  {{ $hasAuthors := gt (len $authors) 0 }}
-  {{ $venue := .Params.journal | default .Params.publisher }}
-  {{ $imagePath := .Params.image | default "" }}
-  {{ $imageResource := .Resources.GetMatch $imagePath }}
-  <article class="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition hover:border-brand-300 hover:shadow-md">
-    <a class="flex h-full flex-col gap-4 p-4 sm:flex-row sm:items-start sm:gap-6 sm:p-5" href="{{ .Permalink }}">
-      <div class="w-full shrink-0 sm:w-40">
-        {{ with $imageResource }}
-        <img
-          class="h-40 w-full rounded-xl object-cover shadow-sm sm:h-28 sm:w-40"
-          src="{{ .RelPermalink }}"
-          alt="{{ $page.Title | emojify }}" />
-        {{ else }}
-        {{ with $imagePath }}
-        <img
-          class="h-40 w-full rounded-xl object-cover shadow-sm sm:h-28 sm:w-40"
-          src="{{ . }}"
-          alt="{{ $page.Title | emojify }}" />
-        {{ end }}
-        {{ end }}
-      </div>
+{{ $softwareCitationKeys := slice "ogs:latest" "ogstools:latest" }}
 
-      <div class="min-w-0 flex-1 text-left">
-        <div class="mb-2 text-sm text-stone-500">
-          {{ if gt (len $authors) 4 }}
-          {{ index $authors 0 }} et al.
-          {{ else if $hasAuthors }}
-          {{ delimit $authors ", " }}
-          {{ end }}
-          {{ if and $hasAuthors (or .Params.year $venue) }} · {{ end }}
-          {{ with .Params.year }}{{ . }}{{ end }}
-          {{ if and .Params.year $venue }} · {{ end }}
-          {{ with $venue }}{{ . }}{{ end }}
-        </div>
-        <h2 class="mb-3 text-xl font-semibold leading-tight text-stone-900 sm:text-2xl">
-          {{ .Title | emojify }}
-        </h2>
-        {{ with .Params.abstract }}
-        <p class="line-clamp-4 text-sm leading-6 text-stone-700 sm:text-base">
-          {{ . }}
+<section class="border-b border-gray-200 bg-gray-50">
+  <div class="mx-auto w-full px-4 py-12 sm:px-6 lg:max-w-7xl lg:py-16">
+    <div class="font-mono text-xs font-semibold tracking-widest text-teal-700 sm:text-sm">
+      RESEARCH
+    </div>
+    <div class="mt-4 grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] lg:items-end">
+      <div>
+        <h1 class="max-w-4xl text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl" style="line-height: 1.1;">
+          {{ .Title }}
+        </h1>
+        <p class="mt-5 max-w-3xl text-lg leading-relaxed text-gray-600">
+          {{ .Params.description }}
         </p>
-        {{ end }}
       </div>
-    </a>
-  </article>
-  {{ end }}
+    </div>
+
+    <div id="software-citations" class="mt-10 grid scroll-mt-8 gap-5 md:grid-cols-2">
+      {{ range $softwareCitationKeys }}
+      {{ $citationKey := . }}
+      {{ $publication := false }}
+      {{ range where $.Site.RegularPages "Section" "publications" }}
+      {{ if eq (lower (.Params.citationKey | default "")) (lower $citationKey) }}
+      {{ $publication = . }}
+      {{ end }}
+      {{ end }}
+      {{ if $publication }}
+      {{ $authors := $publication.Params.authors | default (slice) }}
+      {{ $authorText := "" }}
+      {{ if gt (len $authors) 3 }}
+      {{ $authorText = printf "%s et al." (index $authors 0) }}
+      {{ else if gt (len $authors) 0 }}
+      {{ $authorText = delimit $authors ", " }}
+      {{ end }}
+      {{ $doi := $publication.Params.doi | default "" }}
+      {{ $doiUrl := "" }}
+      {{ if $doi }}
+      {{ if or (hasPrefix $doi "http://") (hasPrefix $doi "https://") }}
+      {{ $doiUrl = $doi }}
+      {{ else }}
+      {{ $doiUrl = printf "https://doi.org/%s" $doi }}
+      {{ end }}
+      {{ end }}
+      {{ $bibtex := $publication.Params.bibtex | default "" }}
+      {{ $bibtexId := printf "software-bibtex-%s" $publication.File.UniqueID }}
+      <article class="rounded-lg border border-gray-200 bg-white p-5">
+        <div class="font-mono text-[11px] font-semibold tracking-widest text-teal-700">
+          SOFTWARE CITATION
+        </div>
+        <h2 class="mt-3 text-xl font-bold tracking-tight text-gray-950">
+          <a class="hover:text-brand-700" href="{{ $publication.RelPermalink }}">
+            {{ $publication.Title | safeHTML }}
+          </a>
+        </h2>
+        <p class="mt-3 text-sm leading-relaxed text-gray-600">
+          {{ with $authorText }}{{ . }}{{ end }}{{ with $publication.Params.year }} ({{ . }}){{ end }}{{ with $publication.Params.publisher }}. {{ . }}.{{ end }}
+        </p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          {{ with $doiUrl }}
+          <a class="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600"
+            href="{{ . }}">
+            Zenodo Release
+          </a>
+          {{ end }}
+          {{ with $bibtex }}
+          <button
+            class="js-copy-bibtex-source inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 transition hover:border-brand-300 hover:text-brand-700"
+            type="button" data-target="{{ $bibtexId }}">
+            Copy BibTeX
+          </button>
+          <pre id="{{ $bibtexId }}" class="hidden">{{ . }}</pre>
+          {{ end }}
+        </div>
+      </article>
+      {{ end }}
+      {{ end }}
+    </div>
+  </div>
+</section>
+
+{{ if gt (len $paginator.Pages) 0 }}
+<section id="publications" class="scroll-mt-8 border-b border-gray-200 bg-white">
+  <div class="mx-auto w-full px-4 py-10 sm:px-6 lg:max-w-7xl lg:py-12">
+    <div class="grid gap-5 lg:grid-cols-2">
+      {{ range $paginator.Pages }}
+      {{ $page := . }}
+      {{ $authors := .Params.authors | default (slice) }}
+      {{ $hasAuthors := gt (len $authors) 0 }}
+      {{ $venue := .Params.journal | default .Params.publisher }}
+      {{ $imagePath := .Params.image | default "" }}
+      {{ $imageResource := .Resources.GetMatch $imagePath }}
+      <article class="overflow-hidden rounded-lg border border-gray-200 bg-white transition hover:-translate-y-1 hover:border-brand-300 hover:shadow-md">
+        <a class="grid h-full gap-4 p-4 sm:grid-cols-[9rem_minmax(0,1fr)] sm:p-5" href="{{ .Permalink }}">
+          <div class="min-w-0">
+            {{ with $imageResource }}
+            <img
+              class="aspect-[21/9] md:aspect-[4/3] w-full rounded-lg object-cover shadow-sm"
+              src="{{ .RelPermalink }}"
+              alt="{{ $page.Title | emojify }}" />
+            {{ else }}
+            {{ with $imagePath }}
+            <img
+              class="aspect-[21/9] md:aspect-[4/3] w-full rounded-lg object-cover shadow-sm"
+              src="{{ . }}"
+              alt="{{ $page.Title | emojify }}" />
+            {{ end }}
+            {{ end }}
+          </div>
+
+          <div class="min-w-0">
+            <div class="font-mono text-[11px] tracking-wide text-teal-600">
+              {{ with $venue }}{{ upper . }}{{ end }}
+              {{ with .Params.year }}{{ if $venue }} &middot; {{ end }}{{ . }}{{ end }}
+            </div>
+            <h2 class="mt-2 text-lg font-semibold leading-snug text-gray-950">
+              {{ .Title | emojify }}
+            </h2>
+            <div class="mt-2 text-sm leading-6 text-gray-500">
+              {{ if gt (len $authors) 4 }}
+              {{ index $authors 0 }} et al.
+              {{ else if $hasAuthors }}
+              {{ delimit $authors ", " }}
+              {{ end }}
+            </div>
+            {{ with .Params.abstract }}
+            <p class="mt-3 line-clamp-4 text-sm leading-relaxed text-gray-600">
+              {{ . }}
+            </p>
+            {{ end }}
+          </div>
+        </a>
+      </article>
+      {{ end }}
+    </div>
+  </div>
 </section>
 
 {{ partial "pagination.html" . }}
 {{ else }}
-<section class="prose mt-10">
-  <p class="border-t py-8">
+<section class="mx-auto w-full px-4 py-10 sm:px-6 lg:max-w-7xl">
+  <div class="rounded-lg border border-gray-200 bg-white p-5 text-gray-600">
     <em>{{ i18n "list.no_articles" | emojify }}</em>
-  </p>
+  </div>
 </section>
 {{ end }}
+<script>
+  document.querySelectorAll(".js-copy-bibtex-source").forEach((button) => {
+    if (button.dataset.copyBibtexBound === "true") {
+      return;
+    }
+
+    button.dataset.copyBibtexBound = "true";
+    button.addEventListener("click", async () => {
+      const target = button.dataset.target ? document.getElementById(button.dataset.target) : null;
+      const bibtex = target ? target.textContent : "";
+      if (!bibtex) {
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(bibtex);
+        const originalLabel = button.textContent;
+        button.textContent = "Copied";
+        window.setTimeout(() => {
+          button.textContent = originalLabel;
+        }, 1500);
+      } catch {
+        button.textContent = "Copy failed";
+      }
+    });
+  });
+</script>
 {{ end }}
