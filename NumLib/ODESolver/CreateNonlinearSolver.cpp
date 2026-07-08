@@ -29,10 +29,21 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
     if (type == "Picard")
     {
         //! \ogs_file_param_special{prj__nonlinear_solvers__nonlinear_solver__Picard}
+        auto const damping =
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__Picard__damping}
+            config.getConfigParameter<double>("damping", 1.0);
+        if (damping <= 0.0 || damping > 1.0)
+        {
+            OGS_FATAL(
+                "The damping factor for the Picard method must be in (0, 1], "
+                "got {:g}.",
+                damping);
+        }
         auto const tag = NonlinearSolverTag::Picard;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(
-            std::make_unique<ConcreteNLS>(linear_solver, max_iter), tag);
+            std::make_unique<ConcreteNLS>(linear_solver, max_iter, damping),
+            tag);
     }
     if (type == "Newton")
     {
