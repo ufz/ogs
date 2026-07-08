@@ -171,6 +171,12 @@ private:
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration
  * method.
  *
+ * Notation used throughout this class and its documentation:
+ * \f$ x_k \f$ is the current iterate and \f$ g \f$ is the Picard fixpoint map,
+ * i.e. \f$ g(x_k) \f$ is the solution of the linearized system
+ * \f$ A(x_k)\,x = b(x_k) \f$ (the result of one linear solve). A converged
+ * iteration is a fixpoint \f$ x = g(x) \f$, and one iteration reads
+ * \f$ x_{k+1} = g(x_k) \f$.
  */
 template <>
 class NonlinearSolver<NonlinearSolverTag::Picard> final
