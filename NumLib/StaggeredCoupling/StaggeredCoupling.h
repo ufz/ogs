@@ -57,6 +57,13 @@ public:
 
     ~StaggeredCoupling();
 
+    /// Number of global coupling iterations performed in the last solved time
+    /// step. Used to drive the time step size control in the staggered scheme.
+    int lastNumberOfCouplingIterations() const
+    {
+        return number_of_global_coupling_iterations_;
+    }
+
     /**
      * This function fills the vector of solutions of coupled processes of
      * processes, solutions_of_coupled_processes_, and initializes the
@@ -84,6 +91,10 @@ private:
     /// Maximum iteration number of the coupling loop of the staggered scheme.
     const int global_coupling_max_iterations_;
 
+    /// Number of global coupling iterations performed in the last solved time
+    /// step.
+    int number_of_global_coupling_iterations_ = 0;
+
     /** Coupling graph for the staggered scheme. It looks like:
      *
      *    x ... x    o        o
@@ -103,7 +114,7 @@ private:
      *
      */
     template <typename ProcessData, typename Output>
-    std::tuple<NumLib::NonlinearSolverStatus, bool> executeConcrete(
+    std::tuple<NumLib::NonlinearSolverStatus, bool, int> executeConcrete(
         std::vector<CouplingNodeVariant>& coupling_nodes,
         const int max_iterations, const double t, const double dt,
         const std::size_t timestep_id,
@@ -115,7 +126,7 @@ private:
             solve_one_time_step_one_process);
 
     template <typename ProcessData, typename Output>
-    std::tuple<NumLib::NonlinearSolverStatus, bool> executeSubCoupling(
+    std::tuple<NumLib::NonlinearSolverStatus, bool, int> executeSubCoupling(
         CouplingNodeVariant& coupling_node, const double t, const double dt,
         const std::size_t timestep_id,
         std::vector<GlobalVector*>& process_solutions,

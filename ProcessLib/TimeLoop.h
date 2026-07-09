@@ -134,6 +134,10 @@ private:
     int _repeating_times_of_rejected_step = 0;
     bool _last_step_rejected = false;
 
+    /// Number of global coupling iterations of the previous time step in the
+    /// staggered scheme. It drives the time step size control of all processes.
+    int _global_coupling_number_iterations = 0;
+
     std::unique_ptr<NumLib::StaggeredCoupling> _staggered_coupling;
 };
 }  // namespace ProcessLib

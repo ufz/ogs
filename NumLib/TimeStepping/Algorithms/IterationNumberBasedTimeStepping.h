@@ -48,6 +48,11 @@ namespace NumLib
  * threshold (e.g. 9),
  * a time step is repeated with a smaller time step size.
  *
+ * \note In the staggered coupling scheme the controlling iteration number is
+ * the maximum over the number of global coupling iterations of the previous
+ * time step and the number of nonlinear (Newton-Raphson or Picard) iterations
+ * of all coupled processes.
+ *
  * Reference
  * - Hoffmann J (2010) Reactive Transport and Mineral Dissolution/Precipitation
  * in Porous Media:Efficient Solution Algorithms, Benchmark Computations and
