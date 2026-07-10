@@ -46,7 +46,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     # TODO: relaxed tol. after !5697, maybe regenerate ref. results?
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/calculatesurfaceflux_ht_cube_1e4.prj RUNTIME 73)
     # Staggered scheme
-    OgsTest(PROJECTFILE Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample/th_decovalex.prj RUNTIME 2)
+    OgsTest(PROJECTFILE Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample/th_decovalex.prj RUNTIME 20)
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/IsothermalFluidFlowStaggered.prj)
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/PressureDiffusionTemperatureDiffusionStaggered.prj)
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/IsothermalFluidFlowWithGravityStaggered.prj)

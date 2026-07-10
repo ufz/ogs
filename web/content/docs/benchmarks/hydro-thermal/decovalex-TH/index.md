@@ -16,7 +16,7 @@ This example is based on the TASK D_THM1 of the DECOVALEX-THMC project.
 The TASK D_THM1 of the DECOVALEX-THMC project studies the coupled thermal hydraulic
  and mechanical (THM) processes in the FEBEX type nuclear waster repository.
  In the FEBEX type repository, nuclear waster canisters are stored in the
- drifts excavated in the deep rock mass of granite, which is fully water
+ drifts excavated in the deep rock mass of fractured granite, which is fully water
  saturated, and they are sealed with bentonite. Initially, the bentonite,
  the sealing material, is partially saturated. TASK D_THM1 defines a 2D model
  about the FEBEX type repository \cite BirEtAl:2008. In this example,
@@ -39,114 +39,49 @@ In the above figure, the domain in the annulus sector represents the sealing
  sector. On the top boundary, the boundary conditions are
  $p=4.3 ⋅ 10^6\ \mathrm{Pa}, T=294\ \mathrm{K}$.
  While on the bottom boundary, the boundary conditions are set as
- $p=4.7 ⋅ 10^6\ \mathrm{Pa}, T=319\ \mathrm{K}$.
+ $p=4.7 ⋅ 10^6\ \mathrm{Pa}, T=310\ \mathrm{K}$.
  The initial conditions are given as
  $p=4.7 ⋅ 10^6\ \mathrm{Pa}, T=298\ \mathrm{K}$.
 
-<p>The material properties are shown in the following table:</p>
-<table>
-<caption>Material properties</caption>
-<thead>
-<tr class="header">
-<th align="left">Property</th>
-<th align="left">Value</th>
-<th align="left">Unit</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="left"><em>Bentonite</em></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="even">
-<td align="left">Density</td>
-<td align="left"><span class="math inline"><em>k</em><em>g</em>/<em>m</em><sup>3</sup></span></td>
-<td align="left">1600</td>
-</tr>
-<tr class="odd">
-<td align="left">Porosity</td>
-<td align="left">-</td>
-<td align="left">0.01</td>
-</tr>
-<tr class="even">
-<td align="left">Thermal conductivity</td>
-<td align="left"><span class="math inline"><em>W</em>/(<em>m</em><em>K</em>)</span></td>
-<td align="left">3</td>
-</tr>
-<tr class="odd">
-<td align="left">Specific heat capacity</td>
-<td align="left"><span class="math inline"><em>J</em>/(<em>k</em><em>g</em><em>K</em>)</span></td>
-<td align="left">3</td>
-</tr>
-<tr class="even">
-<td align="left">Saturated permeability</td>
-<td align="left"><span class="math inline"><em>m</em><sup>2</sup></span></td>
-<td align="left"><span class="math inline">2.0 ⋅ 10<sup>−21</sup></span></td>
-</tr>
-<tr class="odd">
-<td align="left">Solid thermal expansivity</td>
-<td align="left"><span class="math inline"><em>K</em><sup>-1</sup></span></td>
-<td align="left"><span class="math inline">10<sup>−5</sup></span></td>
-</tr>
-<tr class="even">
-<td align="left">Biot's coefficient</td>
-<td align="left"><span class="math inline"><em>-</em></span></td>
-<td align="left"><span class="math inline">0.6</span></td>
-</tr>
-<tr class="odd">
-<td align="left">Storage</td>
-<td align="left"><span class="math inline"><em>Pa</em><sup>-1</sup></span></span></td>
-<td align="left"><span class="math inline">10<sup>−11</sup></span></td>
-</tr>
-<tr class="even">
-<td align="left"><em>Granite</em></td>
-<td align="left"></td>
-<td align="left"></td>
-</tr>
-<tr class="odd">
-<td align="left">Density</td>
-<td align="left"><span class="math inline"><em>k</em><em>g</em>/<em>m</em><sup>3</sup></span></td>
-<td align="left">2700</td>
-</tr>
-<tr class="even">
-<td align="left">Porosity</td>
-<td align="left">-</td>
-<td align="left">0.41</td>
-</tr>
-<tr class="odd">
-<td align="left">Thermal conductivity</td>
-<td align="left"><span class="math inline"><em>W</em>/(<em>m</em><em>K</em>)</span></td>
-<td align="left">3</td>
-</tr>
-<tr class="even">
-<td align="left">Specific heat capacity</td>
-<td align="left"><span class="math inline"><em>J</em>/(<em>k</em><em>g</em><em>K</em>)</span></td>
-<td align="left">900</td>
-</tr>
-<tr class="odd">
-<td align="left">Saturated permeability</td>
-<td align="left"><span class="math inline"><em>m</em><sup>2</sup></span></td>
-<td align="left"><span class="math inline">10<sup>−17</sup></span></td>
-</tr>
-</tr>
-<tr class="even">
-<td align="left">Solid thermal expansivity</td>
-<td align="left"><span class="math inline"><em>K</em><sup>-1</sup></span></td>
-<td align="left"><span class="math inline">10<sup>−5</sup></span></td>
-</tr>
-<tr class="odd">
-<td align="left">Biot's coefficient</td>
-<td align="left"><span class="math inline"><em>-</em></span></td>
-<td align="left"><span class="math inline">1.0</span></td>
-</tr>
-<tr class="even">
-<td align="left">Storage</td>
-<td align="left"><span class="math inline"><em>Pa</em><sup>-1</sup></span></span></td>
-<td align="left"><span class="math inline">2.0 ⋅ 10<sup>−11</sup></span></td>
-</tr>
-</tbody>
-</table>
+The time variation of that heat power is given by the `time_heat_power` curve
+ of the project file, which scales the heat flux on the inner arc.
+  As shown in the following figure, the curve covers the one million year decay
+  of the waste, while this benchmark simulates its first 1000 years:
+
+ {{< figure src="decovalex_TH_heat_power.png" width="50%" >}}
+
+The material properties are shown in the following table in SI units. The
+project file uses a year as its time unit, which it absorbs into the thermal
+conductivities and the permeabilities: both appear there multiplied by
+$31536000\ \mathrm{s}$, so the bentonite conductivity of $1.2\ W/(mK)$ reads
+$37843200$ and its permeability of $2.0\cdot10^{-21}\ m^2$ reads
+$6.3072\cdot10^{-14}$. The other values are as tabulated.
+
+| Property | Value | Unit |
+| --- | --- | --- |
+| *Water* | | |
+| Density | [IAPWSIF97Region1](https://iapws.org/technical-guidance/release/IF97-Rev) | $kg/m^3$ |
+| Viscosity | 10$^{-3}$ | Pa$\cdot$s |
+| Thermal conductivity | 0.6 | $W/(mK)$ |
+| Specific heat capacity | 4000.0 | $J/(kgK)$ |
+| *Bentonite* | | |
+| Density | 1600 | $kg/m^3$ |
+| Porosity | 0.41 | - |
+| Thermal conductivity | 1.2 | $W/(mK)$ |
+| Specific heat capacity | 1.38($T$ - 273.15) + 732.5 | $J/(kgK)$ |
+| Saturated permeability | $2.0 \cdot 10^{-21}$ | $m^2$ |
+| Solid thermal expansivity | $10^{-5}$ | $K^{-1}$ |
+| Biot's coefficient | 1.0 | $-$ |
+| Storage | 0.0 | $Pa^{-1}$ |
+| *Fractured granite* | | |
+| Density | 2700 | $kg/m^3$ |
+| Porosity | 0.01 | - |
+| Thermal conductivity | 3.0 | $W/(mK)$ |
+| Specific heat capacity | 900 | $J/(kgK)$ |
+| Saturated permeability | $10^{-17}$ | $m^2$ |
+| Solid thermal expansivity | $10^{-5}$ | $K^{-1}$ |
+| Biot's coefficient | $1.0$ | $-$ |
+| Storage | 0.0 | $Pa^{-1}$ |
 
 ## Solution
 

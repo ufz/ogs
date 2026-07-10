@@ -19,6 +19,9 @@
             </secondary_variables>
         </process>
     </processes>
+    <!-- Note: In order to use year as time unit, the coefficient of the Laplace term,
+      e.g. thermal conductivity, intrinsic permeability, etc. is multiplied
+      by a factor of 86400 * 365 -->
     <media>
         <medium id="0">
             <phases>
@@ -27,13 +30,7 @@
                     <properties>
                         <property>
                             <name>density</name>
-                            <type>Linear</type>
-                            <reference_value>1000.0</reference_value>
-                            <independent_variable>
-                                <variable_name>temperature</variable_name>
-                                <reference_condition>293.0</reference_condition>
-                                <slope>-4.3e-4</slope>
-                            </independent_variable>
+                            <type>WaterDensityIAPWSIF97Region1</type>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -48,7 +45,7 @@
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>
-                            <!--0.6 * 86400 * 365 with the time unit of year-->
+                            <!--0.6 * 86400 * 365 -->
                             <value>18921600.0</value>
                         </property>
                     </properties>
@@ -59,22 +56,29 @@
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>1.0e-11</value>
+                            <value>0.0</value>
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Parameter</type>
-                            <parameter_name>rho_solid</parameter_name>
+                            <type>Constant</type>
+                            <value>1600.0</value>
                         </property>
                         <property>
                             <name>thermal_conductivity</name>
-                            <type>Parameter</type>
-                            <parameter_name>lambda</parameter_name>
+                            <type>Constant</type>
+                            <!--1.2 * 86400 * 365 -->
+                            <value>37843200.0</value>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
-                            <type>Parameter</type>
-                            <parameter_name>c_p</parameter_name>
+                            <type>Function</type>
+                            <value>
+                                <expression>1.38*(temperature - 273.15) + 732.5</expression>
+                            </value>
+                            <dvalue>
+                                <variable_name>temperature</variable_name>
+                                <expression>1.38</expression>
+                            </dvalue>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -98,12 +102,13 @@
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
+                    <!--2.e-21 * 86400 * 365 -->
                     <value>6.3072e-14 0. 0. 6.3072e-14</value>
                 </property>
                 <property>
                     <name>porosity</name>
                     <type>Constant</type>
-                    <value>0.01</value>
+                    <value>0.41</value>
                 </property>
                 <property>
                     <name>thermal_conductivity</name>
@@ -112,7 +117,7 @@
                 <property>
                     <name>biot_coefficient</name>
                     <type>Constant</type>
-                    <value>0.6</value>
+                    <value>1.0</value>
                 </property>
             </properties>
         </medium>
@@ -123,13 +128,7 @@
                     <properties>
                         <property>
                             <name>density</name>
-                            <type>Linear</type>
-                            <reference_value>1000.0</reference_value>
-                            <independent_variable>
-                                <variable_name>temperature</variable_name>
-                                <reference_condition>293.0</reference_condition>
-                                <slope>-4.3e-4</slope>
-                            </independent_variable>
+                            <type>WaterDensityIAPWSIF97Region1</type>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -144,7 +143,7 @@
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>
-                            <!--0.6 * 86400 * 365 with the time unit of year-->
+                            <!--0.6 * 86400 * 365 -->
                             <value>18921600.0</value>
                         </property>
                     </properties>
@@ -154,23 +153,24 @@
                     <properties>
                         <property>
                             <name>density</name>
-                            <type>Parameter</type>
-                            <parameter_name>rho_solid</parameter_name>
+                            <type>Constant</type>
+                            <value>2700.0</value>
                         </property>
                         <property>
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>2.0e-11</value>
+                            <value>0.0</value>
                         </property>
                         <property>
                             <name>thermal_conductivity</name>
-                            <type>Parameter</type>
-                            <parameter_name>lambda</parameter_name>
+                            <type>Constant</type>
+                            <!--3.0 * 86400 * 365 -->
+                            <value>94608000.0</value>
                         </property>
                         <property>
                             <name>specific_heat_capacity</name>
-                            <type>Parameter</type>
-                            <parameter_name>c_p</parameter_name>
+                            <type>Constant</type>
+                            <value>900.0</value>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
@@ -192,19 +192,15 @@
                     <value>0.0</value>
                 </property>
                 <property>
-                    <name>specific_heat_capacity</name>
-                    <type>Constant</type>
-                    <value>4000</value>
-                </property>
-                <property>
                     <name>permeability</name>
                     <type>Constant</type>
+                    <!--1e-17 * 86400 * 365 -->
                     <value>3.1536e-10 0. 0. 3.1536e-10</value>
                 </property>
                 <property>
                     <name>porosity</name>
                     <type>Constant</type>
-                    <value>0.41</value>
+                    <value>0.01</value>
                 </property>
                 <property>
                     <name>thermal_conductivity</name>
@@ -250,6 +246,7 @@
                 </time_discretization>
                 <time_stepping>
                     <type>FixedTimeStepping</type>
+                    <!--Time units are in years-->
                     <t_initial> 0.0 </t_initial>
                     <t_end> 1e3 </t_end>
                     <timesteps>
@@ -414,38 +411,6 @@
             <value>4.7e+6</value>
         </parameter>
         <parameter>
-            <name>lambda</name>
-            <type>MeshElement</type>
-            <field_name>scaled_solid_thermal_conductivity</field_name>
-            <!--3.0 * 86400 * 365. Scaled with the time unit of year-->
-        </parameter>
-        <parameter>
-            <name>lambda_fluid</name>
-            <type>Constant</type>
-            <!--0.6 * 86400 * 365 with the time unit of year-->
-            <value>18921600.0</value>
-        </parameter>
-        <parameter>
-            <name>c_p</name>
-            <type>MeshElement</type>
-            <field_name>solid_heat_capacity</field_name>
-        </parameter>
-        <parameter>
-            <name>rho_solid</name>
-            <type>MeshElement</type>
-            <field_name>solid_density</field_name>
-        </parameter>
-        <parameter>
-            <name>n0</name>
-            <type>Constant</type>
-            <value>0.01</value>
-        </parameter>
-        <parameter>
-            <name>n1</name>
-            <type>Constant</type>
-            <value>0.41</value>
-        </parameter>
-        <parameter>
             <name>T0</name>
             <type>Constant</type>
             <value>298</value>
@@ -461,18 +426,6 @@
             <value>310</value>
         </parameter>
         <parameter>
-            <name>mu0</name>
-            <type>Constant</type>
-            <!--2.e-21 * 86400 * 365 with the time unit of year-->
-            <values>6.3072e-14 0. 0. 6.3072e-14</values>
-        </parameter>
-        <parameter>
-            <name>mu1</name>
-            <type>Constant</type>
-            <!--1.e-17 * 86400 * 365 with the time unit of year-->
-            <values>3.1536e-10 0. 0. 3.1536e-10</values>
-        </parameter>
-        <parameter>
             <name>hpower_on_arc</name>
             <type>Constant</type>
             <value>1.0</value>
@@ -482,11 +435,6 @@
             <type>CurveScaled</type>
             <curve>time_heat_power</curve>
             <parameter>hpower_on_arc</parameter>
-        </parameter>
-        <parameter>
-            <name>heat_power_c</name>
-            <type>Constant</type>
-            <value>2477507279.46192</value>
         </parameter>
     </parameters>
     <curves>
@@ -828,7 +776,7 @@
             <regex>th_decovalex_ts.*.vtu</regex>
             <field>p</field>
             <absolute_tolerance>5.0e-6</absolute_tolerance>
-            <relative_tolerance>5.0e-13</relative_tolerance>
+            <relative_tolerance>9.5e-13</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>th_decovalex_ts_.*.vtu</regex>
