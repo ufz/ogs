@@ -158,8 +158,6 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         ConstitutiveRelations::GasPressureData const pGR_data{pG, pG_prev};
         ConstitutiveRelations::CapillaryPressureData const pCap_data{pCap,
                                                                      pCap_prev};
-        ConstitutiveRelations::ReferenceTemperatureData const T0{
-            this->process_data_.reference_temperature(t, pos)[0]};
         ConstitutiveRelations::GasPressureGradientData<DisplacementDim> const
             grad_p_GR{gradNp * gas_pressure};
         ConstitutiveRelations::CapillaryPressureGradientData<
@@ -201,7 +199,7 @@ TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
             current_state.swelling_data, ip_cv.swelling_data);
 
         // solid phase linear thermal expansion coefficient
-        models.s_therm_exp_model.eval({pos, t, dt}, media_data, T_data, T0,
+        models.s_therm_exp_model.eval({pos, t, dt}, media_data,
                                       ip_cv.s_therm_exp_data);
 
         models.mechanical_strain_model.eval(

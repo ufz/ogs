@@ -21,7 +21,6 @@
                 <type>CentralDifferences</type>
                 <epsilons>1e-06 1e-06 1e-06</epsilons>
             </jacobian_assembler>
-            <reference_temperature>T_0</reference_temperature>
             <process_variables>
                 <gas_pressure>gas_pressure</gas_pressure>
                 <capillary_pressure>capillary_pressure</capillary_pressure>
@@ -306,11 +305,6 @@
         </parameter>
         <parameter>
             <name>temperature_ic</name>
-            <type>Constant</type>
-            <value>300</value>
-        </parameter>
-        <parameter>
-            <name>T_0</name>
             <type>Constant</type>
             <value>300</value>
         </parameter>

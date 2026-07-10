@@ -21,7 +21,6 @@
                 <type>CentralDifferences</type>
                 <epsilons>0.001 0.001 0.001</epsilons>
             </jacobian_assembler>
-            <reference_temperature>temperature_outside</reference_temperature>
             <process_variables>
                 <gas_pressure>gas_pressure</gas_pressure>
                 <capillary_pressure>capillary_pressure</capillary_pressure>

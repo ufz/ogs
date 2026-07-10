@@ -39,7 +39,6 @@
                 <secondary_variable name="velocity_gas"/>
                 <secondary_variable name="velocity_liquid"/>
             </secondary_variables>
-            <reference_temperature>T_0</reference_temperature>
             <specific_body_force>0 0</specific_body_force>
         </process>
     </processes>
