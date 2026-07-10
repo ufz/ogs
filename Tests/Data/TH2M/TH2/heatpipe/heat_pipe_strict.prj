@@ -19,7 +19,6 @@
                 <type>CentralDifferences</type>
                 <epsilons>0.01 0.0001 3e-03</epsilons>
             </jacobian_assembler>
-            <reference_temperature>T0</reference_temperature>
             <process_variables>
                 <gas_pressure>gas_pressure</gas_pressure>
                 <capillary_pressure>capillary_pressure</capillary_pressure>
@@ -372,11 +371,6 @@
             <name>nu</name>
             <type>Constant</type>
             <value>0.4</value>
-        </parameter>
-        <parameter>
-            <name>T0</name>
-            <type>Constant</type>
-            <value>293.15</value>
         </parameter>
         <parameter>
             <name>displacement0</name>

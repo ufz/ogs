@@ -174,14 +174,6 @@ std::unique_ptr<Process> createTH2MProcess(
         MaterialLib::Solids::createConstitutiveRelations<DisplacementDim>(
             parameters, local_coordinate_system, materialIDs(mesh), config);
 
-    // reference temperature
-    const auto& reference_temperature = ParameterLib::findParameter<double>(
-        config,
-        //! \ogs_file_param_special{prj__processes__process__TH2M__reference_temperature}
-        "reference_temperature", parameters, 1, &mesh);
-    DBUG("Use '{:s}' as reference temperature parameter.",
-         reference_temperature.name);
-
     // Specific body force
     Eigen::Matrix<double, DisplacementDim, 1> specific_body_force;
     {
@@ -232,7 +224,6 @@ std::unique_ptr<Process> createTH2MProcess(
         std::move(media_map),
         std::move(solid_constitutive_relations),
         std::move(phase_transition_model),
-        reference_temperature,
         std::move(initial_stress),
         specific_body_force,
         mass_lumping,

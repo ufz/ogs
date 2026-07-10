@@ -10,7 +10,6 @@
 #include "ConstitutiveRelations/PhaseTransitionModel.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
-#include "ParameterLib/Parameter.h"
 #include "ProcessLib/Common/HydroMechanics/InitialStress.h"
 
 namespace ProcessLib
@@ -35,8 +34,6 @@ struct TH2MProcessData
 
     std::unique_ptr<ConstitutiveRelations::PhaseTransitionModel>
         phase_transition_model_ = nullptr;
-
-    ParameterLib::Parameter<double> const& reference_temperature;
 
     InitialStress const initial_stress;
 

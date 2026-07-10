@@ -21,7 +21,6 @@
                 <type>ForwardDifferences</type>
                 <epsilons>0.001 0.001 0.001</epsilons>
             </jacobian_assembler>
-            <reference_temperature>T0</reference_temperature>
             <process_variables>
                 <gas_pressure>gas_pressure</gas_pressure>
                 <capillary_pressure>capillary_pressure</capillary_pressure>

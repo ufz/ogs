@@ -40,7 +40,6 @@
             </secondary_variables>
             <specific_body_force>0 0</specific_body_force>
             <initialize_porosity_from_medium_property>false</initialize_porosity_from_medium_property>
-            <reference_temperature>temperature0</reference_temperature>
         </process>
     </processes>
     <media>

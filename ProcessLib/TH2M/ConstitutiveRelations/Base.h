@@ -95,9 +95,6 @@ struct CapillaryPressureData
     double pCap_prev = nan;
 };
 
-using ReferenceTemperatureData =
-    BaseLib::StrongType<double, struct ReferenceTemperatureTag>;
-
 template <int DisplacementDim>
 using GasPressureGradientData =
     BaseLib::StrongType<GlobalDimVector<DisplacementDim>,
