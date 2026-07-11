@@ -95,6 +95,7 @@ struct OnePlusGamma_pTheta final
     {
     }
 
+    // NOLINTNEXTLINE(modernize-use-default-member-init) depends on ctor args.
     double const value;
     double const pow_m_p;
     double const pow_m_p1;

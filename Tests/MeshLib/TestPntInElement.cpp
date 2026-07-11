@@ -176,7 +176,7 @@ TYPED_TEST(MeshLibIsPntInElementTest,
      */
     auto const& e = this->bulk_element;
 
-    std::array<double, 3> coords;
+    std::array<double, 3> coords{};
     // comp is the coordinate that is close to, but outside the element range.
     // I.e., this coordinate will be +/- (1 + eps).
     for (unsigned comp = 0; comp < 3; ++comp)

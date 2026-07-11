@@ -49,7 +49,7 @@ CapillaryPressureVanGenuchten::CapillaryPressureVanGenuchten(
             "residual liquid saturion S_L_res = {:g}.",
             S_L_max_, S_L_res_);
     }
-    if (!(m_ > 0 && m_ < 1))
+    if (m_ <= 0 || m_ >= 1)
     {
         OGS_FATAL(
             "Van Genuchten capillary pressure model: The exponent value m = "

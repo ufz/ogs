@@ -28,8 +28,6 @@ GeoMapper::GeoMapper(GeoLib::GEOObjects& geo_objects,
                      const std::string& geo_name)
     : _geo_objects(geo_objects),
       _geo_name(const_cast<std::string&>(geo_name)),
-      _surface_mesh(nullptr),
-      _grid(nullptr),
       _raster(nullptr)
 {
 }

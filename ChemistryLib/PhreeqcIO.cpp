@@ -365,7 +365,6 @@ PhreeqcIO::PhreeqcIO(MeshLib::Mesh const& mesh,
       _user_punch(std::move(user_punch)),
       _output(std::move(output)),
       _dump(std::move(dump)),
-      _num_chemical_systems(0),
       _concentration_warning_threshold(concentration_warning_threshold),
       num_chemistry_threads_(num_chemistry_threads),
       _use_stream_mode(use_stream_mode)
@@ -971,7 +970,7 @@ std::vector<std::string> const PhreeqcIO::getComponentList() const
                    std::back_inserter(component_names),
                    [](auto const& c) { return c.name; });
 
-    component_names.push_back("H");
+    component_names.emplace_back("H");
 
     return component_names;
 }

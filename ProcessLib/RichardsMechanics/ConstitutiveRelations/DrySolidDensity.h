@@ -12,7 +12,7 @@ namespace ProcessLib::RichardsMechanics
 // Apparent dry solid density
 using DrySolidDensity = BaseLib::StrongType<double, struct DrySolidDensityTag>;
 
-constexpr std::string_view ioName(struct DrySolidDensityTag*)
+constexpr std::string_view ioName(struct DrySolidDensityTag* /*unused*/)
 {
     return "dry_density_solid";
 }

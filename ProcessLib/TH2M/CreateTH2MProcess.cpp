@@ -211,9 +211,7 @@ std::unique_ptr<Process> createTH2MProcess(
 
     const bool use_TaylorHood_elements =
         variable_pCap->getShapeFunctionOrder() !=
-                variable_u->getShapeFunctionOrder()
-            ? true
-            : false;
+        variable_u->getShapeFunctionOrder();
     bool const initialize_porosity_from_medium_property =
         //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__initialize_porosity_from_medium_property}
         config.getConfigParameter("initialize_porosity_from_medium_property",

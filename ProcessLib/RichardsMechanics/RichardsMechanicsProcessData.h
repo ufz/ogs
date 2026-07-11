@@ -45,11 +45,11 @@ struct RichardsMechanicsProcessData
 
     std::optional<MicroPorosityParameters> micro_porosity_parameters;
 
-    bool const apply_mass_lumping;
+    bool const apply_mass_lumping = false;
 
     /// If set, improves convergence of the global Newton method in unsaturated
     /// regime.
-    bool const explicit_hm_coupling_in_unsaturated_zone;
+    bool const explicit_hm_coupling_in_unsaturated_zone = false;
 
     bool const use_numerical_jacobian = false;
 

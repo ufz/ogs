@@ -71,7 +71,6 @@ struct GeoLibMarkUsedPointsInSurface : public testing::Test
     GeoLibMarkUsedPointsInSurface()
     {
         auto const distances = std::array<double, 3>{1.0, 1.0, 1.0};
-        number_of_subdivisions = std::array<unsigned, 3>{9, 10, 0};
         point_vec = createPointsInGridArrangement(number_of_subdivisions,
                                                   distances, MathLib::ORIGIN);
         used_points = std::vector<bool>(point_vec.size(), false);
@@ -83,7 +82,7 @@ struct GeoLibMarkUsedPointsInSurface : public testing::Test
     }
 
     std::vector<bool> used_points;
-    std::array<unsigned, 3> number_of_subdivisions;
+    std::array<unsigned, 3> number_of_subdivisions = {9, 10, 0};
     std::vector<GeoLib::Point*> point_vec;
 };
 

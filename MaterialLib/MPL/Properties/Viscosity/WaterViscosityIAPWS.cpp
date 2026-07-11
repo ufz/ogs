@@ -84,7 +84,7 @@ double computeBarMu0Factor(const double barT)
 
 std::array<double, 6> computeSeriesFactorTForMu1(const double barT)
 {
-    std::array<double, 6> series_factorT;
+    std::array<double, 6> series_factorT{};
     series_factorT[0] = 1.;
     const double barT_fac = 1 / barT - 1.0;
     for (int i = 1; i < 6; i++)
@@ -97,7 +97,7 @@ std::array<double, 6> computeSeriesFactorTForMu1(const double barT)
 
 std::array<double, 7> computeSeriesFactorRhoForMu1(const double bar_rho)
 {
-    std::array<double, 7> series_factorRho;
+    std::array<double, 7> series_factorRho{};
     series_factorRho[0] = 1.;
     for (int i = 1; i < 7; i++)
     {

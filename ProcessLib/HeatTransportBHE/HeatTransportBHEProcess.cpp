@@ -364,7 +364,7 @@ NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(
             std::get<3>(tespy_result)[i];
     }
     auto const tespy_has_converged = std::get<1>(tespy_result);
-    if (tespy_has_converged == true)
+    if (tespy_has_converged)
     {
         return NumLib::IterationResult::SUCCESS;
     }

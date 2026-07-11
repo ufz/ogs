@@ -70,7 +70,7 @@ std::unique_ptr<LookupTable> createTestLookupTable(const char xml[])
             std::vector<std::reference_wrapper<ProcessLib::ProcessVariable>>
                 per_process_variable;
 
-            per_process_variable.push_back(pv);
+            per_process_variable.emplace_back(pv);
             process_variables.push_back(std::move(per_process_variable));
         }
     }

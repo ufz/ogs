@@ -11,7 +11,7 @@
 
 namespace MeshLib
 {
-Element::Element(std::size_t id) : _id(id), _neighbors(nullptr) {}
+Element::Element(std::size_t id) : _id(id) {}
 
 Element::~Element()
 {

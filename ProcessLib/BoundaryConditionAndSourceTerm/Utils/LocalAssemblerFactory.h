@@ -39,7 +39,7 @@ class LocalAssemblerFactory final
     struct HasSuitableDimension
     {
         template <typename ElementTraits>
-        constexpr bool operator()(ElementTraits*) const
+        constexpr bool operator()(ElementTraits* /*element_traits*/) const
         {
             return GlobalDim >= ElementTraits::ShapeFunction::DIM;
         }
@@ -48,7 +48,7 @@ class LocalAssemblerFactory final
     struct Is2ndOrderElementOfSuitableDimension
     {
         template <typename ElementTraits>
-        constexpr bool operator()(ElementTraits*) const
+        constexpr bool operator()(ElementTraits* /*element_traits*/) const
         {
             if constexpr (GlobalDim < ElementTraits::ShapeFunction::DIM)
             {

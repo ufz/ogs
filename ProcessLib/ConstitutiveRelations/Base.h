@@ -71,7 +71,7 @@ namespace detail
 template <typename... Ts, std::size_t... Idcs>
 void assign(std::tuple<PrevState<Ts>...>& prev_states,
             std::tuple<Ts...> const& current_states,
-            std::index_sequence<Idcs...>)
+            std::index_sequence<Idcs...> /*unused*/)
 {
     ((std::get<Idcs>(prev_states) = std::get<Idcs>(current_states)), ...);
 }
@@ -89,8 +89,8 @@ void assign(std::tuple<PrevState<Ts>...>& prev_states,
 struct SpaceTimeData
 {
     ParameterLib::SpatialPosition x;
-    double t;
-    double dt;
+    double t = 0;
+    double dt = 0;
 };
 
 /// Convenience alias for not a number.

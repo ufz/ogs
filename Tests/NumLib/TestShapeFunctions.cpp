@@ -86,7 +86,7 @@ using namespace NumLib;
 template <typename ShapeFunction>
 struct ShapeFunctionTest : public ::testing::Test
 {
-    ac::NaturalPointGenerator<ShapeFunction> natural_point_generator;
+    ac::NaturalPointGenerator<ShapeFunction> natural_point_generator{};
     ac::gtest_reporter gtest_reporter;
 };
 
@@ -106,7 +106,7 @@ TYPED_TEST(ShapeFunctionTest, PartitionOfUnity)
         -> bool
     {
         // compute shape functions
-        std::array<double, TypeParam::NPOINTS> N;
+        std::array<double, TypeParam::NPOINTS> N{};
         TypeParam::computeShapeFunction(natural_coordinates_point, N);
         double const sum = std::accumulate(std::begin(N), std::end(N), 0.);
 
@@ -127,7 +127,7 @@ TYPED_TEST(ShapeFunctionTest, SumOfGradientsIsZero)
         -> bool
     {
         // compute shape functions
-        std::array<double, TypeParam::DIM * TypeParam::NPOINTS> dNdr;
+        std::array<double, TypeParam::DIM * TypeParam::NPOINTS> dNdr{};
         TypeParam::computeGradShapeFunction(natural_coordinates_point, dNdr);
         double const sum =
             std::accumulate(std::begin(dNdr), std::end(dNdr), 0.);

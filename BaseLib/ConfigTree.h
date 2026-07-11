@@ -369,7 +369,7 @@ public:
      *
      * \pre \c param must not have been read before from this ConfigTree.
      */
-    ConfigTree getConfigParameter(std::string const& root) const;
+    ConfigTree getConfigParameter(std::string const& param) const;
 
     /*! Get parameter \c param from the configuration tree if present.
      *

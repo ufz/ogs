@@ -113,7 +113,7 @@ class LocalAssemblerFactoryTaylorHood final
     struct IsElementEnabled
     {
         template <typename ElementTraits>
-        constexpr bool operator()(ElementTraits*) const
+        constexpr bool operator()(ElementTraits* /*element_traits*/) const
         {
             if constexpr (GlobalDim < ElementTraits::ShapeFunction::DIM)
             {

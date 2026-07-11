@@ -25,6 +25,13 @@ WarningsAsErrors: >
   modernize-loop-convert,
   readability-braces-around-statements,
   readability-else-after-return,
+  cppcoreguidelines-pro-type-member-init,
+  readability-simplify-boolean-expr,
+  readability-named-parameter,
+  readability-inconsistent-declaration-parameter-name,
+  modernize-use-emplace,
+  modernize-use-default-member-init,
+  clang-analyzer-deadcode.DeadStores,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:

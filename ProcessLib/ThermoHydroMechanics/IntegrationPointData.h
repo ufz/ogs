@@ -65,9 +65,9 @@ struct IntegrationPointData final
 
     double phi_fr = std::numeric_limits<double>::quiet_NaN();
     double phi_fr_prev = std::numeric_limits<double>::quiet_NaN();
-    double integration_weight;
+    double integration_weight = 0;
 
-    double porosity;
+    double porosity = 0;
 
     void pushBackState()
     {
@@ -259,21 +259,21 @@ struct ConstitutiveRelationsValues
     DimMatrix dlambda_eff_dT;
     DimVector dvelocity_dT = DimVector::Constant(
         DisplacementDim, std::numeric_limits<double>::quiet_NaN());
-    double eps_v_dot;
-    double alpha_biot;
-    double beta;
-    double beta_SR;
-    double c_f;
+    double eps_v_dot = 0;
+    double alpha_biot = 0;
+    double beta = 0;
+    double beta_SR = 0;
+    double c_f = 0;
     // Sensible contribution to the volumetric heat capacity. The effective
     // value used in the temperature mass matrix is sensible - latent.
-    double sensible_volumetric_heat_capacity;
+    double sensible_volumetric_heat_capacity = 0;
     // Latent contribution L (effective = sensible - L). Zero without a
     // frozen liquid phase.
     double latent_volumetric_heat_capacity = 0.0;
-    double fluid_compressibility;
-    double rho;
-    double drho_LR_dT;
-    double drho_LR_dp;
+    double fluid_compressibility = 0;
+    double rho = 0;
+    double drho_LR_dT = 0;
+    double drho_LR_dp = 0;
     /* // TODO(WW): Add these second derivatives in the future once the
      computation of the secondary derivatives of the corresponding MPL
      properties are available.
@@ -281,17 +281,17 @@ struct ConstitutiveRelationsValues
        double d2rho_LR_dp_dT;
     */
 
-    double J_TT;
+    double J_TT = 0;
 
     // Freezing related values.
-    double beta_IR;
-    double beta_T_SI;
-    double mass_exchange;
-    double k_rel;
-    double dk_rel_dT;
-    double storage_p_fr;
-    double storage_T_fr;
-    double J_pT_fr;
+    double beta_IR = 0;
+    double beta_T_SI = 0;
+    double mass_exchange = 0;
+    double k_rel = 0;
+    double dk_rel_dT = 0;
+    double storage_p_fr = 0;
+    double storage_T_fr = 0;
+    double J_pT_fr = 0;
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr;

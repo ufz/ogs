@@ -57,7 +57,6 @@ Mesh::Mesh(std::string name,
            bool const compute_element_neighbors,
            Properties const& properties)
     : _id(global_mesh_counter++),
-      _mesh_dimension(0),
       _node_distance(std::numeric_limits<double>::max(), 0),
       _name(std::move(name)),
       _nodes(std::move(nodes)),

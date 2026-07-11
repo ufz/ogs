@@ -127,7 +127,7 @@ bool reflectSetIPData(
     std::vector<IPData>& ip_data_vector,
     Accessor_CurrentLevelFromIPData const& accessor,
     std::tuple<ReflectionData<Classes, Accessors>...> const& refl_data,
-    std::index_sequence<Idcs...>)
+    std::index_sequence<Idcs...> /*unused*/)
 {
     // uses short-circuit evaluation of the fold || ... to stop after the first
     // match

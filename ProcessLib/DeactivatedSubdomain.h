@@ -105,7 +105,7 @@ struct DeactivatedSubdomain
 
     /// A pararameter for the optional Dirichlet boundary condition applied on
     /// the surface of the deactivated subdomain/excavation.
-    ParameterLib::Parameter<double> const* boundary_value_parameter;
+    ParameterLib::Parameter<double> const* boundary_value_parameter = nullptr;
 
     PROCESSLIB_EXPORT static const std::string zero_parameter_name;
 };

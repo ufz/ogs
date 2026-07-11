@@ -64,7 +64,7 @@ public:
     virtual std::string const getConditionClassStr() const = 0;
 
 private:
-    BaseObjType _base_type;
+    BaseObjType _base_type = BaseObjType::MESH;
     ProcessVariable _process_var;
     std::string _param_name;
     std::string _base_obj_name;

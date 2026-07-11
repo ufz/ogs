@@ -144,7 +144,7 @@ GeoLib::Surface* TINInterface::readTIN(std::string const& fname,
         WARN("readTIN(): No triangle found.", fname);
         if (errors)
         {
-            errors->push_back("readTIN error because of no triangle found");
+            errors->emplace_back("readTIN error because of no triangle found");
         }
         delete sfc;
         return nullptr;

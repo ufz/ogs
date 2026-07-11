@@ -18,7 +18,7 @@ struct Level3
 {
     MathLib::KelvinVector::KelvinVectorType<Dim> kelvin3;
     Eigen::Vector<double, Dim> vector3;
-    double scalar3;
+    double scalar3 = std::numeric_limits<double>::quiet_NaN();
     Eigen::Matrix<double, Dim, 4, Eigen::RowMajor> matrix3;
     Eigen::Matrix<double, 4, Dim, Eigen::RowMajor> matrix3_1;
     // Same number of components as Kelvin vector in 2D. Test that Kelvin vector
@@ -69,7 +69,7 @@ using Kelvin1Data =
     BaseLib::StrongType<MathLib::KelvinVector::KelvinVectorType<Dim>,
                         struct Kelvin1DataTag>;
 
-constexpr std::string_view ioName(struct Kelvin1DataTag*)
+constexpr std::string_view ioName(struct Kelvin1DataTag* /*tag*/)
 {
     return "kelvin1";
 }
@@ -79,9 +79,9 @@ struct Level1
 {
     Kelvin1Data<Dim> kelvin1;
     Eigen::Vector<double, Dim> vector1;
-    double scalar1;
+    double scalar1 = std::numeric_limits<double>::quiet_NaN();
     Level2<Dim> level2;
-    Level2b<Dim> level2b;
+    Level2b<Dim> level2b{};
 
     static auto reflect()
     {
@@ -108,7 +108,7 @@ struct Level1b
 
 using ScalarData = BaseLib::StrongType<double, struct ScalarDataTag>;
 
-constexpr std::string_view ioName(struct ScalarDataTag*)
+constexpr std::string_view ioName(struct ScalarDataTag* /*tag*/)
 {
     return "scalar";
 }
@@ -150,7 +150,7 @@ struct LocAsmIF
 template <int dim>
 struct NumCompAndFunction
 {
-    unsigned num_comp;
+    unsigned num_comp = -1;
     std::function<std::vector<double>(LocAsmIF<dim> const&)> function;
 };
 

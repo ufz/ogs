@@ -90,7 +90,7 @@ bool isEvalOrderCorrectRT(std::unordered_set<std::type_index>& computed_data)
 }
 
 template <typename... Models>
-bool isEvalOrderCorrectRT(boost::mp11::mp_list<Models...>,
+bool isEvalOrderCorrectRT(boost::mp11::mp_list<Models...> /*unused*/,
                           std::unordered_set<std::type_index>&& computed_data)
 {
     return (isEvalOrderCorrectRT<Models>(computed_data) && ...);

@@ -25,7 +25,7 @@ SaturationVanGenuchten::SaturationVanGenuchten(
 {
     name_ = std::move(name);
 
-    if (!(m_ > 0 && m_ < 1))
+    if (m_ <= 0 || m_ >= 1)
     {
         OGS_FATAL(
             "The pressure exponent value m = {:g} of van Genuchten saturation "

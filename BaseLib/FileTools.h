@@ -57,7 +57,7 @@ T swapEndianness(T const& v)
     {
         T v;
         char c[sizeof(T)];
-    } a, b;
+    } a{}, b{};
 
     a.v = v;
     for (unsigned short i = 0; i < sizeof(T); i++)

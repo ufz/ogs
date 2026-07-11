@@ -49,7 +49,7 @@ createSurface(std::optional<BaseLib::ConfigTree> const& config,
                 //! \ogs_file_param{prj__chemical_system__surface__site__mass}
                 site_config.getConfigParameter<double>("mass");
 
-            surface.push_back(DensityBasedSurfaceSite(
+            surface.emplace_back(DensityBasedSurfaceSite(
                 std::move(name), site_density, specific_surface_area, mass));
         }
 
@@ -68,7 +68,8 @@ createSurface(std::optional<BaseLib::ConfigTree> const& config,
             auto const molality = MeshLib::getOrCreateMeshProperty<double>(
                 mesh, name, MeshLib::MeshItemType::IntegrationPoint, 1);
 
-            surface.push_back(MoleBasedSurfaceSite(std::move(name), molality));
+            surface.emplace_back(
+                MoleBasedSurfaceSite(std::move(name), molality));
         }
 
         return surface;

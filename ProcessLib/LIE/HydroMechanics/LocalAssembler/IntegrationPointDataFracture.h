@@ -49,7 +49,7 @@ struct IntegrationPointDataFracture final
         material_state_variables;
 
     Eigen::MatrixXd C;
-    double integration_weight;
+    double integration_weight = 0;
 
     GlobalDimVectorType darcy_velocity;
 

@@ -20,7 +20,7 @@ public:
     }
 
 private:
-    fenv_t fe_env;
+    fenv_t fe_env{};
 };
 
 #else

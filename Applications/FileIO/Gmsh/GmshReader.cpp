@@ -73,7 +73,7 @@ std::pair<MeshLib::Element*, int> createElement(
     std::vector<unsigned> node_ids;
     readNodeIDs(in, ElementType::n_all_nodes, node_ids, id_map);
 
-    std::array<MeshLib::Node*, ElementType::n_all_nodes> element_nodes;
+    std::array<MeshLib::Node*, ElementType::n_all_nodes> element_nodes{};
 
     std::transform(begin(node_ids), end(node_ids), begin(element_nodes),
                    [&nodes](auto const id) { return nodes[id]; });
@@ -89,7 +89,7 @@ std::pair<MeshLib::Element*, int> createElement<MeshLib::Tri>(
     std::vector<unsigned> node_ids;
     readNodeIDs(in, 3, node_ids, id_map);
 
-    std::array<MeshLib::Node*, 3> element_nodes;
+    std::array<MeshLib::Node*, 3> element_nodes{};
 
     std::transform(std::rbegin(node_ids), std::rend(node_ids),
                    begin(element_nodes),
@@ -108,7 +108,7 @@ std::pair<MeshLib::Element*, int> createElement<MeshLib::Tet10>(
 
     std::swap(node_ids[8], node_ids[9]);
 
-    std::array<MeshLib::Node*, MeshLib::Tet10::n_all_nodes> element_nodes;
+    std::array<MeshLib::Node*, MeshLib::Tet10::n_all_nodes> element_nodes{};
 
     std::transform(begin(node_ids), end(node_ids), begin(element_nodes),
                    [&nodes](auto const id) { return nodes[id]; });
@@ -124,7 +124,7 @@ std::pair<MeshLib::Element*, int> createElement<MeshLib::Hex20>(
     std::vector<unsigned> node_ids;
     readNodeIDs(in, MeshLib::Hex20::n_all_nodes, node_ids, id_map);
 
-    std::array<MeshLib::Node*, MeshLib::Hex20::n_all_nodes> element_nodes;
+    std::array<MeshLib::Node*, MeshLib::Hex20::n_all_nodes> element_nodes{};
 
     constexpr std::array node_order = {0,  1, 2,  3,  4,  5,  6,  7,  8,  11,
                                        13, 9, 16, 18, 19, 17, 10, 12, 14, 15};
@@ -144,7 +144,7 @@ std::pair<MeshLib::Element*, int> createElement<MeshLib::Prism15>(
     std::vector<unsigned> node_ids;
     readNodeIDs(in, MeshLib::Prism15::n_all_nodes, node_ids, id_map);
 
-    std::array<MeshLib::Node*, MeshLib::Prism15::n_all_nodes> element_nodes;
+    std::array<MeshLib::Node*, MeshLib::Prism15::n_all_nodes> element_nodes{};
 
     constexpr std::array node_order = {0, 1,  2,  3,  4, 5,  6, 9,
                                        7, 12, 14, 13, 8, 10, 11};
@@ -163,7 +163,7 @@ std::pair<MeshLib::Element*, int> createElement<MeshLib::Pyramid13>(
 {
     std::vector<unsigned> node_ids;
     readNodeIDs(in, MeshLib::Pyramid13::n_all_nodes, node_ids, id_map);
-    std::array<MeshLib::Node*, MeshLib::Pyramid13::n_all_nodes> element_nodes;
+    std::array<MeshLib::Node*, MeshLib::Pyramid13::n_all_nodes> element_nodes{};
 
     constexpr std::array node_order = {0,  1, 2, 3, 4,  5, 8,
                                        10, 6, 7, 9, 11, 12};

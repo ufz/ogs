@@ -13,7 +13,7 @@ namespace ProcessLib::ThermoRichardsMechanics
 using LiquidViscosityData =
     BaseLib::StrongType<double, struct LiquidViscosityDataTag>;
 
-constexpr std::string_view ioName(struct LiquidViscosityDataTag*)
+constexpr std::string_view ioName(struct LiquidViscosityDataTag* /*unused*/)
 {
     return "viscosity";
 }

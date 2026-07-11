@@ -51,8 +51,8 @@ double checkQuad(MeshLib::Element const& elem)
 
 double checkTetrahedron(MeshLib::Element const& elem)
 {
-    std::array<double, 4> min;
-    std::array<double, 4> max;
+    std::array<double, 4> min{};
+    std::array<double, 4> max{};
     for (auto face_number = 0; face_number < 4; ++face_number)
     {
         std::unique_ptr<MeshLib::Element const> face{elem.getFace(face_number)};
@@ -70,8 +70,8 @@ double checkTetrahedron(MeshLib::Element const& elem)
 
 double checkHexahedron(MeshLib::Element const& elem)
 {
-    std::array<double, 6> min;
-    std::array<double, 6> max;
+    std::array<double, 6> min{};
+    std::array<double, 6> max{};
     for (auto face_number = 0; face_number < 6; ++face_number)
     {
         std::unique_ptr<MeshLib::Element const> face{elem.getFace(face_number)};
@@ -109,8 +109,8 @@ double checkPrism(MeshLib::Element const& elem)
         std::max((max_angle_tri - pi / 3) / 2, (pi / 3 - min_angle_tri)) * 3 /
         pi;
 
-    std::array<double, 3> min;
-    std::array<double, 3> max;
+    std::array<double, 3> min{};
+    std::array<double, 3> max{};
     for (int i = 1; i < 4; ++i)
     {
         std::unique_ptr<MeshLib::Element const> f{elem.getFace(i)};

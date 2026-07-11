@@ -50,7 +50,7 @@ struct IntegrationPointDataMatrix final
         material_state_variables;
 
     typename BMatricesType::KelvinMatrixType C;
-    double integration_weight;
+    double integration_weight = 0;
 
     GlobalDimVectorType darcy_velocity;
 

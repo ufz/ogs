@@ -45,8 +45,8 @@ public:
         return element_quality.getQualityVector();
     }
 
-    std::array<int, 2> lengths;
-    std::array<int, 2> n_subdivisions;
+    std::array<int, 2> lengths = {-1, -1};
+    std::array<int, 2> n_subdivisions = {-1, -1};
 };
 
 TEST_F(TriElementQuality, ElementSize)

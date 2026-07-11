@@ -104,10 +104,10 @@ struct StateVariables
 
     void pushBackState() override { damage_prev = damage; }
 
-    double damage;  ///< damage part of the state.
+    double damage = 0;  ///< damage part of the state.
 
     // Initial values from previous timestep
-    double damage_prev;  ///< \copydoc damage
+    double damage_prev = 0;  ///< \copydoc damage
 };
 
 /// The cohesive zone delamination model for mode I fracture introduced herein

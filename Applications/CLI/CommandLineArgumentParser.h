@@ -15,12 +15,12 @@ struct CommandLineArguments final
     std::string mesh_dir;
     std::string script_dir;
     std::string log_level;
-    bool log_parallel;
-    bool write_prj;
-    bool nonfatal;
-    bool reference_path_is_set;
+    bool log_parallel = false;
+    bool write_prj = false;
+    bool nonfatal = false;
+    bool reference_path_is_set = false;
 #ifndef _WIN32
-    bool enable_fpe_is_set;
+    bool enable_fpe_is_set = false;
 #endif  // _WIN32
 };
 

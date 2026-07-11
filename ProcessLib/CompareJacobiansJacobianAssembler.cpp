@@ -448,7 +448,7 @@ CompareJacobiansJacobianAssembler::CompareJacobiansJacobianAssembler(
 
 CompareJacobiansJacobianAssembler::CompareJacobiansJacobianAssembler(
     std::shared_ptr<detail::CompareJacobiansJacobianAssemblerImpl> impl,
-    CompareJacobiansJacobianAssembler::Key)
+    CompareJacobiansJacobianAssembler::Key /*key*/)
     : impl_{std::move(impl)}
 {
 }

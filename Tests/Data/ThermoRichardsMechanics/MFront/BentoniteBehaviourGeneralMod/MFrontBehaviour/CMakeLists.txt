@@ -10,6 +10,11 @@ target_compile_options(
             $<$<CXX_COMPILER_ID:MSVC>:/W0>
 )
 
+# generalmod is imported third-party code (TRIAX, D. Masin); do not lint it.
+set_target_properties(
+    OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly PROPERTIES CXX_CLANG_TIDY ""
+)
+
 target_include_directories(
     OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}

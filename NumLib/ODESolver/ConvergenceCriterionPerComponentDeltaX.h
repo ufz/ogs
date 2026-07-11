@@ -26,7 +26,7 @@ public:
         std::vector<double>&& absolute_tolerances,
         std::vector<double>&& relative_tolerances,
         std::vector<double>&& damping_alpha,
-        bool daming_alpha_switch,
+        bool damping_alpha_switch,
         const MathLib::VecNormType norm_type);
 
     bool hasDeltaXCheck() const override { return true; }

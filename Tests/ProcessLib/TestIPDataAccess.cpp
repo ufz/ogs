@@ -14,7 +14,7 @@ struct IPData
     using KV = MathLib::KelvinVector::KelvinVectorType<DisplacementDim>;
 
     KV kelvin;
-    double scalar;
+    double scalar = std::numeric_limits<double>::quiet_NaN();
 };
 
 template <class Dim>

@@ -14,22 +14,22 @@ struct NoOp
 
 struct OutD
 {
-    void eval(double&) {}
+    void eval(double& /*out*/) {}
 };
 
 struct InD
 {
-    void eval(double const&) {}
+    void eval(double const& /*in*/) {}
 };
 
 struct InSOutD
 {
-    void eval(double&, std::string const&) {}
+    void eval(double& /*out*/, std::string const& /*in*/) {}
 };
 
 struct OutCD
 {
-    void eval(double&, char&) {}
+    void eval(double& /*out*/, char& /*out2*/) {}
 };
 
 struct InCSOutIU

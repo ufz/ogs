@@ -20,13 +20,13 @@ struct PropertyVectorMetaData
     std::string property_name;
     /// is_int_type is true if the type of the components is an integer type, if
     /// it is a floating point number type the is_int_type is false
-    bool is_int_type;
+    bool is_int_type = false;
     /// if the component type is an integer number the flag is_data_type_signed
     /// signals if it has a sign or not
-    bool is_data_type_signed;
-    unsigned long data_type_size_in_bytes;
-    unsigned long number_of_components;
-    unsigned long number_of_tuples;
+    bool is_data_type_signed = false;
+    unsigned long data_type_size_in_bytes = 0;
+    unsigned long number_of_components = 0;
+    unsigned long number_of_tuples = 0;
 
     template <typename T>
     void fillPropertyVectorMetaDataTypeInfo()
@@ -37,8 +37,8 @@ struct PropertyVectorMetaData
     }
 };
 
-inline void writePropertyVectorMetaData(
-    std::ostream& os, PropertyVectorMetaData const& pvmd)
+inline void writePropertyVectorMetaData(std::ostream& os,
+                                        PropertyVectorMetaData const& pvmd)
 {
     std::string::size_type s(pvmd.property_name.length());
     os.write(reinterpret_cast<char*>(&s), sizeof(std::string::size_type));
@@ -50,15 +50,18 @@ inline void writePropertyVectorMetaData(
     os.write(reinterpret_cast<char*>(
                  &const_cast<PropertyVectorMetaData&>(pvmd).is_int_type),
              sizeof(bool));
-    os.write(reinterpret_cast<char*>(&const_cast<PropertyVectorMetaData&>(
-                 pvmd).is_data_type_signed),
-             sizeof(bool));
-    os.write(reinterpret_cast<char*>(&const_cast<PropertyVectorMetaData&>(
-                 pvmd).data_type_size_in_bytes),
-             sizeof(unsigned long));
-    os.write(reinterpret_cast<char*>(&const_cast<PropertyVectorMetaData&>(
-                 pvmd).number_of_components),
-             sizeof(unsigned long));
+    os.write(
+        reinterpret_cast<char*>(
+            &const_cast<PropertyVectorMetaData&>(pvmd).is_data_type_signed),
+        sizeof(bool));
+    os.write(
+        reinterpret_cast<char*>(
+            &const_cast<PropertyVectorMetaData&>(pvmd).data_type_size_in_bytes),
+        sizeof(unsigned long));
+    os.write(
+        reinterpret_cast<char*>(
+            &const_cast<PropertyVectorMetaData&>(pvmd).number_of_components),
+        sizeof(unsigned long));
     os.write(reinterpret_cast<char*>(
                  &const_cast<PropertyVectorMetaData&>(pvmd).number_of_tuples),
              sizeof(unsigned long));
@@ -86,13 +89,13 @@ inline std::optional<PropertyVectorMetaData> readPropertyVectorMetaData(
     }
 
     PropertyVectorMetaData pvmd;
-    char *dummy = new char[s];
+    char* dummy = new char[s];
     if (!is.read(dummy, s))
     {
         return std::nullopt;
     }
     pvmd.property_name = std::string(dummy, s);
-    delete [] dummy;
+    delete[] dummy;
 
     if (!is.read(reinterpret_cast<char*>(&pvmd.is_int_type), sizeof(bool)))
     {
@@ -123,16 +126,15 @@ inline std::optional<PropertyVectorMetaData> readPropertyVectorMetaData(
 
 struct PropertyVectorPartitionMetaData
 {
-    unsigned long offset;
-    unsigned long number_of_tuples;
+    unsigned long offset = 0;
+    unsigned long number_of_tuples = 0;
 };
 
 inline void writePropertyVectorPartitionMetaData(
     std::ostream& os, PropertyVectorPartitionMetaData const& pvpmd)
 {
     os.write(reinterpret_cast<char*>(
-                 &const_cast<PropertyVectorPartitionMetaData&>(pvpmd)
-                      .offset),
+                 &const_cast<PropertyVectorPartitionMetaData&>(pvpmd).offset),
              sizeof(unsigned long));
     os.write(reinterpret_cast<char*>(
                  &const_cast<PropertyVectorPartitionMetaData&>(pvpmd)

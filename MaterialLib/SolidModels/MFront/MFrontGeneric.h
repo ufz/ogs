@@ -186,7 +186,7 @@ struct SetGradient
     double* target;
 
     template <typename Grad>
-    void operator()(Grad)
+    void operator()(Grad /*grad*/)
     {
         auto constexpr num_comp = Grad::template size<DisplacementDim>();
 

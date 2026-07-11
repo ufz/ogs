@@ -50,8 +50,6 @@ public:
           _rel_h_min(rel_h_min),
           _rel_h_max(rel_h_max),
           _tol(tol),
-          _e_n_minus1(0.),
-          _e_n_minus2(0.),
           _fixed_times_for_output(fixed_times_for_output)
     {
     }
@@ -83,8 +81,8 @@ private:
 
     const double _tol;
 
-    double _e_n_minus1;  ///< \f$e_{n-1}\f$.
-    double _e_n_minus2;  ///< \f$e_{n-2}\f$.
+    double _e_n_minus1 = 0.;  ///< \f$e_{n-1}\f$.
+    double _e_n_minus2 = 0.;  ///< \f$e_{n-2}\f$.
 
     std::vector<double> const _fixed_times_for_output;
 

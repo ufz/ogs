@@ -266,7 +266,7 @@ bool lineSegmentsIntersect(const GeoLib::Polyline* ply,
         {
             // Do not check first and last segment, because they are
             // neighboured.
-            if (!(seg_num_0 == 0 && seg_it1.getSegmentNumber() == n_segs - 1))
+            if (seg_num_0 != 0 || seg_it1.getSegmentNumber() != n_segs - 1)
             {
                 if (lineSegmentIntersect(*seg_it0, *seg_it1, intersection_pnt))
                 {

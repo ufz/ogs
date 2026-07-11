@@ -36,15 +36,15 @@ struct ThermoMechanicsProcessData
 
     /// Optional, initial stress field. A symmetric tensor, short vector
     /// representation of length 4 or 6, ParameterLib::Parameter<double>.
-    ParameterLib::Parameter<double> const* const initial_stress;
+    ParameterLib::Parameter<double> const* const initial_stress = nullptr;
 
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
     /// ID of the mechanical process.
-    int const mechanics_process_id;
+    int const mechanics_process_id = 0;
 
     /// ID of heat conduction process.
-    int const heat_conduction_process_id;
+    int const heat_conduction_process_id = 0;
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 };

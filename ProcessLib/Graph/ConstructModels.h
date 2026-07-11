@@ -13,10 +13,7 @@ namespace ProcessLib::Graph
 namespace detail
 {
 template <typename T>
-concept HasCreate = requires
-{
-    T::create;
-};
+concept HasCreate = requires { T::create; };
 
 template <typename Model, typename TupleOfArgs>
 Model constructModel(TupleOfArgs& args)
@@ -40,8 +37,8 @@ Model constructModel(TupleOfArgs& args)
 template <template <typename...> typename Tuple,
           typename... Models,
           typename TupleOfArgs>
-Tuple<Models...> constructModels(std::type_identity<Tuple<Models...>>,
-                                 TupleOfArgs&& args)
+Tuple<Models...> constructModels(
+    std::type_identity<Tuple<Models...>> /*unused*/, TupleOfArgs&& args)
 {
     return Tuple{constructModel<Models>(args)...};
 }

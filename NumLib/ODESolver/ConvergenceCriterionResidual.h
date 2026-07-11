@@ -34,7 +34,7 @@ public:
 private:
     const std::optional<double> _abstol;
     const std::optional<double> _reltol;
-    double _residual_norm_0;
+    double _residual_norm_0 = 0.0;
 };
 
 std::unique_ptr<ConvergenceCriterionResidual>

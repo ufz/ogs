@@ -186,7 +186,7 @@ void OctTree<POINT, MAX_POINTS>::getPointsInRange_(
 template <typename POINT, std::size_t MAX_POINTS>
 OctTree<POINT, MAX_POINTS>::OctTree(Eigen::Vector3d const& ll,
                                     Eigen::Vector3d const& ur, double eps)
-    : _ll(ll), _ur(ur), _is_leaf(true), _eps(eps)
+    : _ll(ll), _ur(ur), _eps(eps)
 {
     _children.fill(nullptr);
 }

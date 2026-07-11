@@ -162,7 +162,7 @@ private:
 
 // restart
 template <typename Solver>
-void setRestartImpl(Solver&, int const)
+void setRestartImpl(Solver& /*solver*/, int const /*restart*/)
 {
     DBUG("-> restart is not implemented for this linear solver.");
 }
@@ -176,7 +176,7 @@ void setRestartImpl(Eigen::GMRES<Matrix, Precon>& solver, int const restart)
 
 // L
 template <typename Solver>
-void setLImpl(Solver&, int const)
+void setLImpl(Solver& /*solver*/, int const /*l*/)
 {
     DBUG("-> setL() is not implemented for this linear solver.");
 }
@@ -195,7 +195,7 @@ void setLImpl(Eigen::IDRSTABL<Matrix, Precon>& solver, int const l)
 
 // S
 template <typename Solver>
-void setSImpl(Solver&, int const)
+void setSImpl(Solver& /*solver*/, int const /*s*/)
 {
     DBUG("-> setS() is not implemented for this linear solver.");
 }
@@ -214,7 +214,7 @@ void setSImpl(Eigen::IDRSTABL<Matrix, Precon>& solver, int const s)
 
 // angle
 template <typename Solver>
-void setAngleImpl(Solver&, double const)
+void setAngleImpl(Solver& /*solver*/, double const /*angle*/)
 {
     DBUG("-> setAngle() is not implemented for this linear solver.");
 }
@@ -227,7 +227,7 @@ void setAngleImpl(Eigen::IDRS<Matrix, Precon>& solver, double const angle)
 
 // smoothing
 template <typename Solver>
-void setSmoothingImpl(Solver&, bool const)
+void setSmoothingImpl(Solver& /*solver*/, bool const /*smoothing*/)
 {
     DBUG("-> setSmoothing() is not implemented for this linear solver.");
 }
@@ -240,7 +240,7 @@ void setSmoothingImpl(Eigen::IDRS<Matrix, Precon>& solver, bool const smoothing)
 
 // residual update
 template <typename Solver>
-void setResidualUpdateImpl(Solver&, bool const)
+void setResidualUpdateImpl(Solver& /*solver*/, bool const /*residual_update*/)
 {
     DBUG("-> setResidualUpdate() is not implemented for this linear solver.");
 }

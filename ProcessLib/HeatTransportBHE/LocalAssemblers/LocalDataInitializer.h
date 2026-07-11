@@ -37,7 +37,7 @@ class LocalDataInitializer final
     struct IsNDElement
     {
         template <typename ElementTraits>
-        constexpr bool operator()(ElementTraits*) const
+        constexpr bool operator()(ElementTraits* /*element_traits*/) const
         {
             return ElementTraits::Element::dimension == DIM;
         }

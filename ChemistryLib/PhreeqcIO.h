@@ -249,7 +249,7 @@ private:
     std::unique_ptr<Dump> const _dump;
     std::unique_ptr<PhreeqcInstancePool> instance_pool_;
     double _dt = std::numeric_limits<double>::quiet_NaN();
-    std::size_t _num_chemical_systems;
+    std::size_t _num_chemical_systems = 0;
     /// Negative (or zero) warning threshold for clamped concentrations. All
     /// negative concentrations are clamped to zero unconditionally (PHREEQC
     /// rejects negatives); this only sets the value below which a clamp is
