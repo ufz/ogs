@@ -503,8 +503,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             .property(MaterialPropertyLib::PropertyType::specific_heat_capacity)
             .template value<double>(vars, x_position, t, dt);
 
-    // Also modified by freezing terms.
-    crv.effective_volumetric_heat_capacity =
+    // Sensible part (no latent term here). Also modified by freezing terms.
+    crv.sensible_volumetric_heat_capacity =
         porosity * fluid_density * crv.c_f +
         (1.0 - porosity) * solid_density * c_s;
     double dC_eff_dT = porosity * crv.drho_LR_dT * crv.c_f +
@@ -623,9 +623,12 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             1. / _process_data.ice_constitutive_relation->getBulkModulus(
                      t, x_position, &C_el_ice);
 
-        crv.effective_volumetric_heat_capacity +=
-            -phi_fr * fluid_density * crv.c_f + phi_fr * rho_fr * c_fr -
-            l_fr * rho_fr * dphi_fr_dT;
+        // Latent contribution L (effective = sensible - L).
+        crv.latent_volumetric_heat_capacity = l_fr * rho_fr * dphi_fr_dT;
+
+        // Freezing modifies only the sensible part; latent kept separate.
+        crv.sensible_volumetric_heat_capacity +=
+            -phi_fr * fluid_density * crv.c_f + phi_fr * rho_fr * c_fr;
 
         crv.J_uu_fr = phi_fr * C_IR;
 
@@ -971,8 +974,10 @@ void ThermoHydroMechanicsLocalAssembler<
             N.transpose() * dip_flux_vector_dT.transpose() * dNdx * T * N * w;
         average_velocity_norm += velocity.norm();
 
-        MTT.noalias() +=
-            N.transpose() * crv.effective_volumetric_heat_capacity * N * w;
+        MTT.noalias() += N.transpose() *
+                         (crv.sensible_volumetric_heat_capacity -
+                          crv.latent_volumetric_heat_capacity) *
+                         N * w;
         local_Jac
             .template block<temperature_size, temperature_size>(
                 temperature_index, temperature_index)

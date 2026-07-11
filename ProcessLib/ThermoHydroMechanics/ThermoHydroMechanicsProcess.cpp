@@ -281,6 +281,10 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
             MathLib::KelvinVector::KelvinVectorType<
                 DisplacementDim>::RowsAtCompileTime);
 
+    _process_data.cell_sensible_heat = MeshLib::getOrCreateMeshProperty<double>(
+        const_cast<MeshLib::Mesh&>(mesh), "sensible_heat",
+        MeshLib::MeshItemType::Cell, 1);
+
     _process_data.pressure_interpolated =
         MeshLib::getOrCreateMeshProperty<double>(
             const_cast<MeshLib::Mesh&>(mesh), "pressure_interpolated",
