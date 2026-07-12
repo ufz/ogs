@@ -5,7 +5,7 @@
 
     <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">41242.9</replace>
     <replace sel="/*/time_loop/processes/process/time_stepping/t_end/text()">44842.9</replace>
-    <replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">3600</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]/delta_t/text()">3600</replace>
     <replace sel="/*/time_loop/output/prefix/text()">bentonite_column</replace>
 
     <remove sel="//constitutive_relation/initial_values" />

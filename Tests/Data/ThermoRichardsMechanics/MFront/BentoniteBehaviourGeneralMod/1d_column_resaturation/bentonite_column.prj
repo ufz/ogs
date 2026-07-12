@@ -63,22 +63,22 @@
                         <property>
                             <name>thermal_conductivity</name>
                             <type>Constant</type>
-                            <value>0.58</value>    <!-- standard -->
+                            <value>0.58</value>
                         </property>
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>1000</value>        <!-- standard -->
+                            <value>1000</value>
                         </property>
                         <property>
                             <name>thermal_expansivity</name>
                             <type>Constant</type>
-                            <value>4e-4</value>   <!-- Pitz et al., NB: this is beta_T=3*alpha_T -->
+                            <value>4e-4</value>   <!-- Pitz et al. -->
                         </property>
                         <property>
                             <name>viscosity</name>
                             <type>Constant</type>
-                            <value>1.8e-3</value>   <!-- standard -->
+                            <value>1.8e-3</value>
                         </property>
                     </properties>
                 </phase>
@@ -88,7 +88,7 @@
                         <property>
                             <name>density</name>
                             <type>Constant</type>
-                            <value>2758.0</value>   <!-- for BCV, it must be 2758 kg/m³ (Nagra report); DM's bent powder 1700 kg/m^3 -->
+                            <value>2758.0</value>   <!-- for BCV, it must be 2758 kg/m³ (Nagra report) -->
                         </property>
                         <property>
                             <name>thermal_conductivity</name>
@@ -117,34 +117,29 @@
                 <property>
                     <name>relative_permeability</name>
                     <type>Constant</type>
-                    <value>1</value>    <!-- DM's email, it is a function of b,phi,phi0,S_L,lambda -->
+                    <value>1</value>
                 </property>
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>3e-20</value>   <!-- DM's email , it is k0 -->
+                    <value>3e-20</value>
                 </property>
-                <!--property>
-                    <name>porosity</name>
-                    <type>Constant</type>
-                    <value>0.403145</value>
-                </property-->
                 <property>
                     <name>porosity</name>
                     <type>PorosityFromMassBalance</type>
-                    <initial_porosity>phi0</initial_porosity>  <!-- the value 0.403145=:phi0 is recovered from DM's e=0.67545 -->
+                    <initial_porosity>phi0</initial_porosity>
                     <minimal_porosity>0</minimal_porosity>
                     <maximal_porosity>1</maximal_porosity>
                 </property>
                 <property>
                     <name>bishops_effective_stress</name>
                     <type>BishopsPowerLaw</type>
-                    <exponent>1.0</exponent>   <!-- Pits et al., it is 1, if S_L<S_entry, 0 otherwise -->
+                    <exponent>1.0</exponent>   <!-- Pits et al. -->
                 </property>
                 <property>
                     <name>biot_coefficient</name>
                     <type>Constant</type>
-                    <value>1.0</value>     <!-- OK -->
+                    <value>1.0</value>
                 </property>
                 <property>
                     <name>thermal_conductivity</name>
@@ -156,9 +151,9 @@
     <parameters>
         <parameter>
             <mesh>column</mesh>
-            <name>initial_stress</name>  <!-- suggetsed to be -2000 kPa -->
+            <name>initial_stress</name>
             <type>Function</type>
-            <expression>-2000000</expression>  <!-- originally, I tried out with -0.001 kPa-->
+            <expression>-2000000</expression>
             <expression>-2000000</expression>
             <expression>-2000000</expression>
             <expression>0</expression>
@@ -168,52 +163,52 @@
         <parameter>
             <name>e0</name>
             <type>Constant</type>
-            <value>0.67545</value>    <!-- DM's email -->
+            <value>0.67545</value>
         </parameter>
         <parameter>
             <name>em0</name>
             <type>Constant</type>
-            <value>0.0</value>     <!-- DM's email -->
+            <value>0.0</value>
         </parameter>
         <parameter>
             <name>eM0</name>
             <type>Constant</type>
-            <value>0.0</value>      <!-- DM's email -->
+            <value>0.0</value>
         </parameter>
         <parameter>
             <name>SrM0</name>
             <type>Constant</type>
-            <value>0.0</value>      <!-- DM's email -->
+            <value>0.0</value>
         </parameter>
         <parameter>
             <name>a_scan0</name>
             <type>Constant</type>
-            <value>0.0</value>       <!-- DM's email -->
+            <value>0.0</value>
         </parameter>
         <parameter>
             <name>re0</name>
             <type>Constant</type>
-            <value>0.0</value>      <!-- DM's email -->
+            <value>0.0</value>
         </parameter>
         <parameter>
             <name>phi0</name>
             <type>Constant</type>
-            <value>0.403145</value>   <!-- this magnitude follows from e0=0.67545 -->
+            <value>0.403145</value>
         </parameter>
         <parameter>
             <name>temperature_IC</name>
             <type>Constant</type>
-            <value>298.15</value>   <!-- NB: in DM's email, T_ref=294 K -->
+            <value>298.15</value>
         </parameter>
         <parameter>
             <name>pressure_IC</name>
             <type>Constant</type>
-            <values>-100.e6</values>  <!-- in kPa !!! DM's email, p_cap⁰=100000 kPa => p_LR⁰=-100 MPa -->
+            <values>-100.e6</values>  <!-- in kPa -->
         </parameter>
         <parameter>
             <name>displacement_IC</name>
             <type>Constant</type>
-            <values>0 0 0</values>   <!--  -->
+            <values>0 0 0</values>
         </parameter>
         <parameter>
             <name>temperature_BC</name>
@@ -223,12 +218,12 @@
         <parameter>
             <name>pressure_BC_bot</name>
             <type>Constant</type>
-            <value>-100.e6</value>  <!-- in kPa, DM's email -->
+            <value>-100.e6</value>  <!-- in kPa -->
         </parameter>
         <parameter>
             <name>pressure_BC_top</name>
             <type>Function</type>
-            <expression>if (t &lt;=3600, -100.e6*(1-t/3600), 0)</expression> <!-- in kPa, DM's email -->
+            <expression>if (t &lt;=3600, -100.e6*(1-t/3600), 0)</expression> <!-- in kPa -->
         </parameter>
         <parameter>
             <name>displacement_BC_diriH</name>
@@ -256,11 +251,6 @@
             <order>1</order>
             <initial_condition>pressure_IC</initial_condition>
             <boundary_conditions>
-                <!--boundary_condition>
-                    <mesh>column_zmin</mesh>
-                    <type>Dirichlet</type>
-                    <parameter>pressure_BC_bot</parameter>
-                </boundary_condition-->
                 <boundary_condition>
                     <mesh>column_zmax</mesh>
                     <type>Dirichlet</type>
@@ -271,7 +261,7 @@
         <process_variable>
             <name>displacement</name>
             <components>3</components>
-            <order>2</order>   <!-- 1 when mO1, 2 when mO2 -->
+            <order>2</order>
             <initial_condition>displacement_IC</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
@@ -318,35 +308,104 @@
             <process ref="TRM">
                 <nonlinear_solver>basic_newton</nonlinear_solver>
                 <convergence_criterion>
-                    <type>PerComponentDeltaX</type>
+                    <type>PerComponentResidual</type>
                     <norm_type>NORM2</norm_type>
-                    <!--abstols>1e0 1e-1 1e-5 1e-5 1e-5</abstols-->
-                    <reltols>1e0 1e-2 1e-2 1e-2 1e-2</reltols> <!-- ref., 1e-2 -->
+                    <abstols>1e-10 1e-10 1e-10 1e-10 1e-6</abstols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
                 </time_discretization>
                 <time_stepping>
-                    <type>IterationNumberBasedTimeStepping</type>
-                    <t_initial>0</t_initial>
-                    <t_end>360000</t_end>    <!--this is 100 hours-->
-                    <initial_dt>1e-2</initial_dt>
-                    <minimum_dt>1e-4</minimum_dt>
-                    <maximum_dt>3600</maximum_dt>  <!-- first try dt_max=10 min => 60 min -->
-                    <number_iterations>4 9 11</number_iterations>
-                    <multiplier>2.0 1.0 0.5</multiplier>    <!-- #iter\in[4,9), next dt is x2, #iter\in[9,11) next dt is x1, etc. -->
-                </time_stepping>
-                <!--time_stepping>
                     <type>FixedTimeStepping</type>
-                    <t_initial>0</t_initial>
-                    <t_end>3600</t_end>
+                    <t_initial>0.0</t_initial>
+                    <t_end>360000.0</t_end>
                     <timesteps>
                         <pair>
-                            <repeat>3600</repeat>
-                            <delta_t>1</delta_t>
+                            <repeat>2</repeat>
+                            <delta_t>0.01</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.02</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.04</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.08</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.16</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.32</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>0.64</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1.28</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>2.56</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>5.12</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>10.24</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>20.48</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>40.96</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>81.92</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>163.84</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>327.68</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>655.36</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1310.72</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>2621.44</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>98</repeat>
+                            <delta_t>3600.0</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>1</repeat>
+                            <delta_t>1957.12</delta_t>
                         </pair>
                     </timesteps>
-                </time_stepping-->
+                </time_stepping>
             </process>
         </processes>
         <output>
@@ -358,24 +417,7 @@
                     <each_steps>1</each_steps>
                 </pair>
             </timesteps>
-            <variables>
-                <!--variable>displacement</variable>
-                <variable>pressure</variable>
-                <variable>temperature</variable>
-                <variable>pressure_interpolated</variable>
-                <variable>temperature_interpolated</variable>
-                <variable>saturation</variable>
-                <variable>sigma_total</variable>
-                <variable>epsilon</variable>
-                <variable>e</variable>
-                <variable>em</variable>
-                <variable>eM</variable>
-                <variable>SrM</variable>
-                <variable>a_scan</variable>
-                <variable>re</variable>
-                <variable>porosity</variable>
-                <variable>permeability</variable-->
-            </variables>
+            <variables/>
             <suffix>_ts_{:timestep}_t_{:gtime}_sec</suffix>
         </output>
     </time_loop>
@@ -391,12 +433,10 @@
         <linear_solver>
             <name>general_linear_solver</name>
             <eigen>
-                <!--solver_type>SparseLU</solver_type-->
-                <!--solver_type>PardisoLU</solver_type-->
                 <solver_type>BiCGSTAB</solver_type>
-                <precon_type>DIAGONAL</precon_type>  <!--ILUT is also possible -->
-                <max_iteration_step>10000</max_iteration_step>  <!-- 10000 is a default value -->
-                <error_tolerance>1e-16</error_tolerance>     <!-- 1e-16 is a default value -->
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-16</error_tolerance>
                 <scaling>1</scaling>
             </eigen>
             <petsc>
@@ -413,265 +453,265 @@
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>HeatFlowRate</field>
             <absolute_tolerance>2.5e-16</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>MassFlowRate</field>
-            <absolute_tolerance>2.8e-23</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 2.9e-09 --></relative_tolerance>
+            <absolute_tolerance>2.8e-21</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>NodalForces</field>
             <absolute_tolerance>2.0e-13</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>SrM</field>
-            <absolute_tolerance>4.9e-14</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 1.8e-13 --></relative_tolerance>
+            <absolute_tolerance>4.9e-13</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>a_scan</field>
-            <absolute_tolerance>4.1e-13</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0023 --></relative_tolerance>
+            <absolute_tolerance>4.1e-12</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>displacement</field>
             <absolute_tolerance>1e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 1400.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>dry_density_solid_ip</field>
-            <absolute_tolerance>5.7e-12</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 3.5e-15 --></relative_tolerance>
+            <absolute_tolerance>5.7e-11</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>e</field>
-            <absolute_tolerance>7.0e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 9.9e-15 --></relative_tolerance>
+            <absolute_tolerance>7.0e-14</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>eM</field>
             <absolute_tolerance>1.4e-14</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 6.3e-14 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>em</field>
             <absolute_tolerance>1.3e-14</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 3.1e-14 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>epsilon</field>
-            <absolute_tolerance>2.9e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+            <absolute_tolerance>2.9e-14</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>epsilon_ip</field>
-            <absolute_tolerance>2.8e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+            <absolute_tolerance>8.8e-15</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>intrinsic_permeability_ip</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>liquid_density_avg</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>liquid_density_ip</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_RungeKutta_InternalStateVariables[0]_ip</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_RungeKutta_InternalStateVariables[1]_ip</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_RungeKutta_InternalStateVariables[2]_ip</field>
             <absolute_tolerance>7.0e-12</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 1.5e-10 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_RungeKutta_InternalStateVariables[3]_ip</field>
-            <absolute_tolerance>1.4e-10</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 2.1e-10 --></relative_tolerance>
+            <absolute_tolerance>2.4e-10</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_SrM_ip</field>
             <absolute_tolerance>5.8e-14</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 1.8e-13 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_a_scan_ip</field>
             <absolute_tolerance>4.4e-13</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 5.1e-05 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_eM_ip</field>
             <absolute_tolerance>1.4e-14</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 6.4e-14 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_e_ip</field>
             <absolute_tolerance>6.8e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 9.9e-15 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_em_ip</field>
             <absolute_tolerance>1.2e-14</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 3.1e-14 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>material_state_variable_re_ip</field>
             <absolute_tolerance>1.7e-13</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 1.7e-13 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>porosity</field>
-            <absolute_tolerance>2.8e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 7e-15 --></relative_tolerance>
+            <absolute_tolerance>4.8e-15</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>porosity_avg</field>
-            <absolute_tolerance>2.2e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 1.4e-15 --></relative_tolerance>
+            <absolute_tolerance>4.2e-15</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>porosity_ip</field>
-            <absolute_tolerance>2.2e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 4.9e-15 --></relative_tolerance>
+            <absolute_tolerance>8.2e-15</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>pressure</field>
             <absolute_tolerance>7e-06</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>pressure_interpolated</field>
             <absolute_tolerance>7e-06</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>re</field>
             <absolute_tolerance>1.9e-13</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 1.9e-13 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>relative_permeability_ip</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>saturation</field>
             <absolute_tolerance>2.5e-14</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 3.3e-14 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>saturation_avg</field>
             <absolute_tolerance>8e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 2.4e-14 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>saturation_ip</field>
             <absolute_tolerance>3.0e-14</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 3.7e-14 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>sigma_total</field>
-            <absolute_tolerance>2.0e-06</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 28000.0 --></relative_tolerance>
+            <absolute_tolerance>4.0e-06</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>sigma_total_avg</field>
-            <absolute_tolerance>2.2e-07</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 600.0 --></relative_tolerance>
+            <absolute_tolerance>4.2e-06</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>sigma_total_ip</field>
-            <absolute_tolerance>2.0e-06</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 140000.0 --></relative_tolerance>
+            <absolute_tolerance>4.0e-06</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>temperature</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>temperature_interpolated</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>transport_porosity_ip</field>
-            <absolute_tolerance>2.2e-15</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 4.9e-15 --></relative_tolerance>
+            <absolute_tolerance>4.2e-15</absolute_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>velocity_ip</field>
             <absolute_tolerance>2e-19</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- inf --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>viscosity_avg</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <regex>bentonite_column_ts_.*_t_.*_sec[.]vtu</regex>
             <field>viscosity_ip</field>
             <absolute_tolerance>0.0</absolute_tolerance>
-            <relative_tolerance>0.0 <!-- 0.0 --></relative_tolerance>
+            <relative_tolerance>0.0</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>

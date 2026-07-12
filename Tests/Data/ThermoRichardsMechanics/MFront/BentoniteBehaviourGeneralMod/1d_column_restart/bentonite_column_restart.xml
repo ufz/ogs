@@ -5,7 +5,7 @@
 
     <replace sel="/*/time_loop/processes/process/time_stepping/t_initial/text()">41242.9</replace>
     <replace sel="/*/time_loop/processes/process/time_stepping/t_end/text()">44842.9</replace>
-    <replace sel="/*/time_loop/processes/process/time_stepping/initial_dt/text()">3600</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/timesteps/pair[1]/delta_t/text()">3600</replace>
     <replace sel="/*/time_loop/output/prefix/text()">bentonite_column</replace>
 
     <remove sel="//constitutive_relation/initial_values" />
@@ -43,10 +43,10 @@
     </add>
 
     <replace sel="/*/test_definition/vtkdiff[field='eM']/absolute_tolerance/text()">
-        2.5e-9
+        2.5e-8
     </replace>
     <replace sel="/*/test_definition/vtkdiff[field='material_state_variable_eM_ip']/absolute_tolerance/text()">
-        3.1e-9
+        3.1e-8
     </replace>
     <!-- Some tolerances are looser than in the non-restart case, especially that for re.
          That's not optimal, but better than not testing restart at all. -->
@@ -60,16 +60,16 @@
         3.4e-15
     </replace>
     <replace sel="/*/test_definition/vtkdiff[field='re']/absolute_tolerance/text()">
-        6.6e-5
+        8.6e-5
     </replace>
     <replace sel="/*/test_definition/vtkdiff[field='saturation']/absolute_tolerance/text()">
-        1.8e-7
+        2.8e-7
     </replace>
     <replace sel="/*/test_definition/vtkdiff[field='saturation_avg']/absolute_tolerance/text()">
-        1.6e-7
+        2.6e-7
     </replace>
     <replace sel="/*/test_definition/vtkdiff[field='saturation_ip']/absolute_tolerance/text()">
-        2.3e-7
+        3.3e-7
     </replace>
 
     <remove sel="/*/test_definition/vtkdiff[field='material_state_variable_RungeKutta_InternalStateVariables[0]_ip']" />
