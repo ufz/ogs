@@ -39,9 +39,177 @@
 #include "MeshGeoToolsLib/CreateSearchLength.h"
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/MeshEnums.h"
 #include "MeshLib/Utils/SetMeshSpaceDimension.h"
-#include "MeshToolsLib/ZeroMeshFieldDataByMaterialIDs.h"
+#include "MeshToolsLib/OverwriteMeshFieldDataByMaterialIDs.h"
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
+#include "ParameterLib/Utils.h"
+
+//! Handles `<remove>`, `<set>`, and `<take_original>` sub-elements of
+//! \ogs_file_param{prj__overwrite_mesh_data}.
+//!
+//! For `<remove>`: field_name, mesh_name, mesh_item_type
+//! For `<set>`/`<take_original>`: field_name, mesh_name, mesh_item_type,
+//!                             material_ids, parameter_name
+void parseOverwriteMeshData(
+    BaseLib::ConfigTree const& project_config,
+    std::vector<MeshToolsLib::InitialConditionDataSet>& data_initial_conditions,
+    std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
+    std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters)
+{
+    auto const overwrite_mesh_data_config =
+        //! \ogs_file_param{prj__overwrite_mesh_data}
+        project_config.getConfigSubtreeOptional("overwrite_mesh_data");
+    if (!overwrite_mesh_data_config)
+    {
+        return;
+    }
+
+    for (auto const& [tag, config] :
+         overwrite_mesh_data_config->getAllChildren())
+    {
+        if (tag == "remove")
+        {
+            auto const field_name =
+                //! \ogs_file_param{prj__overwrite_mesh_data__remove__field_name}
+                config->getConfigParameter<std::string>("field_name");
+            //! \ogs_file_param{prj__overwrite_mesh_data__remove__mesh}
+            auto const mesh_name = config->getConfigParameter<std::string>(
+                "mesh", meshes[0]->getName());
+            auto& mesh = MeshLib::findMeshByName(meshes, mesh_name);
+            auto const mesh_item_type = MeshLib::string2MeshItemType(
+                //! \ogs_file_param{prj__overwrite_mesh_data__remove__mesh_item_type}
+                config->getConfigParameter<std::string>("mesh_item_type"));
+
+            MeshLib::Properties& properties = mesh.getProperties();
+            if (properties.template hasPropertyVector<double>(field_name,
+                                                              mesh_item_type))
+            {
+                DBUG("remove property: {}", field_name);
+                properties.removePropertyVector(field_name);
+            }
+            continue;
+        }
+
+        if (tag == "set" || tag == "take_original")
+        {
+            // The "take_original" element shares the parsing code below with
+            // "set", so its parameters are documented separately here.
+            //! \ogs_file_param_special{prj__overwrite_mesh_data__take_original__field_name}
+            //! \ogs_file_param_special{prj__overwrite_mesh_data__take_original__mesh}
+            //! \ogs_file_param_special{prj__overwrite_mesh_data__take_original__mesh_item_type}
+            //! \ogs_file_param_special{prj__overwrite_mesh_data__take_original__material_ids}
+            auto const field_name =
+                //! \ogs_file_param{prj__overwrite_mesh_data__set__field_name}
+                config->getConfigParameter<std::string>("field_name");
+            //! \ogs_file_param{prj__overwrite_mesh_data__set__mesh}
+            auto const mesh_name = config->getConfigParameter<std::string>(
+                "mesh", meshes[0]->getName());
+            auto& mesh = MeshLib::findMeshByName(meshes, mesh_name);
+            auto const mesh_item_type = MeshLib::string2MeshItemType(
+                //! \ogs_file_param{prj__overwrite_mesh_data__set__mesh_item_type}
+                config->getConfigParameter<std::string>("mesh_item_type"));
+
+            // string2MeshItemType() also accepts 'edge' and 'face', but the
+            // overwrite only supports node, cell and integration-point data.
+            // Reject the unsupported types here so the user gets a clear error
+            // at project-file parsing time instead of a fatal later during the
+            // overwrite.
+            if (mesh_item_type != MeshLib::MeshItemType::Node &&
+                mesh_item_type != MeshLib::MeshItemType::Cell &&
+                mesh_item_type != MeshLib::MeshItemType::IntegrationPoint)
+            {
+                OGS_FATAL(
+                    "overwrite_mesh_data: <{:s}> with mesh_item_type '{:s}' is "
+                    "not supported. Only 'node', 'cell' and "
+                    "'integration_point' "
+                    "can be overwritten.",
+                    tag, MeshLib::toString(mesh_item_type));
+            }
+
+            auto const selected_material_ids_string =
+                //! \ogs_file_param{prj__overwrite_mesh_data__set__material_ids}
+                config->getConfigParameter<std::string>("material_ids", "0");
+            auto const* const material_ids = MeshLib::materialIDs(mesh);
+
+            std::vector<std::size_t> element_ids_for_selected_materials;
+            if (material_ids == nullptr)
+            {
+                // The mesh has no MaterialIDs: treat it as a single material-0
+                // region rather than injecting a permanent MaterialIDs
+                // property (which would leak into the output and into any
+                // downstream code that branches on materialIDs() being
+                // present).
+                if (selected_material_ids_string != "0" &&
+                    selected_material_ids_string != "*")
+                {
+                    OGS_FATAL(
+                        "overwrite_mesh_data: mesh '{:s}' has no MaterialIDs, "
+                        "so material_ids='{:s}' cannot be resolved. Only '0' "
+                        "or '*' are valid in this case.",
+                        mesh_name, selected_material_ids_string);
+                }
+                element_ids_for_selected_materials =
+                    ranges::views::iota(std::size_t{0},
+                                        mesh.getNumberOfElements()) |
+                    ranges::to<std::vector>;
+            }
+            else
+            {
+                auto const selected_material_ids =
+                    MaterialLib::parseMaterialIdString(
+                        selected_material_ids_string, material_ids, ' ',
+                        /*validate=*/true);
+                element_ids_for_selected_materials =
+                    ranges::views::iota(std::size_t{0}, material_ids->size()) |
+                    ranges::views::filter(
+                        [&](std::size_t const i)
+                        {
+                            return std::find(selected_material_ids.begin(),
+                                             selected_material_ids.end(),
+                                             (*material_ids)[i]) !=
+                                   selected_material_ids.end();
+                        }) |
+                    ranges::to<std::vector>;
+            }
+
+            // For \c set, get parameter_name; for \c take_original, it's
+            // empty
+            auto const& parameter_name =
+                tag == "set"
+                    //! \ogs_file_param{prj__overwrite_mesh_data__set__parameter_name}
+                    ? config->getConfigParameterOptional<std::string>(
+                          "parameter_name")
+                    : std::optional<std::string>{};
+
+            if (tag == "set" && !parameter_name)
+            {
+                OGS_FATAL(
+                    "\"set\" element requires a parameter_name attribute.");
+            }
+
+            auto const parameter =
+                !parameter_name || parameter_name->empty()
+                    ? static_cast<ParameterLib::Parameter<double>*>(nullptr)
+                    : &ParameterLib::findParameter<double>(
+                          *parameter_name, parameters, 0, nullptr);
+            data_initial_conditions.emplace_back(
+                field_name,
+                std::move(element_ids_for_selected_materials),
+                nullptr,
+                &mesh,
+                parameter,
+                mesh_item_type);
+            continue;
+        }
+
+        OGS_FATAL(
+            "Unknown element <{:s}> in <overwrite_mesh_data>. Expected one of "
+            "<remove>, <set>, or <take_original>.",
+            tag);
+    }
+}
+
 #include "ProcessLib/CreateJacobianAssembler.h"
 #include "ProcessLib/DeactivatedSubdomain.h"
 
@@ -267,19 +435,15 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
         }
     }
 
-    auto const zero_mesh_field_data_by_material_ids =
+    if (
         //! \ogs_file_param{prj__zero_mesh_field_data_by_material_ids}
         config.getConfigParameterOptional<std::vector<int>>(
-            "zero_mesh_field_data_by_material_ids");
-    if (zero_mesh_field_data_by_material_ids)
+            "zero_mesh_field_data_by_material_ids"))
     {
-        WARN(
-            "Tag 'zero_mesh_field_data_by_material_ids` is experimental. Its "
-            "name may be changed, or it may be removed due to its "
-            "corresponding feature becomes a single tool. Please use it with "
-            "care!");
-        MeshToolsLib::zeroMeshFieldDataByMaterialIDs(
-            *meshes[0], *zero_mesh_field_data_by_material_ids);
+        OGS_FATAL(
+            "The project file tag <zero_mesh_field_data_by_material_ids> has "
+            "been removed. Use <overwrite_mesh_data> with a <set> (or "
+            "<take_original>) sub-element and a <material_ids> entry instead.");
     }
 
     MeshLib::setMeshSpaceDimension(meshes);
@@ -408,6 +572,10 @@ ProjectData::ProjectData(BaseLib::ConfigTree const& project_config,
 
         parameter->initialize(_parameters);
     }
+    std::vector<MeshToolsLib::InitialConditionDataSet> data_initial_conditions;
+    parseOverwriteMeshData(project_config, data_initial_conditions, _mesh_vec,
+                           _parameters);
+    MeshToolsLib::overwriteMeshFieldDataByMaterialIDs(data_initial_conditions);
 
     //! \ogs_file_param{prj__process_variables}
     parseProcessVariables(project_config.getConfigSubtree("process_variables"));
