@@ -270,3 +270,88 @@ TEST_F(MaterialLib_ParseMaterialIdStringTest, WildcardWithMultipleElements)
     auto result = parseMaterialIdString("*", material_ids_vector);
     EXPECT_THAT(result, ContainerEq(std::vector<int>{1, 2, 3}));
 }
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest, InvalidMaterialIdThrowsError)
+{
+    using namespace testing;
+
+    // Populate with material IDs 1, 2, 3
+    ranges::fill(*material_ids_vector, 1);
+
+    // Requesting a non-existent material ID should throw when validation is
+    // enabled.
+    EXPECT_THROW(
+        parseMaterialIdString("5", material_ids_vector, ',', /*validate=*/true),
+        std::runtime_error);
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest,
+       NonExistentMaterialIdWithoutValidationIsTolerated)
+{
+    using namespace testing;
+
+    // Populate with material IDs 1, 2, 3
+    ranges::fill(*material_ids_vector, 1);
+    (*material_ids_vector)[0] = 1;
+    (*material_ids_vector)[1] = 2;
+    (*material_ids_vector)[2] = 3;
+
+    // Validation is opt-in: with the default (validate == false) a material ID
+    // absent from the mesh is tolerated and returned as-is. This keeps existing
+    // callers (media, constitutive relations) working, e.g. on a PETSc
+    // partition whose local MaterialIDs is a subset of the global ids.
+    auto const result = parseMaterialIdString("5", material_ids_vector);
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{5}));
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest,
+       InvalidMaterialIdInRangeThrowsError)
+{
+    using namespace testing;
+
+    // Populate with material IDs 1, 2, 3
+    ranges::fill(*material_ids_vector, 1);
+    (*material_ids_vector)[0] = 1;
+    (*material_ids_vector)[1] = 2;
+    (*material_ids_vector)[2] = 3;
+
+    // Requesting a range that includes a non-existent ID should throw when
+    // validation is enabled.
+    EXPECT_THROW(parseMaterialIdString("1:5", material_ids_vector, ',',
+                                       /*validate=*/true),
+                 std::runtime_error);
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest,
+       ValidMaterialIdsWithPropertyVector)
+{
+    using namespace testing;
+
+    // Populate with material IDs 1, 2, 3
+    ranges::fill(*material_ids_vector, 1);
+    (*material_ids_vector)[0] = 1;
+    (*material_ids_vector)[1] = 2;
+    (*material_ids_vector)[2] = 3;
+
+    // Valid material IDs should work, also with validation enabled.
+    auto result = parseMaterialIdString("1,2,3", material_ids_vector, ',',
+                                        /*validate=*/true);
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{1, 2, 3}));
+}
+
+TEST_F(MaterialLib_ParseMaterialIdStringTest,
+       ValidMaterialIdRangeWithPropertyVector)
+{
+    using namespace testing;
+
+    // Populate with material IDs 1, 2, 3
+    ranges::fill(*material_ids_vector, 1);
+    (*material_ids_vector)[0] = 1;
+    (*material_ids_vector)[1] = 2;
+    (*material_ids_vector)[2] = 3;
+
+    // Valid range should work, also with validation enabled.
+    auto result = parseMaterialIdString("1:3", material_ids_vector, ',',
+                                        /*validate=*/true);
+    EXPECT_THAT(result, ContainerEq(std::vector<int>{1, 2, 3}));
+}

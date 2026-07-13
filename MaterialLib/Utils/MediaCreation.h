@@ -23,16 +23,23 @@ namespace MaterialLib
 /// "1,2,3,4,5". Multiple entries are separated by comma, e.g., "-1:2,5,7:9"
 /// expands to "-1,0,1,2,5,7,8,9".
 /// Error messages in this function refer to this specific purpose.
-std::vector<int> splitMaterialIdString(std::string const& material_id_string);
+std::vector<int> splitMaterialIdString(std::string const& material_id_string,
+                                       char const separator = ',');
 
 /// Parses a comma separated list of integers or "*" string.
 /// Such lists occur in the medium definition in the OGS prj file.
 /// Range syntax is supported with colon separator, e.g., "1:5" expands to
 /// "1,2,3,4,5". For the "*" input a vector of all (unique) material ids is
 /// returned. Error messages in this function refer to this specific purpose.
+/// If \c validate is true and \c material_ids is not null, every parsed id must
+/// be present in \c material_ids, otherwise the function fails. Validation is
+/// opt-in so that existing callers (media, constitutive relations) keep
+/// tolerating ids that are absent from the current mesh, e.g. on a PETSc
+/// partition or a project file shared across several meshes.
 std::vector<int> parseMaterialIdString(
     std::string const& material_id_string,
-    MeshLib::PropertyVector<int> const* const material_ids);
+    MeshLib::PropertyVector<int> const* const material_ids,
+    char const separator = ',', bool const validate = false);
 
 /// Creates a new entry for the material id in the media map by either calling
 /// the create_medium function and creating a new shared pointer, or by reusing
