@@ -155,9 +155,12 @@ std::vector<double> BHE_1U::calcThermalResistances(
     double const lambda_g = grout.lambda_g;
     // t=0.0: borehole properties are physically time-invariant; genuinely
     // time-varying parameter types are rejected in createPipe.
-    double const lambda_p =
+    double const lambda_p_inlet =
         sampleStrictPositive(_pipes.inlet.wall_thermal_conductivity, 0.0, pos,
-                             "wall_thermal_conductivity");
+                             "inlet wall_thermal_conductivity");
+    double const lambda_p_outlet =
+        sampleStrictPositive(_pipes.outlet.wall_thermal_conductivity, 0.0, pos,
+                             "outlet wall_thermal_conductivity");
 
     // thermal resistances due to advective flow of refrigerant in the _pipes
     // Eq. 36 in Diersch_2011_CG
@@ -167,7 +170,10 @@ std::vector<double> BHE_1U::calcThermalResistances(
     // thermal resistance due to thermal conductivity of the pipe wall material
     // Eq. 49
     double const inlet_outside_diameter = _pipes.inlet.outsideDiameter();
-    double const R_con_a = pipeWallThermalResistance(_pipes.inlet, lambda_p);
+    double const R_con_a_inlet =
+        pipeWallThermalResistance(_pipes.inlet, lambda_p_inlet);
+    double const R_con_a_outlet =
+        pipeWallThermalResistance(_pipes.outlet, lambda_p_outlet);
 
     // the average outer diameter of the _pipes
     double const d0 = inlet_outside_diameter;
@@ -206,8 +212,8 @@ std::vector<double> BHE_1U::calcThermalResistances(
     // thermal resistance due to the grout transition.
     double const R_con_b = chi_new * R_g;
     // Eq. 29 and 30
-    double const R_fig = R_adv_i1 + R_con_a + R_con_b;
-    double const R_fog = R_adv_o1 + R_con_a + R_con_b;
+    double const R_fig = R_adv_i1 + R_con_a_inlet + R_con_b;
+    double const R_fog = R_adv_o1 + R_con_a_outlet + R_con_b;
 
     return {R_fig, R_fog, R_gg, R_gs};
 }

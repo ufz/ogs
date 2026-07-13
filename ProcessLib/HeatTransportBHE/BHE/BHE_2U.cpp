@@ -160,16 +160,22 @@ std::vector<double> BHE_2U::calcThermalResistances(
     double const lambda_g = grout.lambda_g;
     // t=0.0: borehole properties are physically time-invariant; genuinely
     // time-varying parameter types are rejected in createPipe.
-    double const lambda_p =
+    double const lambda_p_inlet =
         sampleStrictPositive(_pipes.inlet.wall_thermal_conductivity, 0.0, pos,
-                             "wall_thermal_conductivity");
+                             "inlet wall_thermal_conductivity");
+    double const lambda_p_outlet =
+        sampleStrictPositive(_pipes.outlet.wall_thermal_conductivity, 0.0, pos,
+                             "outlet wall_thermal_conductivity");
 
     // thermal resistances due to advective flow of refrigerant in the _pipes
     double const R_adv_i = 1.0 / (Nu * lambda_r * pi);
     double const R_adv_o = 1.0 / (Nu * lambda_r * pi);
 
     // thermal resistance due to thermal conductivity of the pipe wall material
-    double const R_con_a = pipeWallThermalResistance(_pipes.inlet, lambda_p);
+    double const R_con_a_inlet =
+        pipeWallThermalResistance(_pipes.inlet, lambda_p_inlet);
+    double const R_con_a_outlet =
+        pipeWallThermalResistance(_pipes.outlet, lambda_p_outlet);
 
     // the average outer diameter of the _pipes
     double const d0 = _pipes.outlet.outsideDiameter();
@@ -213,8 +219,8 @@ std::vector<double> BHE_2U::calcThermalResistances(
 
     double const R_con_b = chi_new * R_g;
 
-    double const R_fig = R_adv_i + R_con_a + R_con_b;
-    double const R_fog = R_adv_o + R_con_a + R_con_b;
+    double const R_fig = R_adv_i + R_con_a_inlet + R_con_b;
+    double const R_fog = R_adv_o + R_con_a_outlet + R_con_b;
 
     return {R_fig, R_fog, R_gg_1, R_gg_2, R_gs};
 }

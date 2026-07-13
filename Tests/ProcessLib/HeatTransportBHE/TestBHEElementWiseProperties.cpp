@@ -235,14 +235,16 @@ BHEns::BHE_1P make1PWith(ParameterLib::Parameter<double> const& diameter_param,
         pipes,    false};
 }
 
-/// Build a BHE_1U with the given diameter, wall TC, and pipe-center distance.
-BHEns::BHE_1U make1UWith(ParameterLib::Parameter<double> const& diameter_param,
-                         ParameterLib::Parameter<double> const& wall_tc_param,
-                         double const distance)
+/// Build a BHE_1U with separate inlet and outlet wall thermal conductivities.
+BHEns::BHE_1U make1UWithWallTCs(
+    ParameterLib::Parameter<double> const& diameter_param,
+    ParameterLib::Parameter<double> const& inlet_wall_tc,
+    ParameterLib::Parameter<double> const& outlet_wall_tc,
+    double const distance)
 {
     BHEns::BoreholeGeometry const borehole{8.0, diameter_param};
-    BHEns::Pipe const inlet{0.04, 0.0029, wall_tc_param};
-    BHEns::Pipe const outlet{0.04, 0.0029, wall_tc_param};
+    BHEns::Pipe const inlet{0.04, 0.0029, inlet_wall_tc};
+    BHEns::Pipe const outlet{0.04, 0.0029, outlet_wall_tc};
     BHEns::PipeConfigurationUType const pipes{inlet, outlet, distance, 0.001};
 
     return BHEns::BHE_1U{
@@ -251,20 +253,40 @@ BHEns::BHE_1U make1UWith(ParameterLib::Parameter<double> const& diameter_param,
         pipes,    false};
 }
 
-/// Build a BHE_2U with the given diameter, wall TC, and pipe-center distance.
-BHEns::BHE_2U make2UWith(ParameterLib::Parameter<double> const& diameter_param,
-                         ParameterLib::Parameter<double> const& wall_tc_param,
-                         double const distance)
+/// Build a BHE_2U with separate inlet and outlet wall thermal conductivities.
+BHEns::BHE_2U make2UWithWallTCs(
+    ParameterLib::Parameter<double> const& diameter_param,
+    ParameterLib::Parameter<double> const& inlet_wall_tc,
+    ParameterLib::Parameter<double> const& outlet_wall_tc,
+    double const distance)
 {
     BHEns::BoreholeGeometry const borehole{8.0, diameter_param};
-    BHEns::Pipe const inlet{0.04, 0.0029, wall_tc_param};
-    BHEns::Pipe const outlet{0.04, 0.0029, wall_tc_param};
+    BHEns::Pipe const inlet{0.04, 0.0029, inlet_wall_tc};
+    BHEns::Pipe const outlet{0.04, 0.0029, outlet_wall_tc};
     BHEns::PipeConfigurationUType const pipes{inlet, outlet, distance, 0.001};
 
     return BHEns::BHE_2U{
         borehole, kRefrigerant,
         kGrout,   makeConstantControl(kTemperatureParam, kFlowRateParam),
         pipes,    false};
+}
+
+/// Build a BHE_1U with the given diameter, wall TC, and pipe-center distance.
+BHEns::BHE_1U make1UWith(ParameterLib::Parameter<double> const& diameter_param,
+                         ParameterLib::Parameter<double> const& wall_tc_param,
+                         double const distance)
+{
+    return make1UWithWallTCs(diameter_param, wall_tc_param, wall_tc_param,
+                             distance);
+}
+
+/// Build a BHE_2U with the given diameter, wall TC, and pipe-center distance.
+BHEns::BHE_2U make2UWith(ParameterLib::Parameter<double> const& diameter_param,
+                         ParameterLib::Parameter<double> const& wall_tc_param,
+                         double const distance)
+{
+    return make2UWithWallTCs(diameter_param, wall_tc_param, wall_tc_param,
+                             distance);
 }
 }  // namespace
 
@@ -418,6 +440,50 @@ TEST(BHEValidation, Bhe2UFailsOnAcoshDomainViolation)
     auto const pos = makePos(0);
 
     EXPECT_THROW(bhe.thermalResistances(pos), std::runtime_error);
+}
+
+/// The inlet leg (R_fig, unknown 0) and outlet leg (R_fog, unknown 1) each use
+/// their own pipe wall thermal conductivity. With identical inlet/outlet
+/// conductivities the two legs are equal; a distinct outlet conductivity must
+/// make R_fog differ from R_fig. Guards against regressing to sampling only the
+/// inlet conductivity for both legs.
+TEST(BHEThermalResistances, Bhe1UOutletWallConductivityAffectsOutletLeg)
+{
+    ParameterLib::ConstantParameter<double> const inlet_tc{"inlet_tc", 0.42};
+    ParameterLib::ConstantParameter<double> const outlet_tc{"outlet_tc", 4.2};
+    auto const pos = makePos(0);
+
+    auto const bhe_equal =
+        make1UWithWallTCs(kOkDiameter, inlet_tc, inlet_tc, 0.06);
+    auto const R_equal = bhe_equal.thermalResistances(pos);
+    EXPECT_DOUBLE_EQ(R_equal[0], R_equal[1]);
+
+    auto const bhe_diff =
+        make1UWithWallTCs(kOkDiameter, inlet_tc, outlet_tc, 0.06);
+    auto const R_diff = bhe_diff.thermalResistances(pos);
+    // Inlet leg unchanged (same inlet conductivity), outlet leg changed.
+    EXPECT_DOUBLE_EQ(R_diff[0], R_equal[0]);
+    EXPECT_NE(R_diff[1], R_equal[1]);
+    EXPECT_LT(R_diff[1], R_diff[0]);  // higher conductivity -> lower resistance
+}
+
+TEST(BHEThermalResistances, Bhe2UOutletWallConductivityAffectsOutletLeg)
+{
+    ParameterLib::ConstantParameter<double> const inlet_tc{"inlet_tc", 0.42};
+    ParameterLib::ConstantParameter<double> const outlet_tc{"outlet_tc", 4.2};
+    auto const pos = makePos(0);
+
+    auto const bhe_equal =
+        make2UWithWallTCs(kOkDiameter, inlet_tc, inlet_tc, 0.06);
+    auto const R_equal = bhe_equal.thermalResistances(pos);
+    EXPECT_DOUBLE_EQ(R_equal[0], R_equal[1]);
+
+    auto const bhe_diff =
+        make2UWithWallTCs(kOkDiameter, inlet_tc, outlet_tc, 0.06);
+    auto const R_diff = bhe_diff.thermalResistances(pos);
+    EXPECT_DOUBLE_EQ(R_diff[0], R_equal[0]);
+    EXPECT_NE(R_diff[1], R_equal[1]);
+    EXPECT_LT(R_diff[1], R_diff[0]);
 }
 
 namespace
