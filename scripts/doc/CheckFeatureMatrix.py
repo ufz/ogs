@@ -30,7 +30,8 @@ def test_feature_matrix(path: Path, path_to_xml_files: Path) -> None:
 
     missing_features = set(feature_dict.keys()) - set(all_features)
 
-    # TODO: Remove the exception for the submesh residuum output once a test is implemented
+    # TODO: Remove the exception for the submesh residuum output once a test is
+    # implemented.
     assert len(missing_features) == 0 or missing_features == {
         "Submesh Residuum Output: XDMF"
     }, (

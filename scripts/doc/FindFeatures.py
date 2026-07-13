@@ -456,7 +456,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
             )
             for case in ["VTK", "XDMF"]
         },
-        # check for Compensate Non Equilibrium Initial Residuum
+        # Check for Compensate Non Equilibrium Initial Residuum
         **{
             "Compensate Non Equilibrium Initial Residuum: "
             + case: lambda xml, case=case: check_tag_text(
@@ -464,6 +464,90 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
             )
             for case in ["true", "false"]
         },
+        # Check for overwrite_mesh_data configuration. Its operations are the
+        # direct children <remove>, <set> and <take_original>; each holds
+        # <field_name>, <mesh_item_type> and (for set/take_original)
+        # <material_ids>, plus <parameter_name> for <set>.
+        "Includes: overwrite_mesh_data": lambda xml: check_tag_is_present(
+            xml,
+            "//overwrite_mesh_data",
+        ),
+        # Number of operations within a single overwrite_mesh_data element
+        **{
+            "Operation Count: "
+            + str(count): lambda xml, count=count: check_tag_children_count(
+                xml, "//overwrite_mesh_data", count
+            )
+            for count in np.unique(
+                [
+                    child_count
+                    for xml in xml_files
+                    for child_count in count_children(xml, "//overwrite_mesh_data")
+                ]
+            )
+        },
+        # Check for field_name values across all operations
+        **{
+            "Field Name: "
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
+                xml, "//overwrite_mesh_data/*/field_name", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath("//overwrite_mesh_data/*/field_name/text()")
+                ]
+            )
+        },
+        # Check for mesh_item_type values across all operations
+        **{
+            "Mesh Item Type: "
+            + case: lambda xml, case=case: check_tag_text(
+                xml, "//overwrite_mesh_data/*/mesh_item_type", case
+            )
+            for case in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        "//overwrite_mesh_data/*/mesh_item_type/text()"
+                    )
+                ]
+            )
+        },
+        # Check for material_ids values across all operations
+        **{
+            "Material IDs: "
+            + name.replace("\n", ""): lambda xml, name=name: check_tag_text(
+                xml, "//overwrite_mesh_data/*/material_ids", name
+            )
+            for name in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath("//overwrite_mesh_data/*/material_ids/text()")
+                ]
+            )
+        },
+        # Check for the presence of each operation kind
+        "Includes: remove": lambda xml: check_tag_is_present(
+            xml,
+            "//overwrite_mesh_data/remove",
+        ),
+        "Includes: set": lambda xml: check_tag_is_present(
+            xml,
+            "//overwrite_mesh_data/set",
+        ),
+        "Includes: take_original": lambda xml: check_tag_is_present(
+            xml,
+            "//overwrite_mesh_data/take_original",
+        ),
+        # Check for parameter_name presence (only valid inside <set>)
+        "Includes: parameter_name": lambda xml: check_tag_is_present(
+            xml,
+            "//overwrite_mesh_data/set/parameter_name",
+        ),
     }
     return feature_dict
 
