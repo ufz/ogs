@@ -28,6 +28,10 @@ static constexpr char const* toString(const MeshItemType t)
     return mesh_item_type_strings[static_cast<int>(t)];
 }
 
+/// Convert a string to the corresponding MeshItemType enum. The comparison is
+/// case-insensitive; an unknown string raises an OGS_FATAL.
+MeshItemType string2MeshItemType(const std::string& s);
+
 std::ostream& operator<<(std::ostream& os, MeshItemType const& t);
 
 /**
