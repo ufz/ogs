@@ -23,7 +23,7 @@ target_link_libraries(
         VTK::IOLegacy
         $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::IOParallelXML>>:VTK::IOParallelXML>
         $<$<AND:$<BOOL:${OGS_USE_PETSC}>,$<TARGET_EXISTS:VTK::ParallelMPI>>:VTK::ParallelMPI>
-    PRIVATE BaseLib MathLib NumLib GitInfoLib
+    PRIVATE BaseLib MathLib NumLib GitInfoLib MaterialLib_Utils
 )
 
 target_precompile_headers(
