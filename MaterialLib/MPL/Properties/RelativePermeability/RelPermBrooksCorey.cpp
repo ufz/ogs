@@ -99,6 +99,15 @@ PropertyDataType RelPermBrooksCorey::dValue(
         return 0.;
     }
 
+    // Consistency with value(): where the min_relative_permeability clamp is
+    // active (dry range), the relative permeability is constant and its
+    // derivative is zero.
+    auto const k_rel_LR = std::pow(s_eff, (2. + 3. * lambda) / lambda);
+    if (k_rel_LR <= min_relative_permeability_)
+    {
+        return 0.;
+    }
+
     auto const d_se_d_sL = 1. / (s_L_max - s_L_res);
     auto const dk_rel_LRdse =
         (3 * lambda + 2.) / lambda * std::pow(s_eff, 2. / lambda + 2.);
