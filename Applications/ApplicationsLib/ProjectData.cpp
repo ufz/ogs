@@ -40,6 +40,7 @@
 #include "MeshGeoToolsLib/SearchLength.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/MeshEnums.h"
+#include "MeshLib/NodePartitionedMesh.h"
 #include "MeshLib/Utils/SetMeshSpaceDimension.h"
 #include "MeshToolsLib/OverwriteMeshFieldDataByMaterialIDs.h"
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
@@ -127,6 +128,23 @@ void parseOverwriteMeshData(
                     tag, MeshLib::toString(mesh_item_type));
             }
 
+            // Genuine multi-rank PETSc partition: each rank holds only a local
+            // mesh slice. Material-id selection and node writes not implemented
+            // there. Single-thread wrapper (serial / 1 rank) covers whole mesh,
+            // so allowed.
+            auto const* const partitioned_mesh =
+                dynamic_cast<MeshLib::NodePartitionedMesh const*>(&mesh);
+            bool const is_partition =
+                partitioned_mesh && !partitioned_mesh->isForSingleThread();
+
+            if (is_partition && mesh_item_type == MeshLib::MeshItemType::Node)
+            {
+                OGS_FATAL(
+                    "overwrite_mesh_data: <{:s}> modifying node data is not "
+                    "implemented for partitioned (PETSc) meshes.",
+                    tag);
+            }
+
             auto const selected_material_ids_string =
                 //! \ogs_file_param{prj__overwrite_mesh_data__set__material_ids}
                 config->getConfigParameter<std::string>("material_ids", "0");
@@ -156,6 +174,18 @@ void parseOverwriteMeshData(
             }
             else
             {
+                // Specific material subset: depends on material ids, cannot
+                // resolve against partition-local subset. "*" (whole mesh)
+                // exempt.
+                if (is_partition && selected_material_ids_string != "*")
+                {
+                    OGS_FATAL(
+                        "overwrite_mesh_data: <{:s}> material-id-based "
+                        "selection (material_ids='{:s}') is not implemented "
+                        "for "
+                        "partitioned (PETSc) meshes.",
+                        tag, selected_material_ids_string);
+                }
                 std::set<int> const selected_material_ids(
                     std::from_range,
                     MaterialLib::parseMaterialIdString(
