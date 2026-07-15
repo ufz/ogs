@@ -3,7 +3,6 @@
 
 #include "CreateBHEUType.h"
 
-#include <algorithm>
 #include <cmath>
 
 #include "BHE_1U.h"
@@ -63,13 +62,18 @@ parseBHEUTypeConfig(
             pipe_distance);
     }
 
-    double const d0 =
-        std::max(pipes.inlet.outsideDiameter(), pipes.outlet.outsideDiameter());
-    if (pipe_distance < d0)
+    // The resistance formulas use a single pipe outside diameter; the BHE_1U /
+    // BHE_2U constructor enforces that inlet and outlet share it, so the inlet
+    // value is representative here.
+    double const d0 = pipes.inlet.outsideDiameter();
+    if (pipe_distance <= d0)
     {
         OGS_FATAL(
-            "distance_between_pipes ({:g}) must be >= pipe outside diameter "
-            "({:g}) for valid U-type thermal resistance formulas.",
+            "distance_between_pipes ({:g}) must be > pipe outside diameter "
+            "({:g}) for valid U-type thermal resistance formulas. A distance "
+            "equal to the pipe outside diameter makes the inter-grout acosh "
+            "argument exactly 1, i.e. a zero resistance and an infinite "
+            "assembly coefficient.",
             pipe_distance, d0);
     }
 

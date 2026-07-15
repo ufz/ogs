@@ -74,6 +74,15 @@ ParameterLib::ConstantParameter<double> const kFlowRateParam{"flow_rate",
 ParameterLib::ConstantParameter<double> const kTemperatureParam{"temperature",
                                                                 25.0};
 
+// Geometry of the single-diameter U-type / 1P test pipe. kPipeOutsideDiameter
+// is the pipe-center distance at which the R_ar acosh argument is exactly 1
+// (pipes touching), so the touching-pipe tests derive their distance from it
+// instead of restating the arithmetic.
+double const kPipeInsideDiameter = 0.04;
+double const kPipeWallThickness = 0.0029;
+double const kPipeOutsideDiameter =
+    kPipeInsideDiameter + 2 * kPipeWallThickness;  // 0.0458
+
 BHEns::FlowAndTemperatureControl makeConstantControl(
     ParameterLib::Parameter<double> const& temperature_param,
     ParameterLib::Parameter<double> const& flow_rate_param)
@@ -125,8 +134,8 @@ TEST(BHECommonUType, Bhe1UConstantParamsGiveFiniteResistancesAndPositiveAreas)
 
     BoreholeGeometry const borehole{8.0, kOkDiameter};
 
-    Pipe const inlet{0.04, 0.0029, kOkWallTc};
-    Pipe const outlet{0.04, 0.0029, kOkWallTc};
+    Pipe const inlet{kPipeInsideDiameter, kPipeWallThickness, kOkWallTc};
+    Pipe const outlet{kPipeInsideDiameter, kPipeWallThickness, kOkWallTc};
     PipeConfigurationUType const pipes{inlet, outlet, 0.06, 0.001};
 
     auto const control = makeConstantControl(kTemperatureParam, kFlowRateParam);
@@ -157,7 +166,7 @@ TEST(BHECommon1P, Bhe1PConstantParamsGiveFiniteResistancesAndPositiveAreas)
 
     BoreholeGeometry const borehole{8.0, kOkDiameter};
 
-    Pipe const single_pipe{0.04, 0.0029, kOkWallTc};
+    Pipe const single_pipe{kPipeInsideDiameter, kPipeWallThickness, kOkWallTc};
     PipeConfiguration1PType const pipes{single_pipe, 0.001};
 
     auto const control = makeConstantControl(kTemperatureParam, kFlowRateParam);
@@ -226,7 +235,8 @@ BHEns::BHE_1P make1PWith(ParameterLib::Parameter<double> const& diameter_param,
                          ParameterLib::Parameter<double> const& wall_tc_param)
 {
     BHEns::BoreholeGeometry const borehole{8.0, diameter_param};
-    BHEns::Pipe const single_pipe{0.04, 0.0029, wall_tc_param};
+    BHEns::Pipe const single_pipe{kPipeInsideDiameter, kPipeWallThickness,
+                                  wall_tc_param};
     BHEns::PipeConfiguration1PType const pipes{single_pipe, 0.001};
 
     return BHEns::BHE_1P{
@@ -243,8 +253,10 @@ BHEns::BHE_1U make1UWithWallTCs(
     double const distance)
 {
     BHEns::BoreholeGeometry const borehole{8.0, diameter_param};
-    BHEns::Pipe const inlet{0.04, 0.0029, inlet_wall_tc};
-    BHEns::Pipe const outlet{0.04, 0.0029, outlet_wall_tc};
+    BHEns::Pipe const inlet{kPipeInsideDiameter, kPipeWallThickness,
+                            inlet_wall_tc};
+    BHEns::Pipe const outlet{kPipeInsideDiameter, kPipeWallThickness,
+                             outlet_wall_tc};
     BHEns::PipeConfigurationUType const pipes{inlet, outlet, distance, 0.001};
 
     return BHEns::BHE_1U{
@@ -261,8 +273,10 @@ BHEns::BHE_2U make2UWithWallTCs(
     double const distance)
 {
     BHEns::BoreholeGeometry const borehole{8.0, diameter_param};
-    BHEns::Pipe const inlet{0.04, 0.0029, inlet_wall_tc};
-    BHEns::Pipe const outlet{0.04, 0.0029, outlet_wall_tc};
+    BHEns::Pipe const inlet{kPipeInsideDiameter, kPipeWallThickness,
+                            inlet_wall_tc};
+    BHEns::Pipe const outlet{kPipeInsideDiameter, kPipeWallThickness,
+                             outlet_wall_tc};
     BHEns::PipeConfigurationUType const pipes{inlet, outlet, distance, 0.001};
 
     return BHEns::BHE_2U{
@@ -386,8 +400,8 @@ TEST(BHEValidation, Bhe1PRejectsNaNWallTC)
 /// by checkBoreholeVsPipeDiameter (1P grout formula requires D > d_outer).
 TEST(BHEValidation, Bhe1PRejectsBoreholeSmallerThanPipe)
 {
-    // pipe outside diameter = 0.04 + 2 * 0.0029 = 0.0458; choose D = 0.04 <
-    // that.
+    // Choose D below kPipeOutsideDiameter (0.0458) so the borehole is smaller
+    // than the pipe.
     ParameterLib::ConstantParameter<double> const tiny_diameter{"diameter",
                                                                 0.04};
     auto bhe = make1PWith(tiny_diameter, kOkWallTc);
@@ -399,9 +413,9 @@ TEST(BHEValidation, Bhe1PRejectsBoreholeSmallerThanPipe)
 /// 1U chi formula (Eq. 51) requires D > sqrt(2) * d0; violation must fatal.
 TEST(BHEValidation, Bhe1UFailsOnBoreholeVsPipeChiGuard)
 {
-    // pipe outside diameter d0 = 0.04 + 2 * 0.0029 = 0.0458.
-    // sqrt(2) * d0 ~ 0.0648; use D = 0.06 to fail the chi guard while still
-    // leaving acosh arguments finite-valued.
+    // d0 == kPipeOutsideDiameter (0.0458); sqrt(2) * d0 ~ 0.0648, so use
+    // D = 0.06 to fail the chi guard while still leaving acosh arguments
+    // finite-valued.
     ParameterLib::ConstantParameter<double> const small_diameter{"diameter",
                                                                  0.06};
     auto bhe = make1UWith(small_diameter, kOkWallTc, 0.03);
@@ -410,12 +424,26 @@ TEST(BHEValidation, Bhe1UFailsOnBoreholeVsPipeChiGuard)
     EXPECT_THROW(bhe.thermalResistances(pos), std::runtime_error);
 }
 
-/// 1U R_ar argument (2*s^2 - d0^2) / d0^2 must be >= 1, i.e. s >= d0.
+/// 1U R_ar argument (2*s^2 - d0^2) / d0^2 must be > 1, i.e. s > d0.
 /// Using s < d0 violates the acosh domain.
 TEST(BHEValidation, Bhe1UFailsOnAcoshDomainViolation)
 {
-    // d0 = 0.0458; choose s = 0.02 so that (2*s*s - d0*d0)/d0*d0 < 1.
+    // d0 == kPipeOutsideDiameter (0.0458); choose s = 0.02 so that
+    // (2*s*s - d0*d0)/d0*d0 < 1.
     auto bhe = make1UWith(kOkDiameter, kOkWallTc, 0.02);
+    auto const pos = makePos(0);
+
+    EXPECT_THROW(bhe.thermalResistances(pos), std::runtime_error);
+}
+
+/// Pipes exactly touching (s == d0) make the R_ar acosh argument exactly 1, so
+/// acosh(1) = 0 and R_ar = 0. acosh(1) is in-domain but yields a zero
+/// resistance and an infinite (1/R) assembly coefficient, so checkAcoshArg
+/// must reject arg == 1 strictly.
+TEST(BHEValidation, Bhe1UFailsWhenPipesTouch)
+{
+    // Pipe-center distance == pipe outside diameter => R_ar acosh arg == 1.
+    auto bhe = make1UWith(kOkDiameter, kOkWallTc, kPipeOutsideDiameter);
     auto const pos = makePos(0);
 
     EXPECT_THROW(bhe.thermalResistances(pos), std::runtime_error);
@@ -433,13 +461,58 @@ TEST(BHEValidation, Bhe2UFailsOnBoreholeVsPipeChiGuard)
     EXPECT_THROW(bhe.thermalResistances(pos), std::runtime_error);
 }
 
-/// 2U R_ar_1 argument requires s >= d0; violate that.
+/// 2U R_ar_1 argument requires s > d0; violate that.
 TEST(BHEValidation, Bhe2UFailsOnAcoshDomainViolation)
 {
     auto bhe = make2UWith(kOkDiameter, kOkWallTc, 0.02);
     auto const pos = makePos(0);
 
     EXPECT_THROW(bhe.thermalResistances(pos), std::runtime_error);
+}
+
+/// As for 1U: s == d0 makes the R_ar_1 acosh argument exactly 1 and must be
+/// rejected strictly.
+TEST(BHEValidation, Bhe2UFailsWhenPipesTouch)
+{
+    auto bhe = make2UWith(kOkDiameter, kOkWallTc, kPipeOutsideDiameter);
+    auto const pos = makePos(0);
+
+    EXPECT_THROW(bhe.thermalResistances(pos), std::runtime_error);
+}
+
+/// U-type resistance formulas (R_g, R_ar) assume a single pipe outside
+/// diameter, so the constructor must reject inlet/outlet pipes whose outside
+/// diameters differ. Here the wall thicknesses differ, so do the outside
+/// diameters. (Differing wall *conductivity* alone is allowed; see
+/// Bhe1UOutletWallConductivityAffectsOutletLeg below.)
+TEST(BHEValidation, Bhe1URejectsUnequalPipeOutsideDiameters)
+{
+    BHEns::BoreholeGeometry const borehole{8.0, kOkDiameter};
+    BHEns::Pipe const inlet{kPipeInsideDiameter, kPipeWallThickness, kOkWallTc};
+    BHEns::Pipe const outlet{kPipeInsideDiameter, kPipeWallThickness + 0.001,
+                             kOkWallTc};
+    BHEns::PipeConfigurationUType const pipes{inlet, outlet, 0.06, 0.001};
+    auto const control = makeConstantControl(kTemperatureParam, kFlowRateParam);
+
+    EXPECT_THROW(
+        (BHEns::BHE_1U{borehole, kRefrigerant, kGrout, control, pipes, false}),
+        std::runtime_error);
+}
+
+/// As for 1U: a 2U BHE must reject inlet/outlet pipes with different outside
+/// diameters.
+TEST(BHEValidation, Bhe2URejectsUnequalPipeOutsideDiameters)
+{
+    BHEns::BoreholeGeometry const borehole{8.0, kOkDiameter};
+    BHEns::Pipe const inlet{kPipeInsideDiameter, kPipeWallThickness, kOkWallTc};
+    BHEns::Pipe const outlet{kPipeInsideDiameter, kPipeWallThickness + 0.001,
+                             kOkWallTc};
+    BHEns::PipeConfigurationUType const pipes{inlet, outlet, 0.06, 0.001};
+    auto const control = makeConstantControl(kTemperatureParam, kFlowRateParam);
+
+    EXPECT_THROW(
+        (BHEns::BHE_2U{borehole, kRefrigerant, kGrout, control, pipes, false}),
+        std::runtime_error);
 }
 
 /// The inlet leg (R_fig, unknown 0) and outlet leg (R_fog, unknown 1) each use

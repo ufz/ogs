@@ -26,6 +26,7 @@ BHE_2U::BHE_2U(BoreholeGeometry const& borehole,
     : BHECommonUType{borehole, refrigerant,   grout, flowAndTemperatureControl,
                      pipes,    use_python_bcs}
 {
+    checkEqualPipeOutsideDiameters(_pipes.inlet, _pipes.outlet, "BHE 2U");
     // Initialize thermal resistances.
     auto values = visit(
         [&](auto const& control)
@@ -177,17 +178,19 @@ std::vector<double> BHE_2U::calcThermalResistances(
     double const R_con_a_outlet =
         pipeWallThermalResistance(_pipes.outlet, lambda_p_outlet);
 
-    // the average outer diameter of the _pipes
-    double const d0 = _pipes.outlet.outsideDiameter();
+    // Single pipe outside diameter used by the resistance formulas; the U-type
+    // constructor enforces that inlet and outlet share it.
+    double const d0 = _pipes.inlet.outsideDiameter();
     double const D = sampleStrictPositive(borehole_geometry.diameter, 0.0, pos,
                                           "borehole_diameter");
-    // Context prefix shared by the acosh-argument checks below.
-    auto const geometry_context = [&](std::string_view const equation)
+    // Context prefix shared by the acosh-argument checks below. `cause` names
+    // the physical degeneracy that drives the argument to <= 1 so the fatal
+    // message is actionable.
+    auto const geometry_context =
+        [&](std::string_view const equation, std::string_view const cause)
     {
-        return fmt::format(
-            "BHE geometry invalid at {} ({:s}): D={:g}, d0={:g}, "
-            "distance={:g}",
-            pos, equation, D, d0, _pipes.distance);
+        return uTypeGeometryContext(pos, D, d0, _pipes.distance, equation,
+                                    cause);
     };
     // Eq. 38: chi requires D > 2 * d0 so that log(D/(2*d0)) > 0.
     checkBoreholeVsPipeDiameter(D, 2.0 * d0, pos,
@@ -199,19 +202,37 @@ std::vector<double> BHE_2U::calcThermalResistances(
     double const acosh_arg_R_g =
         (D * D + d0 * d0 - 2 * _pipes.distance * _pipes.distance) /
         (2 * D * d0);
-    checkAcoshArg(acosh_arg_R_g, geometry_context("BHE 2U R_g (Eq. 39)"));
+    checkAcoshArg(
+        acosh_arg_R_g,
+        geometry_context(
+            "BHE 2U R_g (Eq. 39)",
+            "The argument drops to <= 1 when a pipe reaches the borehole wall, "
+            "giving a zero grout resistance R_g and an infinite (1/R) assembly "
+            "coefficient."));
     double const R_g = std::acosh(acosh_arg_R_g) / (2 * pi * lambda_g) *
                        (3.098 - 4.432 * std::sqrt(2) * _pipes.distance / D +
                         2.364 * 2 * _pipes.distance * _pipes.distance / D / D);
 
     double const acosh_arg_R_ar_1 =
         (2.0 * _pipes.distance * _pipes.distance - d0 * d0) / d0 / d0;
-    checkAcoshArg(acosh_arg_R_ar_1, geometry_context("BHE 2U R_ar_1"));
+    checkAcoshArg(
+        acosh_arg_R_ar_1,
+        geometry_context(
+            "BHE 2U R_ar_1",
+            "The argument drops to <= 1 when the pipes are too close, giving a "
+            "zero inter-grout resistance R_ar and an infinite (1/R) assembly "
+            "coefficient."));
     double const R_ar_1 = std::acosh(acosh_arg_R_ar_1) / (2.0 * pi * lambda_g);
 
     double const acosh_arg_R_ar_2 =
         (2.0 * 2.0 * _pipes.distance * _pipes.distance - d0 * d0) / d0 / d0;
-    checkAcoshArg(acosh_arg_R_ar_2, geometry_context("BHE 2U R_ar_2"));
+    checkAcoshArg(
+        acosh_arg_R_ar_2,
+        geometry_context(
+            "BHE 2U R_ar_2",
+            "The argument drops to <= 1 when the pipes are too close, giving a "
+            "zero inter-grout resistance R_ar and an infinite (1/R) assembly "
+            "coefficient."));
     double const R_ar_2 = std::acosh(acosh_arg_R_ar_2) / (2.0 * pi * lambda_g);
 
     auto const [chi_new, R_gg_1, R_gg_2, R_gs] =
