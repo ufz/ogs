@@ -15,7 +15,9 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MeshLib/Elements/Line.h"
+#include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
+#include "MeshLib/Utils/addPropertyToMesh.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/SpatialPosition.h"
 #include "ProcessLib/HeatTransportBHE/BHE/BHE_1P.h"
@@ -897,4 +899,36 @@ TEST(BHEEndpoints, HorizontalBheUsesElementOrderingForEndpoints)
             c.raw_elements);
     EXPECT_EQ(ep.inlet, c.nodes[0].get());
     EXPECT_EQ(ep.outlet, c.nodes[n_elements].get());
+}
+
+/// getBHEDataInMesh must accept a horizontal BHE (all nodes share z) and
+/// extract its line elements and nodes as one material group. The removed
+/// ProcessLibBHEMeshUtils.HorizontalBheWithAmbiguousWellheadFails asserted the
+/// opposite (a throw), which became invalid once endpoint selection moved from
+/// a z-coordinate wellhead to element node ordering
+/// (findBHEEndpointsFromElementOrdering); horizontal geometry is now valid.
+TEST(ProcessLibBHEMeshUtils, HorizontalBheIsExtractedFromMesh)
+{
+    // MeshLib::Mesh takes ownership of the raw Node* / Element* pointers.
+    std::vector<MeshLib::Node*> nodes{new MeshLib::Node(0.0, 0.0, 0.0, 0),
+                                      new MeshLib::Node(1.0, 0.0, 0.0, 1),
+                                      new MeshLib::Node(2.0, 0.0, 0.0, 2)};
+    std::vector<MeshLib::Element*> elements{
+        new MeshLib::Line(std::array<MeshLib::Node*, 2>{{nodes[0], nodes[1]}}),
+        new MeshLib::Line(std::array<MeshLib::Node*, 2>{{nodes[1], nodes[2]}})};
+
+    auto mesh = std::make_unique<MeshLib::Mesh>(
+        "horizontal_bhe", nodes, elements, true /*compute_element_neighbors*/);
+    MeshLib::addPropertyToMesh<int>(*mesh, "MaterialIDs",
+                                    MeshLib::MeshItemType::Cell, 1, {{0, 0}});
+
+    // Was expected to throw (ambiguous wellhead); horizontal is now valid.
+    auto const data = ProcessLib::HeatTransportBHE::getBHEDataInMesh(*mesh);
+
+    ASSERT_EQ(data.BHE_mat_IDs.size(), 1u);
+    EXPECT_EQ(data.BHE_mat_IDs.front(), 0);
+    ASSERT_EQ(data.BHE_elements.size(), 1u);
+    EXPECT_EQ(data.BHE_elements.front().size(), 2u);
+    ASSERT_EQ(data.BHE_nodes.size(), 1u);
+    EXPECT_EQ(data.BHE_nodes.front().size(), 3u);
 }
