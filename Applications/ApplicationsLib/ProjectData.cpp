@@ -156,19 +156,18 @@ void parseOverwriteMeshData(
             }
             else
             {
-                auto const selected_material_ids =
+                std::set<int> const selected_material_ids(
+                    std::from_range,
                     MaterialLib::parseMaterialIdString(
                         selected_material_ids_string, material_ids, ' ',
-                        /*validate=*/true);
+                        /*validate=*/true));
                 element_ids_for_selected_materials =
                     ranges::views::iota(std::size_t{0}, material_ids->size()) |
                     ranges::views::filter(
                         [&](std::size_t const i)
                         {
-                            return std::find(selected_material_ids.begin(),
-                                             selected_material_ids.end(),
-                                             (*material_ids)[i]) !=
-                                   selected_material_ids.end();
+                            return selected_material_ids.contains(
+                                (*material_ids)[i]);
                         }) |
                     ranges::to<std::vector>;
             }
