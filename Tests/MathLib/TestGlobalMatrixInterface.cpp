@@ -155,6 +155,31 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 }  // end namespace
 
 #if defined(USE_PETSC)
+
+template <class T_MATRIX, class T_VECTOR>
+void checkAddToDiagonalMPI(T_MATRIX& m, T_VECTOR& v)
+{
+    // Set diagonal entries that this rank owns.
+    for (PetscInt i = 0; i < m.getNumberOfLocalRows(); ++i)
+    {
+        m.set(m.getRangeBegin() + i, m.getRangeBegin() + i, 1.0);
+    }
+    MathLib::finalizeMatrixAssembly(m);
+
+    // Apply addToDiagonal
+    m.addToDiagonal(5.0);
+    MathLib::finalizeMatrixAssembly(m);
+
+    // Verify via matMult with a vector of ones.
+    // Each diagonal entry is 1.0 + 5.0 = 6.0 and off-diagonals are 0,
+    // so the result vector is [6,6,...] and norm2 = sqrt(n * 6^2).
+    set(v, 1.);
+    T_VECTOR y(m.getNumberOfRows());
+    matMult(m, v, y);
+
+    ASSERT_NEAR(std::sqrt(m.getNumberOfRows() * 36.0), norm2(y), 1e-12);
+}
+
 TEST(MPI_Math, CheckInterface_PETScMatrix_Local_Size)
 {
     MathLib::PETScMatrixOption opt;
@@ -208,10 +233,58 @@ TEST(MPI_Math, CheckInterface_PETSc_Rectangular_Matrix_Global_Size)
 
     checkGlobalRectangularMatrixInterfaceMPI(A, x);
 }
+
+TEST(MPI_Math, PETScMatrix_addToDiagonal_Local_Size)
+{
+    MathLib::PETScMatrixOption opt;
+    opt.d_nz = 2;
+    opt.o_nz = 0;
+    opt.is_global_size = false;
+    opt.n_local_cols = 2;
+    MathLib::PETScMatrix A(2, opt);
+    const bool is_global = false;
+    MathLib::PETScVector x(2, is_global);
+
+    checkAddToDiagonalMPI(A, x);
+}
+
+TEST(MPI_Math, PETScMatrix_addToDiagonal_Global_Size)
+{
+    // 3 ranks × 1 row each = 3×3 global matrix, so each rank owns exactly its
+    // own diagonal. This avoids cross-rank diagonal writes.
+    MathLib::PETScMatrixOption opt;
+    opt.d_nz = 2;
+    opt.o_nz = 0;
+    MathLib::PETScMatrix A(3, opt);
+    MathLib::PETScVector x(3);
+
+    checkAddToDiagonalMPI(A, x);
+}
+
 #else
 TEST(Math, CheckInterface_EigenMatrix)
 {
     MathLib::EigenMatrix m(10);
     checkGlobalMatrixInterface(m);
+}
+
+TEST(Math, EigenMatrix_addToDiagonal)
+{
+    MathLib::EigenMatrix m(4);
+    // Set off-diagonal values
+    m.setValue(0, 1, 2.0);
+    m.setValue(2, 3, 3.0);
+
+    // Apply addToDiagonal
+    m.addToDiagonal(5.0);
+
+    // Verify diagonal entries
+    for (int i = 0; i < 4; ++i)
+    {
+        ASSERT_EQ(5.0, m.get(i, i));
+    }
+    // Off-diagonal unchanged
+    ASSERT_EQ(2.0, m.get(0, 1));
+    ASSERT_EQ(3.0, m.get(2, 3));
 }
 #endif

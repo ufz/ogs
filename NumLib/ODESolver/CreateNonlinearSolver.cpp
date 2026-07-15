@@ -65,11 +65,27 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
         }
         auto const tag = NonlinearSolverTag::Newton;
         using ConcreteNLS = NonlinearSolver<tag>;
-        return std::make_pair(
-            std::make_unique<ConcreteNLS>(linear_solver, max_iter,
-                                          std::move(standard_newton),
-                                          recompute_jacobian),
-            tag);
+        auto solver = std::make_unique<ConcreteNLS>(linear_solver, max_iter,
+                                                    std::move(standard_newton),
+                                                    recompute_jacobian);
+        auto const tikhonov_config =
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__tikhonov}
+            config.getConfigSubtreeOptional("tikhonov");
+        if (tikhonov_config)
+        {
+            auto const tikhonov_lambda =
+                //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__tikhonov__lambda}
+                tikhonov_config->getConfigParameter<double>("lambda");
+            auto const tikhonov_starting_iteration =
+                //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__tikhonov__starting_iteration}
+                tikhonov_config->getConfigParameter<int>("starting_iteration",
+                                                         0);
+            solver->setTikhonovLambda(tikhonov_lambda,
+                                      tikhonov_starting_iteration);
+            DBUG("Newton solver: Tikhonov regularization lambda = {:g}",
+                 tikhonov_lambda);
+        }
+        return std::make_pair(std::move(solver), tag);
     }
 #ifdef USE_PETSC
     if (boost::iequals(type, "PETScSNES"))

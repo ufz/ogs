@@ -538,6 +538,10 @@
             <name>basic_newton</name>
             <type>Newton</type>
             <max_iter>100</max_iter>
+            <tikhonov>
+                <lambda>1e-14</lambda>
+                <starting_iteration>11</starting_iteration>
+            </tikhonov>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>
