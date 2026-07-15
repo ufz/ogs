@@ -78,8 +78,7 @@ public:
                                               int const in_component_id,
                                               int const out_component_id);
 
-    std::array<double, number_of_unknowns> pipeHeatConductions(
-        ParameterLib::SpatialPosition const& pos) const;
+    std::array<double, number_of_unknowns> pipeHeatConductions() const;
 
     std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
         Eigen::Vector3d const& elem_direction) const;

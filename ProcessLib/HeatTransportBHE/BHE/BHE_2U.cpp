@@ -57,8 +57,8 @@ std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatCapacities()
              /*g4*/ (1.0 - porosity_g) * rho_g * heat_cap_g}};
 }
 
-std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatConductions(
-    ParameterLib::SpatialPosition const& /*pos*/) const
+std::array<double, BHE_2U::number_of_unknowns> BHE_2U::pipeHeatConductions()
+    const
 {
     double const lambda_r = refrigerant.thermal_conductivity;
     double const rho_r = refrigerant.density;

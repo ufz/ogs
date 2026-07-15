@@ -55,8 +55,7 @@ double BHECommonCoaxial::updateFlowRateAndTemperature(double const T_out,
 }
 
 std::array<double, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::pipeHeatConductions(
-    ParameterLib::SpatialPosition const& /*pos*/) const
+BHECommonCoaxial::pipeHeatConductions() const
 {
     double const lambda_r = refrigerant.thermal_conductivity;
     double const rho_r = refrigerant.density;

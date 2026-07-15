@@ -726,7 +726,7 @@ void checkCoaxialElementWiseProperties()
     }
 
     // pipeHeatConductions: 3 finite values.
-    auto const lambda = bhe.pipeHeatConductions(pos);
+    auto const lambda = bhe.pipeHeatConductions();
     for (int u = 0; u < 3; ++u)
     {
         EXPECT_TRUE(std::isfinite(lambda[u])) << "unknown=" << u;

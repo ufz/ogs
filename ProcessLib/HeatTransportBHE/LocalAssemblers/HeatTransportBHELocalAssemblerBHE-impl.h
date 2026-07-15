@@ -135,7 +135,7 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::assemble(
         _integration_method.getNumberOfPoints();
 
     auto const& pipe_heat_capacities = _bhe.pipeHeatCapacities();
-    auto const& pipe_heat_conductions = _bhe.pipeHeatConductions(element_pos_);
+    auto const& pipe_heat_conductions = _bhe.pipeHeatConductions();
     auto const& pipe_advection_vectors =
         _bhe.pipeAdvectionVectors(_element_direction);
     auto const& cross_section_areas = _bhe.crossSectionAreas(element_pos_);
