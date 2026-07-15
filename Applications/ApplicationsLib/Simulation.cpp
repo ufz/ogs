@@ -12,6 +12,7 @@
 #include "BaseLib/ConfigTreeUtil.h"
 #include "BaseLib/DateTools.h"
 #include "BaseLib/FileTools.h"
+#include "BaseLib/MPI.h"
 #include "BaseLib/PrjProcessing.h"
 #include "BaseLib/RunTime.h"
 #include "MeshLib/Mesh.h"
@@ -192,6 +193,10 @@ Simulation::~Simulation()
 int Simulation::runTestDefinitions(
     std::optional<ApplicationsLib::TestDefinition>& test_definition)
 {
+    // In serial builds, run the complete test definition normally. In PETSc
+    // builds, xdmfdiff tests compare global XDMF/HDF5 output files and must run
+    // only once on rank 0 after all ranks have finished simulation.
+    // The rank 0 result is broadcast so every rank exits with the same status.
     if (!test_definition)
     {
         auto const end_time = std::chrono::system_clock::now();
@@ -201,22 +206,68 @@ int Simulation::runTestDefinitions(
         return EXIT_SUCCESS;
     }
 
-    INFO("");
-    INFO("##########################################");
-    INFO("# Running tests                          #");
-    INFO("##########################################");
-    INFO("");
-    auto status = test_definition->runTests();
-    auto const end_time = std::chrono::system_clock::now();
-    auto const time_str = BaseLib::formatDate(end_time);
-    if (status)
+#if defined(USE_PETSC)
+    bool const has_xdmfdiff_tests = test_definition->hasTests("xdmfdiff");
+    BaseLib::MPI::Mpi mpi;
+    bool const run_all_tests = !has_xdmfdiff_tests;
+    bool const run_xdmfdiff_tests = has_xdmfdiff_tests && mpi.rank == 0;
+#else
+    bool constexpr run_all_tests = true;
+    bool constexpr run_xdmfdiff_tests = false;
+#endif
+
+    auto const log_tests_header = []
     {
-        INFO("OGS completed on {:s}.", time_str);
+        INFO("");
+        INFO("##########################################");
+        INFO("# Running tests                          #");
+        INFO("##########################################");
+        INFO("");
+    };
+
+    auto tests_succeeded = true;
+    if (run_all_tests)
+    {
+        log_tests_header();
+        tests_succeeded = test_definition->runTests();
     }
     else
     {
-        ERR("OGS terminated on {:s}. One of the tests failed.", time_str);
-        return EXIT_FAILURE;
+        tests_succeeded = test_definition->runTestsExcluding("xdmfdiff");
     }
-    return EXIT_SUCCESS;
+
+#if defined(USE_PETSC)
+    if (has_xdmfdiff_tests)
+    {
+        // Need to wait until all ranks have written their output.
+        MPI_Barrier(mpi.communicator);
+        auto xdmfdiff_status = EXIT_SUCCESS;
+        if (run_xdmfdiff_tests)
+        {
+            log_tests_header();
+            xdmfdiff_status = test_definition->runTests("xdmfdiff")
+                                  ? EXIT_SUCCESS
+                                  : EXIT_FAILURE;
+        }
+        MPI_Bcast(&xdmfdiff_status, 1, MPI_INT, 0, mpi.communicator);
+
+        tests_succeeded = tests_succeeded && xdmfdiff_status == EXIT_SUCCESS;
+        tests_succeeded = BaseLib::MPI::allOf(tests_succeeded, mpi);
+    }
+#endif
+
+    if (run_all_tests || run_xdmfdiff_tests)
+    {
+        auto const end_time = std::chrono::system_clock::now();
+        auto const time_str = BaseLib::formatDate(end_time);
+        if (tests_succeeded)
+        {
+            INFO("OGS completed on {:s}.", time_str);
+        }
+        else
+        {
+            ERR("OGS terminated on {:s}. One of the tests failed.", time_str);
+        }
+    }
+    return tests_succeeded ? EXIT_SUCCESS : EXIT_FAILURE;
 }

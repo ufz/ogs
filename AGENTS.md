@@ -31,7 +31,16 @@ Every process must have:
 
 ## Testing & validation
 
-- Unit tests: `Tests/{LibName}/` (Google Test)
-- Integration tests: `Tests/Data/{ProcessName}/` (`.prj` files with reference outputs)
+- Build configuration via cmake presets, e.g. `release`, `release-petsc` for parallelised runs, build directory then in `../build/[preset]`
+- Build with `ninja`
+- Unit tests: `Tests/{LibName}/` (Google Test), `test`-target
+- Integration tests: `Tests/Data/{ProcessName}/` (`.prj` files with reference outputs or `.xml`-patch files referencing `.prj`-files), typical test command in build directory: `ctest -LE large --output-on-failure`, full logs in [build-dir]/logs
 - Always run ctests from release build.
+- Python-based (`.py`) notebook tests (require `release-all` preset) also based on ctest, prefixed with `nb-`
 - Check `.clang-format`, `.clang-tidy` for linting rules
+- Use `pre-commit` to lint changes
+
+## Documentation
+
+- Doxygen C++ documentation, `doc`-target
+- Hugo-based documentation web site, `web`-target, `preview-web`-target for local preview

@@ -52,6 +52,7 @@ parse:
         nargs: "*"
         flags:
           - DISABLED
+          - NO_TEST_DEFINITION
       spelling: OgsTest
       kwargs:
         PROJECTFILE: 1

@@ -152,15 +152,13 @@ public:
             INFO("OGS started on {:s} in serial mode.", time_str);
         }
 
-        std::optional<ApplicationsLib::TestDefinition> test_definition{
-            std::nullopt};
-
         try
         {
             run_time.start();
             bool solver_succeeded = simulation->executeSimulation();
             simulation->outputLastTimeStep();
             test_definition = simulation->getTestDefinition();
+            test_definition_pending = true;
 
             if (solver_succeeded)
             {
@@ -188,7 +186,7 @@ public:
             return EXIT_FAILURE;
         }
 
-        return Simulation::runTestDefinitions(test_definition);
+        return ogs_status;
     }
 
     int executeTimeStep()
@@ -250,14 +248,13 @@ public:
         return simulation->getMeshNames();
     }
 
-    void finalize()
+    int finalize()
     {
         if (simulation)
         {
             simulation->outputLastTimeStep();
             simulation.reset(nullptr);
         }
-        mpi_setup.reset();
 
         // Check for swallowed ConfigTree errors after Simulation destructor
         // runs. This catches configuration errors in objects destroyed at end
@@ -269,8 +266,18 @@ public:
         catch (std::exception& e)
         {
             ERR("{}", e.what());
-            throw;
+            ogs_status = EXIT_FAILURE;
         }
+
+        if (ogs_status == EXIT_SUCCESS && test_definition_pending)
+        {
+            ogs_status = Simulation::runTestDefinitions(test_definition);
+        }
+        test_definition_pending = false;
+
+        mpi_setup.reset();
+
+        return ogs_status;
     }
 
     int status() const { return ogs_status; }
@@ -281,6 +288,9 @@ private:
     int ogs_status = EXIT_SUCCESS;
 
     std::unique_ptr<Simulation> simulation;
+    std::optional<ApplicationsLib::TestDefinition> test_definition{
+        std::nullopt};
+    bool test_definition_pending = false;
     std::map<std::string, OGSMesh> mesh_mapping;
     std::optional<BaseLib::MPI::Setup> mpi_setup;
 };

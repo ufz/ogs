@@ -216,6 +216,7 @@ vtkdiff
 VTUinterface
 Witte
 Xcode
+xdmfdiff
 Xeon
 XPath
 Youngs

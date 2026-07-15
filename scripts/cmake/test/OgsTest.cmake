@@ -4,9 +4,9 @@ function(OgsTest)
         return()
     endif()
 
-    set(options DISABLED)
-    set(oneValueArgs PROJECTFILE RUNTIME)
-    set(multiValueArgs WRAPPER PROPERTIES LABELS)
+    set(options DISABLED NO_TEST_DEFINITION)
+    set(oneValueArgs PROJECTFILE RUNTIME NAME_SUFFIX)
+    set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES EXECUTABLE_ARGS)
     cmake_parse_arguments(
         OgsTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -72,9 +72,29 @@ function(OgsTest)
         endif()
     endif()
 
-    set(_exe_args -r ${OgsTest_SOURCE_DIR}
-                  ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
-    )
+    if(DEFINED OgsTest_NAME_SUFFIX)
+        set(TEST_NAME "${TEST_NAME}-${OgsTest_NAME_SUFFIX}")
+    elseif(OgsTest_PATCH_FILES)
+        # Append short hash of the patch files to the test name.
+        string(SHA1 _patches_hash "${OgsTest_PATCH_FILES}")
+        string(SUBSTRING "${_patches_hash}" 0 4 _short_patches_hash)
+        set(TEST_NAME "${TEST_NAME}_${_short_patches_hash}")
+        message(DEBUG "Test name is already defined. New test name: ${TEST_NAME}")
+    endif()
+
+    if(OgsTest_NO_TEST_DEFINITION)
+        set(_exe_args ${OgsTest_SOURCE_DIR}/${OgsTest_NAME})
+    else()
+        set(_exe_args -r ${OgsTest_SOURCE_DIR}
+                      ${OgsTest_SOURCE_DIR}/${OgsTest_NAME}
+        )
+    endif()
+    foreach(_patch ${OgsTest_PATCH_FILES})
+        list(APPEND _exe_args -p ${OgsTest_SOURCE_DIR}/${_patch})
+    endforeach()
+    if(OgsTest_EXECUTABLE_ARGS)
+        list(APPEND _exe_args ${OgsTest_EXECUTABLE_ARGS})
+    endif()
 
     current_dir_as_list(ProcessLib labels)
     if(OgsTest_LABELS)
@@ -138,6 +158,10 @@ macro(_ogs_add_test TEST_NAME)
         # from venv.
         set(_ogs_exe ogs)
     endif()
+    set(_diff_tool_environment VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>)
+    if(TARGET xdmfdiff)
+        list(APPEND _diff_tool_environment XDMFDIFF_EXE=$<TARGET_FILE:xdmfdiff>)
+    endif()
 
     add_test(
         NAME ${TEST_NAME}
@@ -156,7 +180,7 @@ macro(_ogs_add_test TEST_NAME)
         ${TEST_NAME}
         PROPERTIES ${OgsTest_PROPERTIES}
                    ENVIRONMENT
-                   VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>
+                   "${_diff_tool_environment}"
                    COST
                    ${OgsTest_RUNTIME}
                    DISABLED
