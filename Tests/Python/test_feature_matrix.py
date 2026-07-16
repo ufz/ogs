@@ -162,6 +162,33 @@ def test_process_diff_file_tags_add(base_xml, diff_xml_add):
 
 
 @pytest.fixture
+def diff_xml_add_pos():
+    return b"""<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="A2.prj">
+    <add sel="/*/child2" pos="before"><before1/><before2/></add>
+    <add sel="/*/child2" pos="after"><after1/><after2/></add>
+</OpenGeoSysProjectDiff>
+"""
+
+
+def test_process_diff_file_tags_add_pos(base_xml, diff_xml_add_pos):
+    base_xml = etree.fromstring(base_xml).getroottree()
+    diff_xml = etree.fromstring(diff_xml_add_pos).getroottree()
+    base_xml = apply_diff_to_base_xml(diff_xml, base_xml, False)
+
+    # pos="before" inserts the children as the target's previous siblings,
+    # keeping their document order (before1 then before2, directly ahead of
+    # child2).
+    before = [e.tag for e in base_xml.xpath("/*/child2/preceding-sibling::*")]
+    assert before[-2:] == ["before1", "before2"]
+
+    # pos="after" inserts the children as the target's next siblings, also
+    # keeping their document order (after1 then after2, directly behind child2).
+    after = [e.tag for e in base_xml.xpath("/*/child2/following-sibling::*")]
+    assert after[:2] == ["after1", "after2"]
+
+
+@pytest.fixture
 def diff_xml_remove():
     return b"""<?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProjectDiff base_file="A2.prj">
