@@ -5,6 +5,8 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 
+#include "BaseLib/Error.h"
+
 namespace MeshLib
 {
 std::string MeshElemType2String(const MeshElemType t)
@@ -220,6 +222,34 @@ MeshLib::MeshQualityType String2MeshQualityType(std::string const& s)
         return MeshQualityType::SIZEDIFFERENCE;
     }
     return MeshQualityType::INVALID;
+}
+
+MeshItemType string2MeshItemType(const std::string& s)
+{
+    if (boost::iequals(s, toString(MeshItemType::Node)))
+    {
+        return MeshItemType::Node;
+    }
+    if (boost::iequals(s, toString(MeshItemType::Edge)))
+    {
+        return MeshItemType::Edge;
+    }
+    if (boost::iequals(s, toString(MeshItemType::Face)))
+    {
+        return MeshItemType::Face;
+    }
+    if (boost::iequals(s, toString(MeshItemType::Cell)))
+    {
+        return MeshItemType::Cell;
+    }
+    if (boost::iequals(s, toString(MeshItemType::IntegrationPoint)))
+    {
+        return MeshItemType::IntegrationPoint;
+    }
+    OGS_FATAL(
+        "The mesh item type '{:s}' is unknown. Valid values are "
+        "'cell', 'integration_point', 'edge', 'face' and 'node'.",
+        s);
 }
 
 }  // namespace MeshLib

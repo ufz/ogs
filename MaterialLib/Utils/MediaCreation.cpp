@@ -8,6 +8,7 @@
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/iota.hpp>
 #include <range/v3/view/unique.hpp>
+#include <set>
 
 #include "BaseLib/Logging.h"
 #include "BaseLib/StringTools.h"
@@ -44,10 +45,17 @@ auto expandRange(int const start, int const end)
     return ranges::views::iota(start, end + 1);
 }
 
-std::vector<int> splitMaterialIdString(std::string const& material_id_string)
+std::vector<int> splitMaterialIdString(std::string const& material_id_string,
+                                       char const separator)
 {
+    if (separator == ':')
+    {
+        OGS_FATAL(
+            "Invalid separator ':'. Character ':' is reserved for range "
+            "specification.");
+    }
     auto const material_ids_strings =
-        BaseLib::splitString(material_id_string, ',');
+        BaseLib::splitString(material_id_string, separator);
 
     // Pre-allocate with estimated capacity (simplified heuristic)
     std::vector<int> material_ids;
@@ -101,7 +109,8 @@ std::vector<int> splitMaterialIdString(std::string const& material_id_string)
 
 std::vector<int> parseMaterialIdString(
     std::string const& material_id_string,
-    MeshLib::PropertyVector<int> const* const material_ids)
+    MeshLib::PropertyVector<int> const* const material_ids,
+    char const separator, bool const validate)
 {
     if (material_id_string == "*")
     {
@@ -122,7 +131,29 @@ std::vector<int> parseMaterialIdString(
     }
 
     // Usual case of ids or ranges separated by comma.
-    return splitMaterialIdString(material_id_string);
+    auto const parsed_ids =
+        splitMaterialIdString(material_id_string, separator);
+
+    if (material_ids == nullptr || !validate)
+    {
+        return parsed_ids;
+    }
+
+    // Create a set of valid material IDs for efficient lookup
+    std::set<int> const valid_material_ids(material_ids->begin(),
+                                           material_ids->end());
+
+    for (int id : parsed_ids)
+    {
+        if (valid_material_ids.find(id) == valid_material_ids.end())
+        {
+            OGS_FATAL(
+                "Material ID {} specified in material_id_string '{}' does "
+                "not exist in the mesh. Available material IDs are: {}.",
+                id, material_id_string, fmt::join(valid_material_ids, ", "));
+        }
+    }
+    return parsed_ids;
 }
 
 }  // namespace MaterialLib
