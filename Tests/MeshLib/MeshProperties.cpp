@@ -126,203 +126,11 @@ TEST_F(MeshLibProperties, AddDoubleProperties)
     ASSERT_FALSE(mesh->getProperties().existsPropertyVector<double>(prop_name));
 }
 
-TEST_F(MeshLibProperties, AddDoublePointerProperties)
-{
-    ASSERT_TRUE(mesh != nullptr);
-    std::string const& prop_name("GroupProperty");
-    // check if a property with the name is already assigned to the mesh
-    ASSERT_FALSE(mesh->getProperties().hasPropertyVector(prop_name));
-    // data needed for the property
-    const std::size_t n_prop_val_groups(10);
-    const std::size_t n_items(mesh_size * mesh_size * mesh_size);
-    std::vector<std::size_t> prop_item2group_mapping(n_items);
-    // create simple mat_group to index mapping
-    for (std::size_t j(0); j < n_prop_val_groups; j++)
-    {
-        auto const lower(static_cast<std::size_t>(
-            (static_cast<double>(j) / n_prop_val_groups) * n_items));
-        auto const upper(static_cast<std::size_t>(
-            (static_cast<double>(j + 1) / n_prop_val_groups) * n_items));
-        for (std::size_t k(lower); k < upper; k++)
-        {
-            prop_item2group_mapping[k] = j;
-        }
-    }
-    // obtain PropertyVector data structure
-    auto* const group_properties =
-        mesh->getProperties().createNewPropertyVector<double*>(
-            prop_name, n_prop_val_groups, prop_item2group_mapping,
-            MeshLib::MeshItemType::Cell);
-    ASSERT_EQ(prop_item2group_mapping.size(), group_properties->size());
-
-    // initialize the property values
-    for (std::size_t i(0); i < n_prop_val_groups; i++)
-    {
-        group_properties->initPropertyValue(i, static_cast<double>(i + 1));
-    }
-    // check mapping to values
-    for (std::size_t i(0); i < n_prop_val_groups; i++)
-    {
-        auto const lower(static_cast<std::size_t>(
-            (static_cast<double>(i) / n_prop_val_groups) * n_items));
-        auto const upper(static_cast<std::size_t>(
-            (static_cast<double>(i + 1) / n_prop_val_groups) * n_items));
-        for (std::size_t k(lower); k < upper; k++)
-        {
-            ASSERT_NEAR(static_cast<double>(i + 1), *(*group_properties)[k],
-                        std::numeric_limits<double>::epsilon());
-        }
-    }
-
-    // the mesh should have the property assigned to cells
-    ASSERT_TRUE(mesh->getProperties().hasPropertyVector(prop_name));
-    // fetch the properties from the container
-    auto const* const group_properties_cpy =
-        mesh->getProperties().getPropertyVector<double*>(prop_name);
-    ASSERT_FALSE(!group_properties_cpy);
-
-    for (std::size_t k(0); k < n_items; k++)
-    {
-        ASSERT_EQ((*group_properties)[k], (*group_properties_cpy)[k]);
-    }
-
-    mesh->getProperties().removePropertyVector(prop_name);
-    ASSERT_FALSE(
-        mesh->getProperties().existsPropertyVector<double*>(prop_name));
-}
-
-TEST_F(MeshLibProperties, AddArrayPointerProperties)
-{
-    ASSERT_TRUE(mesh != nullptr);
-    std::string const& prop_name("GroupPropertyWithArray");
-    const std::size_t n_prop_val_groups(10);
-    const std::size_t n_items(mesh_size * mesh_size * mesh_size);
-    std::vector<std::size_t> prop_item2group_mapping(n_items);
-    // create simple mat_group to index mapping
-    for (std::size_t j(0); j < n_prop_val_groups; j++)
-    {
-        auto const lower(static_cast<std::size_t>(
-            (static_cast<double>(j) / n_prop_val_groups) * n_items));
-        auto const upper(static_cast<std::size_t>(
-            (static_cast<double>(j + 1) / n_prop_val_groups) * n_items));
-        for (std::size_t k(lower); k < upper; k++)
-        {
-            prop_item2group_mapping[k] = j;
-        }
-    }
-    auto* const group_prop_vec =
-        mesh->getProperties().createNewPropertyVector<std::array<double, 3>*>(
-            prop_name, n_prop_val_groups, prop_item2group_mapping,
-            MeshLib::MeshItemType::Cell);
-    ASSERT_EQ(prop_item2group_mapping.size(), group_prop_vec->size());
-
-    // initialize the property values
-    for (std::size_t i(0); i < n_prop_val_groups; i++)
-    {
-        group_prop_vec->initPropertyValue(
-            i,
-            std::array<double, 3>(
-                {{static_cast<double>(i), static_cast<double>(i + 1),
-                  static_cast<double>(i + 2)}}));
-    }
-    // check the mapping to values
-    for (std::size_t i(0); i < n_prop_val_groups; i++)
-    {
-        auto const lower(static_cast<std::size_t>(
-            (static_cast<double>(i) / n_prop_val_groups) * n_items));
-        auto const upper(static_cast<std::size_t>(
-            (static_cast<double>(i + 1) / n_prop_val_groups) * n_items));
-        for (std::size_t k(lower); k < upper; k++)
-        {
-            ASSERT_NEAR(static_cast<double>(i), (*(*group_prop_vec)[k])[0],
-                        std::numeric_limits<double>::epsilon());
-            ASSERT_NEAR(static_cast<double>(i + 1), (*(*group_prop_vec)[k])[1],
-                        std::numeric_limits<double>::epsilon());
-            ASSERT_NEAR(static_cast<double>(i + 2), (*(*group_prop_vec)[k])[2],
-                        std::numeric_limits<double>::epsilon());
-        }
-    }
-
-    auto* const group_properties_cpy =
-        mesh->getProperties().getPropertyVector<std::array<double, 3>*>(
-            prop_name);
-    ASSERT_FALSE(!group_properties_cpy);
-
-    for (std::size_t k(0); k < n_items; k++)
-    {
-        ASSERT_EQ((*((*group_prop_vec)[k]))[0],
-                  (*((*group_properties_cpy)[k]))[0]);
-        ASSERT_EQ((*((*group_prop_vec)[k]))[1],
-                  (*((*group_properties_cpy)[k]))[1]);
-        ASSERT_EQ((*((*group_prop_vec)[k]))[2],
-                  (*((*group_properties_cpy)[k]))[2]);
-    }
-
-    mesh->getProperties().removePropertyVector(prop_name);
-    auto exists =
-        mesh->getProperties().existsPropertyVector<std::array<double, 3>*>(
-            prop_name);
-    ASSERT_FALSE(exists);
-}
-
 TEST_F(MeshLibProperties, AddVariousDifferentProperties)
 {
     ASSERT_TRUE(mesh != nullptr);
 
-    std::string const& prop_name("GroupVectorProperty");
-    // check if the property is already assigned to the mesh
-    ASSERT_FALSE(mesh->getProperties().hasPropertyVector(prop_name));
-    const std::size_t n_prop_val_groups(10);
-    const std::size_t n_items(mesh_size * mesh_size * mesh_size);
-    std::vector<std::size_t> prop_item2group_mapping(n_items);
-    // create simple mat_group to index mapping
-    for (std::size_t j(0); j < n_prop_val_groups; j++)
-    {
-        auto const lower(static_cast<std::size_t>(
-            (static_cast<double>(j) / n_prop_val_groups) * n_items));
-        auto const upper(static_cast<std::size_t>(
-            (static_cast<double>(j + 1) / n_prop_val_groups) * n_items));
-        for (std::size_t k(lower); k < upper; k++)
-        {
-            prop_item2group_mapping[k] = j;
-        }
-    }
-    // create data structure for the property
-    auto* const group_properties =
-        mesh->getProperties().createNewPropertyVector<std::array<double, 3>*>(
-            prop_name, n_prop_val_groups, prop_item2group_mapping,
-            MeshLib::MeshItemType::Cell);
-    // initialize the property values
-    for (std::size_t i(0); i < n_prop_val_groups; i++)
-    {
-        group_properties->initPropertyValue(
-            i,
-            std::array<double, 3>(
-                {{static_cast<double>(i), static_cast<double>(i + 1),
-                  static_cast<double>(i + 2)}}));
-    }
-
-    // the mesh should have the property assigned to cells
-    ASSERT_TRUE(mesh->getProperties().hasPropertyVector(prop_name));
-
-    // fetch the vector filled with property values from mesh
-    auto const* const group_properties_cpy =
-        mesh->getProperties().getPropertyVector<std::array<double, 3>*>(
-            prop_name);
-    ASSERT_FALSE(!group_properties_cpy);
-    // compare the content
-    const std::size_t n_elements(mesh_size * mesh_size * mesh_size);
-    for (std::size_t k(0); k < n_elements; k++)
-    {
-        ASSERT_EQ((*((*group_properties)[k]))[0],
-                  (*((*group_properties_cpy)[k]))[0]);
-        ASSERT_EQ((*((*group_properties)[k]))[1],
-                  (*((*group_properties_cpy))[k])[1]);
-        ASSERT_EQ((*((*group_properties)[k]))[2],
-                  (*((*group_properties_cpy)[k]))[2]);
-    }
-
-    // *** add a 2nd property ***
+    // *** add a 1st property ***
     std::string const& prop_name_2("ItemwiseMatrixProperties");
     // check if the property is already assigned to the mesh
     ASSERT_FALSE(mesh->getProperties().hasPropertyVector(prop_name_2));
@@ -363,7 +171,7 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
         }
     }
 
-    // *** add a 3rd property ***
+    // *** add a 2nd property ***
     std::string const& prop_name_3("ItemwiseEigenMatrixProperties");
     // check if the property is already assigned to the mesh
     ASSERT_FALSE(mesh->getProperties().hasPropertyVector(prop_name_3));
@@ -415,48 +223,30 @@ TEST_F(MeshLibProperties, AddVariousDifferentProperties)
 TEST_F(MeshLibProperties, CopyConstructor)
 {
     ASSERT_TRUE(mesh != nullptr);
-    std::string const& prop_name("GroupProperty");
-    // data needed for the property
-    const std::size_t n_prop_val_groups(10);
+    std::string const prop_name("CellProperty");
     const std::size_t n_items(mesh_size * mesh_size * mesh_size);
-    std::vector<std::size_t> prop_item2group_mapping(n_items);
-    // create simple mat_group to index mapping
-    for (std::size_t j(0); j < n_prop_val_groups; j++)
-    {
-        auto const lower(static_cast<std::size_t>(
-            (static_cast<double>(j) / n_prop_val_groups) * n_items));
-        auto const upper(static_cast<std::size_t>(
-            (static_cast<double>(j + 1) / n_prop_val_groups) * n_items));
-        for (std::size_t k(lower); k < upper; k++)
-        {
-            prop_item2group_mapping[k] = j;
-        }
-    }
-    // obtain PropertyVector data structure
-    auto* const group_properties(
-        mesh->getProperties().createNewPropertyVector<double*>(
-            prop_name, n_prop_val_groups, prop_item2group_mapping,
-            MeshLib::MeshItemType::Cell));
-    // initialize the property values
-    for (std::size_t i(0); i < n_prop_val_groups; i++)
-    {
-        group_properties->initPropertyValue(i, static_cast<double>(i + 1));
-    }
+
+    // obtain PropertyVector data structure and fill it
+    auto* const properties(
+        mesh->getProperties().createNewPropertyVector<double>(
+            prop_name, MeshLib::MeshItemType::Cell, n_items, 1));
+    std::iota(properties->begin(), properties->end(), 1.0);
 
     // create a copy from the original Properties object
     MeshLib::Properties properties_copy(mesh->getProperties());
     // check if the Properties have a PropertyVector with the correct name
     ASSERT_TRUE(properties_copy.hasPropertyVector(prop_name));
     // fetch the PropertyVector from the copy of the Properties object
-    auto const* const group_properties_cpy(
-        properties_copy.getPropertyVector<double*>(prop_name));
-    ASSERT_FALSE(!group_properties_cpy);
+    auto const* const properties_cpy(
+        properties_copy.getPropertyVector<double>(prop_name));
+    ASSERT_FALSE(!properties_cpy);
+    ASSERT_NE(properties, properties_cpy);  // distinct objects (deep copy)
 
     // check if the values in the PropertyVector of the copy of the Properties
     // are the same
     for (std::size_t k(0); k < n_items; k++)
     {
-        EXPECT_EQ(*(*group_properties)[k], *(*group_properties_cpy)[k]);
+        EXPECT_EQ((*properties)[k], (*properties_cpy)[k]);
     }
 }
 

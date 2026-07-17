@@ -44,44 +44,6 @@ PropertyVector<T>* Properties::createNewPropertyVector(
 }
 
 template <typename T>
-PropertyVector<T>* Properties::createNewPropertyVector(
-    std::string const& name,
-    std::size_t n_prop_groups,
-    std::vector<std::size_t> const& item2group_mapping,
-    MeshItemType mesh_item_type,
-    std::size_t n_components)
-{
-    // check if there is already a PropertyVector with the same name
-    auto it(_properties.find(name));
-    if (it != _properties.end())
-    {
-        ERR("A property of the name '{:s}' already assigned to the mesh.",
-            name);
-        return nullptr;
-    }
-
-    // check entries of item2group_mapping for consistence
-    for (std::size_t k(0); k < item2group_mapping.size(); k++)
-    {
-        std::size_t const group_id(item2group_mapping[k]);
-        if (group_id >= n_prop_groups)
-        {
-            ERR("The mapping to property {:d} for item {:d} is not in the "
-                "correct range [0,{:d}).",
-                group_id, k, n_prop_groups);
-            return nullptr;
-        }
-    }
-
-    auto entry_info(
-        _properties.insert(std::pair<std::string, PropertyVectorBase*>(
-            name,
-            new PropertyVector<T>(n_prop_groups, item2group_mapping, name,
-                                  mesh_item_type, n_components))));
-    return static_cast<PropertyVector<T>*>((entry_info.first)->second);
-}
-
-template <typename T>
 bool Properties::existsPropertyVector(std::string_view name) const
 {
     auto it(_properties.find(std::string(name)));

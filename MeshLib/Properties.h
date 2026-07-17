@@ -48,30 +48,6 @@ public:
                                                std::size_t n_property_values,
                                                std::size_t n_components);
 
-    /// Method creates a PropertyVector if a PropertyVector with the same name
-    /// and the same type T was not already created before. In case there exists
-    /// already such a PropertyVector a nullptr is returned.
-    /// This method is used if only a small number of distinct property values
-    /// in a property exist (e.g. mapping property groups to elements).
-    /// In this case a mapping between mesh items and properties (stored
-    /// on the heap), see the parameter item2group_mapping, is required.
-    /// @tparam T type of the property value
-    /// @param name the name of the property
-    /// @param n_prop_groups number of distinct property groups
-    /// @param item2group_mapping the mapping between mesh item and the property
-    /// group
-    /// @param mesh_item_type for instance node or element assigned properties
-    /// @param n_components number of components for each tuple
-    /// @return A pointer to a PropertyVector on success and a nullptr
-    /// otherwise.
-    template <typename T>
-    PropertyVector<T>* createNewPropertyVector(
-        std::string const& name,
-        std::size_t n_prop_groups,
-        std::vector<std::size_t> const& item2group_mapping,
-        MeshItemType mesh_item_type,
-        std::size_t n_components = 1);
-
     /// Checks if a property vector with given \c name and the given type
     /// exists.
     /// @param name name of the requested property vector
