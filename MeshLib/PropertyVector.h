@@ -11,6 +11,7 @@
 #ifdef _MSC_VER
 #include <string_view>  // for MSVC, we need to include <string_view> to use std::string_view
 #endif
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -124,7 +125,7 @@ public:
     {
         if constexpr (std::is_same_v<PROP_VAL_TYPE, bool>)
         {
-            static_assert(!std::is_same_v<PROP_VAL_TYPE, bool>,
+            static_assert(false,
                           "PropertyVector<bool>::operator[] cannot be "
                           "instantiated for booleans.");
         }
@@ -135,7 +136,16 @@ public:
     }
     constexpr PROP_VAL_TYPE const& operator[](std::size_t const pos) const
     {
-        return data_[pos];
+        if constexpr (std::is_same_v<PROP_VAL_TYPE, bool>)
+        {
+            static_assert(false,
+                          "PropertyVector<bool>::operator[] cannot be "
+                          "instantiated for booleans.");
+        }
+        else
+        {
+            return data_[pos];
+        }
     }
 
     constexpr void resize(std::size_t const size) { data_.resize(size); }
