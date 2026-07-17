@@ -5,6 +5,7 @@
 
 #include <Eigen/Core>
 #include <numeric>
+#include <string_view>
 
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
@@ -21,6 +22,20 @@ public:
     }
 
     ~MeshLibProperties() override { delete mesh; }
+
+    /// Creates a single-component cell property of n_items values filled with
+    /// first_value, first_value + 1, ... .
+    MeshLib::PropertyVector<double>* createFilledCellProperty(
+        std::string_view const name,
+        std::size_t const n_items,
+        double const first_value = 0.0)
+    {
+        auto* const pv = mesh->getProperties().createNewPropertyVector<double>(
+            name, MeshLib::MeshItemType::Cell, n_items, 1);
+        std::iota(pv->begin(), pv->end(), first_value);
+        return pv;
+    }
+
     static std::size_t const mesh_size = 5;
     MeshLib::Mesh* mesh{nullptr};
 };
@@ -104,11 +119,9 @@ TEST_F(MeshLibProperties, AddDoubleProperties)
 
     std::string_view prop_name("TestProperty");
     auto* const double_properties =
-        mesh->getProperties().createNewPropertyVector<double>(
-            prop_name, MeshLib::MeshItemType::Cell, size, 1);
+        createFilledCellProperty(prop_name, size, 1.0);
     ASSERT_EQ(size, double_properties->size());
 
-    std::iota(double_properties->begin(), double_properties->end(), 1);
     for (std::size_t k(0); k < size; k++)
     {
         ASSERT_EQ(static_cast<double>(k + 1), (*double_properties)[k]);
@@ -227,10 +240,7 @@ TEST_F(MeshLibProperties, CopyConstructor)
     const std::size_t n_items(mesh_size * mesh_size * mesh_size);
 
     // obtain PropertyVector data structure and fill it
-    auto* const properties(
-        mesh->getProperties().createNewPropertyVector<double>(
-            prop_name, MeshLib::MeshItemType::Cell, n_items, 1));
-    std::iota(properties->begin(), properties->end(), 1.0);
+    auto* const properties(createFilledCellProperty(prop_name, n_items, 1.0));
 
     // create a copy from the original Properties object
     MeshLib::Properties properties_copy(mesh->getProperties());
