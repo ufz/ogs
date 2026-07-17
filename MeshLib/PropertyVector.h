@@ -53,10 +53,11 @@ protected:
     std::string const _property_name;
 };
 
-/// Class template PropertyVector is a std::vector with template parameter
-/// PROP_VAL_TYPE. The reason for the derivation of std::vector is
-/// the template specialisation for pointer types below.
-/// \tparam PROP_VAL_TYPE typical this is a scalar, a vector or a matrix
+/// Contiguous storage for the values of one named mesh property.
+/// Values are laid out tuple-contiguous: the component of a tuple is at
+/// tuple_index * n_components + component, so the components of one tuple are
+/// adjacent in memory. Instances are created and owned by Properties.
+/// \tparam PROP_VAL_TYPE typically a scalar, a vector or a matrix
 template <typename PROP_VAL_TYPE>
 class PropertyVector : public PropertyVectorBase
 {
