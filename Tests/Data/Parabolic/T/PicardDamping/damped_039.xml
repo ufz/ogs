@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="undamped.prj">
+    <replace sel="/*/nonlinear_solvers/nonlinear_solver/max_iter/text()">20</replace>
+    <add sel="/*/nonlinear_solvers/nonlinear_solver">
+        <damping>0.39</damping>
+    </add>
+</OpenGeoSysProjectDiff>
