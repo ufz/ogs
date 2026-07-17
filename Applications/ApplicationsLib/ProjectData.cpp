@@ -186,11 +186,11 @@ void parseOverwriteMeshData(
                         "partitioned (PETSc) meshes.",
                         tag, selected_material_ids_string);
                 }
-                std::set<int> const selected_material_ids(
-                    std::from_range,
+                std::set<int> const selected_material_ids =
                     MaterialLib::parseMaterialIdString(
                         selected_material_ids_string, material_ids, ' ',
-                        /*validate=*/true));
+                        /*validate=*/true) |
+                    ranges::to<std::set<int>>();
                 element_ids_for_selected_materials =
                     ranges::views::iota(std::size_t{0}, material_ids->size()) |
                     ranges::views::filter(
