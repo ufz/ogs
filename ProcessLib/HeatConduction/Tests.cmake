@@ -1,4 +1,12 @@
 if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
+    OgsTest(
+        PROJECTFILE Parabolic/T/PicardDamping/undamped.prj
+        PROPERTIES WILL_FAIL true
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/T/PicardDamping/damped_039.xml
+        RUNTIME 1
+    )
     OgsTest(PROJECTFILE Parabolic/T/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 2)
     OgsTest(PROJECTFILE Parabolic/T/1D_freezing_column_Stefan/Stefan_problem_homogen.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/T/2D_freezing_disk/circle_disk.prj RUNTIME 2)

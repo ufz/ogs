@@ -94,7 +94,7 @@ public:
         else
         {
             nonlinear_solver =
-                std::make_unique<NLSolver>(*linear_solver, _maxiter);
+                std::make_unique<NLSolver>(*linear_solver, _maxiter, 1.0);
         }
 
         NumLib::TimeLoopSingleODE<NLTag> loop(ode_sys, std::move(linear_solver),

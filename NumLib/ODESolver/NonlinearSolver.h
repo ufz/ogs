@@ -171,6 +171,16 @@ private:
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration
  * method.
  *
+ * Notation used throughout this class and its documentation:
+ * \f$ x_k \f$ is the current iterate and \f$ g \f$ is the Picard fixpoint map,
+ * i.e. \f$ g(x_k) \f$ is the solution of the linearized system
+ * \f$ A(x_k)\,x = b(x_k) \f$ (the result of one linear solve). A converged
+ * iteration is a fixpoint \f$ x = g(x) \f$, and one iteration reads
+ * \f$ x_{k+1} = g(x_k) \f$.
+ *
+ * With an under-relaxation (damping) coefficient \f$ \beta \in (0, 1] \f$ the
+ * iteration becomes \f$ x_{k+1} = (1-\beta)\,x_k + \beta\,g(x_k) \f$; the value
+ * \f$ \beta = 1 \f$ recovers the plain Picard update above.
  */
 template <>
 class NonlinearSolver<NonlinearSolverTag::Picard> final
@@ -185,10 +195,13 @@ public:
      * \param linear_solver the linear solver used by this nonlinear solver.
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
+     * \param damping  under-relaxation coefficient \f$ \beta \in (0, 1] \f$
+     *                 applied to the Picard update (see class description);
+     *                 \f$ \beta = 1 \f$ disables damping.
      */
     explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
-                             const int maxiter)
-        : _linear_solver(linear_solver), _maxiter(maxiter)
+                             const int maxiter, const double damping)
+        : _linear_solver(linear_solver), _damping(damping), _maxiter(maxiter)
     {
     }
 
@@ -225,6 +238,12 @@ private:
 
     // TODO doc
     ConvergenceCriterion* _convergence_criterion = nullptr;
+
+    //! Under-relaxation (damping) coefficient beta in (0, 1] applied to the
+    //! Picard update x_{k+1} = (1-beta)*x_k + beta*g(x_k); 1.0 disables
+    //! damping.
+    double const _damping;
+
     const int _maxiter;  //!< maximum number of iterations
 
     GlobalVector* _r_neq = nullptr;  //!< non-equilibrium initial residuum.

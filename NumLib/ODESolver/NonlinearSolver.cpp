@@ -140,6 +140,15 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
+    if (_damping != 1.0 && sys.isLinear())
+    {
+        OGS_FATAL(
+            "Damping (under-relaxation) is not compatible with a linear "
+            "equation system: a single Picard step already yields the exact "
+            "solution, so the damped iterate would be accepted as converged "
+            "but wrong. Remove the 'damping' parameter for linear problems.");
+    }
+
     auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
     auto& rhs = NumLib::GlobalVectorProvider::provider.getVector(_rhs_id);
 
@@ -235,6 +244,19 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         if (iteration_succeeded)
         {
+            // Notation (see NonlinearSolver<Picard> class doc):
+            //   x_k      = x[process_id]  (iterate entering this step)
+            //   g(x_k)   = x_new_process  (raw Picard output, this linear
+            //   solve)
+            // Under-relaxation with damping beta (active when beta != 1):
+            //   x_{k+1} = x_k + beta*(g(x_k) - x_k)
+            //           = (1-beta)*x_k + beta*g(x_k)
+            if (_damping != 1.0)
+            {
+                LinAlg::scale(x_new_process, _damping);
+                LinAlg::axpy(x_new_process, 1.0 - _damping, *x[process_id]);
+            }
+
             if (postIterationCallback)
             {
                 postIterationCallback(iteration, error_norms_met, x_new);
