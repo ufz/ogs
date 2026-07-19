@@ -11,15 +11,18 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-static std::tuple<BoreholeGeometry, RefrigerantProperties, GroutParameters,
-                  FlowAndTemperatureControl, PipeConfiguration1PType, bool>
+static std::tuple<BoreholeGeometry,
+                  RefrigerantProperties,
+                  GroutParameters,
+                  FlowAndTemperatureControl,
+                  PipeConfiguration1PType,
+                  bool>
 parseBHE1PTypeConfig(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes)
+        curves)
 {
     // if the BHE is using python boundary condition
     auto const bhe_if_use_python_bc_conf =
@@ -33,13 +36,13 @@ parseBHE1PTypeConfig(
 
     auto const borehole_geometry =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
-        createBoreholeGeometry(config.getConfigSubtree("borehole"), parameters,
-                               bhe_nodes);
+        createBoreholeGeometry(config.getConfigSubtree("borehole"), parameters);
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes}
     auto const& pipes_config = config.getConfigSubtree("pipes");
-    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inlet}
-    Pipe const inlet_pipe = createPipe(pipes_config.getConfigSubtree("inlet"));
+    Pipe const inlet_pipe =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inlet}
+        createPipe(pipes_config.getConfigSubtree("inlet"), parameters);
 
     const auto pipe_longitudinal_dispersion_length =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__longitudinal_dispersion_length}
@@ -72,11 +75,9 @@ T_BHE createBHE1PType(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes)
+        curves)
 {
-    auto SinglePipeType =
-        parseBHE1PTypeConfig(config, parameters, curves, bhe_nodes);
+    auto SinglePipeType = parseBHE1PTypeConfig(config, parameters, curves);
     return {std::get<0>(SinglePipeType), std::get<1>(SinglePipeType),
             std::get<2>(SinglePipeType), std::get<3>(SinglePipeType),
             std::get<4>(SinglePipeType), std::get<5>(SinglePipeType)};
@@ -87,8 +88,7 @@ template BHE_1P createBHE1PType<BHE_1P>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes);
+        curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

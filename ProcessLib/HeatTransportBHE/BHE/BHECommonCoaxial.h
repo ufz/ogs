@@ -4,12 +4,18 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <cmath>
 #include <optional>
 
 #include "BHECommon.h"
 #include "BaseLib/Error.h"
 #include "FlowAndTemperatureControl.h"
 #include "PipeConfigurationCoaxial.h"
+
+namespace ParameterLib
+{
+class SpatialPosition;
+}
 
 namespace ProcessLib
 {
@@ -29,13 +35,31 @@ public:
 
     static constexpr int number_of_unknowns = 3;
     static constexpr int number_of_grout_zones = 1;
+    static constexpr int number_of_flow_legs = 2;
+
+    /// Signed fluid velocity per flow leg. Positive = flow along
+    /// +elem_direction; negative = against it.  Leg ordering matches the
+    /// BHE unknowns: { unknown 0 (inflow channel), unknown 1 (outflow
+    /// channel) }; the physical-channel mapping (inner pipe vs annulus)
+    /// is set per subclass via assignVelocities().
+    std::array<double, number_of_flow_legs> flowLegs() const
+    {
+        return {+std::abs(velocity_inner), -std::abs(velocity_annulus)};
+    }
 
     double updateFlowRateAndTemperature(double T_out, double current_time);
 
     std::vector<double> calcThermalResistances(
         double const Nu_inner_pipe,
         double const Nu_annulus_pipe,
-        int const section_index = 0) const;
+        ParameterLib::SpatialPosition const& pos) const;
+
+    /// Return the full vector of thermal resistances for the element at
+    /// `pos`, computed once using the cached Nusselt numbers. Intended to
+    /// be called once per element by the assembler so that the resistance
+    /// computation is not repeated per unknown and per integration point.
+    std::vector<double> thermalResistances(
+        ParameterLib::SpatialPosition const& pos) const;
 
     std::array<double, number_of_unknowns> pipeHeatCapacities() const;
 
@@ -55,11 +79,10 @@ public:
                                               int const out_component_id);
 
     std::array<double, number_of_unknowns> pipeHeatConductions(
-        int const section_index = 0) const;
+        ParameterLib::SpatialPosition const& pos) const;
 
     std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
-        Eigen::Vector3d const& /*elem_direction*/,
-        int const section_index = 0) const;
+        Eigen::Vector3d const& elem_direction) const;
 
     void updateHeatTransferCoefficients(double const flow_rate);
 
@@ -68,20 +91,23 @@ protected:
 
     double cross_section_area_inner_pipe, cross_section_area_annulus;
 
-    /// Returns fluid velocities indexed by unknown: {v_for_unknown_0,
-    /// v_for_unknown_1}. The mapping from physical channels (inner pipe /
+    /// Fluid velocities indexed by unknown: `velocity_inner` is the
+    /// velocity carried on unknown 0 (the inflow channel), and
+    /// `velocity_annulus` is the velocity carried on unknown 1 (the
+    /// outflow channel). The mapping from physical channels (inner pipe /
     /// annulus) to unknowns differs between CXA and CXC and is set once per
-    /// flow-rate update via assignVelocities().
-    std::array<double, 2> velocities() const
-    {
-        return {_flow_velocities[0], _flow_velocities[1]};
-    }
+    /// flow-rate update via assignVelocities(). flowLegs() returns the
+    /// signed per-leg velocities derived from these magnitudes.
+    double velocity_inner = 0.0;
+    double velocity_annulus = 0.0;
+    double cached_nu_inner = 0.0;
+    double cached_nu_annulus = 0.0;
 
     virtual std::vector<double> getThermalResistances(
         double const& R_gs, double const& R_ff, double const& R_fg) const = 0;
 
 private:
-    /// Assigns _flow_velocities from the physical channel velocities.
+    /// Assigns velocities from the physical channel velocities.
     /// Subclasses encode which channel maps to which unknown.
     virtual void assignVelocities(double inner_vel, double annulus_vel) = 0;
 };

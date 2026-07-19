@@ -3,23 +3,16 @@
 
 #pragma once
 
-#include <Eigen/Core>
 #include <map>
 #include <memory>
 #include <string>
 #include <vector>
 
-#include "BHECommon.h"
-#include "FlowAndTemperatureControl.h"
-#include "PipeConfigurationUType.h"
+#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace BaseLib
 {
 class ConfigTree;
-}
-namespace MeshLib
-{
-class Node;
 }
 namespace ParameterLib
 {
@@ -37,8 +30,7 @@ T_BHE createBHEUType(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes);
+        curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

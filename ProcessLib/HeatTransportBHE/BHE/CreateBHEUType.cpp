@@ -24,8 +24,7 @@ parseBHEUTypeConfig(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes)
+        curves)
 {
     // if the BHE is using python boundary condition
     auto const bhe_if_use_python_bc_conf =
@@ -36,16 +35,16 @@ parseBHEUTypeConfig(
 
     auto const borehole_geometry =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
-        createBoreholeGeometry(config.getConfigSubtree("borehole"), parameters,
-                               bhe_nodes);
+        createBoreholeGeometry(config.getConfigSubtree("borehole"), parameters);
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes}
     auto const& pipes_config = config.getConfigSubtree("pipes");
-    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inlet}
-    Pipe const inlet_pipe = createPipe(pipes_config.getConfigSubtree("inlet"));
+    Pipe const inlet_pipe =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inlet}
+        createPipe(pipes_config.getConfigSubtree("inlet"), parameters);
     Pipe const outlet_pipe =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__outlet}
-        createPipe(pipes_config.getConfigSubtree("outlet"));
+        createPipe(pipes_config.getConfigSubtree("outlet"), parameters);
     const auto pipe_distance =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__distance_between_pipes}
         pipes_config.getConfigParameter<double>("distance_between_pipes");
@@ -74,32 +73,6 @@ parseBHEUTypeConfig(
             pipe_distance, d0);
     }
 
-    for (int section_index = 0;
-         section_index < borehole_geometry.sections.getNumberOfSections();
-         ++section_index)
-    {
-        double const D =
-            borehole_geometry.sections.diameterAtSection(section_index);
-        if (D <= 2.0 * d0)
-        {
-            OGS_FATAL(
-                "Invalid U-type geometry at section {:d}: borehole diameter "
-                "{:g} must be greater than 2*pipe outside diameter {:g}.",
-                section_index, D, 2.0 * d0);
-        }
-
-        double const acosh_argument =
-            (D * D + d0 * d0 - pipe_distance * pipe_distance) / (2.0 * D * d0);
-        if (!std::isfinite(acosh_argument) || acosh_argument < 1.0)
-        {
-            OGS_FATAL(
-                "Invalid U-type geometry at section {:d}: acosh argument "
-                "for grout resistance is {:g}, must be >= 1. "
-                "(D={:g}, d0={:g}, distance_between_pipes={:g})",
-                section_index, acosh_argument, D, d0, pipe_distance);
-        }
-    }
-
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout}
     auto const grout = createGroutParameters(config.getConfigSubtree("grout"));
 
@@ -124,10 +97,9 @@ T_BHE createBHEUType(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes)
+        curves)
 {
-    auto UType = parseBHEUTypeConfig(config, parameters, curves, bhe_nodes);
+    auto UType = parseBHEUTypeConfig(config, parameters, curves);
     return {std::get<0>(UType), std::get<1>(UType), std::get<2>(UType),
             std::get<3>(UType), std::get<4>(UType), std::get<5>(UType)};
 }
@@ -137,16 +109,14 @@ template BHE_1U createBHEUType<BHE_1U>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes);
+        curves);
 
 template BHE_2U createBHEUType<BHE_2U>(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes);
+        curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

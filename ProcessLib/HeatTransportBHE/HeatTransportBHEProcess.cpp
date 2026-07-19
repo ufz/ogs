@@ -155,10 +155,10 @@ void HeatTransportBHEProcess::initializeConcreteProcess(
         HeatTransportBHELocalAssemblerSoil, HeatTransportBHELocalAssemblerBHE>(
         mesh.getElements(), dof_table, local_assemblers_,
         NumLib::IntegrationOrder{integration_order}, element_to_bhe_map,
-        mesh.isAxiallySymmetric(), _process_data, _bheMeshData);
+        mesh.isAxiallySymmetric(), _process_data);
 
     // Create BHE boundary conditions for each of the BHEs
-    createBHEBoundaryConditionTopBottom(_bheMeshData.BHE_nodes);
+    createBHEEndpointBoundaryConditions();
 
     // Store BHE and soil elements to split the assembly and use the matrix
     // cache in the linear case only for soil elements
@@ -473,21 +473,21 @@ void HeatTransportBHEProcess::algebraicBcConcreteProcess(
     auto M_normal = M.getRawMatrix();
     auto K_normal = K.getRawMatrix();
     auto n_original_rows = K_normal.rows();
-    auto const n_BHE_bottom_pairs = _vec_bottom_BHE_node_indices.size();
-    auto const n_BHE_top_pairs = _vec_top_BHE_node_indices.size();
+    auto const n_BHE_outflow_pairs = vec_outflow_BHE_node_indices_.size();
+    auto const n_BHE_inflow_pairs = vec_inflow_BHE_node_indices_.size();
 
     // apply weighting factor based on the max value from column wise inner
     // product and scale it with user defined value
     const double w_val = _process_data._algebraic_BC_Setting._weighting_factor;
 
     M_normal.conservativeResize(
-        M_normal.rows() + n_BHE_bottom_pairs + n_BHE_top_pairs,
+        M_normal.rows() + n_BHE_outflow_pairs + n_BHE_inflow_pairs,
         M_normal.cols());
     K_normal.conservativeResize(
-        K_normal.rows() + n_BHE_bottom_pairs + n_BHE_top_pairs,
+        K_normal.rows() + n_BHE_outflow_pairs + n_BHE_inflow_pairs,
         K_normal.cols());
 
-    for (std::size_t i = 0; i < n_BHE_bottom_pairs; i++)
+    for (std::size_t i = 0; i < n_BHE_outflow_pairs; i++)
     {
         Eigen::SparseVector<double> M_Plus(M_normal.cols());
         M_Plus.setZero();
@@ -497,7 +497,7 @@ void HeatTransportBHEProcess::algebraicBcConcreteProcess(
         K_Plus.setZero();
 
         auto const [bhe_idx, first_BHE_bottom_index, second_BHE_bottom_index] =
-            _vec_bottom_BHE_node_indices[i];
+            vec_outflow_BHE_node_indices_[i];
 
         K_Plus.insert(first_BHE_bottom_index) = w_val;
         K_Plus.insert(second_BHE_bottom_index) = -w_val;
@@ -506,8 +506,8 @@ void HeatTransportBHEProcess::algebraicBcConcreteProcess(
     }
 
     auto b_normal = b.getRawVector();
-    Eigen::SparseVector<double> b_Plus(b_normal.rows() + n_BHE_bottom_pairs +
-                                       n_BHE_top_pairs);
+    Eigen::SparseVector<double> b_Plus(b_normal.rows() + n_BHE_outflow_pairs +
+                                       n_BHE_inflow_pairs);
     b_Plus.setZero();
 
     // Copy values from the original column vector to the modified one
@@ -516,17 +516,17 @@ void HeatTransportBHEProcess::algebraicBcConcreteProcess(
         b_Plus.insert(i) = b_normal.coeff(i);
     }
 
-    for (std::size_t i = 0; i < n_BHE_top_pairs; i++)
+    for (std::size_t i = 0; i < n_BHE_inflow_pairs; i++)
     {
         Eigen::SparseVector<double> M_Plus(M_normal.cols());
         M_Plus.setZero();
-        M_normal.row(n_original_rows + n_BHE_bottom_pairs + i) = M_Plus;
+        M_normal.row(n_original_rows + n_BHE_outflow_pairs + i) = M_Plus;
 
         Eigen::SparseVector<double> K_Plus(K_normal.cols());
         K_Plus.setZero();
 
         auto const [bhe_idx, first_BHE_top_index, second_BHE_top_index] =
-            _vec_top_BHE_node_indices[i];
+            vec_inflow_BHE_node_indices_[i];
 
         auto first_BHE_top_index_pair = first_BHE_top_index;
         auto second_BHE_top_index_pair = second_BHE_top_index;
@@ -536,7 +536,7 @@ void HeatTransportBHEProcess::algebraicBcConcreteProcess(
         K_Plus.insert(second_BHE_top_index_pair) =
             -w_val;  // for power BC, the outflow node must be negative
 
-        K_normal.row(n_original_rows + n_BHE_bottom_pairs + i) = K_Plus;
+        K_normal.row(n_original_rows + n_BHE_outflow_pairs + i) = K_Plus;
 
         // get the delta_T value here
         double const T_out = (*x[0])[second_BHE_top_index_pair];
@@ -549,7 +549,7 @@ void HeatTransportBHEProcess::algebraicBcConcreteProcess(
         auto delta_T = std::visit(calculate_delta_T,
                                   _process_data._vec_BHE_property[bhe_idx]);
 
-        b_Plus.insert(n_original_rows + n_BHE_bottom_pairs + i) =
+        b_Plus.insert(n_original_rows + n_BHE_outflow_pairs + i) =
             delta_T * w_val;
     }
 
@@ -563,8 +563,7 @@ void HeatTransportBHEProcess::algebraicBcConcreteProcess(
 #endif
 }
 
-void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
-    std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes)
+void HeatTransportBHEProcess::createBHEEndpointBoundaryConditions()
 {
     const int process_id = 0;
     auto& bcs = _boundary_conditions[process_id];
@@ -574,68 +573,20 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
     // for each BHE
     for (std::size_t bhe_i = 0; bhe_i < n_BHEs; bhe_i++)
     {
-        auto const& bhe_nodes = all_bhe_nodes[bhe_i];
         // find the variable ID
         // the soil temperature is 0-th variable
         // the BHE temperature is therefore bhe_i + 1
         const int variable_id = bhe_i + 1;
 
-        std::vector<MeshLib::Node*> bhe_boundary_nodes;
-
-        // cherry-pick the boundary nodes according to
-        // the number of connected line elements.
-        for (auto const& bhe_node : bhe_nodes)
-        {
-            // Count number of 1d elements connected with every BHE node.
-            auto const& connected_elements =
-                _mesh.getElementsConnectedToNode(*bhe_node);
-            const std::size_t n_line_elements = std::count_if(
-                connected_elements.begin(), connected_elements.end(),
-                [](MeshLib::Element const* elem)
-                { return (elem->getDimension() == 1); });
-
-            if (n_line_elements == 1)
-            {
-                bhe_boundary_nodes.push_back(bhe_node);
-            }
-        }
-
-        if (bhe_boundary_nodes.size() != 2)
-        {
-            OGS_FATAL(
-                "Error!!! The BHE boundary nodes are not correctly found, "
-                "for every single BHE, there should be 2 boundary nodes.");
-        }
-
-        // For 1U, 2U, CXC, CXA type BHE, the node order in the boundary nodes
-        // vector should be rearranged according to its z coordinate in
-        // descending order. In these BHE types, the z coordinate on the top and
-        // bottom node is different. The BHE top node with a higher z coordinate
-        // should be placed at the first, while the BHE bottom node with a lower
-        // z coordinate should be placed at the second. For other horizontal BHE
-        // types e.g. 1P-type BHE, the z coordinate on the top and bottom node
-        // is identical. Thus the node order in the boundary nodes vector can
-        // not be rearranged according to its z coordinate. For these BHE types,
-        // the boundary node order is according to the default node id order in
-        // the model mesh.
-        // for 1P-type BHE
-        if ((*bhe_boundary_nodes[0])[2] == (*bhe_boundary_nodes[1])[2])
-        {
-            INFO(
-                "For 1P-type BHE, the BHE inflow and outflow "
-                "nodes are identified according to their mesh node id in "
-                "ascending order");
-        }
-        // for 1U, 2U, CXC, CXA type BHE
-        else
-        {
-            // swap the boundary nodes if the z coordinate of the
-            // first node is lower than it on the second node
-            if ((*bhe_boundary_nodes[0])[2] < (*bhe_boundary_nodes[1])[2])
-            {
-                std::swap(bhe_boundary_nodes[0], bhe_boundary_nodes[1]);
-            }
-        }
+        // Derive the inflow/outflow endpoints from the BHE's line-element
+        // chain, using the same node-0 -> node-1 convention that the local
+        // assembler uses to build elem_direction. The inflow endpoint
+        // receives the inflow Dirichlet BC; the outflow endpoint receives
+        // the outflow BC. For canonical vertical BHEs meshed with node 0
+        // at the surface this matches the previous z-coordinate-based
+        // behaviour.
+        auto const endpoints = findBHEEndpointsFromElementOrdering(
+            _bheMeshData.BHE_elements[bhe_i]);
 
         auto get_global_index =
             [&](std::size_t const node_id, int const component)
@@ -672,8 +623,8 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
         };
 
         auto createBCs =
-            [&, bc_top_node_id = bhe_boundary_nodes[0]->getID(),
-             bc_bottom_node_id = bhe_boundary_nodes[1]->getID()](auto& bhe)
+            [&, bc_inflow_node_id = endpoints.inlet->getID(),
+             bc_outflow_node_id = endpoints.outlet->getID()](auto& bhe)
         {
             for (auto const& in_out_component_id :
                  bhe.inflow_outflow_bc_component_ids)
@@ -685,12 +636,12 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     if (this->_process_data
                             .py_bc_object)  // the bc object exist
                     {
-                        // apply the customized top, inflow BC.
+                        // apply the customized inflow Dirichlet BC.
                         bcs.addBoundaryCondition(
                             ProcessLib::createBHEInflowPythonBoundaryCondition(
                                 get_global_bhe_bc_indices(
                                     bhe.getBHEInflowDirichletBCNodesAndComponents(
-                                        bc_top_node_id, bc_bottom_node_id,
+                                        bc_inflow_node_id, bc_outflow_node_id,
                                         in_out_component_id.first)),
                                 bhe,
                                 *(_process_data.py_bc_object)));
@@ -710,21 +661,22 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     {
                         // for algebraic_bc method, record the pair of indices
                         // in a separate vector
-                        _vec_top_BHE_node_indices.push_back(
+                        vec_inflow_BHE_node_indices_.push_back(
                             get_global_bhe_bc_indices_with_bhe_idx(
                                 bhe_i,
-                                {{{bc_top_node_id, in_out_component_id.first},
-                                  {bc_top_node_id,
+                                {{{bc_inflow_node_id,
+                                   in_out_component_id.first},
+                                  {bc_inflow_node_id,
                                    in_out_component_id.second}}}));
                     }
                     else
                     {
-                        // Top, inflow, normal case
+                        // Inflow, normal case
                         bcs.addBoundaryCondition(
                             createBHEInflowDirichletBoundaryCondition(
                                 get_global_bhe_bc_indices(
                                     bhe.getBHEInflowDirichletBCNodesAndComponents(
-                                        bc_top_node_id, bc_bottom_node_id,
+                                        bc_inflow_node_id, bc_outflow_node_id,
                                         in_out_component_id.first)),
                                 [&bhe](double const T, double const t)
                                 {
@@ -736,7 +688,7 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
 
                 auto const bottom_nodes_and_components =
                     bhe.getBHEBottomDirichletBCNodesAndComponents(
-                        bc_bottom_node_id,
+                        bc_outflow_node_id,
                         in_out_component_id.first,
                         in_out_component_id.second);
 
@@ -744,14 +696,14 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                     !this->_process_data._algebraic_BC_Setting
                          ._use_algebraic_bc)
                 {
-                    // Bottom, outflow, all cases | not needed for algebraic_bc
+                    // Outflow, all cases | not needed for algebraic_bc
                     // method
                     bcs.addBoundaryCondition(
                         createBHEBottomDirichletBoundaryCondition(
                             get_global_bhe_bc_indices(
-                                {{{bc_bottom_node_id,
+                                {{{bc_outflow_node_id,
                                    in_out_component_id.first},
-                                  {bc_bottom_node_id,
+                                  {bc_outflow_node_id,
                                    in_out_component_id.second}}})));
                 }
                 else if (bottom_nodes_and_components &&
@@ -760,11 +712,11 @@ void HeatTransportBHEProcess::createBHEBoundaryConditionTopBottom(
                 {
                     // for algebraic_bc method, record the pair of indices in a
                     // separate vector
-                    _vec_bottom_BHE_node_indices.push_back(
+                    vec_outflow_BHE_node_indices_.push_back(
                         get_global_bhe_bc_indices_with_bhe_idx(
                             bhe_i,
-                            {{{bc_bottom_node_id, in_out_component_id.first},
-                              {bc_bottom_node_id,
+                            {{{bc_outflow_node_id, in_out_component_id.first},
+                              {bc_outflow_node_id,
                                in_out_component_id.second}}}));
                 }
             }

@@ -12,6 +12,11 @@
 #include "FlowAndTemperatureControl.h"
 #include "PipeConfigurationUType.h"
 
+namespace ParameterLib
+{
+class SpatialPosition;
+}
+
 namespace ProcessLib
 {
 namespace HeatTransportBHE
@@ -41,25 +46,32 @@ public:
            PipeConfigurationUType const& pipes,
            bool const use_python_bcs);
 
-    /// Construct a copy with different borehole geometry.
-    /// Used for grouped BHE definitions.
-    BHE_2U withGeometry(BoreholeGeometry const& g) const
-    {
-        return {g,      refrigerant,   grout, flowAndTemperatureControl,
-                _pipes, use_python_bcs};
-    }
-
     static constexpr int number_of_unknowns = 8;
     static constexpr int number_of_grout_zones = 4;
+    static constexpr int number_of_flow_legs = 4;
+
+    /// Signed fluid velocity per flow leg. Positive = flow along
+    /// +elem_direction; negative = against it.  Leg ordering matches the
+    /// BHE unknowns: { i1, i2 (down), o1, o2 (up) }.
+    std::array<double, number_of_flow_legs> flowLegs() const
+    {
+        return {+flow_velocity, +flow_velocity, -flow_velocity, -flow_velocity};
+    }
 
     std::array<double, number_of_unknowns> pipeHeatCapacities() const;
 
     std::array<double, number_of_unknowns> pipeHeatConductions(
-        int const section_index = 0) const;
+        ParameterLib::SpatialPosition const& pos) const;
 
     std::array<Eigen::Vector3d, number_of_unknowns> pipeAdvectionVectors(
-        Eigen::Vector3d const& /*elem_direction*/,
-        int const section_index = 0) const;
+        Eigen::Vector3d const& elem_direction) const;
+
+    /// Return the full vector of thermal resistances for the element at
+    /// `pos`, computed once using the cached Nusselt number.  Intended to
+    /// be called once per element by the assembler so that the resistance
+    /// computation is not repeated per unknown and per integration point.
+    std::vector<double> thermalResistances(
+        ParameterLib::SpatialPosition const& pos) const;
 
     template <int NPoints,
               typename SingleUnknownMatrixType,
@@ -135,13 +147,11 @@ public:
                 R_matrix.block(4 * NPoints, 4 * NPoints, NPoints, NPoints) +=
                     2.0 * matBHE_loc_R;
                 R_matrix.block(5 * NPoints, 5 * NPoints, NPoints, NPoints) +=
-                    2.0 * matBHE_loc_R;  // K_ig  // notice we have two
-                                         // PHI_gg_1 term here.
+                    2.0 * matBHE_loc_R;  // K_ig
                 R_matrix.block(6 * NPoints, 6 * NPoints, NPoints, NPoints) +=
                     2.0 * matBHE_loc_R;
                 R_matrix.block(7 * NPoints, 7 * NPoints, NPoints, NPoints) +=
-                    2.0 * matBHE_loc_R;  // K_og  // see Diersch 2013 FEFLOW
-                                         // book page 954 Table M.2
+                    2.0 * matBHE_loc_R;  // K_og
                 return;
             case 3:  // PHI_gg_2
                 R_matrix.block(4 * NPoints, 5 * NPoints, NPoints, NPoints) +=
@@ -156,13 +166,11 @@ public:
                 R_matrix.block(4 * NPoints, 4 * NPoints, NPoints, NPoints) +=
                     1.0 * matBHE_loc_R;
                 R_matrix.block(5 * NPoints, 5 * NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_ig  // notice we only have
-                                         // 1 PHI_gg term here.
+                    1.0 * matBHE_loc_R;  // K_ig
                 R_matrix.block(6 * NPoints, 6 * NPoints, NPoints, NPoints) +=
                     1.0 * matBHE_loc_R;
                 R_matrix.block(7 * NPoints, 7 * NPoints, NPoints, NPoints) +=
-                    1.0 * matBHE_loc_R;  // K_og  // see Diersch 2013 FEFLOW
-                                         // book page 954 Table M.2
+                    1.0 * matBHE_loc_R;  // K_og
                 return;
             case 4:  // PHI_gs
                 R_s_matrix.template block<NPoints, NPoints>(0, 0).noalias() +=
@@ -213,13 +221,15 @@ public:
 
 public:
     std::array<double, number_of_unknowns> crossSectionAreas(
-        int const section_index = 0) const;
+        ParameterLib::SpatialPosition const& pos) const;
 
     void updateHeatTransferCoefficients(double const flow_rate);
 
 private:
+    double cached_nu_ = 0.0;
+
     std::vector<double> calcThermalResistances(
-        double const Nu, int const section_index = 0) const;
+        double const Nu, ParameterLib::SpatialPosition const& pos) const;
 };
 }  // namespace BHE
 }  // namespace HeatTransportBHE

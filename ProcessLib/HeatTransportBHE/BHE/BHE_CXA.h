@@ -6,7 +6,9 @@
 #include <Eigen/Core>
 
 #include "BHECommonCoaxial.h"
+#include "BHEParameterValidation.h"
 #include "BaseLib/Error.h"
+#include "ParameterLib/SpatialPosition.h"
 
 namespace ProcessLib
 {
@@ -14,19 +16,6 @@ namespace HeatTransportBHE
 {
 namespace BHE
 {
-/**
- * The BHE_CXA class is the realization of Coaxial pipe with Annular type of the
- * Borehole Heat Exchanger. In this class, the pipe heat capacity,
- * pipe heat conduction, pipe advection vectors are initialized according to the
- * geometry of CXA type of BHE. For CXA type of BHE, 3 primary unknowns are
- * assigned on the 1D BHE elements. They are the temperature in inflow pipe
- * T_in, temperature in outflow pipe T_out, temperature of the grout zone
- * surrounding the inflow pipe T_g. These primary variables are solved
- * according to heat convection and conduction equations on the pipes and also
- * in the grout zone. The interaction of the CXA type of BHE and the
- * surrounding soil is regulated through the thermal resistance values, which
- * are calculated specifically during the initialization of the class.
- */
 class BHE_CXA final : public BHECommonCoaxial
 {
 public:
@@ -49,14 +38,6 @@ public:
             },
             flowAndTemperatureControl);
         updateHeatTransferCoefficients(values.flow_rate);
-    }
-
-    /// Construct a copy with different borehole geometry.
-    /// Used for grouped BHE definitions.
-    BHE_CXA withGeometry(BoreholeGeometry const& g) const
-    {
-        return {g,      refrigerant,   grout, flowAndTemperatureControl,
-                _pipes, use_python_bcs};
     }
 
     template <int NPoints, typename SingleUnknownMatrixType,
@@ -113,19 +94,24 @@ public:
     }
 
     std::array<double, number_of_unknowns> crossSectionAreas(
-        int const section_index = 0) const
+        ParameterLib::SpatialPosition const& pos) const
     {
+        double const D = sampleStrictPositive(borehole_geometry.diameter, 0.0,
+                                              pos, "borehole_diameter");
+        double const borehole_area = Pipe::circleArea(D);
         return {cross_section_area_annulus, cross_section_area_inner_pipe,
-                checkedGroutArea(
-                    borehole_geometry.sections.areaAtSection(section_index),
-                    _pipes.outer_pipe.outsideArea(), section_index)};
+                checkedGroutArea(borehole_area, _pipes.outer_pipe.outsideArea(),
+                                 pos)};
     }
 
 private:
     void assignVelocities(double inner_vel, double annulus_vel) override
     {
-        // CXA: unknown 0 = annulus (inflow), unknown 1 = inner pipe (outflow)
-        _flow_velocities = {annulus_vel, inner_vel};
+        // CXA: unknown 0 = annulus (inflow), unknown 1 = inner pipe (outflow).
+        // velocity_inner stores the velocity for unknown 0, so it must
+        // receive the annulus velocity here.
+        velocity_inner = annulus_vel;
+        velocity_annulus = inner_vel;
     }
 
     std::vector<double> getThermalResistances(double const& R_gs,

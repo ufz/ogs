@@ -8,6 +8,8 @@
 #include "BaseLib/Error.h"
 #include "HeatTransportBHELocalAssemblerBHE.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
+#include "MathLib/Point3d.h"
+#include "MeshLib/Elements/Element.h"
 #include "NumLib/Fem/InitShapeMatrices.h"
 
 namespace ProcessLib
@@ -21,16 +23,20 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::
         NumLib::GenericIntegrationMethod const& integration_method,
         BHEType const& bhe,
         bool const is_axially_symmetric,
-        HeatTransportBHEProcessData& process_data,
-        BHEMeshData const& bhe_mesh_data)
+        HeatTransportBHEProcessData& process_data)
     : _process_data(process_data),
       _integration_method(integration_method),
       _bhe(bhe),
-      _element_id(e.getID()),
-      _bhe_mesh_data(bhe_mesh_data)
+      _element_id(e.getID())
 {
     // need to make sure that the BHE elements are one-dimensional
     assert(e.getDimension() == 1);
+
+    // Set up SpatialPosition for this element (element ID + centroid
+    // coordinates so that FunctionParameter expressions using x/y/z work).
+    // For a 2-node line element the center of gravity is its midpoint.
+    element_pos_.setElementID(_element_id);
+    element_pos_.setCoordinates(getCenterOfGravity(e));
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -56,40 +62,33 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::
         _secondary_data.N[ip] = sm.N;
     }
 
-    // calculate the element direction vector
+    // Calculate the element direction vector from the line element's node
+    // ordering: _element_direction points from node 0 to node 1. This vector
+    // defines the BHE's flow reference direction -- the BHE inflow flows
+    // along +_element_direction and the outflow against it. The per-BHE
+    // flowLegs() return signed velocities with respect to this convention,
+    // and pipeAdvectionVectors multiplies by _element_direction so that
+    // tilted and curved boreholes are honored automatically. For vertical
+    // BHEs the convention is met by ordering node 0 at the top (surface)
+    // and node 1 at depth.
     auto const& p0 = e.getNode(0)->asEigenVector3d();
     auto const& p1 = e.getNode(1)->asEigenVector3d();
 
     _element_direction = (p1 - p0).normalized();
 
-    auto const section_it =
-        _bhe_mesh_data.BHE_element_section_indices.find(_element_id);
-    if (section_it == _bhe_mesh_data.BHE_element_section_indices.end())
-    {
-        OGS_FATAL(
-            "Could not read BHE element section index for element id "
-            "{:d}.",
-            _element_id);
-    }
-
-    _section_index = section_it->second;
-    if (_section_index < 0)
-    {
-        OGS_FATAL(
-            "Invalid BHE section index for element id {:d}. Check BHE mesh "
-            "data initialisation.",
-            _element_id);
-    }
-
     _R_matrix.setZero(bhe_unknowns_size, bhe_unknowns_size);
     _R_pi_s_matrix.setZero(bhe_unknowns_size, soil_temperature_size);
     _R_s_matrix.setZero(soil_temperature_size, soil_temperature_size);
     static constexpr int max_num_thermal_exchange_terms = 5;
+    // Compute the full thermal resistance vector once per element (not per
+    // unknown x per integration point) -- borehole geometry does not vary
+    // within an element, so neither do the resistances.
+    auto const resistances_for_element = _bhe.thermalResistances(element_pos_);
     // Formulate the local BHE R matrix.
     // Only unknowns with thermal exchange terms need resistance assembly.
     // In CXA/CXC there are 3 exchange terms (= number of unknowns),
     // in 1U there are 4 (= number of unknowns),
-    // in 2U there are 5 but 8 unknowns — unknowns 5-7 (extra grout zones)
+    // in 2U there are 5 but 8 unknowns -- unknowns 5-7 (extra grout zones)
     // have no exchange terms. See Diersch (2013) FEFLOW, M.127-M.128.
     for (int idx_bhe_unknowns = 0;
          idx_bhe_unknowns <
@@ -102,15 +101,13 @@ HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::
                 single_bhe_unknowns_size,
                 single_bhe_unknowns_size>::Zero(single_bhe_unknowns_size,
                                                 single_bhe_unknowns_size);
+        double const R = resistances_for_element[idx_bhe_unknowns];
         // Loop over Gauss points
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
             auto const& N = _ip_data[ip].N;
             auto const& w = _ip_data[ip].integration_weight;
 
-            // Get thermal resistance for this element's section
-            auto const& R = _bhe.thermalResistanceAtSection(idx_bhe_unknowns,
-                                                            _section_index);
             // calculate mass matrix for current unknown
             matBHE_loc_R += N.transpose() * N * (1 / R) * w;
         }  // end of loop over integration point
@@ -138,11 +135,10 @@ void HeatTransportBHELocalAssemblerBHE<ShapeFunction, BHEType>::assemble(
         _integration_method.getNumberOfPoints();
 
     auto const& pipe_heat_capacities = _bhe.pipeHeatCapacities();
-    auto const& pipe_heat_conductions =
-        _bhe.pipeHeatConductions(_section_index);
+    auto const& pipe_heat_conductions = _bhe.pipeHeatConductions(element_pos_);
     auto const& pipe_advection_vectors =
-        _bhe.pipeAdvectionVectors(_element_direction, _section_index);
-    auto const& cross_section_areas = _bhe.crossSectionAreas(_section_index);
+        _bhe.pipeAdvectionVectors(_element_direction);
+    auto const& cross_section_areas = _bhe.crossSectionAreas(element_pos_);
 
     // the mass and conductance matrix terms
     for (unsigned ip = 0; ip < n_integration_points; ip++)

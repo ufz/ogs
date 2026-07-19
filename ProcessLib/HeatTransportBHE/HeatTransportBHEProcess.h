@@ -82,8 +82,7 @@ private:
         std::vector<GlobalVector*> const& x_prev, int const process_id,
         GlobalVector& b, GlobalMatrix& Jac) override;
 
-    void createBHEBoundaryConditionTopBottom(
-        std::vector<std::vector<MeshLib::Node*>> const& all_bhe_nodes);
+    void createBHEEndpointBoundaryConditions();
     void preTimestepConcreteProcess(std::vector<GlobalVector*> const& x,
                                     const double t, const double dt,
                                     int const process_id) override;
@@ -112,18 +111,16 @@ private:
 
     std::vector<std::unique_ptr<MeshLib::MeshSubset const>>
         _mesh_subset_BHE_soil_nodes;
-    // a vector of tuple structure containing the indices of BHE top nodes,
-    // used only for algebraic boundary conditions
-    // first object is the index of BHE
-    // second and third object is the global indices of a pair of unknowns,
-    // pointing to the inflow and outflow temperature
+    // Indices of BHE inflow endpoint nodes, used only for algebraic
+    // boundary conditions. First tuple element is the index of the BHE,
+    // second and third are the global indices of a pair of unknowns
+    // pointing to the inflow and outflow temperature.
     std::vector<std::tuple<std::size_t, GlobalIndexType, GlobalIndexType>>
-        _vec_top_BHE_node_indices;
-    // a vector of tuple structure containing the indices of BHE bottom nodes,
-    // used only for algebraic boundary conditions
-    // same structure as the top node vector
+        vec_inflow_BHE_node_indices_;
+    // Indices of BHE outflow endpoint nodes, used only for algebraic
+    // boundary conditions. Same tuple structure as the inflow vector.
     std::vector<std::tuple<std::size_t, GlobalIndexType, GlobalIndexType>>
-        _vec_bottom_BHE_node_indices;
+        vec_outflow_BHE_node_indices_;
 
     std::unique_ptr<MeshLib::MeshSubset const> _mesh_subset_soil_nodes;
 

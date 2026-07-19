@@ -3,11 +3,13 @@
 
 #pragma once
 
+#include <cmath>
 #include <numbers>
 
 #include "GroutParameters.h"
 #include "Pipe.h"
 #include "RefrigerantProperties.h"
+#include "ThermalResistanceHelpers.h"
 
 namespace ProcessLib
 {
@@ -54,11 +56,14 @@ inline AdvectiveThermalResistanceCoaxial calculateAdvectiveThermalResistance(
                 Nu_annulus, hydraulic_diameter / outer_pipe.diameter)};
 }
 
+/// Compute pipe wall thermal resistance from pipe geometry and pre-evaluated
+/// wall thermal conductivity values.
 inline PipeWallThermalResistanceCoaxial calculatePipeWallThermalResistance(
-    Pipe const& inner_pipe, Pipe const& outer_pipe)
+    Pipe const& inner_pipe, double const lambda_p_inner, Pipe const& outer_pipe,
+    double const lambda_p_outer)
 {
-    return {inner_pipe.wallThermalResistance(),
-            outer_pipe.wallThermalResistance()};
+    return {pipeWallThermalResistance(inner_pipe, lambda_p_inner),
+            pipeWallThermalResistance(outer_pipe, lambda_p_outer)};
 }
 
 inline GroutAndGroutSoilExchangeThermalResistanceCoaxial
