@@ -3,7 +3,10 @@
 
 #pragma once
 
+#include <spdlog/fmt/ostr.h>
+
 #include <bitset>
+#include <iosfwd>
 #include <optional>
 
 #include "MathLib/Point3d.h"
@@ -90,4 +93,16 @@ private:
     static constexpr std::size_t coordinates_bit = 2;
 };
 
+//! Prints the node id, element id and coordinates carried by \c pos, using
+//! "not set" for any of the three that is not specified.
+std::ostream& operator<<(std::ostream& os, SpatialPosition const& pos);
+
 }  // namespace ParameterLib
+
+namespace fmt
+{
+template <>
+struct formatter<::ParameterLib::SpatialPosition> : ostream_formatter
+{
+};
+}  // namespace fmt
