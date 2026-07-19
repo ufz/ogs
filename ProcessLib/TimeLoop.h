@@ -102,8 +102,8 @@ private:
      *                        function.
      *  @param time_step_constraints Functions that are evaluate to
      *  influence the time step size (for instance a fixed output time)
-     *  @return the time step size and the information if the last time step was
-     *  rejected
+     *  @return the time step size and the information if the previous time step
+     *  was rejected
      */
     std::pair<NumLib::TimeIncrement, bool> computeTimeStepping(
         const double prev_dt, NumLib::Time& t, std::size_t& accepted_steps,
@@ -132,7 +132,7 @@ private:
     std::size_t _rejected_steps = 0;
     NumLib::TimeIncrement _dt{0.};
     int _repeating_times_of_rejected_step = 0;
-    bool _last_step_rejected = false;
+    bool _previous_step_rejected = false;
 
     /// Number of global coupling iterations of the previous time step in the
     /// staggered scheme. It drives the time step size control of all processes.

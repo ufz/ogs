@@ -15,7 +15,7 @@ namespace NumLib
  *
  * This algorithm estimates a time step size depending on the number of
  * iterations (e.g. of iterative linear solvers, nonlinear methods, partitioned
- * coupling) needed in the last time step (see Hoffmann (2010) for
+ * coupling) needed in the previous time step (see Hoffmann (2010) for
  * Newton-Raphson case).
  * The new time step \f$\Delta t_{n+1}\f$ size is calculated as
  * \f[
@@ -32,7 +32,7 @@ namespace NumLib
  * \f]
  *
  * For example, users can setup the following time stepping strategy based on
- * the iteration number of the Newton-Raphson method in the last time step.
+ * the iteration number of the Newton-Raphson method in the previous time step.
  * <table border="1">
  * <tr><th>Num. of Newton
  * steps</th><th>0-2</th><th>3-6</th><th>7-8</th><th>9<</th></tr>

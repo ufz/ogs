@@ -22,9 +22,9 @@ struct SolutionDependentDirichletBoundaryConditionConfig
 ///
 /// This class is a special category of Dirichlet boundary condition,
 /// applied in the situation where the value assigned for the boundary condition
-/// is dependent on the process solution of the last time step. This particular
-/// boundary condition is widely used in the reactive transport problems and has
-/// the potential to be used in other processes.
+/// is dependent on the process solution of the previous time step. This
+/// particular boundary condition is widely used in the reactive transport
+/// problems and has the potential to be used in other processes.
 class SolutionDependentDirichletBoundaryCondition final
     : public BoundaryCondition
 {
