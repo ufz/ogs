@@ -21,8 +21,7 @@ parseBHECoaxialConfig(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes)
+        curves)
 {
     // if the BHE is using python boundary condition
     auto const bhe_if_use_python_bc_conf =
@@ -33,16 +32,16 @@ parseBHECoaxialConfig(
 
     auto const borehole_geometry =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__borehole}
-        createBoreholeGeometry(config.getConfigSubtree("borehole"), parameters,
-                               bhe_nodes);
+        createBoreholeGeometry(config.getConfigSubtree("borehole"), parameters);
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes}
     auto const& pipes_config = config.getConfigSubtree("pipes");
-    //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__outer}
-    Pipe const outer_pipe = createPipe(pipes_config.getConfigSubtree("outer"));
+    Pipe const outer_pipe =
+        //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__outer}
+        createPipe(pipes_config.getConfigSubtree("outer"), parameters);
     Pipe const inner_pipe =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__inner}
-        createPipe(pipes_config.getConfigSubtree("inner"));
+        createPipe(pipes_config.getConfigSubtree("inner"), parameters);
     const auto pipe_longitudinal_dispersion_length =
         //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__pipes__longitudinal_dispersion_length}
         pipes_config.getConfigParameter<double>(
@@ -58,23 +57,6 @@ parseBHECoaxialConfig(
             "Invalid coaxial pipe geometry: outer pipe inner diameter ({:g}) "
             "must be greater than inner pipe outside diameter ({:g}).",
             pipes.outer_pipe.diameter, pipes.inner_pipe.outsideDiameter());
-    }
-
-    double const outer_pipe_outside_diameter =
-        pipes.outer_pipe.outsideDiameter();
-    for (int section_index = 0;
-         section_index < borehole_geometry.sections.getNumberOfSections();
-         ++section_index)
-    {
-        double const D =
-            borehole_geometry.sections.diameterAtSection(section_index);
-        if (D <= outer_pipe_outside_diameter)
-        {
-            OGS_FATAL(
-                "Invalid coaxial geometry at section {:d}: borehole diameter "
-                "{:g} must be greater than outer pipe outside diameter {:g}.",
-                section_index, D, outer_pipe_outside_diameter);
-        }
     }
 
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__grout}
@@ -101,10 +83,9 @@ T_BHE createBHECoaxial(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes)
+        curves)
 {
-    auto coaxial = parseBHECoaxialConfig(config, parameters, curves, bhe_nodes);
+    auto coaxial = parseBHECoaxialConfig(config, parameters, curves);
     return {std::get<0>(coaxial), std::get<1>(coaxial), std::get<2>(coaxial),
             std::get<3>(coaxial), std::get<4>(coaxial), std::get<5>(coaxial)};
 }
@@ -114,16 +95,14 @@ template BHE_CXA createBHECoaxial<BHE_CXA>(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes);
+        curves);
 
 template BHE_CXC createBHECoaxial<BHE_CXC>(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes);
+        curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

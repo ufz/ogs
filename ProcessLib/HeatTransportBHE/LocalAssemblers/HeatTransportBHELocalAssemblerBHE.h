@@ -9,7 +9,7 @@
 #include "IntegrationPointDataBHE.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "ProcessLib/HeatTransportBHE/BHE/MeshUtils.h"
+#include "ParameterLib/SpatialPosition.h"
 #include "ProcessLib/HeatTransportBHE/HeatTransportBHEProcessData.h"
 #include "SecondaryData.h"
 
@@ -55,8 +55,7 @@ public:
         NumLib::GenericIntegrationMethod const& integration_method,
         BHEType const& bhe,
         bool const is_axially_symmetric,
-        HeatTransportBHEProcessData& process_data,
-        BHEMeshData const& bhe_mesh_data);
+        HeatTransportBHEProcessData& process_data);
 
     void assemble(double const /*t*/, double const /*dt*/,
                   std::vector<double> const& /*local_x*/,
@@ -93,14 +92,14 @@ private:
     BHEType const& _bhe;
 
     std::size_t const _element_id;
-    BHEMeshData const& _bhe_mesh_data;
+
+    /// SpatialPosition for this element, used to evaluate spatially varying
+    /// BHE parameters (diameter, wall thermal conductivity, etc.).
+    ParameterLib::SpatialPosition element_pos_;
 
     SecondaryData<typename ShapeMatrices::ShapeType> _secondary_data;
 
     Eigen::Vector3d _element_direction;
-
-    // For multi-section support: section index for this element
-    int _section_index = 0;
 
     typename ShapeMatricesType::template MatrixType<bhe_unknowns_size,
                                                     bhe_unknowns_size>

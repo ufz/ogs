@@ -6,6 +6,9 @@
 #include <Eigen/Core>
 
 #include "BHECommonCoaxial.h"
+#include "BHEParameterValidation.h"
+#include "BaseLib/Error.h"
+#include "ParameterLib/SpatialPosition.h"
 
 namespace ProcessLib
 {
@@ -48,14 +51,6 @@ public:
             },
             flowAndTemperatureControl);
         updateHeatTransferCoefficients(values.flow_rate);
-    }
-
-    /// Construct a copy with different borehole geometry.
-    /// Used for grouped BHE definitions.
-    BHE_CXC withGeometry(BoreholeGeometry const& g) const
-    {
-        return {g,      refrigerant,   grout, flowAndTemperatureControl,
-                _pipes, use_python_bcs};
     }
 
     template <int NPoints, typename SingleUnknownMatrixType,
@@ -112,19 +107,22 @@ public:
     }
 
     std::array<double, number_of_unknowns> crossSectionAreas(
-        int const section_index = 0) const
+        ParameterLib::SpatialPosition const& pos) const
     {
+        double const D = sampleStrictPositive(borehole_geometry.diameter, 0.0,
+                                              pos, "borehole_diameter");
+        double const borehole_area = Pipe::circleArea(D);
         return {cross_section_area_inner_pipe, cross_section_area_annulus,
-                checkedGroutArea(
-                    borehole_geometry.sections.areaAtSection(section_index),
-                    _pipes.outer_pipe.outsideArea(), section_index)};
+                checkedGroutArea(borehole_area, _pipes.outer_pipe.outsideArea(),
+                                 pos)};
     }
 
 private:
     void assignVelocities(double inner_vel, double annulus_vel) override
     {
         // CXC: unknown 0 = inner pipe (inflow), unknown 1 = annulus (outflow)
-        _flow_velocities = {inner_vel, annulus_vel};
+        velocity_inner = inner_vel;
+        velocity_annulus = annulus_vel;
     }
 
     std::vector<double> getThermalResistances(double const& R_gs,

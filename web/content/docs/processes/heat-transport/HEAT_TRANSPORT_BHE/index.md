@@ -69,12 +69,14 @@ Here is an example of a borehole with 18 m in length and a constant diameter of 
 
 For boreholes with varying diameters at different depths (e.g., telescoping boreholes), the `<diameter>` can reference a parameter name instead of a numeric value. The referenced parameter defines a depth-dependent step function for the borehole diameter.
 
-Internally, each BHE is composed of 1D line elements. To determine the diameter sections, the code:
+Internally, each BHE is composed of 1D line elements.
+The code assigns a diameter to each element as follows:
 
-1. Sorts all BHE nodes by z-coordinate from top (wellhead) to bottom.
-2. Walks the nodes top-to-bottom, computing the cumulative 3D distance from the wellhead.
-3. At each node, evaluates the referenced parameter at that node's spatial coordinates to obtain a diameter value.
-4. Groups consecutive nodes that share the same diameter into sections. A new section boundary is created at the node where the diameter value first changes.
+1. For each BHE element, compute its centroid (midpoint between the two end nodes).
+2. Evaluate the referenced parameter at the element-centroid coordinates to obtain a diameter value.
+3. Each element therefore carries its own diameter; piecewise-constant profiles (e.g. a telescoping borehole) are produced by using a `Function` parameter whose value only changes across element boundaries.
+
+The thermal resistances are then computed per element using the local borehole geometry.
 
 Here is an example of a borehole with 3 sections of different diameters, using a `Function` parameter:
 
@@ -95,11 +97,11 @@ Here is an example of a borehole with 3 sections of different diameters, using a
 
 In this example (assuming the BHE extends from z=0 downward):
 
-* Section 1 (0-6 m depth): diameter 0.15 m
-* Section 2 (6-12 m depth): diameter 0.13 m
-* Section 3 (12-18 m depth): diameter 0.11 m
+* Elements with centroid at 0-6 m depth: diameter 0.15 m
+* Elements with centroid at 6-12 m depth: diameter 0.13 m
+* Elements with centroid at 12-18 m depth: diameter 0.11 m
 
-The thermal resistance calculations are performed separately for each section, accounting for the different borehole geometries along the depth.
+Each BHE element receives its own diameter and the thermal resistance calculations are performed per element, accounting for the different borehole geometries along the depth.
 
 ### `<type>`
 
@@ -115,7 +117,7 @@ Currently there are 5 types of BHE available. Following the convention in Diersc
 * `CXC`: coaxial pipe with a reversed flow direction to CXA type;
 * `1P`: single coaxial pipe where the fluid flows down through a central pipe and returns upward through the annular space between the pipe and the borehole wall. Only one pipe (the inner pipe) is configured; the grout-filled annulus serves as the return flow path.
 
-Especially in CXA and CXC type, the direction of the borehole itself could be deviated by any angle, which is defined by mesh. The inflow direction will be in accordance with the direction of the line element (represents the BHE borehole) in the mesh. And the outlet direction is the opposite of the inflow direction.
+The borehole orientation — vertical, tilted, or curved — is determined entirely by the line-element geometry in the input mesh, and applies to all BHE types (`1U`, `2U`, `CXA`, `CXC`, `1P`). The **node ordering of each line element defines the flow reference direction**: BHE inflow flows from the element's node 0 toward node 1, and the outflow returns from node 1 toward node 0. For the canonical vertical BHE this means node 0 sits at the top (surface) and node 1 at the bottom (depth). The per-leg advection vectors are computed from this line-element direction, so any inclination encoded in the mesh is honoured automatically. See the [inclined-BHE meshing tutorial]({{< ref "/docs/tutorials/Inclined_bhe_meshing" >}}) for guidance on producing meshes with non-vertical line elements.
 
 The cross-sections of the U-type and coaxial BHEs are illustrated in the following figures.
 
@@ -162,6 +164,44 @@ Here is an example for a `1P` type BHE:
     <longitudinal_dispersion_length>0.001</longitudinal_dispersion_length>
 </pipes>
 ```
+
+#### Depth-dependent pipe wall thermal conductivity
+
+The `<wall_thermal_conductivity>` in `<inlet>` (and `<outlet>` for U-type BHEs, or `<inner>`/`<outer>` for coaxial BHEs) accepts either a numeric value or a parameter name referencing a `<parameter>` defined in the project-level `<parameters>` block.
+When a parameter name is given, the parameter is sampled at each BHE element's centroid to produce per-element wall conductivity values.
+
+Borehole diameter and pipe wall thermal conductivity are evaluated independently for each element.
+Thermal resistances are then computed per element based on the local property values.
+
+Here is an example where the inlet pipe wall thermal conductivity changes at 10 m depth:
+
+```xml
+<parameters>
+    <parameter>
+        <name>pipe_wall_tc</name>
+        <type>Function</type>
+        <expression>if(z > -10, 0.42, 0.35)</expression>
+    </parameter>
+</parameters>
+...
+<pipes>
+    <inlet>
+        <diameter>0.0378</diameter>
+        <wall_thickness>0.0029</wall_thickness>
+        <wall_thermal_conductivity>pipe_wall_tc</wall_thermal_conductivity>
+    </inlet>
+    <outlet>
+        <diameter>0.0378</diameter>
+        <wall_thickness>0.0029</wall_thickness>
+        <wall_thermal_conductivity>0.42</wall_thermal_conductivity>
+    </outlet>
+    <distance_between_pipes>0.053</distance_between_pipes>
+    <longitudinal_dispersion_length>0.001</longitudinal_dispersion_length>
+</pipes>
+```
+
+Note that borehole diameter and pipe wall thermal conductivity can be varied simultaneously and independently.
+Each BHE element receives its own property values, and thermal resistances are computed per element.
 
 ### `<flow_and_temperature_control>`
 

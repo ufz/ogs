@@ -27,8 +27,7 @@ HeatTransportBHELocalAssemblerSoil<ShapeFunction>::
         MeshLib::Element const& e,
         NumLib::GenericIntegrationMethod const& integration_method,
         bool const is_axially_symmetric,
-        HeatTransportBHEProcessData& process_data,
-        BHEMeshData const& /*bhe_mesh_data*/)
+        HeatTransportBHEProcessData& process_data)
     : _process_data(process_data),
       _integration_method(integration_method),
       _element(e)

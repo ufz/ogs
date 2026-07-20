@@ -3,6 +3,8 @@
 
 #include "BHECommonCoaxial.h"
 
+#include "BHEParameterValidation.h"
+#include "ParameterLib/SpatialPosition.h"
 #include "ThermalResistancesCoaxial.h"
 #include "ThermoMechanicalFlowProperties.h"
 
@@ -51,10 +53,10 @@ double BHECommonCoaxial::updateFlowRateAndTemperature(double const T_out,
     updateHeatTransferCoefficients(values.flow_rate);
     return values.temperature;
 }
+
 std::array<double, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::pipeHeatConductions(int /*section_index*/) const
+BHECommonCoaxial::pipeHeatConductions() const
 {
-    // Pipe dimensions are constant; velocity does not vary by section.
     double const lambda_r = refrigerant.thermal_conductivity;
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
@@ -62,39 +64,29 @@ BHECommonCoaxial::pipeHeatConductions(int /*section_index*/) const
     double const porosity_g = grout.porosity_g;
     double const lambda_g = grout.lambda_g;
 
-    auto v = velocities();
-    // Here we calculate the laplace coefficients in the governing
-    // equations of BHE. These governing equations can be found in
-    // 1) Diersch (2013) FEFLOW book on page 952, M.120-122, or
-    // 2) Diersch (2011) Comp & Geosci 37:1122-1135, Eq. 26-28, 23-25
-    return {{// pipe i, Eq. 26 and Eq. 23
-             (lambda_r + rho_r * Cp_r * alpha_L * std::abs(v[0])),
-             // pipe o, Eq. 27 and Eq. 24
-             (lambda_r + rho_r * Cp_r * alpha_L * std::abs(v[1])),
-             // pipe g, Eq. 28 and Eq. 25
+    auto const legs = flowLegs();
+    return {{(lambda_r + rho_r * Cp_r * alpha_L * std::abs(legs[0])),
+             (lambda_r + rho_r * Cp_r * alpha_L * std::abs(legs[1])),
              (1.0 - porosity_g) * lambda_g}};
 }
 
 std::array<Eigen::Vector3d, BHECommonCoaxial::number_of_unknowns>
-BHECommonCoaxial::pipeAdvectionVectors(Eigen::Vector3d const& elem_direction,
-                                       int /*section_index*/) const
+BHECommonCoaxial::pipeAdvectionVectors(
+    Eigen::Vector3d const& elem_direction) const
 {
-    // Pipe dimensions are constant; velocity does not vary by section.
     double const rho_r = refrigerant.density;
     double const Cp_r = refrigerant.specific_heat_capacity;
-    auto const v = velocities();
 
-    return {// pipe i, Eq. 26 and Eq. 23
-            rho_r * Cp_r * std::abs(v[0]) * elem_direction,
-            // pipe o, Eq. 27 and Eq. 24
-            -rho_r * Cp_r * std::abs(v[1]) * elem_direction,
-            // grout g, Eq. 28 and Eq. 25
-            {0, 0, 0}};
+    auto const legs = flowLegs();
+    auto leg_adv = [&](double const v_signed) -> Eigen::Vector3d
+    { return rho_r * Cp_r * v_signed * elem_direction; };
+
+    return {leg_adv(legs[0]), leg_adv(legs[1]), {0, 0, 0}};
 }
 
 std::vector<double> BHECommonCoaxial::calcThermalResistances(
     double const Nu_inner_pipe, double const Nu_annulus_pipe,
-    int const section_index) const
+    ParameterLib::SpatialPosition const& pos) const
 {
     // thermal resistances due to advective flow of refrigerant in the pipes
     auto const R_advective = calculateAdvectiveThermalResistance(
@@ -102,18 +94,27 @@ std::vector<double> BHECommonCoaxial::calcThermalResistances(
         Nu_annulus_pipe);
 
     // thermal resistance due to thermal conductivity of the pipe wall material
+    // t=0.0: borehole properties are physically time-invariant; genuinely
+    // time-varying parameter types are rejected in createPipe.
+    double const lambda_p_inner =
+        sampleStrictPositive(_pipes.inner_pipe.wall_thermal_conductivity, 0.0,
+                             pos, "wall_thermal_conductivity (inner pipe)");
+    double const lambda_p_outer =
+        sampleStrictPositive(_pipes.outer_pipe.wall_thermal_conductivity, 0.0,
+                             pos, "wall_thermal_conductivity (outer pipe)");
     auto const R_conductive = calculatePipeWallThermalResistance(
-        _pipes.inner_pipe, _pipes.outer_pipe);
+        _pipes.inner_pipe, lambda_p_inner, _pipes.outer_pipe, lambda_p_outer);
 
     // thermal resistance due to the grout transition and grout-soil exchange.
+    double const D = sampleStrictPositive(borehole_geometry.diameter, 0.0, pos,
+                                          "borehole_diameter");
+    checkBoreholeVsPipeDiameter(D, _pipes.outer_pipe.outsideDiameter(), pos,
+                                "coaxial grout resistance");
     auto const R = calculateGroutAndGroutSoilExchangeThermalResistance(
-        _pipes.outer_pipe, grout,
-        borehole_geometry.sections.diameterAtSection(section_index));
+        _pipes.outer_pipe, grout, D);
 
-    // thermal resistance due to grout-soil exchange
     double const R_gs = R.grout_soil;
 
-    // Eq. 56 and 57
     double const R_ff = R_advective.inner_pipe_coaxial + R_advective.a_annulus +
                         R_conductive.inner_pipe_coaxial;
     double const R_fg =
@@ -122,7 +123,13 @@ std::vector<double> BHECommonCoaxial::calcThermalResistances(
     return getThermalResistances(R_gs, R_ff, R_fg);
 }
 
-std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>
+std::vector<double> BHECommonCoaxial::thermalResistances(
+    ParameterLib::SpatialPosition const& pos) const
+{
+    return calcThermalResistances(cached_nu_inner, cached_nu_annulus, pos);
+}
+
+std::array<std::pair<std::size_t, int>, 2>
 BHECommonCoaxial::getBHEInflowDirichletBCNodesAndComponents(
     std::size_t const top_node_id,
     std::size_t const /*bottom_node_id*/,
@@ -132,8 +139,7 @@ BHECommonCoaxial::getBHEInflowDirichletBCNodesAndComponents(
             std::make_pair(top_node_id, in_component_id + 1)};
 }
 
-std::optional<
-    std::array<std::pair<std::size_t /*node_id*/, int /*component*/>, 2>>
+std::optional<std::array<std::pair<std::size_t, int>, 2>>
 BHECommonCoaxial::getBHEBottomDirichletBCNodesAndComponents(
     std::size_t const bottom_node_id, int const in_component_id,
     int const out_component_id)
@@ -151,14 +157,9 @@ void BHECommonCoaxial::updateHeatTransferCoefficients(double const flow_rate)
         _pipes.inner_pipe, _pipes.outer_pipe, borehole_geometry.length,
         refrigerant, flow_rate);
 
+    cached_nu_inner = tm_flow_inner.nusselt_number;
+    cached_nu_annulus = tm_flow_annulus.nusselt_number;
     assignVelocities(tm_flow_inner.velocity, tm_flow_annulus.velocity);
-
-    recomputeSectionalResistances(
-        [&](int i)
-        {
-            return calcThermalResistances(tm_flow_inner.nusselt_number,
-                                          tm_flow_annulus.nusselt_number, i);
-        });
 }
 }  // namespace BHE
 }  // namespace HeatTransportBHE

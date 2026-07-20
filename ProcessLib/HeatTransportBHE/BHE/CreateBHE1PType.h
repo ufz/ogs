@@ -9,15 +9,14 @@
 #include <vector>
 
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-#include "ParameterLib/Parameter.h"
 
 namespace BaseLib
 {
 class ConfigTree;
 }
-namespace MeshLib
+namespace ParameterLib
 {
-class Node;
+struct ParameterBase;
 }
 namespace ProcessLib
 {
@@ -31,8 +30,7 @@ T_BHE createBHE1PType(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
-    std::vector<MeshLib::Node*> const& bhe_nodes);
+        curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib
