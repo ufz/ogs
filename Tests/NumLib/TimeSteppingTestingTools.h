@@ -30,7 +30,7 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
     double const solution_error = 0;
     int time_step_counter = 0;
     std::size_t idx = 0;
-    bool last_time_step_rejected = false;
+    bool previous_step_rejected = false;
     double timestepper_dt = 0.0;
 
     for (auto const& i : number_iterations)
@@ -42,14 +42,14 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
             idx++;
             timestepper_dt = algorithm.next(
                 solution_error, i, previous_timestep, current_timestep);
-            last_time_step_rejected = true;
+            previous_step_rejected = true;
         }
         else
         {
             timestepper_dt = algorithm.next(
                 solution_error, i, previous_timestep, current_timestep);
             time_step_counter++;
-            last_time_step_rejected = false;
+            previous_step_rejected = false;
         }
 
         if (current_timestep.current() + timestepper_dt ==
@@ -69,7 +69,7 @@ std::vector<double> timeStepping(T_TIME_STEPPING& algorithm,
                 ? end_time() - current_timestep.current()()
                 : timestepper_dt;
 
-        if (!last_time_step_rejected)
+        if (!previous_step_rejected)
         {
             NumLib::updateTimeSteps(timestepper_dt, previous_timestep,
                                     current_timestep);

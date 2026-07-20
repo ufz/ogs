@@ -105,8 +105,8 @@ double EvolutionaryPIDcontroller::limitStepSize(
 
     if (!previous_step_accepted)
     {
-        // If the last time step was rejected and the new predicted time step
-        // size is identical to that of the previous rejected step, the new
+        // If the previous time step was rejected and the new predicted time
+        // step size is identical to that of the previous rejected step, the new
         // step size is then reduced by half.
         if (std::abs(limited_h - timestep_current.dt()) <
             std::numeric_limits<double>::min())
@@ -114,9 +114,9 @@ double EvolutionaryPIDcontroller::limitStepSize(
             limited_h = std::max(_h_min, 0.5 * limited_h);
         }
 
-        // If the last time step was rejected and the new predicted time step
-        // size is larger than the step size of the rejected step, the new step
-        // size takes the half of the size of the rejected step. This could
+        // If the previous time step was rejected and the new predicted time
+        // step size is larger than the step size of the rejected step, the new
+        // step size takes the half of the size of the rejected step. This could
         // happen when a time step is rejected due to a diverged non-linear
         // solver. In such case, this algorithm may give a large time step size
         // by using the diverged solution.

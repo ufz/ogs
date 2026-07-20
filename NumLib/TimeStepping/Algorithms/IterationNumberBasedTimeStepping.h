@@ -15,7 +15,7 @@ namespace NumLib
  *
  * This algorithm estimates a time step size depending on the number of
  * iterations (e.g. of iterative linear solvers, nonlinear methods, partitioned
- * coupling) needed in the last time step (see Hoffmann (2010) for
+ * coupling) needed in the previous time step (see Hoffmann (2010) for
  * Newton-Raphson case).
  * The new time step \f$\Delta t_{n+1}\f$ size is calculated as
  * \f[
@@ -32,7 +32,7 @@ namespace NumLib
  * \f]
  *
  * For example, users can setup the following time stepping strategy based on
- * the iteration number of the Newton-Raphson method in the last time step.
+ * the iteration number of the Newton-Raphson method in the previous time step.
  * <table border="1">
  * <tr><th>Num. of Newton
  * steps</th><th>0-2</th><th>3-6</th><th>7-8</th><th>9<</th></tr>
@@ -47,6 +47,11 @@ namespace NumLib
  * large iteration number. If the iteration number exceeds a user-defined
  * threshold (e.g. 9),
  * a time step is repeated with a smaller time step size.
+ *
+ * \note In the staggered coupling scheme the controlling iteration number is
+ * the maximum over the number of global coupling iterations of the previous
+ * time step and the number of nonlinear (Newton-Raphson or Picard) iterations
+ * of all coupled processes.
  *
  * Reference
  * - Hoffmann J (2010) Reactive Transport and Mineral Dissolution/Precipitation

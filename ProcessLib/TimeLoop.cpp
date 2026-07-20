@@ -3,6 +3,7 @@
 
 #include "TimeLoop.h"
 
+#include <algorithm>
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/algorithm/contains.hpp>
 
@@ -302,6 +303,20 @@ std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
                     [](auto const& ppd) -> bool
                     { return ppd->timestep_current.timeStepNumber() == 0; });
 
+    // In the staggered scheme the time step size is controlled by the maximum
+    // over the number of global coupling iterations and the per-process
+    // nonlinear solver iterations of all processes.
+    int staggered_number_iterations = 0;
+    if (_staggered_coupling)
+    {
+        auto const ppd_max_iterations = std::ranges::max_element(
+            _per_process_data, {}, [](auto const& ppd)
+            { return ppd->nonlinear_solver_status.number_iterations; });
+        staggered_number_iterations = std::max(
+            _global_coupling_number_iterations,
+            (*ppd_max_iterations)->nonlinear_solver_status.number_iterations);
+    }
+
     for (std::size_t i = 0; i < _per_process_data.size(); i++)
     {
         auto& ppd = *_per_process_data[i];
@@ -321,9 +336,13 @@ std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
         ppd.timestep_current.setAccepted(
             ppd.nonlinear_solver_status.error_norms_met);
 
+        int const number_iterations =
+            _staggered_coupling ? staggered_number_iterations
+                                : ppd.nonlinear_solver_status.number_iterations;
+
         auto const timestepper_dt = timestep_algorithm.next(
-            solution_error, ppd.nonlinear_solver_status.number_iterations,
-            ppd.timestep_previous, ppd.timestep_current);
+            solution_error, number_iterations, ppd.timestep_previous,
+            ppd.timestep_current);
 
         if (!ppd.timestep_current.isAccepted())
         {
@@ -354,13 +373,13 @@ std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
         _repeating_times_of_rejected_step++;
     }
 
-    bool last_step_rejected = false;
+    bool previous_step_rejected = false;
     if (!is_initial_step)
     {
         if (all_process_steps_accepted)
         {
             accepted_steps++;
-            last_step_rejected = false;
+            previous_step_rejected = false;
         }
         else
         {
@@ -368,7 +387,7 @@ std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
             {
                 t -= prev_dt;
                 rejected_steps++;
-                last_step_rejected = true;
+                previous_step_rejected = true;
             }
         }
     }
@@ -383,7 +402,7 @@ std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
     // Check whether the time stepping is stabilized
     if (std::abs(dt() - prev_dt) < eps)
     {
-        if (last_step_rejected)
+        if (previous_step_rejected)
         {
             OGS_FATAL(
                 "The new step size of {} is the same as that of the previous "
@@ -429,7 +448,7 @@ std::pair<NumLib::TimeIncrement, bool> TimeLoop::computeTimeStepping(
         }
     }
 
-    return {dt, last_step_rejected};
+    return {dt, previous_step_rejected};
 }
 
 std::vector<TimeLoop::TimeStepConstraintCallback>
@@ -486,7 +505,7 @@ void TimeLoop::initialize()
     auto const time_step_constraints = generateOutputTimeStepConstraints(
         calculateUniqueFixedTimesForAllOutputs(_outputs));
 
-    std::tie(_dt, _last_step_rejected) =
+    std::tie(_dt, _previous_step_rejected) =
         computeTimeStepping(0.0, _current_time, _accepted_steps,
                             _rejected_steps, time_step_constraints);
 
@@ -532,12 +551,12 @@ bool TimeLoop::calculateNextTimeStep()
     auto const time_step_constraints = generateOutputTimeStepConstraints(
         calculateUniqueFixedTimesForAllOutputs(_outputs));
 
-    // _last_step_rejected is also checked in computeTimeStepping.
-    std::tie(_dt, _last_step_rejected) =
+    // _previous_step_rejected is also checked in computeTimeStepping.
+    std::tie(_dt, _previous_step_rejected) =
         computeTimeStepping(prev_dt, _current_time, _accepted_steps,
                             _rejected_steps, time_step_constraints);
 
-    if (!_last_step_rejected)
+    if (!_previous_step_rejected)
     {
         outputSolutions(timesteps, current_time(), &Output::doOutput);
     }
@@ -550,7 +569,7 @@ bool TimeLoop::calculateNextTimeStep()
         DBUG("current time == previous time + dt : {:a} == {:a} + {:a} = {:a}",
              current_time(), _current_time(), _dt(), _current_time() + _dt());
         ERR("The time increment {} results in exactly the same time {} as the "
-            "last rejected time step.\n"
+            "previous rejected time step.\n"
             "Time stepping stops at time step {:d} and time {}.",
             _dt, current_time, timesteps, _current_time);
         return false;
@@ -690,7 +709,10 @@ TimeLoop::solveCoupledEquationSystemsByStaggeredScheme(
             t(), dt, timestep_id, _process_solutions, _process_solutions_prev,
             _per_process_data, _outputs, &solveOneTimeStepOneProcess);
 
-    _last_step_rejected = nonlinear_solver_status.error_norms_met;
+    _global_coupling_number_iterations =
+        _staggered_coupling->lastNumberOfCouplingIterations();
+
+    _previous_step_rejected = nonlinear_solver_status.error_norms_met;
 
     for (auto const& process_data : _per_process_data)
     {

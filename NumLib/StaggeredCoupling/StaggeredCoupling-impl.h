@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <algorithm>
+
 #include "BaseLib/Error.h"
 #include "BaseLib/RunTime.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
@@ -19,11 +21,14 @@ NumLib::NonlinearSolverStatus StaggeredCoupling::execute(
     std::vector<Output> const& outputs,
     ProcessSolver<ProcessData, Output> const& solve_one_time_step_one_process)
 {
-    auto const [nonlinear_solver_status, coupling_iteration_converged] =
+    auto const [nonlinear_solver_status, coupling_iteration_converged,
+                number_of_coupling_iterations] =
         executeConcrete(coupling_nodes_, global_coupling_max_iterations_, t, dt,
                         timestep_id, process_solutions, process_solutions_prev,
                         per_process_data, outputs,
                         solve_one_time_step_one_process);
+
+    number_of_global_coupling_iterations_ = number_of_coupling_iterations;
 
     if (!coupling_iteration_converged)
     {
@@ -70,7 +75,7 @@ NumLib::NonlinearSolverStatus StaggeredCoupling::executeSingleIteration(
 }
 
 template <typename ProcessData, typename Output>
-std::tuple<NumLib::NonlinearSolverStatus, bool>
+std::tuple<NumLib::NonlinearSolverStatus, bool, int>
 StaggeredCoupling::executeConcrete(
     std::vector<CouplingNodeVariant>& coupling_nodes, const int max_iterations,
     const double t, const double dt, const std::size_t timestep_id,
@@ -85,12 +90,16 @@ StaggeredCoupling::executeConcrete(
     NumLib::NonlinearSolverStatus nonlinear_solver_status{true, -1};
 
     bool coupling_iteration_converged = true;
+    int number_of_coupling_iterations = 0;
+    // Maximum number of coupling iterations over all nested sub-couplings.
+    int number_of_sub_coupling_iterations = 0;
     for (int global_coupling_iteration = 0;
          global_coupling_iteration < max_iterations;
          global_coupling_iteration++,
              resetCouplingConvergenceCriteria(coupling_nodes))
     {
         coupling_iteration_converged = true;
+        number_of_coupling_iterations = global_coupling_iteration + 1;
 
         INFO("Global coupling iteration #{:d} started.",
              global_coupling_iteration);
@@ -103,17 +112,24 @@ StaggeredCoupling::executeConcrete(
             if (std::holds_alternative<RootCouplingNode>(coupling_node))
             {
                 auto const [local_nonlinear_solver_status,
-                            local_coupling_iteration_converged] =
+                            local_coupling_iteration_converged,
+                            local_number_of_coupling_iterations] =
                     executeSubCoupling(
                         coupling_node, t, dt, timestep_id, process_solutions,
                         process_solutions_prev, per_process_data, outputs,
                         solve_one_time_step_one_process);
 
+                number_of_sub_coupling_iterations =
+                    std::max(number_of_sub_coupling_iterations,
+                             local_number_of_coupling_iterations);
+
                 if (!local_nonlinear_solver_status.error_norms_met)
                 {
                     coupling_iteration_converged = false;
                     return {local_nonlinear_solver_status,
-                            coupling_iteration_converged};
+                            coupling_iteration_converged,
+                            std::max(number_of_coupling_iterations,
+                                     number_of_sub_coupling_iterations)};
                 }
 
                 coupling_iteration_converged =
@@ -137,7 +153,9 @@ StaggeredCoupling::executeConcrete(
                     "{:g} s for process {:s}.",
                     timestep_id, t, regular_coupling_node.process_name);
                 coupling_iteration_converged = false;
-                return {nonlinear_solver_status, coupling_iteration_converged};
+                return {nonlinear_solver_status, coupling_iteration_converged,
+                        std::max(number_of_coupling_iterations,
+                                 number_of_sub_coupling_iterations)};
             }
 
             auto const& x =
@@ -165,11 +183,13 @@ StaggeredCoupling::executeConcrete(
         }
     }
 
-    return {nonlinear_solver_status, coupling_iteration_converged};
+    return {nonlinear_solver_status, coupling_iteration_converged,
+            std::max(number_of_coupling_iterations,
+                     number_of_sub_coupling_iterations)};
 }
 
 template <typename ProcessData, typename Output>
-std::tuple<NumLib::NonlinearSolverStatus, bool>
+std::tuple<NumLib::NonlinearSolverStatus, bool, int>
 StaggeredCoupling::executeSubCoupling(
     CouplingNodeVariant& coupling_node, const double t, const double dt,
     const std::size_t timestep_id,
@@ -186,14 +206,16 @@ StaggeredCoupling::executeSubCoupling(
         std::get<CouplingNode>(root_coupling_node.sub_coupling_nodes.front())
             .max_iterations;
 
-    auto const [sub_nonlinear_solver_status, sub_coupling_iteration_converged] =
+    auto const [sub_nonlinear_solver_status, sub_coupling_iteration_converged,
+                sub_number_of_coupling_iterations] =
         executeConcrete<ProcessData, Output>(
             root_coupling_node.sub_coupling_nodes, local_max_iterations, t, dt,
             timestep_id, process_solutions, process_solutions_prev,
             per_process_data, outputs, solve_one_time_step_one_process);
 
     INFO("--- End sub-coupling.");
-    return {sub_nonlinear_solver_status, sub_coupling_iteration_converged};
+    return {sub_nonlinear_solver_status, sub_coupling_iteration_converged,
+            sub_number_of_coupling_iterations};
 }
 
 }  // namespace NumLib
