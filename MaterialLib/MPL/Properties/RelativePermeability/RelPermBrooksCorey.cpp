@@ -91,7 +91,10 @@ PropertyDataType RelPermBrooksCorey::dValue(
     auto const lambda = exponent_;
 
     auto const s_eff = (s_L - s_L_res) / (s_L_max - s_L_res);
-    if ((s_eff < 0.) || (s_eff > 1.))
+    // Consistency with value(): at s_eff == 1 the value is clamped to the
+    // constant 1.0 (and saturation models clamping S_L at s_L_max put whole
+    // regions exactly on this point), so the derivative there is zero.
+    if ((s_eff < 0.) || (s_eff >= 1.))
     {
         return 0.;
     }

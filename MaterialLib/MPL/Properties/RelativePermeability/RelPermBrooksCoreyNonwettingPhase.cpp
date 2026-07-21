@@ -92,7 +92,11 @@ PropertyDataType RelPermBrooksCoreyNonwettingPhase::dValue(
     auto const lambda = exponent_;
 
     auto const s_eff = (s_L - s_L_res) / (s_L_max - s_L_res);
-    if ((s_eff < 0.) || (s_eff > 1.))
+    // Consistency with value(): at the branch points s_eff == 0 (dry, value
+    // clamped to 1.0) and s_eff == 1 (saturated, value clamped to
+    // min_relative_permeability) the value is constant, so the derivative is
+    // zero.
+    if ((s_eff <= 0.) || (s_eff >= 1.))
     {
         return 0.0;
     }

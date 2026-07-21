@@ -51,6 +51,16 @@ PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
                         WaterVapour *
                     T * T * dgamma_dpi);
         case Variable::liquid_phase_pressure:
+            // Consistency with value(): below the pressure clamp p = max(0,
+            // p_LR) the density is constant in pressure, so its derivative is
+            // zero. Returning the analytic derivative evaluated at the
+            // clamped pressure would feed the Jacobian a phantom liquid
+            // compressibility wherever p_LR < 0 (strongly desaturated
+            // states).
+            if (variable_array.liquid_phase_pressure < 0.0)
+            {
+                return 0.0;
+            }
             return -gibbs_free_energy_.get_dgamma_dpi_dpi(tau, pi) /
                    (MaterialLib::PhysicalConstant::SpecificGasConstant::
                         WaterVapour *
