@@ -32,9 +32,9 @@ from subprocess import run
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import meshio
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 from matplotlib import colormaps
 
 mechanics_path = Path(
@@ -561,8 +561,8 @@ mesh_path_pre_existing = Path("mesh_borehole_pre_existing").resolve()
 
 # Compare generated and pre-existing meshes
 def _mesh_stats(path):
-    m = meshio.read(path)
-    return m.points.shape[0], sum(len(b.data) for b in m.cells)
+    m = pv.read(path)
+    return m.n_points, m.n_cells
 
 
 meshes = {
@@ -726,11 +726,11 @@ run(["pvtu2vtu", "-i", str(last_pvtu), "-o", str(last_vtu)], check=True)
 
 # ---------------- VTU comparer ----------------
 def read_mesh(path):
-    m = meshio.read(str(path))
-    pts = m.points.astype(float)
+    m = pv.read(str(path))
+    pts = np.asarray(m.points, dtype=float)
     if pts.shape[1] == 2:
         pts = np.c_[pts, np.zeros(len(pts))]
-    return pts, m.point_data
+    return pts, {k: np.asarray(v) for k, v in m.point_data.items()}
 
 
 def sort_index_by_points(pts):
