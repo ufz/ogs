@@ -57,7 +57,7 @@ public:
         std::size_t id = std::numeric_limits<std::size_t>::max());
 
     /// Copy constructor
-    explicit TemplateElement(const TemplateElement& e);
+    TemplateElement(const TemplateElement& e);
 
     /// Returns a copy of this object.
     Element* clone() const override { return new TemplateElement(*this); }

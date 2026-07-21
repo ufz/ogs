@@ -83,7 +83,7 @@ namespace detail
 // Non-templated core implementation.
 struct FLin : FBase
 {
-    FLin(std::size_t dim_) : FBase(1 + dim_), dim{dim_} {}
+    explicit FLin(std::size_t dim_) : FBase(1 + dim_), dim{dim_} {}
 
     double operator()(std::array<double, 3> const& coords) const override final
     {
