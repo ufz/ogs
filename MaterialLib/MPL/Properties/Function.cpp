@@ -7,9 +7,10 @@
 #include <omp.h>
 #endif
 
+#include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
-#include <ranges>
 #include <unordered_set>
 
 #include "BaseLib/Algorithm.h"
@@ -513,13 +514,13 @@ Function::Function(
 
     required_variables_enum_ =
         expression_symbol_names |
-        std::views::filter(
+        ranges::views::filter(
             [&curves](std::string const& s)
             {
                 return !ParameterLib::isBuiltinSymbol(s) && !curves.contains(s);
             }) |
-        std::views::transform([](std::string const& s)
-                              { return convertStringToVariable(s); }) |
+        ranges::views::transform([](std::string const& s)
+                                 { return convertStringToVariable(s); }) |
         ranges::to<std::vector>;
 
     int const num_threads = BaseLib::getNumberOfThreads();
@@ -600,9 +601,9 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
                     name_, thread_id, impl_ptr->per_thread_data.size());
             }
             auto& thread_data = impl_ptr->per_thread_data[thread_id];
-            auto const it = std::ranges::find_if(
-                thread_data.dvalue_expressions,
-                [&variable](auto const& v) { return v.first == variable; });
+            auto const it = ranges::find_if(thread_data.dvalue_expressions,
+                                            [&variable](auto const& v)
+                                            { return v.first == variable; });
 
             if (it == end(thread_data.dvalue_expressions))
             {
