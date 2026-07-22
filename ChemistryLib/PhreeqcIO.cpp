@@ -53,7 +53,8 @@ overloaded(Ts...) -> overloaded<Ts...>;
 class StringViewLineIterator
 {
 public:
-    StringViewLineIterator(std::string_view const text, std::size_t pos = 0)
+    explicit StringViewLineIterator(std::string_view const text,
+                                    std::size_t pos = 0)
         : text_(text), pos_(pos)
     {
     }

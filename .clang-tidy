@@ -32,6 +32,7 @@ WarningsAsErrors: >
   modernize-use-emplace,
   modernize-use-default-member-init,
   clang-analyzer-deadcode.DeadStores,
+  google-explicit-constructor,
 HeaderFilterRegex: ".*"
 FormatStyle: file
 CheckOptions:

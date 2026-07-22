@@ -78,7 +78,7 @@ inline std::array<double, 3> getCoords(MathLib::Point3d const& p)
 template <typename T>
 struct PrintableRef
 {
-    PrintableRef(T const& data) : data_{data} {}
+    explicit PrintableRef(T const& data) : data_{data} {}
 
     friend std::ostream& operator<<(std::ostream& os,
                                     PrintableRef<T> const& ref)
@@ -97,7 +97,7 @@ private:
     using Data = std::array<T, N>;
 
 public:
-    PrintableRef(Data const& data) : data_{data} {}
+    explicit PrintableRef(Data const& data) : data_{data} {}
 
     friend std::ostream& operator<<(std::ostream& os,
                                     PrintableRef<Data> const& ref)
