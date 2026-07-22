@@ -9,6 +9,24 @@
 
 namespace MaterialPropertyLib
 {
+namespace
+{
+/// Collect the values of a list of `<expression>` subtrees into a string
+/// vector.
+template <typename ConfigSubtreeList>
+std::vector<std::string> parseExpressionList(
+    ConfigSubtreeList const& expression_configs)
+{
+    std::vector<std::string> expressions;
+    expressions.reserve(expression_configs.size());
+    std::transform(std::begin(expression_configs), std::end(expression_configs),
+                   std::back_inserter(expressions),
+                   [](BaseLib::ConfigTree const& p)
+                   { return p.getValue<std::string>(); });
+    return expressions;
+}
+}  // namespace
+
 std::unique_ptr<Function> createFunction(
     BaseLib::ConfigTree const& config,
     std::map<std::string,
@@ -24,15 +42,12 @@ std::unique_ptr<Function> createFunction(
 
     DBUG("Create Function property {:s}.", property_name);
 
-    std::vector<std::string> value_expressions;
     //! \ogs_file_param{properties__property__Function__value}
     auto const& value_config = config.getConfigSubtree("value");
 
-    //! \ogs_file_param{properties__property__Function__value__expression}
-    for (auto const& p : value_config.getConfigSubtreeList("expression"))
-    {
-        value_expressions.emplace_back(p.getValue<std::string>());
-    }
+    auto const value_expressions = parseExpressionList(
+        //! \ogs_file_param{properties__property__Function__value__expression}
+        value_config.getConfigSubtreeList("expression"));
 
     // For each derivative a name of the variable and the list of expressions.
     std::vector<std::pair<std::string, std::vector<std::string>>>
@@ -44,17 +59,9 @@ std::unique_ptr<Function> createFunction(
             //! \ogs_file_param{properties__property__Function__dvalue__variable_name}
             dvalue_config.getConfigParameter<std::string>("variable_name");
 
-        std::vector<std::string> expressions;
-        auto const& expression_configs =
+        auto expressions = parseExpressionList(
             //! \ogs_file_param{properties__property__Function__dvalue__expression}
-            dvalue_config.getConfigSubtreeList("expression");
-
-        expressions.reserve(expression_configs.size());
-        std::transform(std::begin(expression_configs),
-                       std::end(expression_configs),
-                       std::back_inserter(expressions),
-                       [](BaseLib::ConfigTree const& p)
-                       { return p.getValue<std::string>(); });
+            dvalue_config.getConfigSubtreeList("expression"));
 
         dvalue_expressions.emplace_back(std::move(variable_name),
                                         std::move(expressions));
