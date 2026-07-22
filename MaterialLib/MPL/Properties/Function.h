@@ -13,6 +13,16 @@
 
 namespace MaterialPropertyLib
 {
+/// Second-derivative specification for a Function property: the two (unordered)
+/// variables to differentiate with respect to, and one expression string per
+/// value component.
+struct D2ValueConfig
+{
+    std::string variable_name1;
+    std::string variable_name2;
+    std::vector<std::string> expressions;
+};
+
 /// A function property defined by mathematical expression. For the evaluation
 /// of the expressions the exprtk library is used. In the expressions all
 /// variables defined in MaterialPropertyLib::Variable enum, t for time,
@@ -29,6 +39,7 @@ public:
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
             dvalue_string_expressions,
+        std::vector<D2ValueConfig> const& d2value_string_expressions,
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);
@@ -43,6 +54,13 @@ public:
                             ParameterLib::SpatialPosition const& pos,
                             double const t,
                             double const dt) const override;
+
+    PropertyDataType d2Value(VariableArray const& variable_array,
+                             Variable const variable1,
+                             Variable const variable2,
+                             ParameterLib::SpatialPosition const& pos,
+                             double const t,
+                             double const dt) const override;
 
     ~Function();
 

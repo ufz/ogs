@@ -7,6 +7,8 @@
 #include <omp.h>
 #endif
 
+#include <range/v3/algorithm/contains.hpp>
+#include <range/v3/algorithm/find.hpp>
 #include <range/v3/algorithm/find_if.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/filter.hpp>
@@ -119,6 +121,35 @@ static exprtk::symbol_table<double> createSymbolTable(
     return symbol_table;
 }
 
+/// An unordered pair of variables: (variable1, variable2) is considered equal
+/// to (variable2, variable1).
+struct VariablePair
+{
+    Variable variable1;
+    Variable variable2;
+
+    /// Order-independent equality: {a, b} equals {b, a}.
+    friend bool operator==(VariablePair const& p, VariablePair const& q)
+    {
+        return (p.variable1 == q.variable1 && p.variable2 == q.variable2) ||
+               (p.variable1 == q.variable2 && p.variable2 == q.variable1);
+    }
+};
+
+/// A compiled second-derivative entry: the variable pair to differentiate with
+/// respect to, and the multi-component expressions evaluating it.
+struct D2ValueExpression
+{
+    D2ValueExpression(Variable const variable1, Variable const variable2,
+                      std::vector<exprtk::expression<double>> expressions)
+        : expressions(std::move(expressions)), variables{variable1, variable2}
+    {
+    }
+
+    std::vector<exprtk::expression<double>> expressions;
+    VariablePair variables;
+};
+
 /// Symbol table storage and compiled expressions for one OpenMP thread.
 /// Each thread receives its own instance so that concurrent evaluations
 /// do not race on the exprtk symbol table or the VariableArray scratch space.
@@ -141,14 +172,16 @@ struct PerThreadData
         std::vector<Variable>* non_scalar_out,
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
-            dvalue_string_expressions)
+            dvalue_string_expressions,
+        std::vector<D2ValueConfig> const& d2value_string_expressions)
         : symbol_table(createSymbolTable<D>(
               expression_symbol_names, spatial_position_is_required,
               used_curve_names, curves, variable_array, curve_wrappers)),
           symbol_table_cache(symbol_table, spatial_position_is_required)
     {
         buildCopyOps(variables_enum, non_scalar_out);
-        compileExpressions(value_string_expressions, dvalue_string_expressions);
+        compileExpressions(value_string_expressions, dvalue_string_expressions,
+                           d2value_string_expressions);
     }
 
     PerThreadData(PerThreadData&& /*other*/)
@@ -198,6 +231,21 @@ struct PerThreadData
     /// ```
     std::vector<std::pair<Variable, std::vector<exprtk::expression<double>>>>
         dvalue_expressions;
+
+    /// Second-derivative expressions w.r.t. an unordered pair of variables.
+    /// Each entry stores the VariablePair - where (v1, v2) and (v2, v1) are
+    /// treated as identical - together with multi-component expressions
+    /// corresponding one-to-one with the value expressions. Specified in the
+    /// project file as:
+    /// ```xml
+    /// <d2value>
+    ///   <variable_name>temperature</variable_name>
+    ///   <variable_name>phase_pressure</variable_name>
+    ///   <expression>d2f1/dT dp</expression>
+    ///   <expression>d2f2/dT dp</expression>
+    /// </d2value>
+    /// ```
+    std::vector<D2ValueExpression> d2value_expressions;
 
     /// Cached pointers to symbol table variables (t, x, y, z).
     ParameterLib::SymbolTableCache symbol_table_cache;
@@ -257,14 +305,17 @@ struct PerThreadData
         }
     }
 
-    /// Compile value and dValue expressions for this thread.
+    /// Compile value, dValue, and d2Value expressions for this thread.
     /// \param value_string_expressions  Raw value expression strings.
     /// \param dvalue_string_expressions Variable name paired with its
     ///                                  derivative expression strings.
+    /// \param d2value_string_expressions Two variable names and second-
+    ///                                   derivative expression strings.
     void compileExpressions(
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
-            dvalue_string_expressions)
+            dvalue_string_expressions,
+        std::vector<D2ValueConfig> const& d2value_string_expressions)
     {
         value_expressions = ParameterLib::compileExpressions(
             symbol_table, value_string_expressions);
@@ -286,6 +337,18 @@ struct PerThreadData
                 ParameterLib::compileExpressions(symbol_table,
                                                  string_expressions));
         }
+
+        // Component-count consistency is validated once in the Function
+        // constructor; here only the per-thread compilation remains.
+        for (auto const& [variable_name1, variable_name2, string_expressions] :
+             d2value_string_expressions)
+        {
+            d2value_expressions.emplace_back(
+                convertStringToVariable(variable_name1),
+                convertStringToVariable(variable_name2),
+                ParameterLib::compileExpressions(symbol_table,
+                                                 string_expressions));
+        }
     }
 };
 
@@ -301,6 +364,7 @@ struct Function::Implementation
         std::vector<std::string> const& value_string_expressions,
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
             dvalue_string_expressions,
+        std::vector<D2ValueConfig> const& d2value_string_expressions,
         std::map<std::string,
                  std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
             curves);
@@ -323,6 +387,7 @@ Function::Implementation<D>::Implementation(
     std::vector<std::string> const& value_string_expressions,
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
         dvalue_string_expressions,
+    std::vector<D2ValueConfig> const& d2value_string_expressions,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
@@ -344,7 +409,8 @@ Function::Implementation<D>::Implementation(
             std::integral_constant<int, D>{}, expression_symbol_names,
             spatial_position_is_required, used_curve_names, curves,
             variables_enum, thread_id == 0 ? &non_scalar_variables : nullptr,
-            value_string_expressions, dvalue_string_expressions);
+            value_string_expressions, dvalue_string_expressions,
+            d2value_string_expressions);
     }
 }
 
@@ -496,16 +562,53 @@ Function::Function(
     std::vector<std::string> const& value_string_expressions,
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
         dvalue_string_expressions,
+    std::vector<D2ValueConfig> const& d2value_string_expressions,
     std::map<std::string,
              std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
         curves)
 {
     name_ = std::move(name);
 
-    // Collect variables from all expressions (value and dvalue) so the symbol
-    // table is complete even when a variable appears only in a derivative.
+    // Validate the d2value blocks once, before the per-thread/per-dimension
+    // Implementations are built: each unordered {v1,v2} pair may appear at
+    // most once, and each block must carry one expression per value component.
+    {
+        std::vector<VariablePair> seen_pairs;
+        for (auto const& [vname1, vname2, exprs] : d2value_string_expressions)
+        {
+            VariablePair const pair{convertStringToVariable(vname1),
+                                    convertStringToVariable(vname2)};
+            if (ranges::contains(seen_pairs, pair))
+            {
+                OGS_FATAL(
+                    "Function property '{}': duplicate d2value block for "
+                    "variable pair '{}'/'{}'. Each unordered pair may "
+                    "appear at most once.",
+                    name_, vname1, vname2);
+            }
+            seen_pairs.push_back(pair);
+
+            if (exprs.size() != value_string_expressions.size())
+            {
+                OGS_FATAL(
+                    "Function property '{}': the number of d2Value expressions "
+                    "({:d}) for variables '{:s}'/'{:s}' does not match the "
+                    "number of value expressions ({:d}).",
+                    name_, exprs.size(), vname1, vname2,
+                    value_string_expressions.size());
+            }
+        }
+    }
+
+    // Collect variables from all expressions (value, dvalue, and d2value) so
+    // the symbol table is complete even when a variable appears only in a
+    // derivative.
     auto all_exprs = value_string_expressions;
     for (auto const& [_, exprs] : dvalue_string_expressions)
+    {
+        all_exprs.insert(all_exprs.end(), exprs.begin(), exprs.end());
+    }
+    for (auto const& [_1, _2, exprs] : d2value_string_expressions)
     {
         all_exprs.insert(all_exprs.end(), exprs.begin(), exprs.end());
     }
@@ -527,10 +630,12 @@ Function::Function(
 
     impl2_ = std::make_unique<Implementation<2>>(
         num_threads, expression_symbol_names, required_variables_enum_,
-        value_string_expressions, dvalue_string_expressions, curves);
+        value_string_expressions, dvalue_string_expressions,
+        d2value_string_expressions, curves);
     impl3_ = std::make_unique<Implementation<3>>(
         num_threads, expression_symbol_names, required_variables_enum_,
-        value_string_expressions, dvalue_string_expressions, curves);
+        value_string_expressions, dvalue_string_expressions,
+        d2value_string_expressions, curves);
 }
 
 std::variant<Function::Implementation<2>*, Function::Implementation<3>*>
@@ -551,27 +656,35 @@ Function::getImplementationForDimensionOfVariableArray(
         "Mixed dimensions cannot be dealt within Function evaluation.");
 }
 
-PropertyDataType Function::value(VariableArray const& variable_array,
-                                 ParameterLib::SpatialPosition const& pos,
-                                 double const t, double const /*dt*/) const
+/// OpenMP thread id validated against the number of allocated per-thread data
+/// slots. OGS_FATAL if the id exceeds the allocation.
+static int currentThreadId(std::string const& property_name,
+                           std::size_t const num_slots)
 {
 #ifdef _OPENMP
     int const thread_id = omp_get_thread_num();
 #else
     int const thread_id = 0;
 #endif
+    if (thread_id >= static_cast<int>(num_slots))
+    {
+        OGS_FATAL(
+            "In Function-type property '{:s}' evaluation the OMP-thread with "
+            "id {:d} exceeds the number of allocated threads {:d}.",
+            property_name, thread_id, num_slots);
+    }
+    return thread_id;
+}
+
+PropertyDataType Function::value(VariableArray const& variable_array,
+                                 ParameterLib::SpatialPosition const& pos,
+                                 double const t, double const /*dt*/) const
+{
     return std::visit(
         [&](auto&& impl_ptr)
         {
-            if (thread_id >= static_cast<int>(impl_ptr->per_thread_data.size()))
-            {
-                OGS_FATAL(
-                    "In Function-type property '{:s}' evaluation the "
-                    "OMP-thread with id {:d} exceeds the number of allocated "
-                    "threads {:d}.",
-                    name_, thread_id, impl_ptr->per_thread_data.size());
-            }
-            auto& thread_data = impl_ptr->per_thread_data[thread_id];
+            auto& thread_data = impl_ptr->per_thread_data[currentThreadId(
+                name_, impl_ptr->per_thread_data.size())];
             return thread_data.evaluate(impl_ptr->non_scalar_variables,
                                         variable_array, pos, t,
                                         thread_data.value_expressions);
@@ -584,23 +697,11 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
                                   ParameterLib::SpatialPosition const& pos,
                                   double const t, double const /*dt*/) const
 {
-#ifdef _OPENMP
-    int const thread_id = omp_get_thread_num();
-#else
-    int const thread_id = 0;
-#endif
     return std::visit(
         [&](auto&& impl_ptr)
         {
-            if (thread_id >= static_cast<int>(impl_ptr->per_thread_data.size()))
-            {
-                OGS_FATAL(
-                    "In Function-type property '{:s}' evaluation the "
-                    "OMP-thread with id {:d} exceeds the number of allocated "
-                    "threads {:d}.",
-                    name_, thread_id, impl_ptr->per_thread_data.size());
-            }
-            auto& thread_data = impl_ptr->per_thread_data[thread_id];
+            auto& thread_data = impl_ptr->per_thread_data[currentThreadId(
+                name_, impl_ptr->per_thread_data.size())];
             auto const it = ranges::find_if(thread_data.dvalue_expressions,
                                             [&variable](auto const& v)
                                             { return v.first == variable; });
@@ -615,6 +716,39 @@ PropertyDataType Function::dValue(VariableArray const& variable_array,
 
             return thread_data.evaluate(impl_ptr->non_scalar_variables,
                                         variable_array, pos, t, it->second);
+        },
+        getImplementationForDimensionOfVariableArray(variable_array));
+}
+
+PropertyDataType Function::d2Value(VariableArray const& variable_array,
+                                   Variable const variable1,
+                                   Variable const variable2,
+                                   ParameterLib::SpatialPosition const& pos,
+                                   double const t, double const /*dt*/) const
+{
+    return std::visit(
+        [&](auto&& impl_ptr)
+        {
+            auto& thread_data = impl_ptr->per_thread_data[currentThreadId(
+                name_, impl_ptr->per_thread_data.size())];
+            auto const it = ranges::find(thread_data.d2value_expressions,
+                                         VariablePair{variable1, variable2},
+                                         &D2ValueExpression::variables);
+
+            if (it == thread_data.d2value_expressions.end())
+            {
+                OGS_FATAL(
+                    "Requested second derivative with respect to variables "
+                    "'{:s}'/'{:s}' not provided for Function-type property "
+                    "'{:s}'.",
+                    variable_enum_to_string[static_cast<int>(variable1)],
+                    variable_enum_to_string[static_cast<int>(variable2)],
+                    name_);
+            }
+
+            return thread_data.evaluate(impl_ptr->non_scalar_variables,
+                                        variable_array, pos, t,
+                                        it->expressions);
         },
         getImplementationForDimensionOfVariableArray(variable_array));
 }

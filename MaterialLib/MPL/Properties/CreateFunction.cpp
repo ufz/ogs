@@ -67,10 +67,40 @@ std::unique_ptr<Function> createFunction(
                                         std::move(expressions));
     }
 
+    // For each second derivative: two variable names and expression list.
+    std::vector<D2ValueConfig> d2value_expressions;
+    //! \ogs_file_param{properties__property__Function__d2value}
+    for (auto const& d2value_config : config.getConfigSubtreeList("d2value"))
+    {
+        auto variable_names_range =
+            //! \ogs_file_param{properties__property__Function__d2value__variable_name}
+            d2value_config.getConfigParameterList<std::string>("variable_name");
+
+        std::vector<std::string> variable_names(variable_names_range.begin(),
+                                                variable_names_range.end());
+
+        if (variable_names.size() != 2)
+        {
+            OGS_FATAL(
+                "Function property '{}': each <d2value> block must contain "
+                "exactly two <variable_name> entries, but {:d} were given.",
+                property_name, variable_names.size());
+        }
+
+        auto expressions = parseExpressionList(
+            //! \ogs_file_param{properties__property__Function__d2value__expression}
+            d2value_config.getConfigSubtreeList("expression"));
+
+        d2value_expressions.emplace_back(std::move(variable_names[0]),
+                                         std::move(variable_names[1]),
+                                         std::move(expressions));
+    }
+
     return std::make_unique<MaterialPropertyLib::Function>(
         std::move(property_name),
         value_expressions,
         dvalue_expressions,
+        d2value_expressions,
         curves);
 }
 }  // namespace MaterialPropertyLib
