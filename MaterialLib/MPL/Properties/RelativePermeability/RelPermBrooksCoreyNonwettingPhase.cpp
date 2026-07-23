@@ -22,6 +22,43 @@ RelPermBrooksCoreyNonwettingPhase::RelPermBrooksCoreyNonwettingPhase(
       exponent_(exponent)
 {
     name_ = std::move(name);
+
+    if (exponent_ <= 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: exponent 'lambda' must be "
+            "positive, but {} was given.",
+            exponent_);
+    }
+    if (residual_liquid_saturation_ < 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: residual_liquid_saturation "
+            "must be non-negative, but {} was given.",
+            residual_liquid_saturation_);
+    }
+    if (residual_gas_saturation_ < 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: residual_gas_saturation must "
+            "be non-negative, but {} was given.",
+            residual_gas_saturation_);
+    }
+    if (residual_liquid_saturation_ + residual_gas_saturation_ >= 1.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: residual_liquid_saturation "
+            "({}) + residual_gas_saturation ({}) must be less than 1 so that "
+            "the effective saturation range is positive.",
+            residual_liquid_saturation_, residual_gas_saturation_);
+    }
+    if (min_relative_permeability_ < 0. || min_relative_permeability_ > 1.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: min_relative_permeability must "
+            "be in [0, 1], but {} was given.",
+            min_relative_permeability_);
+    }
 };
 
 PropertyDataType RelPermBrooksCoreyNonwettingPhase::value(
