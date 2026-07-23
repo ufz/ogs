@@ -8,6 +8,7 @@
 #include <boost/algorithm/string.hpp>
 #include <memory>
 
+#include "AndersonAcceleration.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "DampingReductionStrategy.h"
@@ -28,10 +29,39 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
 
     if (type == "Picard")
     {
-        //! \ogs_file_param_special{prj__nonlinear_solvers__nonlinear_solver__Picard}
         auto const damping =
             //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__Picard__damping}
             config.getConfigParameter<double>("damping", 1.0);
+
+        auto const anderson_config =
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__Picard__anderson}
+            config.getConfigSubtreeOptional("anderson");
+        int anderson_depth = 0;
+        if (anderson_config)
+        {
+            anderson_depth =
+                //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__Picard__anderson__depth}
+                anderson_config->getConfigParameter<int>("depth");
+
+            if (anderson_depth < 0)
+            {
+                OGS_FATAL(
+                    "Anderson acceleration depth must be non-negative, got "
+                    "{:d}.",
+                    anderson_depth);
+            }
+            if (anderson_depth < AndersonAcceleration::min_mixing_depth)
+            {
+                WARN(
+                    "Anderson acceleration with a depth of {:d} has no effect: "
+                    "mixing fewer than {:d} stored steps reproduces the plain "
+                    "Picard update. Use a depth >= {:d} to accelerate, or drop "
+                    "the <anderson> subtree to disable the acceleration "
+                    "explicitly.",
+                    anderson_depth, AndersonAcceleration::min_mixing_depth,
+                    AndersonAcceleration::min_mixing_depth);
+            }
+        }
         if (damping <= 0.0 || damping > 1.0)
         {
             OGS_FATAL(
@@ -39,10 +69,12 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
                 "got {:g}.",
                 damping);
         }
+
         auto const tag = NonlinearSolverTag::Picard;
         using ConcreteNLS = NonlinearSolver<tag>;
         return std::make_pair(
-            std::make_unique<ConcreteNLS>(linear_solver, max_iter, damping),
+            std::make_unique<ConcreteNLS>(linear_solver, max_iter,
+                                          anderson_depth, damping),
             tag);
     }
     if (type == "Newton")

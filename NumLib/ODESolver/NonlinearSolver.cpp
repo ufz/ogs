@@ -3,6 +3,12 @@
 
 #include "NonlinearSolver.h"
 
+#include <spdlog/fmt/ranges.h>
+
+#include <Eigen/Core>
+#include <algorithm>
+
+#include "AndersonAcceleration.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
@@ -18,6 +24,28 @@
 
 namespace NumLib
 {
+namespace
+{
+//! One entry of the Anderson acceleration history: the iterate \c x it was
+//! taken from and the (possibly damped) step
+//! \f$ f = \beta\,(g(x) - x) \f$ leading away from it.
+//!
+//! The two vectors are only ever appended, rotated and dropped together, so
+//! keeping them in one entry rules out a desynchronization of the two buffers.
+struct AndersonHistoryEntry
+{
+    GlobalVector* x;
+    GlobalVector* f;
+};
+
+//! Returns \c entry's vectors to the provider.
+void releaseAndersonHistoryEntry(AndersonHistoryEntry const& entry)
+{
+    NumLib::GlobalVectorProvider::provider.releaseVector(*entry.x);
+    NumLib::GlobalVectorProvider::provider.releaseVector(*entry.f);
+}
+}  // namespace
+
 namespace detail
 {
 #if !defined(USE_PETSC) && !defined(USE_LIS)
@@ -140,13 +168,16 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
-    if (_damping != 1.0 && sys.isLinear())
+    if ((_damping != 1.0 ||
+         _anderson_depth >= AndersonAcceleration::min_mixing_depth) &&
+        sys.isLinear())
     {
         OGS_FATAL(
-            "Damping (under-relaxation) is not compatible with a linear "
-            "equation system: a single Picard step already yields the exact "
-            "solution, so the damped iterate would be accepted as converged "
-            "but wrong. Remove the 'damping' parameter for linear problems.");
+            "Damping (under-relaxation) and Anderson acceleration are not "
+            "compatible with a linear equation system: a single Picard step "
+            "already yields the exact solution, so the mixed/damped iterate "
+            "would be accepted as converged but wrong. Remove the 'damping' "
+            "parameter and the 'anderson' subtree for linear problems.");
     }
 
     auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
@@ -160,6 +191,20 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     bool error_norms_met = false;
 
     _convergence_criterion->preFirstIteration();
+
+    // Anderson acceleration history. _anderson_depth of 0 and 1 = plain Picard.
+    //
+    // Circular buffer of history entries, oldest first (size <=
+    // _anderson_depth). With beta = _damping = 1 the stored step reduces to the
+    // plain residual g(x) - x; for beta < 1 every stored step is scaled by
+    // beta, which leaves the mixing weights theta unchanged (beta cancels, see
+    // below).
+    std::vector<AndersonHistoryEntry> anderson_history;
+    anderson_history.reserve(_anderson_depth);
+
+    // Gram matrix G = F^T F of the stored steps, maintained incrementally
+    // across iterations (only the newest step's row/column is recomputed).
+    Eigen::MatrixXd gram(_anderson_depth, _anderson_depth);
 
     int iteration = 1;
     for (; iteration <= _maxiter; ++iteration, _convergence_criterion->reset())
@@ -260,18 +305,130 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         if (iteration_succeeded)
         {
-            // Notation (see NonlinearSolver<Picard> class doc):
-            //   x_k      = x[process_id]  (iterate entering this step)
-            //   g(x_k)   = x_new_process  (raw Picard output, this linear
-            //   solve)
-            // Under-relaxation with damping beta (active when beta != 1):
-            //   x_{k+1} = x_k + beta*(g(x_k) - x_k)
-            //           = (1-beta)*x_k + beta*g(x_k)
+            //   x_old         = x[process_id]   (iterate entering this step)
+            //   x_new_process                   (raw Picard output g(x_old))
+            // beta relaxation (always active when damping != 1):
+            //   x_new = x_old + beta*(g(x_old) - x_old)
+            //         = (1-beta)*x_old + beta*g(x_old)
             if (_damping != 1.0)
             {
                 LinAlg::scale(x_new_process, _damping);
                 LinAlg::axpy(x_new_process, 1.0 - _damping, *x[process_id]);
             }
+            // Anderson acceleration (active when anderson_depth > 0):
+            //   additionally mixes the last anderson_depth damped steps
+            //   f_i = beta*(g(x_i) - x_i) (i.e. x_new_process - x_old computed
+            //   after the beta relaxation above) to find the optimal theta
+            //   minimising ||sum theta_i f_i|| s.t. sum theta_i = 1, then sets
+            //   x_new = sum theta_i*(x_i + f_i).
+            //   When anderson_depth == 0 only the beta relaxation above
+            //   applies.
+            if (_anderson_depth > 0)
+            {
+                // Whether the circular buffer is full and the oldest entry is
+                // about to be evicted (needed for the incremental Gram update).
+                bool const rotated =
+                    static_cast<int>(anderson_history.size()) ==
+                    _anderson_depth;
+                if (!rotated)
+                {
+                    // The id out-params are unused: the provider allocates a
+                    // fresh vector on every call and never re-fetches by id.
+                    std::size_t x_id = 0u;
+                    std::size_t f_id = 0u;
+                    anderson_history.push_back(
+                        {&NumLib::GlobalVectorProvider::provider.getVector(
+                             x_id),
+                         &NumLib::GlobalVectorProvider::provider.getVector(
+                             f_id)});
+                }
+                else
+                {
+                    // Recycle the oldest entry as the newest one.
+                    std::rotate(anderson_history.begin(),
+                                anderson_history.begin() + 1,
+                                anderson_history.end());
+                }
+
+                auto const& newest = anderson_history.back();
+
+                // x = x_old, f = x_new_process - x_old
+                LinAlg::copy(*x[process_id], *newest.x);
+                LinAlg::copy(x_new_process, *newest.f);
+                LinAlg::axpy(*newest.f, -1.0, *x[process_id]);
+
+                // Actual window size, <= anderson_depth while the buffer fills.
+                int const history_size =
+                    static_cast<int>(anderson_history.size());
+
+                // Incrementally maintain the (history_size x history_size) Gram
+                // matrix G = F^T F whose columns are the stored damped steps
+                // f_0 ... f_{history_size-1}. All steps but the newest are
+                // unchanged from the previous iteration, so only the last
+                // row/column is recomputed - history_size dot products instead
+                // of a full history_size*(history_size+1)/2 rebuild. On a
+                // rotate the oldest entry (index 0) was evicted, so the cached
+                // block is first shifted up-left by one.
+                if (rotated)
+                {
+                    gram.topLeftCorner(history_size - 1, history_size - 1) =
+                        gram.block(1, 1, history_size - 1, history_size - 1)
+                            .eval();
+                }
+                for (int i = 0; i < history_size; ++i)
+                {
+                    double const d =
+                        LinAlg::dot(*anderson_history[i].f, *newest.f);
+                    gram(i, history_size - 1) = d;
+                    gram(history_size - 1, i) = d;
+                }
+
+                // A single stored step needs no mixing: the sum-to-one
+                // constraint forces theta = (1), which just reproduces the
+                // damped step already held in x_new_process.
+                if (history_size >= 2)
+                {
+                    // Solve G theta = e (least-squares) with the constraint
+                    // sum theta_i = 1 via a simple Lagrange formulation:
+                    //
+                    //   [ G  1 ] [ theta  ] = [ 0 ]
+                    //   [ 1  0 ] [ lambda ]   [ 1 ]
+                    //
+                    // The beta factor scales G by beta^2 and cancels in theta,
+                    // so the weights are identical to the undamped case. The
+                    // Anderson update is then:
+                    //   x_anderson = sum_i theta_i * (x_i + f_i)
+                    //              = sum_i theta_i * (x_i +
+                    //              beta*(g(x_i)-x_i)) = sum_i theta_i *
+                    //              ((1-beta)*x_i + beta*g(x_i))
+                    Eigen::MatrixXd const G =
+                        gram.topLeftCorner(history_size, history_size);
+
+                    Eigen::VectorXd const theta =
+                        detail::computeAndersonWeights(G);
+
+                    // Accumulate the Anderson mixed iterate directly into
+                    // x_new_process. Its previous value is no longer needed:
+                    // the newest step was already extracted from it above, and
+                    // it is not aliased by any history entry (those are
+                    // independent copies).
+                    x_new_process.setZero();
+                    for (int i = 0; i < history_size; ++i)
+                    {
+                        // x_new_process += theta_i * (x_i + f_i)
+                        LinAlg::axpy(x_new_process, theta(i),
+                                     *anderson_history[i].x);
+                        LinAlg::axpy(x_new_process, theta(i),
+                                     *anderson_history[i].f);
+                    }
+
+                    DBUG("Picard/Anderson: history size {:d}, theta=[{:.4g}]",
+                         history_size,
+                         fmt::join(theta.data(), theta.data() + history_size,
+                                   ", "));
+                }
+            }
+            // end Anderson acceleration block
 
             if (postIterationCallback)
             {
@@ -300,6 +457,23 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                     LinAlg::copy(
                         *x[process_id],
                         x_new_process);  // throw the iteration result away
+                    // Drop the just-added (now stale) history entry, since we
+                    // are repeating this iteration. In the full-buffer case
+                    // this is the recycled slot; releasing it by reference is
+                    // safe because the provider tracks vectors by pointer, not
+                    // by the (unused) id.
+                    //
+                    // The rotation and the Gram shift performed above are not
+                    // undone, and need not be: dropping the newest entry leaves
+                    // the buffer holding the remaining entries in order, and
+                    // the shifted top-left block of the Gram matrix is exactly
+                    // their Gram matrix. The oldest entry stays evicted, which
+                    // merely shortens the sliding window by one.
+                    if (!anderson_history.empty())
+                    {
+                        releaseAndersonHistoryEntry(anderson_history.back());
+                        anderson_history.pop_back();
+                    }
                     continue;
             }
         }
@@ -353,6 +527,12 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
         ERR("Picard: Could not solve the given nonlinear system within {:d} "
             "iterations",
             _maxiter);
+    }
+
+    // Release Anderson history vectors.
+    for (auto const& entry : anderson_history)
+    {
+        releaseAndersonHistoryEntry(entry);
     }
 
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(A);

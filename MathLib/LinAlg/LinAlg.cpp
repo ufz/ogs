@@ -61,6 +61,15 @@ void axpby(PETScVector& y, PetscScalar const a, PetscScalar const b,
     VecAXPBY(y.getRawVector(), a, b, x.getRawVector());
 }
 
+double dot(PETScVector const& a, PETScVector const& b)
+{
+    PetscScalar result;
+    VecDot(a.getRawVector(), b.getRawVector(), &result);
+    // PetscRealPart is a no-op for real builds and keeps this compiling for a
+    // complex-scalar PETSc build (where PetscScalar is std::complex).
+    return static_cast<double>(PetscRealPart(result));
+}
+
 // Explicit specialization
 // Computes w = x/y componentwise.
 // \note  that VecPointwiseDivide avoids to divide by values that are
@@ -250,6 +259,17 @@ void axpby(EigenVector& y, double const a, double const b, EigenVector const& x)
 {
     // TODO: does that break anything?
     y.getRawVector() = a * x.getRawVector() + b * y.getRawVector();
+}
+
+double dot(EigenVector const& a, EigenVector const& b)
+{
+    // Make the operands locally accessible before reading their entries, so
+    // dot() is self-sufficient regardless of the caller. In this serial Eigen
+    // build there are no ghost entries, so these calls are no-ops; the PETSc
+    // overload obtains the equivalent guarantee from PETSc itself.
+    LinAlg::setLocalAccessibleVector(a);
+    LinAlg::setLocalAccessibleVector(b);
+    return a.getRawVector().dot(b.getRawVector());
 }
 
 // Explicit specialization

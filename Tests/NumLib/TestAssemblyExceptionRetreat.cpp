@@ -193,7 +193,7 @@ NumLib::NonlinearSolverStatus solveOnce(int const assemblies_before_abort = 0)
     else
     {
         nonlinear_solver = std::make_unique<NumLib::NonlinearSolver<NLTag>>(
-            *linear_solver, maxiter, 1.0);
+            *linear_solver, maxiter, 0, 1.0);
     }
     nonlinear_solver->setEquationSystem(ode_sys, *convergence_criterion);
 

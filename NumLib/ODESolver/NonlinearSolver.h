@@ -180,7 +180,11 @@ private:
  *
  * With an under-relaxation (damping) coefficient \f$ \beta \in (0, 1] \f$ the
  * iteration becomes \f$ x_{k+1} = (1-\beta)\,x_k + \beta\,g(x_k) \f$; the value
- * \f$ \beta = 1 \f$ recovers the plain Picard update above.
+ * \f$ \beta = 1 \f$ recovers the plain Picard update above. Damping is applied
+ * to every step, independently of whether Anderson acceleration is enabled.
+ *
+ * For an Anderson depth \f$ m \ge 2 \f$ the damped steps of the last \f$ m \f$
+ * iterations are additionally mixed, see \c AndersonAcceleration.h.
  */
 template <>
 class NonlinearSolver<NonlinearSolverTag::Picard> final
@@ -195,13 +199,20 @@ public:
      * \param linear_solver the linear solver used by this nonlinear solver.
      * \param maxiter the maximum number of iterations used to solve the
      *                equation.
+     * \param anderson_depth the number of previous iterates to use in
+     *                       Anderson acceleration; 0 and 1 both give a plain
+     *                       Picard iteration, mixing starts at 2.
      * \param damping  under-relaxation coefficient \f$ \beta \in (0, 1] \f$
      *                 applied to the Picard update (see class description);
      *                 \f$ \beta = 1 \f$ disables damping.
      */
     explicit NonlinearSolver(GlobalLinearSolver& linear_solver,
-                             const int maxiter, const double damping)
-        : _linear_solver(linear_solver), _damping(damping), _maxiter(maxiter)
+                             int const maxiter, int const anderson_depth,
+                             double const damping)
+        : _linear_solver(linear_solver),
+          _damping(damping),
+          _anderson_depth(anderson_depth),
+          _maxiter(maxiter)
     {
     }
 
@@ -244,7 +255,11 @@ private:
     //! damping.
     double const _damping;
 
-    const int _maxiter;  //!< maximum number of iterations
+    //! Number of previous iterates retained for Anderson acceleration.
+    //! 0 and 1 both disable the mixing (plain Picard).
+    int const _anderson_depth;
+
+    int const _maxiter;  //!< maximum number of iterations
 
     GlobalVector* _r_neq = nullptr;  //!< non-equilibrium initial residuum.
     std::size_t _A_id = 0u;          //!< ID of the \f$ A \f$ matrix.

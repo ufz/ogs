@@ -168,6 +168,10 @@ void axpy(PETScVector& y, PetscScalar const a, PETScVector const& x);
 // y = a*x + b*y
 void axpby(PETScVector& y, PetscScalar const a, PetscScalar const b,
            PETScVector const& x);
+/// Computes the dot product \f$ a \cdot b \f$ over the global vectors, i.e.
+/// ghost entries are not counted twice.
+/// \note Collective operation; all ranks obtain the same result.
+double dot(PETScVector const& a, PETScVector const& b);
 
 // Matrix
 
@@ -242,6 +246,8 @@ void axpy(EigenVector& y, double const a, EigenVector const& x);
 // y = a*x + b*y
 void axpby(EigenVector& y, double const a, double const b,
            EigenVector const& x);
+/// Computes the dot product \f$ a \cdot b \f$.
+double dot(EigenVector const& a, EigenVector const& b);
 
 // Matrix
 
