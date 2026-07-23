@@ -93,8 +93,9 @@ public:
         }
         else
         {
-            nonlinear_solver =
-                std::make_unique<NLSolver>(*linear_solver, _maxiter, 1.0);
+            nonlinear_solver = std::make_unique<NLSolver>(
+                *linear_solver, _maxiter, /*anderson_depth=*/0,
+                /*damping=*/1.0);
         }
 
         NumLib::TimeLoopSingleODE<NLTag> loop(ode_sys, std::move(linear_solver),
@@ -268,5 +269,71 @@ TYPED_TEST(NumLibODEIntTyped, DISABLED_T1)
  * * check that the order of time discretization scales correctly
  *   with the timestep size
  */
+
+// OGS_FATAL aborts (uncatchable) instead of throwing in this build, so the
+// rejection cannot be observed with EXPECT_ANY_THROW.
+#ifndef OGS_FATAL_ABORT
+// Runs a single Picard step on the linear ODE1 with the given acceleration
+// parameters and returns nothing; the caller wraps it in EXPECT_ANY_THROW.
+void runLinearPicardStep(int const anderson_depth, double const damping)
+{
+    using ODE = ODE1;
+    constexpr auto NLTag = NumLib::NonlinearSolverTag::Picard;
+    using NLSolver = NumLib::NonlinearSolver<NLTag>;
+
+    ODE ode;
+    NumLib::BackwardEuler time_disc;
+
+    int const process_id = 0;
+    NumLib::TimeDiscretizedODESystem<ODE::ODETag, NLTag> ode_sys(
+        process_id, ode, time_disc);
+
+    auto linear_solver = createLinearSolver();
+    auto conv_crit = std::make_unique<NumLib::ConvergenceCriterionDeltaX>(
+        1e-9, std::nullopt, MathLib::VecNormType::NORM2);
+    auto nonlinear_solver = std::make_unique<NLSolver>(
+        *linear_solver, /*maxiter=*/20, anderson_depth, damping);
+
+    NumLib::TimeLoopSingleODE<NLTag> loop(ode_sys, std::move(linear_solver),
+                                          std::move(nonlinear_solver),
+                                          std::move(conv_crit));
+
+    GlobalVector x0(ode.getMatrixSpecifications(process_id).nrows);
+    ODETraits<ODE>::setIC(x0);
+
+    double const t0 = ODETraits<ODE>::t0;
+    double const t_end = ODETraits<ODE>::t_end;
+    // A timestep smaller than the whole interval, so the time loop actually
+    // enters and invokes the nonlinear solver (a single step of exactly
+    // t_end - t0 would leave t == t_end, which the loop's t < t_end + eps guard
+    // rejects at this magnitude). One solver call is enough to hit the guard.
+    double const delta_t = (t_end - t0) / 2.0;
+    auto cb = [](double const /*t*/, GlobalVector const& /*x*/) {};
+    loop.loop(t0, x0, t_end, delta_t, cb);
+}
+
+// A single Picard step already solves a linear system exactly, so damping and
+// Anderson acceleration would make the solver accept a modified iterate as
+// converged but wrong. NonlinearSolver<Picard>::solve must reject both on a
+// linear equation system (ODE1 is linear).
+TEST(NumLibPicardLinearGuard, AndersonDepthOnLinearSystemAborts)
+{
+    EXPECT_ANY_THROW(
+        runLinearPicardStep(/*anderson_depth=*/2, /*damping=*/1.0));
+}
+
+TEST(NumLibPicardLinearGuard, DampingOnLinearSystemAborts)
+{
+    EXPECT_ANY_THROW(
+        runLinearPicardStep(/*anderson_depth=*/0, /*damping=*/0.5));
+}
+
+// The guard must not fire when neither acceleration is requested: plain Picard
+// on a linear system is exactly the supported case.
+TEST(NumLibPicardLinearGuard, PlainPicardOnLinearSystemRuns)
+{
+    EXPECT_NO_THROW(runLinearPicardStep(/*anderson_depth=*/0, /*damping=*/1.0));
+}
+#endif  // OGS_FATAL_ABORT
 
 }  // namespace TestODEInt

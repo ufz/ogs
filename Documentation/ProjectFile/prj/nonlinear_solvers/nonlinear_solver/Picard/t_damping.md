@@ -8,7 +8,14 @@ is a fixed point \f$ x = g(x) \f$.
 The default value 1.0 gives a non-damped Picard iteration
 \f$ x_{k+1} = g(x_k) \f$. Values of the damping factor \f$ \beta \f$ in the range
 (0, 1] provide under-relaxation for stabilization: the update is computed as
-\f$ x_{k+1} = (1-\beta)\,x_k + \beta\,g(x_k) \f$.
+\f$ x_{k+1} = (1-\beta)\,x_k + \beta\,g(x_k) \f$. This parameter applies to both
+plain Picard iteration (when the `anderson` subtree is omitted) and
+Anderson-accelerated Picard iteration.
+
+A damping factor other than 1.0 is rejected with a fatal error on a linear
+equation system: a single non-damped Picard step already yields the exact
+solution there, so the damped iterate would be accepted as converged but wrong.
+The same holds for the `anderson` subtree.
 
 Note on convergence checks: damping scales the increment by \f$ \beta \f$, i.e.
 \f$ x_{k+1} - x_k = \beta\,(g(x_k) - x_k) \f$. A delta-x convergence criterion
