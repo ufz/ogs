@@ -7,6 +7,14 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE Parabolic/T/PicardDamping/damped_039.xml
         RUNTIME 1
     )
+    OgsTest(
+        PROJECTFILE Parabolic/T/PicardDamping/anderson_acceleration.xml
+        RUNTIME 1
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/T/PicardDamping/anderson_acceleration_damped_039.xml
+        RUNTIME 1
+    )
     OgsTest(PROJECTFILE Parabolic/T/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 2)
     OgsTest(PROJECTFILE Parabolic/T/1D_freezing_column_Stefan/Stefan_problem_homogen.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/T/2D_freezing_disk/circle_disk.prj RUNTIME 2)
