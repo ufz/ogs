@@ -21,6 +21,43 @@ RelPermBrooksCorey::RelPermBrooksCorey(std::string name,
       exponent_(exponent)
 {
     name_ = std::move(name);
+
+    if (exponent_ <= 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCorey: exponent 'lambda' must be positive, but {} "
+            "was given.",
+            exponent_);
+    }
+    if (residual_liquid_saturation_ < 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCorey: residual_liquid_saturation must be "
+            "non-negative, but {} was given.",
+            residual_liquid_saturation_);
+    }
+    if (residual_gas_saturation_ < 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCorey: residual_gas_saturation must be non-negative, "
+            "but {} was given.",
+            residual_gas_saturation_);
+    }
+    if (residual_liquid_saturation_ + residual_gas_saturation_ >= 1.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCorey: residual_liquid_saturation ({}) + "
+            "residual_gas_saturation ({}) must be less than 1 so that the "
+            "effective saturation range is positive.",
+            residual_liquid_saturation_, residual_gas_saturation_);
+    }
+    if (min_relative_permeability_ < 0. || min_relative_permeability_ > 1.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCorey: min_relative_permeability must be in [0, 1], "
+            "but {} was given.",
+            min_relative_permeability_);
+    }
 };
 
 PropertyDataType RelPermBrooksCorey::value(
@@ -95,6 +132,15 @@ PropertyDataType RelPermBrooksCorey::dValue(
     // constant 1.0 (and saturation models clamping S_L at s_L_max put whole
     // regions exactly on this point), so the derivative there is zero.
     if ((s_eff < 0.) || (s_eff >= 1.))
+    {
+        return 0.;
+    }
+
+    // Consistency with value(): where the min_relative_permeability clamp is
+    // active (dry range), the relative permeability is constant and its
+    // derivative is zero.
+    auto const k_rel_LR = std::pow(s_eff, (2. + 3. * lambda) / lambda);
+    if (k_rel_LR <= min_relative_permeability_)
     {
         return 0.;
     }

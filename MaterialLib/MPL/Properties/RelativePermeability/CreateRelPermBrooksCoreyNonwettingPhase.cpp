@@ -33,11 +33,9 @@ createRelPermBrooksCoreyNonwettingPhase(BaseLib::ConfigTree const& config)
     auto const exponent =
         //! \ogs_file_param{properties__property__RelPermBrooksCoreyNonwettingPhase__lambda}
         config.getConfigParameter<double>("lambda");
-    if (exponent <= 0.)
-    {
-        OGS_FATAL("Exponent 'lambda' must be positive.");
-    }
 
+    // Parameter ranges are validated in the
+    // RelPermBrooksCoreyNonwettingPhase constructor.
     return std::make_unique<RelPermBrooksCoreyNonwettingPhase>(
         std::move(property_name),
         residual_liquid_saturation,

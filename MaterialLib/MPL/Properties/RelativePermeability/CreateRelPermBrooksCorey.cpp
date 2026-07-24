@@ -30,11 +30,8 @@ std::unique_ptr<RelPermBrooksCorey> createRelPermBrooksCorey(
     auto const exponent =
         //! \ogs_file_param{properties__property__RelPermBrooksCorey__lambda}
         config.getConfigParameter<double>("lambda");
-    if (exponent <= 0.)
-    {
-        OGS_FATAL("Exponent 'lambda' must be positive.");
-    }
 
+    // Parameter ranges are validated in the RelPermBrooksCorey constructor.
     return std::make_unique<RelPermBrooksCorey>(std::move(property_name),
                                                 residual_liquid_saturation,
                                                 residual_gas_saturation,

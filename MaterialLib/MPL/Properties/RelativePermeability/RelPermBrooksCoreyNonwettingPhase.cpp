@@ -22,6 +22,43 @@ RelPermBrooksCoreyNonwettingPhase::RelPermBrooksCoreyNonwettingPhase(
       exponent_(exponent)
 {
     name_ = std::move(name);
+
+    if (exponent_ <= 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: exponent 'lambda' must be "
+            "positive, but {} was given.",
+            exponent_);
+    }
+    if (residual_liquid_saturation_ < 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: residual_liquid_saturation "
+            "must be non-negative, but {} was given.",
+            residual_liquid_saturation_);
+    }
+    if (residual_gas_saturation_ < 0.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: residual_gas_saturation must "
+            "be non-negative, but {} was given.",
+            residual_gas_saturation_);
+    }
+    if (residual_liquid_saturation_ + residual_gas_saturation_ >= 1.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: residual_liquid_saturation "
+            "({}) + residual_gas_saturation ({}) must be less than 1 so that "
+            "the effective saturation range is positive.",
+            residual_liquid_saturation_, residual_gas_saturation_);
+    }
+    if (min_relative_permeability_ < 0. || min_relative_permeability_ > 1.)
+    {
+        OGS_FATAL(
+            "RelPermBrooksCoreyNonwettingPhase: min_relative_permeability must "
+            "be in [0, 1], but {} was given.",
+            min_relative_permeability_);
+    }
 };
 
 PropertyDataType RelPermBrooksCoreyNonwettingPhase::value(
@@ -102,9 +139,23 @@ PropertyDataType RelPermBrooksCoreyNonwettingPhase::dValue(
     }
 
     auto const twoL_L = (2. + lambda) / lambda;
+    auto const s_eff_pow_twoL_L = std::pow(s_eff, twoL_L);
+
+    // Consistency with value(): where the min_relative_permeability clamp is
+    // active, the relative permeability is constant and its derivative is
+    // zero. Returning the unclamped derivative there would feed the Jacobian
+    // a spurious sensitivity over the entire gas-phase invasion band near
+    // full saturation (amplified by up to a factor of
+    // k_rel/min_relative_permeability in terms scaling with dk_rel/k_rel).
+    auto const k_rel_GR = (1. - s_eff) * (1. - s_eff) * (1. - s_eff_pow_twoL_L);
+    if (k_rel_GR <= min_relative_permeability_)
+    {
+        return 0.0;
+    }
+
     auto const d_se_d_sL = 1. / (s_L_max - s_L_res);
     auto const dk_rel_GRdse =
-        -2. * (1 - s_eff) * (1. - std::pow(s_eff, twoL_L)) -
+        -2. * (1 - s_eff) * (1. - s_eff_pow_twoL_L) -
         twoL_L * std::pow(s_eff, twoL_L - 1.) * (1. - s_eff) * (1. - s_eff);
 
     return dk_rel_GRdse * d_se_d_sL;
