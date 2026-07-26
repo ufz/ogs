@@ -29,19 +29,146 @@ struct MPLFunction : public ::testing::Test
     static constexpr double t = 10.;
 };
 
+// ============================================================================
+// d2Value tests
+// ============================================================================
+
+// Scalar d2f/dT2: f(T) = T^2, dT = 2T, d2T = 2.
+TEST_F(MPLFunction, D2ValueScalarScalar)
+{
+    vars.temperature = 3.;
+
+    MPL::Property const& f =
+        MPL::Function{"test_function",
+                      {"temperature^2"},
+                      {{"temperature", {"2*temperature"}}},
+                      {{"temperature", "temperature", {"2"}}},
+                      {}};
+
+    ASSERT_EQ(9., f.value<double>(vars, pos, nan, nan));
+    ASSERT_EQ(
+        6., f.dValue<double>(vars, MPL::Variable::temperature, pos, nan, nan));
+    ASSERT_EQ(2., f.d2Value<double>(vars, MPL::Variable::temperature,
+                                    MPL::Variable::temperature, pos, nan, nan));
+}
+
+// Vector-valued (2-component) d2Value.
+// f = {T^2, T^3}, d2f/dT2 = {2, 6*T}.
+TEST_F(MPLFunction, D2ValueScalarVector)
+{
+    vars.temperature = 2.;
+
+    MPL::Property const& f =
+        MPL::Function{"test_function",
+                      {"temperature^2", "temperature^3"},
+                      {{"temperature", {"2*temperature", "3*temperature^2"}}},
+                      {{"temperature", "temperature", {"2", "6*temperature"}}},
+                      {}};
+
+    ASSERT_EQ((Eigen::Vector2d{4., 8.}),
+              (f.value<Eigen::Vector2d>(vars, pos, nan, nan)));
+    ASSERT_EQ((Eigen::Vector2d{4., 12.}),
+              f.dValue<Eigen::Vector2d>(vars, MPL::Variable::temperature, pos,
+                                        nan, nan));
+    ASSERT_EQ(
+        (Eigen::Vector2d{2., 12.}),
+        f.d2Value<Eigen::Vector2d>(vars, MPL::Variable::temperature,
+                                   MPL::Variable::temperature, pos, nan, nan));
+}
+
+// Symmetric retrieval: a {T, p} block answers both (T,p) and (p,T).
+// f = T*p, d2f/(dT dp) = 1.
+TEST_F(MPLFunction, D2ValueSymmetric)
+{
+    vars.temperature = 5.;
+    vars.liquid_phase_pressure = 3.;
+
+    MPL::Property const& f =
+        MPL::Function{"test_function",
+                      {"temperature * liquid_phase_pressure"},
+                      {{"temperature", {"liquid_phase_pressure"}},
+                       {"liquid_phase_pressure", {"temperature"}}},
+                      {{"temperature", "liquid_phase_pressure", {"1"}}},
+                      {}};
+
+    // Both orderings must find the same block and return 1.
+    ASSERT_EQ(1., f.d2Value<double>(vars, MPL::Variable::temperature,
+                                    MPL::Variable::liquid_phase_pressure, pos,
+                                    nan, nan));
+    ASSERT_EQ(1., f.d2Value<double>(vars, MPL::Variable::liquid_phase_pressure,
+                                    MPL::Variable::temperature, pos, nan, nan));
+}
+
+// Undeclared pair must OGS_FATAL (throw).
+TEST_F(MPLFunction, D2ValueUndeclaredPairFatal)
+{
+    vars.temperature = 1.;
+
+    MPL::Property const& f = MPL::Function{"test_function",
+                                           {"temperature"},
+                                           {{"temperature", {"1"}}},
+                                           {},  // no d2value blocks
+                                           {}};
+
+    ASSERT_ANY_THROW(f.d2Value<double>(vars, MPL::Variable::temperature,
+                                       MPL::Variable::temperature, pos, nan,
+                                       nan));
+}
+
+// Duplicate unordered pair in d2value must OGS_FATAL at construction.
+TEST_F(MPLFunction, D2ValueDuplicatePairFatal)
+{
+    ASSERT_ANY_THROW(
+        MPL::Function("test_function",
+                      {"temperature"},
+                      {{"temperature", {"1"}}},
+                      {
+                          {"temperature", "temperature", {"2"}},
+                          {"temperature", "temperature", {"2"}},  // duplicate!
+                      },
+                      {}));
+}
+
+// Swapped-order duplicate: {T, p} then {p, T} is the same unordered pair and
+// must OGS_FATAL at construction, exercising the order-independent dedup.
+TEST_F(MPLFunction, D2ValueSwappedDuplicatePairFatal)
+{
+    ASSERT_ANY_THROW(
+        MPL::Function("test_function",
+                      {"temperature * liquid_phase_pressure"},
+                      {{"temperature", {"liquid_phase_pressure"}},
+                       {"liquid_phase_pressure", {"temperature"}}},
+                      {
+                          {"temperature", "liquid_phase_pressure", {"1"}},
+                          {"liquid_phase_pressure", "temperature", {"1"}},
+                      },
+                      {}));
+}
+
+// d2value expression count must match the number of value components.
+TEST_F(MPLFunction, D2ValueComponentCountMismatchFatal)
+{
+    ASSERT_ANY_THROW(MPL::Function("test_function",
+                                   {"temperature"},  // one value component
+                                   {{"temperature", {"1"}}},
+                                   // two d2value expressions -> mismatch.
+                                   {{"temperature", "temperature", {"2", "0"}}},
+                                   {}));
+}
+
 TEST_F(MPLFunction, ScalarScalar)
 {
     vars.temperature = 2.;
 
     MPL::Property const& f = MPL::Function{
-        "test_function", {"temperature"}, {{"temperature", {"1"}}}, {}};
+        "test_function", {"temperature"}, {{"temperature", {"1"}}}, {}, {}};
 
     ASSERT_EQ(2., f.value<double>(vars, pos, nan, nan));
     ASSERT_EQ(
         1., f.dValue<double>(vars, MPL::Variable::temperature, pos, nan, nan));
 
     MPL::Property const& f_t =
-        MPL::Function{"function_t", {"t"}, {{"temperature", {"0"}}}, {}};
+        MPL::Function{"function_t", {"t"}, {{"temperature", {"0"}}}, {}, {}};
     ASSERT_EQ(10., f_t.value<double>(vars, pos, t, nan));
     ASSERT_EQ(
         0., f_t.dValue<double>(vars, MPL::Variable::temperature, pos, t, nan));
@@ -50,6 +177,7 @@ TEST_F(MPLFunction, ScalarScalar)
         MPL::Function{"function_temperature*t",
                       {"temperature * t"},
                       {{"temperature", {"t"}}},
+                      {},
                       {}};
     ASSERT_EQ(20., f_temperature_t.value<double>(vars, pos, t, nan));
     ASSERT_EQ(t,
@@ -57,7 +185,7 @@ TEST_F(MPLFunction, ScalarScalar)
                                              pos, t, nan));
 
     MPL::Property const& f_pos = MPL::Function{
-        "function_x+y+z", {"x+y+z"}, {{"temperature", {"0"}}}, {}};
+        "function_x+y+z", {"x+y+z"}, {{"temperature", {"0"}}}, {}, {}};
     ASSERT_EQ(coords[0] + coords[1] + coords[2],
               f_pos.value<double>(vars, pos, t, nan));
     ASSERT_EQ(
@@ -73,6 +201,7 @@ TEST_F(MPLFunction, ScalarScalar)
         MPL::Function{"function_curve",
                       {"linear_curve(temperature)"},
                       {{"temperature", {"linear_curve(t)"}}},
+                      {},
                       curves};
     ASSERT_EQ(0.5, f_curve.value<double>(vars, pos, t, nan));
     ASSERT_EQ(
@@ -88,6 +217,7 @@ TEST_F(MPLFunction, ScalarVector)
         MPL::Function{"test_function",
                       {"temperature", "temperature^2"},
                       {{"temperature", {"1", "2*temperature"}}},
+                      {},
                       {}};
     ASSERT_EQ((Eigen::Vector2d{2., 4.}),
               (f.value<Eigen::Vector2d>(vars, pos, t, nan)));
@@ -99,6 +229,7 @@ TEST_F(MPLFunction, ScalarVector)
         MPL::Function{"test_function",
                       {"temperature + t", "temperature^2-t"},
                       {{"temperature", {"1+t", "t^2*temperature"}}},
+                      {},
                       {}};
     ASSERT_EQ((Eigen::Vector2d{12., -6.}),
               (f_t.value<Eigen::Vector2d>(vars, pos, t, nan)));
@@ -110,6 +241,7 @@ TEST_F(MPLFunction, ScalarVector)
         MPL::Function{"test_function",
                       {"temperature + y", "temperature^2-z"},
                       {{"temperature", {"1+x+y-z", "y^2*temperature"}}},
+                      {},
                       {}};
     ASSERT_EQ((Eigen::Vector2d{22., -31.}),
               (f_pos.value<Eigen::Vector2d>(vars, pos, t, nan)));
@@ -127,6 +259,7 @@ TEST_F(MPLFunction, ScalarVector)
         "function_curve",
         {"linear_curve(temperature)", "linear_curve(temperature)^2"},
         {{"temperature", {"linear_curve(t)", "0"}}},
+        {},
         curves};
     ASSERT_EQ((Eigen::Vector2d{0.5, 0.25}),
               (f_curve.value<Eigen::Vector2d>(vars, pos, t, nan)));
@@ -143,7 +276,7 @@ TEST_F(MPLFunction, ScalarVector)
 TEST_F(MPLFunction, ScalarMatrix2x2)
 {
     MPL::Property const& f =
-        MPL::Function{"test_function", {"1", "2", "3", "4"}, {}, {}};
+        MPL::Function{"test_function", {"1", "2", "3", "4"}, {}, {}, {}};
 
     Eigen::Matrix2d const expected =
         (Eigen::Matrix2d() << 1, 2, 3, 4).finished();
@@ -154,8 +287,12 @@ TEST_F(MPLFunction, ScalarMatrix2x2)
 // Eigen::Matrix3d. Column-major regression would give m(0,1) == 4 instead of 2.
 TEST_F(MPLFunction, ScalarMatrix3x3)
 {
-    MPL::Property const& f = MPL::Function{
-        "test_function", {"1", "2", "3", "4", "5", "6", "7", "8", "9"}, {}, {}};
+    MPL::Property const& f =
+        MPL::Function{"test_function",
+                      {"1", "2", "3", "4", "5", "6", "7", "8", "9"},
+                      {},
+                      {},
+                      {}};
 
     Eigen::Matrix3d const expected =
         (Eigen::Matrix3d() << 1, 2, 3, 4, 5, 6, 7, 8, 9).finished();
@@ -167,17 +304,17 @@ TEST_F(MPLFunction, KelvinVector2Scalar)
     vars.stress.emplace<KV2>(1, 2, 3, 4 * std::sqrt(2.));
     vars.temperature = 273.15;
 
-    MPL::Property const& f =
-        MPL::Function{"test_function", {"avg(stress) * temperature"}, {}, {}};
+    MPL::Property const& f = MPL::Function{
+        "test_function", {"avg(stress) * temperature"}, {}, {}, {}};
     ASSERT_EQ(((1 + 4) * 0.5) * 273.15, f.value<double>(vars, pos, t, nan));
 
     MPL::Property const& f_t = MPL::Function{
-        "test_function", {"avg(stress) * temperature + t"}, {}, {}};
+        "test_function", {"avg(stress) * temperature + t"}, {}, {}, {}};
     ASSERT_EQ(((1 + 4) * 0.5) * 273.15 + 10,
               f_t.value<double>(vars, pos, t, nan));
 
     MPL::Property const& f_pos = MPL::Function{
-        "test_function", {"avg(stress) * temperature + x + y + z"}, {}, {}};
+        "test_function", {"avg(stress) * temperature + x + y + z"}, {}, {}, {}};
     ASSERT_EQ(((1 + 4) * 0.5) * 273.15 + coords[0] + coords[1] + coords[2],
               f_pos.value<double>(vars, pos, t, nan));
 
@@ -189,7 +326,7 @@ TEST_F(MPLFunction, KelvinVector2Scalar)
             std::vector<double>{0, 5}, std::vector<double>{10, 0}, true);
 
     MPL::Property const& f_curve = MPL::Function{
-        "test_function", {"linear_curve(avg(stress))"}, {}, curves};
+        "test_function", {"linear_curve(avg(stress))"}, {}, {}, curves};
     ASSERT_EQ(5, f_curve.value<double>(vars, pos, t, nan));
 }
 
@@ -199,17 +336,17 @@ TEST_F(MPLFunction, KelvinVector3Scalar)
                              6 * std::sqrt(2.));
     vars.temperature = 273.15;
 
-    MPL::Property const& f =
-        MPL::Function{"test_function", {"avg(stress) * temperature"}, {}, {}};
+    MPL::Property const& f = MPL::Function{
+        "test_function", {"avg(stress) * temperature"}, {}, {}, {}};
     ASSERT_EQ(((1 + 6) * 0.5) * 273.15, f.value<double>(vars, pos, t, nan));
 
     MPL::Property const& f_t = MPL::Function{
-        "test_function", {"avg(stress) * temperature + t"}, {}, {}};
+        "test_function", {"avg(stress) * temperature + t"}, {}, {}, {}};
     ASSERT_EQ(((1 + 6) * 0.5) * 273.15 + 10,
               f_t.value<double>(vars, pos, t, nan));
 
     MPL::Property const& f_pos = MPL::Function{
-        "test_function", {"avg(stress) * temperature + x + y + z"}, {}, {}};
+        "test_function", {"avg(stress) * temperature + x + y + z"}, {}, {}, {}};
     ASSERT_EQ(((1 + 6) * 0.5) * 273.15 + coords[0] + coords[1] + coords[2],
               f_pos.value<double>(vars, pos, t, nan));
 
@@ -221,7 +358,7 @@ TEST_F(MPLFunction, KelvinVector3Scalar)
             std::vector<double>{0, 100}, std::vector<double>{0, 10}, true);
 
     MPL::Property const& f_curve = MPL::Function{
-        "test_function", {"linear_curve(avg(stress) + x)"}, {}, curves};
+        "test_function", {"linear_curve(avg(stress) + x)"}, {}, {}, curves};
     ASSERT_EQ(1.35, f_curve.value<double>(vars, pos, t, nan));
 }
 
@@ -232,16 +369,17 @@ TEST_F(MPLFunction, KelvinVector23Scalar)
     vars.total_strain.emplace<KV2>(1, 2, 3, 4);
 
     MPL::Property const& f = MPL::Function{
-        "test_function", {"avg(stress) * avg(total_strain)"}, {}, {}};
+        "test_function", {"avg(stress) * avg(total_strain)"}, {}, {}, {}};
     ASSERT_ANY_THROW(f.value<double>(vars, pos, t, nan));
 
     MPL::Property const& f_t = MPL::Function{
-        "test_function", {"avg(stress) * avg(total_strain) - t"}, {}, {}};
+        "test_function", {"avg(stress) * avg(total_strain) - t"}, {}, {}, {}};
     ASSERT_ANY_THROW(f_t.value<double>(vars, pos, t, nan));
 
     MPL::Property const& f_pos =
         MPL::Function{"test_function",
                       {"avg(stress) * avg(total_strain) + x + y + z"},
+                      {},
                       {},
                       {}};
     ASSERT_ANY_THROW(f_pos.value<double>(vars, pos, t, nan));
@@ -256,6 +394,7 @@ TEST_F(MPLFunction, KelvinVector23Scalar)
         MPL::Function{"test_function",
                       {"avg(stress) * avg(total_strain) + linear_curve(x)"},
                       {},
+                      {},
                       curves};
     ASSERT_ANY_THROW(f_curve.value<double>(vars, pos, t, nan));
 }
@@ -265,13 +404,18 @@ TEST_F(MPLFunction, VectorizedTensor2Scalar)
     vars.deformation_gradient.emplace<VT2>(1, 2, 3, 4, 5);
     vars.temperature = 273.15;
 
-    MPL::Property const& f = MPL::Function{
-        "test_function", {"avg(deformation_gradient) * temperature"}, {}, {}};
+    MPL::Property const& f =
+        MPL::Function{"test_function",
+                      {"avg(deformation_gradient) * temperature"},
+                      {},
+                      {},
+                      {}};
     ASSERT_EQ(((1 + 5) * 0.5) * 273.15, f.value<double>(vars, pos, t, nan));
 
     MPL::Property const& f_t =
         MPL::Function{"test_function",
                       {"t * avg(deformation_gradient) * temperature"},
+                      {},
                       {},
                       {}};
     ASSERT_EQ(10 * ((1 + 5) * 0.5) * 273.15,
@@ -280,6 +424,7 @@ TEST_F(MPLFunction, VectorizedTensor2Scalar)
     MPL::Property const& f_pos =
         MPL::Function{"test_function",
                       {"avg(deformation_gradient) * temperature + x+ y + z"},
+                      {},
                       {},
                       {}};
     ASSERT_EQ(((1 + 5) * 0.5) * 273.15 + coords[0] + coords[1] + coords[2],
@@ -295,6 +440,7 @@ TEST_F(MPLFunction, VectorizedTensor2Scalar)
         MPL::Function{"test_function",
                       {"avg(deformation_gradient) * linear_curve(y)"},
                       {},
+                      {},
                       curves};
     ASSERT_EQ(6, f_curve.value<double>(vars, pos, t, nan));
 }
@@ -304,13 +450,18 @@ TEST_F(MPLFunction, VectorizedTensor3Scalar)
     vars.deformation_gradient.emplace<VT3>(1, 2, 3, 4, 5, 6, 7, 8, 9);
     vars.temperature = 273.15;
 
-    MPL::Property const& f = MPL::Function{
-        "test_function", {"avg(deformation_gradient) * temperature"}, {}, {}};
+    MPL::Property const& f =
+        MPL::Function{"test_function",
+                      {"avg(deformation_gradient) * temperature"},
+                      {},
+                      {},
+                      {}};
     ASSERT_EQ(((1 + 9) * 0.5) * 273.15, f.value<double>(vars, pos, nan, nan));
 
     MPL::Property const& f_pos =
         MPL::Function{"test_function",
                       {"avg(deformation_gradient) * temperature/x + y + z"},
+                      {},
                       {},
                       {}};
     ASSERT_EQ(((1 + 9) * 0.5) * 273.15 / coords[0] + coords[1] + coords[2],
@@ -326,6 +477,7 @@ TEST_F(MPLFunction, VectorizedTensor3Scalar)
         "test_function",
         {"avg(deformation_gradient) * linear_curve(temperature/x)"},
         {},
+        {},
         curves};
     ASSERT_EQ(13.6575, f_curve.value<double>(vars, pos, nan, nan));
 }
@@ -335,7 +487,7 @@ TEST_F(MPLFunction, ScalarUninitialized)
     // The vars.temperature = is not initialized.
 
     MPL::Property const& f = MPL::Function{
-        "test_function", {"temperature"}, {{"temperature", {"1"}}}, {}};
+        "test_function", {"temperature"}, {{"temperature", {"1"}}}, {}, {}};
     ASSERT_ANY_THROW(f.value<double>(vars, {}, nan, nan));
     ASSERT_ANY_THROW(
         f.dValue<double>(vars, MPL::Variable::temperature, {}, nan, nan));
@@ -346,8 +498,8 @@ TEST_F(MPLFunction, KelvinVector2Uninitialized)
     vars.temperature = 273.15;
     // The vars.stress is not initialized.
 
-    MPL::Property const& f =
-        MPL::Function{"test_function", {"avg(stress) * temperature"}, {}, {}};
+    MPL::Property const& f = MPL::Function{
+        "test_function", {"avg(stress) * temperature"}, {}, {}, {}};
     ASSERT_ANY_THROW(f.value<double>(vars, {}, nan, nan));
 }
 
@@ -356,8 +508,12 @@ TEST_F(MPLFunction, VectorizedTensor2Uninitialized)
     vars.temperature = 273.15;
     // The vars.deformation_gradient is not initialized.
 
-    MPL::Property const& f = MPL::Function{
-        "test_function", {"avg(deformation_gradient) * temperature"}, {}, {}};
+    MPL::Property const& f =
+        MPL::Function{"test_function",
+                      {"avg(deformation_gradient) * temperature"},
+                      {},
+                      {},
+                      {}};
     ASSERT_ANY_THROW(f.value<double>(vars, {}, nan, nan));
 }
 
@@ -366,8 +522,8 @@ TEST_F(MPLFunction, KelvinVector3Uninitialized)
     vars.temperature = 273.15;
     // The vars.stress is not initialized.
 
-    MPL::Property const& f =
-        MPL::Function{"test_function", {"avg(stress) * temperature"}, {}, {}};
+    MPL::Property const& f = MPL::Function{
+        "test_function", {"avg(stress) * temperature"}, {}, {}, {}};
     ASSERT_ANY_THROW(f.value<double>(vars, {}, nan, nan));
 }
 
@@ -376,8 +532,12 @@ TEST_F(MPLFunction, VectorizedTensor3Uninitialized)
     vars.temperature = 273.15;
     // The vars.deformation_gradient is not initialized.
 
-    MPL::Property const& f = MPL::Function{
-        "test_function", {"avg(deformation_gradient) * temperature"}, {}, {}};
+    MPL::Property const& f =
+        MPL::Function{"test_function",
+                      {"avg(deformation_gradient) * temperature"},
+                      {},
+                      {},
+                      {}};
     ASSERT_ANY_THROW(f.value<double>(vars, {}, nan, nan));
 }
 
@@ -519,6 +679,7 @@ TEST_P(MPLFunctionOpenMPTest, DeterministicSameInputEvaluation)
         MPL::Property const& f = MPL::Function{"test",
                                                {"temperature + t + x + y + z"},
                                                {{"temperature", {"1"}}},
+                                               {},
                                                {}};
 
         MPL::VariableArray vars;
@@ -597,10 +758,16 @@ TEST_P(MPLFunctionOpenMPTest, SequentialParallelEquivalence)
             });
         }
 
-        MPL::Property const& f_seq = MPL::Function{
-            "test", {"temperature * t + x * y"}, {{"temperature", {"t"}}}, {}};
-        MPL::Property const& f_par = MPL::Function{
-            "test", {"temperature * t + x * y"}, {{"temperature", {"t"}}}, {}};
+        MPL::Property const& f_seq = MPL::Function{"test",
+                                                   {"temperature * t + x * y"},
+                                                   {{"temperature", {"t"}}},
+                                                   {},
+                                                   {}};
+        MPL::Property const& f_par = MPL::Function{"test",
+                                                   {"temperature * t + x * y"},
+                                                   {{"temperature", {"t"}}},
+                                                   {},
+                                                   {}};
 
         std::vector<std::pair<double, double>> seq_results;
         seq_results.reserve(inputs.size());
@@ -652,6 +819,7 @@ TEST_P(MPLFunctionOpenMPTest, IndependentThreadIsolationWithCurves)
         MPL::Property const& f = MPL::Function{"test",
                                                {"linear(t) + temperature + x"},
                                                {{"temperature", {"linear(t)"}}},
+                                               {},
                                                curves};
 
         std::vector<double> value_results(inputs.size());
