@@ -199,4 +199,4 @@ auto computeNsAndWeights(MeshLib::Element const& element,
     return nss_and_weights;
 }
 
-}  // namespace ProcessLib::Python
+}  // namespace ProcessLib::BoundaryConditionAndSourceTerm::Python

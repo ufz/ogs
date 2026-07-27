@@ -50,7 +50,7 @@ struct HeatTransportBHEProcessData final
     std::vector<BHE::BHETypes> _vec_BHE_property;
 
     MeshLib::PropertyVector<int> const* _mesh_prop_materialIDs = nullptr;
-    std::unordered_map<int, int> _map_materialID_to_BHE_ID{};
+    std::unordered_map<int, int> _map_materialID_to_BHE_ID;
 
     //! Python object computing BC values.
     BHEInflowPythonBoundaryConditionPythonSideInterface* py_bc_object;
