@@ -20,7 +20,7 @@
       <div class="flex-1 rounded-lg border border-gray-200 border-t-4 bg-white p-5"
         style="border-top-color: {{ index (slice "#104EB2" "#0E7C88" "#0D6A8F" "#0F8B93") $i }};">
         <div class="font-mono text-xs font-semibold tracking-wide text-teal-700">{{ $step.number }}</div>
-        <div class="mt-2 text-base font-semibold text-gray-900">{{ $step.headline }}</div>
+        <h3 class="mt-2 text-base font-semibold text-gray-900">{{ $step.headline }}</h3>
         <p class="mt-2 text-sm leading-relaxed text-gray-600">{{ $step.textline }}</p>
       </div>
       {{ end }}
