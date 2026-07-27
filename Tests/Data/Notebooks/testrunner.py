@@ -119,7 +119,7 @@ def check_and_modify_frontmatter():
     branch = "master"
     binder_tag = "6.5.8-0.8.1"
     petsc_prefix = ""
-    if petsc_enabled:
+    if petsc_enabled():
         petsc_prefix = "petsc-"
     if "CI_MERGE_REQUEST_SOURCE_PROJECT_URL" in os.environ:
         repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
