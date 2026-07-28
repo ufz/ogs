@@ -20,7 +20,7 @@ macro(BuildExternalProject_find_package target required)
     unset(_CMAKE_PREFIX_PATH)
 endmacro()
 
-macro(BuildExternalProject_set_build_dir target argn_string)
+function(BuildExternalProject_set_build_dir target argn_string)
 
     set(build_dir ${PROJECT_BINARY_DIR}/_ext/${target})
 
@@ -34,6 +34,7 @@ macro(BuildExternalProject_set_build_dir target argn_string)
             else()
                 set(_compiler_args "${CMAKE_CXX_COMPILER_ID}${CMAKE_CXX_COMPILER_VERSION}")
             endif()
+            string(REPLACE "${PROJECT_SOURCE_DIR}" "" argn_string "${argn_string}")
             string(
                 SHA256
                     _hash
@@ -47,7 +48,7 @@ macro(BuildExternalProject_set_build_dir target argn_string)
 
     message(STATUS "Building ${target} in ${build_dir_${target}}")
 
-endmacro()
+endfunction()
 
 function(BuildExternalProject target)
 
