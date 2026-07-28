@@ -786,7 +786,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         local_x.template segment<displacement_size>(displacement_index);
 
     auto const& identity2 = Invariants::identity2;
-    const double dt = 0.0;
+    constexpr double dt = std::numeric_limits<double>::quiet_NaN();
 
     MPL::VariableArray vars;
 

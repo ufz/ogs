@@ -139,7 +139,10 @@ void ThermoRichardsMechanicsLocalAssembler<
             variables.liquid_saturation = S_L;
         }
 
-        constitutive_setting.init(models, t, dt, x_position, media_data,
+        // dt = 0 at initialization: there is no time step yet, which yields
+        // the elastic tangent. The function-wide dt is NaN to keep
+        // initialization and integration strictly separated.
+        constitutive_setting.init(models, t, 0.0 /*dt*/, x_position, media_data,
                                   {T_ip, 0, {}}, this->current_states_[ip],
                                   this->prev_states_[ip]);
 
