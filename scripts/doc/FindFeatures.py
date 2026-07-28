@@ -244,6 +244,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
                 "global_process_coupling",
                 "secondary_variable",
                 "coupling_scheme",
+                "subtype",
             ]
         },
         # Add coupling scheme types for processes. Checks whether there is a coupling
