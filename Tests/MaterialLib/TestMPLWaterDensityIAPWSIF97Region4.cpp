@@ -29,8 +29,8 @@ TEST(Material, checkWaterLiquidDensityIAPWSIF97Region4)
 
     double const p[] = {611.213, 1.e6, 10.e6, 22.064e6};
 
-    double const expected_rho[] = {999.84000051382395, 887.16909718765328,
-                                   688.44365003037342, 445.22706336770574};
+    double const expected_rho[] = {999.7930660007243, 887.1274516747791,
+                                   688.4113330921692, 445.206163508301};
 
     for (int i = 0; i < 4; i++)
     {
@@ -61,8 +61,8 @@ TEST(Material, checkWaterVapourDensityIAPWSIF97Region4)
 
     double const p[] = {611.213, 1.e6, 10.e6, 22.064e6};
 
-    double const expected_rho[] = {0.0048513089254716563, 5.1456273993465231,
-                                   55.454724500162683, 224.58486103712534};
+    double const expected_rho[] = {0.004851081195212619, 5.14538585318268,
+                                   55.45212134316541, 224.57431856923355};
 
     for (int i = 0; i < 4; i++)
     {

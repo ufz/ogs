@@ -23,8 +23,8 @@ PropertyDataType WaterDensityIAPWSIF97Region1::value(
     const double pi = p / ref_p_;
 
     return ref_p_ /
-           (MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour *
-            T * gibbs_free_energy_.get_dgamma_dpi(tau, pi));
+           (MaterialLib::PhysicalConstant::SpecificGasConstant::WaterIF97 * T *
+            gibbs_free_energy_.get_dgamma_dpi(tau, pi));
 }
 
 PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
@@ -48,7 +48,7 @@ PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
                          gibbs_free_energy_.get_dgamma_dtau_dpi(tau, pi) /
                          dgamma_dpi) /
                    (MaterialLib::PhysicalConstant::SpecificGasConstant::
-                        WaterVapour *
+                        WaterIF97 *
                     T * T * dgamma_dpi);
         case Variable::liquid_phase_pressure:
             // Consistency with value(): below the pressure clamp p = max(0,
@@ -63,7 +63,7 @@ PropertyDataType WaterDensityIAPWSIF97Region1::dValue(
             }
             return -gibbs_free_energy_.get_dgamma_dpi_dpi(tau, pi) /
                    (MaterialLib::PhysicalConstant::SpecificGasConstant::
-                        WaterVapour *
+                        WaterIF97 *
                     T * dgamma_dpi * dgamma_dpi);
         case Variable::concentration:
             return 0.0;

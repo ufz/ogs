@@ -99,6 +99,23 @@ namespace SpecificGasConstant
 /// Specific gas constant for water vapour.
 constexpr double WaterVapour =
     IdealGasConstant / MolarMass::Water;  // = 461.504;
+
+/**
+ * Specific gas constant of ordinary water as *defined* for IAPWS-IF97.
+ *
+ * This is not a measured physical constant and must not be replaced by
+ * \c WaterVapour or updated to newer CODATA values: the regression
+ * coefficients of IF97 were fitted with this value held fixed, so it is a
+ * defined parameter of the formulation in the same sense as its reducing
+ * quantities \f$p^*\f$ and \f$T^*\f$. Using any other value makes the IF97
+ * equations disagree with their own published verification tables.
+ *
+ * - Source: IAPWS R7-97(2012), "Revised Release on the IAPWS Industrial
+ *   Formulation 1997 for the Thermodynamic Properties of Water and Steam",
+ *   Sec. 3 "Reference Constants", Eq. (1).
+ *   http://www.iapws.org/relguide/IF97-Rev.pdf
+ */
+constexpr double WaterIF97 = 461.526;  ///< J \per{kg} \per{K}
 }  // namespace SpecificGasConstant
 /**
  * Henry's law constant

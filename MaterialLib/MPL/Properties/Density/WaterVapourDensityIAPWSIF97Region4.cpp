@@ -45,8 +45,7 @@ PropertyDataType WaterVapourDensityIAPWSIF97Region4::value(
             tau, pi);
 
     return p /
-           (pi *
-            MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour *
+           (pi * MaterialLib::PhysicalConstant::SpecificGasConstant::WaterIF97 *
             T_s * dgamma_dtau);
 }
 

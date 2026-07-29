@@ -42,8 +42,7 @@ PropertyDataType WaterLiquidEnthalpyIAPWSIF97Region4::value(
     double const tau = ref_T_ / T_s;
     double const pi = p / ref_p_;
 
-    return tau *
-           MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour *
+    return tau * MaterialLib::PhysicalConstant::SpecificGasConstant::WaterIF97 *
            T_s * gibbs_free_energy_.get_dgamma_dtau(tau, pi);
 }
 
