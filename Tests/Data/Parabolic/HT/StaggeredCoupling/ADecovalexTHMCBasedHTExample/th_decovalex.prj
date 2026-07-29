@@ -226,13 +226,13 @@
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltol>1.e-14</reltol>
+                    <reltol>1.e-10</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the second process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <reltol>1.e-14</reltol>
+                    <reltol>1.e-10</reltol>
                 </convergence_criterion>
             </convergence_criteria>
         </global_process_coupling>

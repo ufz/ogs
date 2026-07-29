@@ -21,8 +21,8 @@ NumLib::NonlinearSolverStatus StaggeredCoupling::execute(
     std::vector<Output> const& outputs,
     ProcessSolver<ProcessData, Output> const& solve_one_time_step_one_process)
 {
-    auto const [nonlinear_solver_status, coupling_iteration_converged,
-                number_of_coupling_iterations] =
+    auto [nonlinear_solver_status, coupling_iteration_converged,
+          number_of_coupling_iterations] =
         executeConcrete(coupling_nodes_, global_coupling_max_iterations_, t, dt,
                         timestep_id, process_solutions, process_solutions_prev,
                         per_process_data, outputs,
@@ -30,12 +30,26 @@ NumLib::NonlinearSolverStatus StaggeredCoupling::execute(
 
     number_of_global_coupling_iterations_ = number_of_coupling_iterations;
 
-    if (!coupling_iteration_converged)
+    // A failed per-process nonlinear solver is already reported as such and
+    // leaves the coupling loop early with unmet error norms. Reaching the
+    // iteration limit with all processes converged individually is the
+    // remaining failure mode: the coupling residuum is not converged, hence
+    // the solution must not be accepted.
+    if (!coupling_iteration_converged &&
+        nonlinear_solver_status.error_norms_met)
     {
         WARN(
-            "The coupling iterations reaches its maximum number in time step "
-            "#{:d} at t = {:g}",
-            timestep_id, t);
+            "The coupling iterations reached their maximum number {:d} in time "
+            "step #{:d} at t = {:g} s. The time step will be rejected.",
+            global_coupling_max_iterations_, timestep_id, t);
+
+        nonlinear_solver_status.error_norms_met = false;
+        // The time loop decides on the acceptance of the time step by means of
+        // the per-process nonlinear solver states.
+        for (auto const& process_data : per_process_data)
+        {
+            process_data->nonlinear_solver_status.error_norms_met = false;
+        }
     }
 
     return nonlinear_solver_status;
