@@ -338,8 +338,11 @@ void RichardsMechanicsLocalAssembler<ShapeFunctionDisplacement,
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps);
 
+        // dt = 0 at initialization: there is no time step yet, which yields
+        // the elastic tangent. The function-wide dt is NaN to keep
+        // initialization and integration strictly separated.
         auto const C_el = ip_data_[ip].computeElasticTangentStiffness(
-            variables, t, x_position, dt, this->solid_material_,
+            variables, t, x_position, 0.0 /*dt*/, this->solid_material_,
             *this->material_states_[ip].material_state_variables);
 
         auto const& sigma_sw =

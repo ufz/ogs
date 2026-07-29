@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <limits>
 #include <typeinfo>
 
 #include "MaterialLib/MPL/Medium.h"
@@ -182,7 +183,7 @@ void ThermoHydroMechanicsLocalAssembler<
     // the primary variables from all coupled processes.
     auto const [T, p, u] = localDOF(local_x);
 
-    double const dt = 0.0;
+    constexpr double dt = std::numeric_limits<double>::quiet_NaN();
 
     MPL::VariableArray vars;
     auto const& medium = _process_data.media_map.getMedium(_element.getID());

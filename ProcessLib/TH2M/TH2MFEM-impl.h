@@ -861,7 +861,6 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
     auto const displacement =
         local_x.template segment<displacement_size>(displacement_index);
 
-    constexpr double dt = std::numeric_limits<double>::quiet_NaN();
     auto const& medium =
         *this->process_data_.media_map.getMedium(this->element_.getID());
     auto const& solid_phase =
@@ -925,8 +924,12 @@ void TH2MLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         // with eps_m initialization.
         ConstitutiveRelations::ElasticTangentStiffnessData<DisplacementDim>
             C_el_data;
-        models.elastic_tangent_stiffness_model.eval({pos, t, dt}, T_data,
-                                                    C_el_data);
+        // dt = 0 at initialization: there is no time step yet, which yields
+        // the elastic tangent. Other property evaluations at initialization
+        // pass NaN for dt to keep initialization and integration strictly
+        // separated.
+        models.elastic_tangent_stiffness_model.eval({pos, t, 0.0 /*dt*/},
+                                                    T_data, C_el_data);
         auto const& C_el = C_el_data.stiffness_tensor;
 
         // Set eps_m_prev from potentially non-zero eps and sigma_sw from
