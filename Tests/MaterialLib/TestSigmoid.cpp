@@ -31,34 +31,33 @@ MaterialPropertyLib::Sigmoid makeSigmoid(double const lower_bound,
                                         MPL::Variable::temperature);
 }
 
-double valueAt(MaterialPropertyLib::Sigmoid const& s, double const X)
+double valueAt(MPL::Property const& s, double const X)
 {
     ParameterLib::SpatialPosition const pos;
     double const nan = std::numeric_limits<double>::quiet_NaN();
     MPL::VariableArray vars;
     vars.temperature = X;
-    return s.Property::template value<double>(vars, pos, nan, nan);
+    return s.value<double>(vars, pos, nan, nan);
 }
 
-double dValueAt(MaterialPropertyLib::Sigmoid const& s, double const X,
+double dValueAt(MPL::Property const& s, double const X,
                 MPL::Variable const variable)
 {
     ParameterLib::SpatialPosition const pos;
     double const nan = std::numeric_limits<double>::quiet_NaN();
     MPL::VariableArray vars;
     vars.temperature = X;
-    return s.Property::template dValue<double>(vars, variable, pos, nan, nan);
+    return s.dValue<double>(vars, variable, pos, nan, nan);
 }
 
-double d2ValueAt(MaterialPropertyLib::Sigmoid const& s, double const X)
+double d2ValueAt(MPL::Property const& s, double const X)
 {
     ParameterLib::SpatialPosition const pos;
     double const nan = std::numeric_limits<double>::quiet_NaN();
     MPL::VariableArray vars;
     vars.temperature = X;
-    return s.Property::template d2Value<double>(
-        vars, MPL::Variable::temperature, MPL::Variable::temperature, pos, nan,
-        nan);
+    return s.d2Value<double>(vars, MPL::Variable::temperature,
+                             MPL::Variable::temperature, pos, nan, nan);
 }
 }  // namespace
 
