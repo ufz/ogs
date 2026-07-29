@@ -30,8 +30,13 @@ TEST(Material, checkWaterEnthalpyIAPWSIF97Region1)
     std::array const pressures = {0., 3.e6, 80.e6, 3.e6};
     std::array const temperatures = {273.15, 300., 300., 500.};
 
-    double const expected_h[] = {-0.042208551, 0.115325859e3, 0.184134183e3,
-                                 0.975496445e3};
+    // Values for the last three (p, T) pairs are the verification values of
+    // IAPWS R7-97(2012), Table 5 -- the release recommends verifying
+    // programmed functions against exactly these three combinations.
+    // http://www.iapws.org/relguide/IF97-Rev.pdf
+    // The first pair is not covered by Table 5.
+    double const expected_h[] = {-0.04221053244781875, 0.115331273e3,
+                                 0.184142828e3, 0.975542239e3};
 
     for (std::size_t i = 0; i < pressures.size(); i++)
     {

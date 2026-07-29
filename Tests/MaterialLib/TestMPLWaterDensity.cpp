@@ -31,7 +31,7 @@ TEST(Material, checkWaterDensityIAPWSIF97Region1_)
     variable_array.temperature = T;
     variable_array.liquid_phase_pressure = p;
 
-    const double rho_expected = 890.98496087498256;
+    const double rho_expected = 890.9431362377443;
 
     ASSERT_NEAR(rho_expected,
                 property.template value<double>(variable_array, pos, t, dt),

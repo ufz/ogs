@@ -44,7 +44,7 @@ PropertyDataType WaterLiquidDensityIAPWSIF97Region4::value(
     double const pi = p / ref_p_;
 
     return ref_p_ /
-           (MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour *
+           (MaterialLib::PhysicalConstant::SpecificGasConstant::WaterIF97 *
             T_s * gibbs_free_energy_.get_dgamma_dpi(tau, pi));
 }
 

@@ -29,9 +29,8 @@ PropertyDataType WaterEnthalpyIAPWSIF97Region1::value(
     double const tau = ref_T_ / T;
     double const pi = p / ref_p_;
 
-    return tau *
-           MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour * T *
-           gibbs_free_energy_.get_dgamma_dtau(tau, pi);
+    return tau * MaterialLib::PhysicalConstant::SpecificGasConstant::WaterIF97 *
+           T * gibbs_free_energy_.get_dgamma_dtau(tau, pi);
 }
 
 PropertyDataType WaterEnthalpyIAPWSIF97Region1::dValue(
@@ -48,7 +47,7 @@ PropertyDataType WaterEnthalpyIAPWSIF97Region1::dValue(
     if (variable == Variable::temperature)
     {
         return -tau * tau * gibbs_free_energy_.get_dgamma_dtau_dtau(tau, pi) *
-               MaterialLib::PhysicalConstant::SpecificGasConstant::WaterVapour;
+               MaterialLib::PhysicalConstant::SpecificGasConstant::WaterIF97;
     }
 
     OGS_FATAL(

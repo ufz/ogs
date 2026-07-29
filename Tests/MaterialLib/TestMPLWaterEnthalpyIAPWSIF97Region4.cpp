@@ -29,8 +29,8 @@ TEST(Material, checkWaterLiquidEnthalpyIAPWSIF97Region4)
     double const dt = std::numeric_limits<double>::quiet_NaN();
     double const p[] = {611.213, 1.e6, 10.e6, 22.064e6};
 
-    double const expected_h[] = {-41.555230442141529, 762647.04245918128,
-                                 1407801.4124185159, 1923760.6606565041};
+    double const expected_h[] = {-41.55718122033141, 762682.8443354114,
+                                 1407867.500568234, 1923850.9701145296};
 
     for (int i = 0; i < 4; i++)
     {
@@ -61,8 +61,8 @@ TEST(Material, checkWaterVapourEnthalpyIAPWSIF97Region4)
     double const dt = std::numeric_limits<double>::quiet_NaN();
     double const p[] = {611.213, 1.e6, 10.e6, 22.064e6};
 
-    double const expected_h[] = {2500.775234200720, 2776.989174073231,
-                                 2725.344627240651, 2303.146272347803};
+    double const expected_h[] = {2500.8926311621317, 2777.1195376846626,
+                                 2725.4725664387292, 2303.2543917702774};
 
     for (int i = 0; i < 4; i++)
     {
