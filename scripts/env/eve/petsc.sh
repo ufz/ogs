@@ -6,9 +6,9 @@ fi
 
 source $DIR/mpi.sh
 
-# TODO build these for foss/2024a or remove it:
+# TODO build these for current toolchain or remove it:
 #module load vtk/9.2.5_mpi_foss2020b
-module load petsc-bilke/3.22.5_foss2024a
+#module load petsc-bilke/3.22.5_foss2024a
 #module load hdf5/1.14.2_mpi_foss_2022b
 
 #export HDF5_ROOT=/global/apps/hdf5/1.14.2_mpi
