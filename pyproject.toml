@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.11"]
+requires = ["scikit-build-core>=1.0"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -39,17 +39,24 @@ explicit = true
 [tool.scikit-build]
 build-dir = "../build/_skbuild/{wheel_tag}"
 cmake.args = ["--preset", "wheel"]
-experimental = true
-metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
 minimum-version = "build-system.requires"
 ninja.make-fallback = false
 wheel.packages = ["Applications/Python/ogs"]
 sdist.exclude = ["Tests/Data", "web"]
 sdist.include = ["web/data/versions.json"]
 
-[tool.scikit-build.metadata.scripts]
-provider = "scripts"
-provider-path = "scripts/python/scikit-build-plugins"
+# Needs to be set to the version for which libomp (installed by homebrew) was build.
+# Both env variable configurations required (one for build, one for delocate phase).
+[tool.scikit-build.env]
+MACOSX_DEPLOYMENT_TARGET = { env = "MACOSX_DEPLOYMENT_TARGET", default = "26.0" }
+[tool.cibuildwheel.macos]
+environment = { MACOSX_DEPLOYMENT_TARGET="26.0" }
+
+[[tool.dynamic-metadata]]
+provider = "scikit_build_core.metadata.setuptools_scm"
+
+[[tool.dynamic-metadata]]
+provider = { path = "scripts/python/scikit-build-plugins", module = "scripts" }
 
 [tool.setuptools_scm]
 write_to = "Applications/Python/_version.py"
@@ -113,11 +120,6 @@ repair-wheel-command = "python {project}/scripts/python/repair_windows_wheel.py 
 [tool.cibuildwheel.windows.config-settings]
 "cmake.define.OGS_USE_MFRONT" = "OFF"
 "cmake.args" = "-G;Ninja;--preset;wheel"
-
-[tool.cibuildwheel.macos]
-# Passing MACOSX_DEPLOYMENT_TARGET with a regular environment variable
-# via the calling environment did not work.
-environment = { MACOSX_DEPLOYMENT_TARGET="26.0" }
 
 [tool.ruff]
 include = ["*.py", "*.pyi", "**/pyproject.toml", "*.ipynb"]
