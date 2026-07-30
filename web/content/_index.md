@@ -43,13 +43,13 @@ application_areas:
     headline: Geothermal energy
     textline: Model heat extraction and storage in the deep subsurface, capturing the coupled thermal, hydraulic and mechanical response of geothermal reservoirs.
     visual:
-      permalink: features/vis/layeredview2.png
+      permalink: images/ogs-geothermal.jpg
       alt: Geothermal reservoir model
   - eyebrow:
     headline: Nuclear-waste disposal
     textline: Assess deep geological repositories over long timescales, resolving the full THMC evolution of the host rock and engineered barrier system.
     visual:
-      permalink: features/vis/contours2-bw.png
+      permalink: images/ogs-nuclear-waste.png
       alt: Repository simulation contours
 
 feature_intro: An adaptable, modular architecture enabling a wide variety of use cases and flexible research workflows.
