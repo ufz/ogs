@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="MandelCryerStaggered.prj">
+    <replace msel="/*/processes/process/type/text()">
+        THERMO_HYDRO_MECHANICS
+    </replace>
+
+    <add msel="/*/processes/process">
+        <equation_balance_type>mass</equation_balance_type>
+    </add>
+    <add msel="/*/processes/process/process_variables">
+        <temperature>temperature</temperature>
+    </add>
+
+    <add sel="/*/media/medium/phases/phase[type='Gas']/properties/*[1]" pos="before">
+        <property>
+            <name>thermal_conductivity</name>
+            <type>Constant</type>
+            <value>0.6</value>
+        </property>
+        <property>
+            <name>specific_heat_capacity</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </property>
+    </add>
+    <replace msel="/*/media/medium/phases/phase[type='Gas']/type/text()">
+        AqueousLiquid
+    </replace>
+
+    <add sel="/*/media/medium/phases/phase[type='Solid']/properties/*[1]" pos="before">
+        <property>
+            <name>thermal_conductivity</name>
+            <type>Constant</type>
+            <value>800.0</value>
+        </property>
+        <property>
+            <name>specific_heat_capacity</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </property>
+        <property>
+            <name>thermal_expansivity</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </property>
+    </add>
+    <add sel="/*/media/medium/properties/*[1]" pos="before">
+        <property>
+            <name>thermal_conductivity</name>
+            <type>EffectiveThermalConductivityPorosityMixing</type>
+        </property>
+    </add>
+
+    <remove sel="/*/media/medium/properties/property[name='reference_temperature']"/>
+
+    <add sel="/*/time_loop/global_process_coupling/convergence_criteria/*[1]" pos="before">
+        <convergence_criterion>
+            <type>DeltaX</type>
+            <norm_type>NORM2</norm_type>
+            <abstol>1.e-2</abstol>
+        </convergence_criterion>
+    </add>
+
+    <add sel="/*/time_loop/processes/*[1]" pos="before">
+        <!-- T -->
+        <process ref="MandelCryer">
+            <nonlinear_solver>basic_newton_T</nonlinear_solver>
+            <convergence_criterion>
+                <type>DeltaX</type>
+                <norm_type>NORM2</norm_type>
+                <abstol>1e-5</abstol>
+                <reltol>1e-15</reltol>
+            </convergence_criterion>
+            <time_discretization>
+                <type>BackwardEuler</type>
+            </time_discretization>
+            <time_stepping>
+                <type>FixedTimeStepping</type>
+                <t_initial>0</t_initial>
+                <t_end>1.5</t_end>
+                <timesteps>
+                    <pair>
+                        <repeat>1</repeat>
+                        <delta_t>1e-2</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>10</repeat>
+                        <delta_t>4e-2</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>10</repeat>
+                        <delta_t>1e-1</delta_t>
+                    </pair>
+                </timesteps>
+            </time_stepping>
+        </process>
+    </add>
+
+    <add sel="/*/parameters">
+        <parameter>
+            <name>T0</name>
+            <type>Constant</type>
+            <value>293.15</value>
+        </parameter>
+    </add>
+
+    <add sel="/*/process_variables/*[1]" pos="before">
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>T0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>mesh_2d_q</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>T0</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </add>
+
+    <add sel="/*/nonlinear_solvers/*[1]" pos="before">
+        <nonlinear_solver>
+            <name>basic_newton_T</name>
+            <type>Newton</type>
+            <max_iter>10</max_iter>
+            <linear_solver>general_linear_solver_T</linear_solver>
+        </nonlinear_solver>
+    </add>
+
+    <add sel="/*/linear_solvers/*[1]" pos="before">
+        <linear_solver>
+            <name>general_linear_solver_T</name>
+            <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>CG</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-8</error_tolerance>
+                <scaling>1</scaling>
+            </eigen>
+            <petsc>
+                <prefix>sd</prefix>
+                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </add>
+
+    <replace msel="/*/test_definition/vtkdiff[1]/absolute_tolerance/text()">5.0e-13</replace>
+    <replace msel="/*/test_definition/vtkdiff[2]/absolute_tolerance/text()">2.5e-4</replace>
+    <replace msel="/*/test_definition/vtkdiff[3]/absolute_tolerance/text()">9.0e-12</replace>
+    <replace msel="/*/test_definition/vtkdiff[4]/absolute_tolerance/text()">5.0e-12</replace>
+    <replace msel="/*/test_definition/vtkdiff[5]/absolute_tolerance/text()">6.0e-05</replace>
+</OpenGeoSysProjectDiff>
+
