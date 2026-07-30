@@ -128,9 +128,6 @@ set_property(
 )
 # Eigen End
 
-# Debug
-option(OGS_FATAL_ABORT "Abort in OGS_FATAL" OFF)
-
 # Options controlling which FEM elements will be compiled
 set(OGS_MAX_ELEMENT_DIM 3
     CACHE STRING "Maximum dimension of FEM elements to be built."

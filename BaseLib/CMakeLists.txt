@@ -56,7 +56,6 @@ target_link_libraries(
 
 target_compile_definitions(
     BaseLib
-    PUBLIC $<$<BOOL:${OGS_FATAL_ABORT}>:OGS_FATAL_ABORT>
     # Logging.cpp needs a redirection-safe stdout sink in wheel builds.
     PRIVATE $<$<BOOL:${OGS_BUILD_WHEEL}>:OGS_BUILD_WHEEL>
 )
