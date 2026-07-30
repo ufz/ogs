@@ -18,22 +18,36 @@ constexpr double CelsiusZeroInKelvin = 273.15;
 /**
   Ideal gas constant in SI standard units (J \per{mol} \per{K})
 
-  - Source:
-  https://web.archive.org/web/20210603224431/https://physics.nist.gov/cgi-bin/cuu/Value?r
-  - Date visited:         2015-04-17
-  - Standard uncertainty: 0.000 0075 J mol^-1 K^-1
+  Exact by definition since the 2019 revision of the SI: \f$R = N_A k_B\f$,
+  and both the Avogadro constant and the Boltzmann constant are fixed
+  exactly. There is therefore no standard uncertainty.
+
+  - Source: SI Brochure, 9th edition (2019)
+    https://www.bipm.org/en/publications/si-brochure
 */
-constexpr double IdealGasConstant = 8.3144621;
+constexpr double IdealGasConstant = 8.31446261815324;
 
 /**
  * Boltzmann constant in SI standard units (J \per{K})
+ *
+ * Exact by definition since the 2019 revision of the SI: this value defines
+ * the kelvin.
+ *
+ * - Source: SI Brochure, 9th edition (2019)
+ *   https://www.bipm.org/en/publications/si-brochure
  */
-constexpr double BoltzmannConstant = 1.3806505e-23;  ///< J/K
+constexpr double BoltzmannConstant = 1.380649e-23;  ///< J/K
 
 /**
  * Planck constant in SI standard units (J s)
+ *
+ * Exact by definition since the 2019 revision of the SI: this value defines
+ * the kilogram.
+ *
+ * - Source: SI Brochure, 9th edition (2019)
+ *   https://www.bipm.org/en/publications/si-brochure
  */
-constexpr double PlanckConstant = 6.626068e-34;  ///< J s
+constexpr double PlanckConstant = 6.62607015e-34;  ///< J s
 
 /**
  * Critical point data of water.
@@ -72,14 +86,24 @@ namespace MolarMass
 /**
  * Water.
  *
- * - Source:       http://www.ciaaw.org/pubs/TSAW2013_xls.xls
- * - Date visited: 2015-05-28
+ * Molar mass of ordinary water as adopted by the IAPWS-95 formulation. In OGS
+ * this value only feeds \c SpecificGasConstant::WaterVapour, which is used
+ * directly by \c WaterVapourDensity and, together with the IAPWS-IF97
+ * Region-1 Gibbs derivative, by \c SaturationLuMcCartney::rho_w. The
+ * IAPWS-IF97 property implementations themselves use the defined constant
+ * \c SpecificGasConstant::WaterIF97 instead.
  *
- * According to the IUPAC report the atomic mass of O is in the range [15.999
- * 03, 15.999 77] g/mol and the atomic mass of H is in the range [1.007
- * 84, 1.008 11] g/mol
+ * - Source: IAPWS-95, Wagner and Pruss (2002), J. Phys. Chem. Ref. Data 31,
+ *   387, Table 1.
+ *   https://pubs.aip.org/aip/jpr/article/31/2/387/241937/The-IAPWS-Formulation-1995-for-the-Thermodynamic
+ *   (the formulation tabulates this value). The primary metrology source
+ *   and the uncertainty of this value are the IUPAC standard atomic weights,
+ *   "Table of Standard Atomic Weights 2013" (as for \c N2 and \c O2 below),
+ *   http://www.ciaaw.org/pubs/TSAW2013_xls.xls: its intervals for hydrogen
+ *   [1.00784, 1.00811] and oxygen [15.99903, 15.99977] g/mol bound the
+ *   molar mass of H<sub>2</sub>O to [18.01471, 18.01599] g/mol.
  */
-constexpr double Water = 0.018016;  ///< kg \per{mol}
+constexpr double Water = 0.018015268;  ///< kg \per{mol}
 
 /**
  * Nitrogen N<sub>2</sub>.
@@ -87,8 +111,8 @@ constexpr double Water = 0.018016;  ///< kg \per{mol}
  * - Source:       http://www.ciaaw.org/pubs/TSAW2013_xls.xls
  * - Date visited: 2015-05-28
  *
- * According to the IUPAC report the atomic mass of N is in the range [14.006
- * 43, 14.007 28] g/mol
+ * According to the IUPAC report the atomic mass of N is in the range
+ * [14.00643, 14.00728] g/mol
  */
 constexpr double N2 = 0.028013;  ///< kg \per{mol}
 
@@ -98,8 +122,8 @@ constexpr double N2 = 0.028013;  ///< kg \per{mol}
  * - Source:       http://www.ciaaw.org/pubs/TSAW2013_xls.xls
  * - Date visited: 2015-05-28
  *
- * According to the IUPAC report the atomic mass of O is in the range [15.999
- * 03, 15.999 77] g/mol
+ * According to the IUPAC report the atomic mass of O is in the range
+ * [15.99903, 15.99977] g/mol
  */
 constexpr double O2 = 0.032;  ///< kg \per{mol}
 
@@ -125,9 +149,20 @@ constexpr double H2 = 0.002016;  ///< kg \per{mol}
  */
 namespace SpecificGasConstant
 {
-/// Specific gas constant for water vapour.
-constexpr double WaterVapour =
-    IdealGasConstant / MolarMass::Water;  // = 461.504;
+/**
+ * Specific gas constant for water vapour.
+ *
+ * Evaluates to 461.5231 J \per{kg} \per{K}. Note that this combines the exact
+ * SI value of \c IdealGasConstant with the IAPWS-95 molar mass, and so differs
+ * by 1.1e-5 in relative terms from the specific gas constant of IAPWS-95
+ * itself (461.51805 J \per{kg} \per{K}, the value defined by IAPWS-95). That
+ * difference is immaterial for the ideal-gas vapour relations using this
+ * constant, but it must not be substituted for \c WaterIF97 below; note that
+ * \c SaturationLuMcCartney::rho_w also consumes this constant together with
+ * the IAPWS-IF97 Region-1 Gibbs derivative, so the difference does enter
+ * results computed from that correlation.
+ */
+constexpr double WaterVapour = IdealGasConstant / MolarMass::Water;
 
 /**
  * Specific gas constant of ordinary water as *defined* for IAPWS-IF97.
