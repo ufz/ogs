@@ -338,8 +338,10 @@ macro(_add_test TEST_NAME)
         "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
     )
 
+    set(_uv_run_args)
     if(OGS_USE_PIP AND DEFINED AddTest_PYTHON_PACKAGES)
         list(APPEND labels additional_python_modules)
+        list(APPEND _uv_run_args uv run)
         foreach(_package ${AddTest_PYTHON_PACKAGES})
             list(APPEND _uv_run_args --with ${_package})
         endforeach()
