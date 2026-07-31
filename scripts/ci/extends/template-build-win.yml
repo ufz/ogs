@@ -14,10 +14,32 @@
     - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS"
     - $cmake_cmd
     - |
-      echo "######################## $(Get-Date) ########################"
-      Invoke-Expression $cmake_cmd
-      if ($LASTEXITCODE -ne 0) {
-        exit $LASTEXITCODE
+      $ctest_group = "Experimental"
+      if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }
+
+      $ctest_condition = $false
+      if ($null -eq $env:CI_MERGE_REQUEST_LABELS) { $ctest_condition = $true }
+      elseif (-Not ($env:CI_MERGE_REQUEST_LABELS -match "unit_tests")) { $ctest_condition = $true }
+      $buildWithCtest = $false
+      if(($env:BUILD_CTEST -eq "true") -And ($ctest_condition -eq $true))
+      {
+        $buildWithCtest = $true
+        echo "######################## $(Get-Date) ########################"
+        $env:CTEST_BINARY_DIRECTORY = $build_directory_full
+        $env:CTEST_GROUP = $ctest_group
+        $env:CTEST_DASHBOARD_PHASE = "configure"
+        ctest -S scripts/ci/ctest-dashboard.cmake -VV | Tee-Object -FilePath $log_file
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
+      }
+
+      if (-Not $buildWithCtest) {
+        echo "######################## $(Get-Date) ########################"
+        Invoke-Expression $cmake_cmd
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
       }
 
       # Activate .venv
@@ -26,12 +48,20 @@
       if ($env:BUILD_PACKAGE -eq "true") { $cmakeArgs += @("--target", "package") }
       if ($env:CMAKE_PRESET -match "msvc") { $cmakeArgs += @("--", "/m") }
 
-      echo "######################## $(Get-Date) ########################"
-      Write-Output "Running cmake $($cmakeArgs -join ' ')"
-      cmake @cmakeArgs | Tee-Object -FilePath $log_file
-      $cmakeBuildExitCode = $LASTEXITCODE
-      if ($cmakeBuildExitCode -ne 0) {
-        exit $cmakeBuildExitCode
+      if (-Not $buildWithCtest) {
+        echo "######################## $(Get-Date) ########################"
+        Write-Output "Running cmake $($cmakeArgs -join ' ')"
+        cmake @cmakeArgs | Tee-Object -FilePath $log_file -Append
+        $cmakeBuildExitCode = $LASTEXITCODE
+        if ($cmakeBuildExitCode -ne 0) {
+          exit $cmakeBuildExitCode
+        }
+      } else {
+        $env:CTEST_DASHBOARD_PHASE = "build"
+        ctest -S scripts/ci/ctest-dashboard.cmake -VV | Tee-Object -FilePath $log_file -Append
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
       }
 
       echo "######################## $(Get-Date) ########################"
@@ -41,12 +71,6 @@
           exit $LASTEXITCODE
         }
       }
-      $ctest_group = "Experimental"
-      if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }
-
-      $ctest_condition = $false
-      if ($null -eq $env:CI_MERGE_REQUEST_LABELS) { $ctest_condition = $true }
-      elseif (-Not ($env:CI_MERGE_REQUEST_LABELS -match "unit_tests")) { $ctest_condition = $true }
       if(($env:BUILD_CTEST -eq "true") -And ($ctest_condition -eq $true))
       {
         $ctest_arguments = @()
