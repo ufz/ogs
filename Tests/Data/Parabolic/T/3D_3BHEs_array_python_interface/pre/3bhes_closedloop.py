@@ -1,34 +1,38 @@
 # SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 # SPDX-License-Identifier: BSD-3-Clause
 
-# Execute this file to generate TESPy network csv files
+# Execute this file to generate TESPy network JSON file
 import numpy as np
 from tespy.components import (
-    cycle_closer,
-    heat_exchanger_simple,
-    merge,
-    pump,
-    splitter,
+    CycleCloser,
+    Merge,
+    Pump,
+    SimpleHeatExchanger,
+    Splitter,
 )
-from tespy.connections import connection
-from tespy.networks import network
-from tespy.tools import char_line, dc_cc
+from tespy.connections import Connection
+from tespy.networks import Network
+from tespy.tools.characteristics import CharLine
+from tespy.tools.fluid_properties.wrappers import IAPWSWrapper
 
 # %% network
-btes = network(fluids=["water"], T_unit="K", p_unit="bar", h_unit="kJ / kg")
+btes = Network()
+btes.units.set_defaults(
+    temperature="K", pressure="bar", pressure_difference="bar", enthalpy="kJ / kg"
+)
 
 # %% components
-fc = cycle_closer("cycle closer")
-pu = pump("pump")
-sp = splitter("splitter", num_out=3)
+fc = CycleCloser("cycle closer")
+pu = Pump("pump")
+sp = Splitter("splitter", num_out=3)
 
 # bhe:
-bhe1 = heat_exchanger_simple("BHE1")
-bhe2 = heat_exchanger_simple("BHE2")
-bhe3 = heat_exchanger_simple("BHE3")
+bhe1 = SimpleHeatExchanger("BHE1")
+bhe2 = SimpleHeatExchanger("BHE2")
+bhe3 = SimpleHeatExchanger("BHE3")
 
-mg = merge("merge", num_in=3)
-cons = heat_exchanger_simple("consumer")
+mg = Merge("merge", num_in=3)
+cons = SimpleHeatExchanger("consumer")
 
 ## components paramerization
 # pump
@@ -107,8 +111,8 @@ y = (
     )
     * 1e5
 )
-char = char_line(x=x, y=y)
-pu.set_attr(flow_char=dc_cc(func=char, is_set=True))
+char = CharLine(x=x, y=y)
+pu.set_attr(flow_char={"char_func": char, "is_set": True})
 pu.set_attr(eta_s=0.90)
 
 # bhes
@@ -122,19 +126,19 @@ cons.set_attr(pr=1)
 cons.set_attr(Q=-3000)  # W
 
 # %% connections
-fc_pu = connection(fc, "out1", pu, "in1")
-pu_sp = connection(pu, "out1", sp, "in1")
+fc_pu = Connection(fc, "out1", pu, "in1", label="fc_pu")
+pu_sp = Connection(pu, "out1", sp, "in1", label="pu_sp")
 
-sp_bhe1 = connection(sp, "out1", bhe1, "in1")
-sp_bhe2 = connection(sp, "out2", bhe2, "in1")
-sp_bhe3 = connection(sp, "out3", bhe3, "in1")
+sp_bhe1 = Connection(sp, "out1", bhe1, "in1", label="sp_bhe1")
+sp_bhe2 = Connection(sp, "out2", bhe2, "in1", label="sp_bhe2")
+sp_bhe3 = Connection(sp, "out3", bhe3, "in1", label="sp_bhe3")
 
-bhe1_mg = connection(bhe1, "out1", mg, "in1")
-bhe2_mg = connection(bhe2, "out1", mg, "in2")
-bhe3_mg = connection(bhe3, "out1", mg, "in3")
+bhe1_mg = Connection(bhe1, "out1", mg, "in1", label="bhe1_mg")
+bhe2_mg = Connection(bhe2, "out1", mg, "in2", label="bhe2_mg")
+bhe3_mg = Connection(bhe3, "out1", mg, "in3", label="bhe3_mg")
 
-mg_cons = connection(mg, "out1", cons, "in1")
-cons_fc = connection(cons, "out1", fc, "in1")
+mg_cons = Connection(mg, "out1", cons, "in1", label="mg_cons")
+cons_fc = Connection(cons, "out1", fc, "in1", label="cons_fc")
 
 btes.add_conns(
     fc_pu, pu_sp, sp_bhe1, sp_bhe2, sp_bhe3, bhe1_mg, bhe2_mg, bhe3_mg, mg_cons, cons_fc
@@ -142,7 +146,10 @@ btes.add_conns(
 
 ## connection parametrization
 # system inlet
-fc_pu.set_attr(p=2, fluid={"water": 1})
+# The IAPWS-IF97 engine is used instead of TESPy's CoolProp default: CoolProp
+# crashes inside OGS's embedded Python, see bhe_tespy_compat.py. The engine is
+# propagated from here to all other connections of the network.
+fc_pu.set_attr(p=2, fluid={"water": 1}, fluid_engines={"water": IAPWSWrapper})
 
 # for BHEs:
 # Tout:
@@ -155,5 +162,5 @@ bhe3_mg.set_attr(T=303.15)
 btes.solve("design")
 # btes.print_results()
 
-# %% save to csv:
-btes.save("tespy_nw_closedloop")
+# %% save to json:
+btes.export("tespy_nw_closedloop.json")
