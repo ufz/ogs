@@ -12,18 +12,23 @@ try:
 except ModuleNotFoundError:
     import OpenGeoSys
 
+# Input files are read relative to the project file, not to the working
+# directory: the ctest runs OGS in the build directory so that the log files
+# written below do not end up in the source tree.
+prj_dir = Path(ogs_prj_directory)  # noqa: F821
+
 df_server = read_csv(
-    "initial.csv", delimiter=";", index_col=[0], dtype={"data_index": str}
+    prj_dir / "initial.csv", delimiter=";", index_col=[0], dtype={"data_index": str}
 )
 
 
 def get_Tin(t):
-    df_readfile = read_csv("readfile.txt", delimiter=";")
+    df_readfile = read_csv(prj_dir / "readfile.txt", delimiter=";")
     time_list = df_readfile["time"].tolist()  # prepare the time adjustment
     t = min(
         time_list, key=lambda x: abs(x - t)
     )  # !!!makes simulation much slower!!! - time adjustment to nearest value in list in case time value isn't in the list (happens in Beier test)
-    return [float(df_readfile.Tin[df_readfile.time == t])]
+    return [float(df_readfile.Tin[df_readfile.time == t].iloc[0])]
 
 
 # OGS setting
