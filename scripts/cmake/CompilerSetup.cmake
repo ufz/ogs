@@ -108,6 +108,13 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL
             endif()
         endif()
         unset(_gcc_versions_with_eigen_false_positives)
+        if(OGS_USE_MFRONT AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL
+                              15
+        )
+            # MGIS 2.2 uses undeclared reverse-iterator members in a template.
+            # GCC 15 diagnoses this in the external header via -Wtemplate-body.
+            add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-Wno-template-body>)
+        endif()
     endif()
 
     if(COMPILER_IS_CLANG)
