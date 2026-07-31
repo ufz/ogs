@@ -10,7 +10,7 @@ aliases = ["/docs/devguide/"]
 name = "Developer Guide"
 identifier = "devguide"
 weight = 2
-post = "You want to contribute to the OpenGeoSys project or implement a custom feature? In the Developer Guide you will find everything to get you started into OpenGeoSys development. Experienced developers will find a comprehensive list of advanced development topics."
+post = "You want to contribute to the OpenGeoSys project or implement a custom feature? In the Developer Guide you will find everything to get you started into OpenGeoSys development."
 [menu.docs.params]
 category = "Developer"
 +++
