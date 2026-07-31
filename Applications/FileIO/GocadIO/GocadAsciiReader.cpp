@@ -346,10 +346,6 @@ bool parseNodes(std::ifstream& in,
             nodes.push_back(createNode(sstr));
             for (auto& [name, property] : mesh_properties)
             {
-                if (name == mat_id_name)
-                {
-                    continue;
-                }
                 // ToDo check data type 'double'
                 double value;
                 sstr >> value;
