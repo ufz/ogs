@@ -346,7 +346,8 @@ bool parseNodes(std::ifstream& in,
             nodes.push_back(createNode(sstr));
             for (auto& [name, property] : mesh_properties)
             {
-                // ToDo check data type 'double'
+                // mesh_properties only holds PropertyVector<double> entries,
+                // so reading a double per column is safe here.
                 double value;
                 sstr >> value;
                 property.push_back(value);
