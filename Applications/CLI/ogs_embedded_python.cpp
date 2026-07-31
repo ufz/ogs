@@ -6,6 +6,7 @@
 #include <pybind11/embed.h>
 
 #include <array>
+#include <cstddef>
 #include <cstdio>
 #include <filesystem>
 #include <memory>
@@ -260,9 +261,33 @@ void setupEmbeddedPythonVenvPaths()
         findSitePackagesPath(venv_path, emb_major, emb_minor);
     INFO("Using virtual environment site-packages: {}", site_packages.string());
 
-    // Add to sys.path (insert at beginning for highest priority)
-    py::list sys_path = py::module_::import("sys").attr("path");
-    sys_path.insert(0, py::str(site_packages.string()));
+    // Add to sys.path via site.addsitedir() and not via a plain
+    // sys.path.insert(): only the former processes the .pth files of the
+    // directory. Ephemeral virtual environments created by `uv run --with ...`
+    // contain no packages at all, but merely a .pth file chaining to the
+    // directories the packages really live in. Without .pth processing not a
+    // single package of such an environment would be importable.
+    auto const sys = py::module_::import("sys");
+    py::list const sys_path = sys.attr("path");
+    std::size_t const num_paths_before = py::len(sys_path);
+
+    py::module_::import("site").attr("addsitedir")(
+        py::str(site_packages.string()));
+
+    // addsitedir() appends, but the virtual environment's packages shall take
+    // precedence over those of the embedded interpreter. Hence move the newly
+    // added paths to the front, keeping their relative order.
+    std::size_t const num_paths_after = py::len(sys_path);
+    py::list reordered_path;
+    for (std::size_t i = num_paths_before; i < num_paths_after; ++i)
+    {
+        reordered_path.append(sys_path[i]);
+    }
+    for (std::size_t i = 0; i < num_paths_before; ++i)
+    {
+        reordered_path.append(sys_path[i]);
+    }
+    sys.attr("path") = reordered_path;
 }
 
 }  // namespace ApplicationsLib
