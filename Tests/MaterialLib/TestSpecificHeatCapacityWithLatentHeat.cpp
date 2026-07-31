@@ -3,6 +3,8 @@
 
 #include <gtest/gtest.h>
 
+#include <cmath>
+#include <limits>
 #include <sstream>
 
 #include "TestMPL.h"
@@ -10,7 +12,7 @@
 
 struct IceWaterRockParameters
 {
-    double const k = 1;
+    double const k = -1;         // negative -> frozen fraction decreases with T
     double const T_c = 273.15;   // K
     double const rho_I = 900;    // kg/m³
     double const rho_W = 1000;   // kg/m³
@@ -100,11 +102,13 @@ std::unique_ptr<MaterialPropertyLib::Medium> createMyMedium(double L_IW,
     prj << "        <value>" << porosity << "</value>\n";
     prj << "      </property>\n";
     prj << "      <property>\n";
-    prj << "        <name>volume_fraction</name>\n";
-    prj << "        <type>TemperatureDependentFraction</type>\n";
+    prj << "        <name>frozen_liquid_saturation</name>\n";
+    prj << "        <type>Sigmoid</type>\n";
     prj << "        <steepness>" << water_ice_rock.k << "</steepness>\n";
-    prj << "        <characteristic_temperature>" << water_ice_rock.T_c
-        << "</characteristic_temperature>\n";
+    prj << "        <midpoint>" << water_ice_rock.T_c << "</midpoint>\n";
+    prj << "        <lower_bound>0</lower_bound>\n";
+    prj << "        <upper_bound>1</upper_bound>\n";
+    prj << "        <independent_variable>temperature</independent_variable>\n";
     prj << "      </property>\n";
     prj << "       <property>\n";
     prj << "         <name>density</name>\n";
@@ -193,7 +197,7 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_atTc)
         medium->property(MPL::PropertyType::specific_heat_capacity)
             .template value<double>(vars, pos, t, dt);
     auto const Capp_expected =
-        (Cvol_mix + water_ice_rock.rho_I * water_ice_rock.L_IW * phi *
+        (Cvol_mix - water_ice_rock.rho_I * water_ice_rock.L_IW * phi *
                         water_ice_rock.k / 4) /
         rho_mix;
     auto const relativeError =
@@ -256,4 +260,43 @@ TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_aboveTc)
     ASSERT_LE(relativeError, 1e-10)
         << "for expected apparent heat capacity " << Capp_expected
         << " and for actual apparent heat capacity " << Capp;
+}
+
+// The apparent-heat-capacity derivative dValue() has a closed form involving
+// the second derivative of the frozen liquid saturation. Verify it against a
+// central finite difference of value() at temperatures spanning the freezing
+// transition.
+TEST(MaterialPropertyLib, SpecificHeatCapacityWithLatentHeat_dValue_vs_FD)
+{
+    ParameterLib::SpatialPosition const pos;
+    double const t = std::numeric_limits<double>::quiet_NaN();
+    double const dt = std::numeric_limits<double>::quiet_NaN();
+    IceWaterRockParameters water_ice_rock;
+
+    auto const phi = 0.46;
+    auto const& medium = createMyMedium(water_ice_rock.L_IW, phi);
+    auto const& c_app =
+        medium->property(MPL::PropertyType::specific_heat_capacity);
+
+    auto const value_at = [&](double const T)
+    {
+        MPL::VariableArray vars;
+        vars.temperature = T;
+        return c_app.template value<double>(vars, pos, t, dt);
+    };
+
+    double const h = 1e-3;  // K
+    for (double const T : {water_ice_rock.T_c - 2.0, water_ice_rock.T_c,
+                           water_ice_rock.T_c + 2.0})
+    {
+        auto const dC_fd = (value_at(T + h) - value_at(T - h)) / (2 * h);
+
+        MPL::VariableArray vars;
+        vars.temperature = T;
+        auto const dC = c_app.template dValue<double>(
+            vars, MPL::Variable::temperature, pos, t, dt);
+
+        auto const tol = 1e-4 * std::fabs(dC) + 1e-6;
+        EXPECT_NEAR(dC, dC_fd, tol) << "at T = " << T;
+    }
 }

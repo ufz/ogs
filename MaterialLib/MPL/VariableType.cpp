@@ -55,10 +55,10 @@ VariableArray::VariablePointerConst VariableArray::address_of(
             return &equivalent_plastic_strain;
         case Variable::fracture_aperture:
             return &fracture_aperture;
+        case Variable::frozen_liquid_saturation:
+            return &frozen_liquid_saturation;
         case Variable::grain_compressibility:
             return &grain_compressibility;
-        case Variable::ice_volume_fraction:
-            return &ice_volume_fraction;
         case Variable::liquid_phase_pressure:
             return &liquid_phase_pressure;
         case Variable::liquid_saturation:

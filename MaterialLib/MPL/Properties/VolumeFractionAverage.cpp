@@ -60,6 +60,25 @@ void VolumeFractionAverage::setProperties(
             properties_.porous = &property;
         }
     }
+
+    // Consistency check performed once at setup (scale_ is already set to the
+    // medium by setScale() before setProperties() runs), instead of on every
+    // value()/dValue() call: a FrozenLiquid phase providing this property and
+    // the medium's frozen_liquid_saturation property must either both be
+    // present or both be absent.
+    auto const& medium = *std::get<Medium*>(scale_);
+    if ((properties_.frozen != nullptr) !=
+        medium.hasProperty(PropertyType::frozen_liquid_saturation))
+    {
+        OGS_FATAL(
+            "In the 'VolumeFractionAverage' property '{}', a FrozenLiquid "
+            "phase "
+            "and the medium's 'frozen_liquid_saturation' property must be "
+            "provided together. Found FrozenLiquid phase property: {}, medium "
+            "frozen_liquid_saturation property: {}.",
+            name_, properties_.frozen != nullptr,
+            medium.hasProperty(PropertyType::frozen_liquid_saturation));
+    }
 }
 
 PropertyDataType VolumeFractionAverage::value(
@@ -70,28 +89,29 @@ PropertyDataType VolumeFractionAverage::value(
     auto const& medium = *std::get<Medium*>(scale_);
     auto const& porosity = medium[PropertyType::porosity];
 
-    double phi_fr = 0;
+    auto const phi =
+        std::get<double>(porosity.value(variable_array, pos, t, dt));
+
+    double S_fr = 0;
     double prop_value_frozen = 0;
 
-    // get frozen pore volume fraction, and porosity
-    if (medium.hasProperty(PropertyType::volume_fraction))
+    // get frozen liquid (ice) saturation, i.e. the fraction of the pore space
+    // occupied by ice (the frozen-phase/saturation consistency is enforced once
+    // in setProperties())
+    if (medium.hasProperty(PropertyType::frozen_liquid_saturation))
     {
-        assert(properties_.frozen != nullptr);
-        auto const& fraction = medium[PropertyType::volume_fraction];
-        phi_fr = std::get<double>(fraction.value(variable_array, pos, t, dt));
+        auto const& saturation = medium[PropertyType::frozen_liquid_saturation];
+        S_fr = std::get<double>(saturation.value(variable_array, pos, t, dt));
         prop_value_frozen = std::get<double>(
             properties_.frozen->value(variable_array, pos, t, dt));
     }
-
-    auto const phi =
-        std::get<double>(porosity.value(variable_array, pos, t, dt));
     auto const prop_value_liquid =
         std::get<double>(properties_.liquid->value(variable_array, pos, t, dt));
     auto const prop_value_porous =
         std::get<double>(properties_.porous->value(variable_array, pos, t, dt));
 
-    return (phi - phi_fr) * prop_value_liquid + phi_fr * prop_value_frozen +
-           (1 - phi) * prop_value_porous;
+    return phi * (1.0 - S_fr) * prop_value_liquid +
+           phi * S_fr * prop_value_frozen + (1 - phi) * prop_value_porous;
 }
 
 PropertyDataType VolumeFractionAverage::dValue(
@@ -99,20 +119,26 @@ PropertyDataType VolumeFractionAverage::dValue(
     ParameterLib::SpatialPosition const& pos, double const t,
     double const dt) const
 {
-    (void)variable;
-    assert((variable == Variable::temperature) &&
-           "VolumeFractionAverage::dValue is implemented for "
-           "derivatives with respect to temperature only.");
-
-    double dphi_fr_dT = 0;
-    double prop_value_frozen = 0;
+    if (variable != Variable::temperature)
+    {
+        OGS_FATAL(
+            "VolumeFractionAverage::dValue is implemented for derivatives with "
+            "respect to temperature only.");
+    }
 
     auto const& medium = *std::get<Medium*>(scale_);
-    if (medium.hasProperty(PropertyType::volume_fraction))
+    auto const& porosity = medium[PropertyType::porosity];
+    auto const phi =
+        std::get<double>(porosity.value(variable_array, pos, t, dt));
+
+    double dS_fr_dT = 0;
+    double prop_value_frozen = 0;
+
+    if (medium.hasProperty(PropertyType::frozen_liquid_saturation))
     {
-        auto const& fraction = medium[PropertyType::volume_fraction];
-        dphi_fr_dT = std::get<double>(
-            fraction.dValue(variable_array, Variable::temperature, pos, t, dt));
+        auto const& saturation = medium[PropertyType::frozen_liquid_saturation];
+        dS_fr_dT = std::get<double>(saturation.dValue(
+            variable_array, Variable::temperature, pos, t, dt));
         prop_value_frozen = std::get<double>(
             properties_.frozen->value(variable_array, pos, t, dt));
     }
@@ -120,6 +146,9 @@ PropertyDataType VolumeFractionAverage::dValue(
     double prop_value_liquid =
         std::get<double>(properties_.liquid->value(variable_array, pos, t, dt));
 
-    return (prop_value_frozen - prop_value_liquid) * dphi_fr_dT;
+    // Only the frozen liquid saturation S_fr is treated as temperature
+    // dependent here; the porosity and the phase properties are assumed to be
+    // temperature independent, so their temperature derivatives are omitted.
+    return phi * (prop_value_frozen - prop_value_liquid) * dS_fr_dT;
 }
 }  // namespace MaterialPropertyLib

@@ -67,14 +67,15 @@ double SpecificHeatCapacityWithLatentHeat::effectiveVolumetricHeatCapacity(
 {
     auto const& medium = *std::get<Medium*>(scale_);
     auto const& porosity_property = medium[PropertyType::porosity];
-    auto const& frozen_fraction_property =
-        medium[PropertyType::volume_fraction];
+    auto const& frozen_liquid_saturation_property =
+        medium[PropertyType::frozen_liquid_saturation];
 
     auto const phi =
         std::get<double>(porosity_property.value(variable_array, pos, t, dt));
-    auto const phi_fr = std::get<double>(
-        frozen_fraction_property.value(variable_array, pos, t, dt));
-    auto const phi_li = phi - phi_fr;
+    auto const S_fr = std::get<double>(
+        frozen_liquid_saturation_property.value(variable_array, pos, t, dt));
+    auto const phi_li = phi * (1.0 - S_fr);
+    auto const phi_fr = phi * S_fr;
     auto const phi_po = 1 - phi;
 
     auto const rho_li =
@@ -104,20 +105,24 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::value(
 {
     auto const& medium = *std::get<Medium*>(scale_);
     auto const& effective_density_property = medium[PropertyType::density];
-    auto const& frozen_fraction_property =
-        medium[PropertyType::volume_fraction];
+    auto const& porosity_property = medium[PropertyType::porosity];
+    auto const& frozen_liquid_saturation_property =
+        medium[PropertyType::frozen_liquid_saturation];
 
     auto const rho_eff = effective_density_property.template value<double>(
         variable_array, pos, t, dt);
     auto const rho_fr =
         std::get<double>(densities_.frozen->value(variable_array, pos, t, dt));
-    auto const dphi_fr_dT = frozen_fraction_property.template dValue<double>(
-        variable_array, Variable::temperature, pos, t, dt);
+    auto const dS_fr_dT =
+        frozen_liquid_saturation_property.template dValue<double>(
+            variable_array, Variable::temperature, pos, t, dt);
 
     auto const Cvol =
         effectiveVolumetricHeatCapacity(variable_array, pos, t, dt);
-    auto const Lvol = l_ * rho_fr;
-    auto const Cvol_app = Cvol - Lvol * dphi_fr_dT;
+    auto const phi =
+        std::get<double>(porosity_property.value(variable_array, pos, t, dt));
+    auto const Lvol = l_ * rho_fr * phi;
+    auto const Cvol_app = Cvol - Lvol * dS_fr_dT;
     // divide volumetric quantity by density in order to obtain specific value
     return Cvol_app / rho_eff;
 }
@@ -134,8 +139,9 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
 
     auto const& medium = *std::get<Medium*>(scale_);
     auto const& effective_density_property = medium[PropertyType::density];
-    auto const& frozen_fraction_property =
-        medium[PropertyType::volume_fraction];
+    auto const& porosity_property = medium[PropertyType::porosity];
+    auto const& frozen_liquid_saturation_property =
+        medium[PropertyType::frozen_liquid_saturation];
 
     auto const rho_eff = effective_density_property.template value<double>(
         variable_array, pos, t, dt);
@@ -149,19 +155,23 @@ PropertyDataType SpecificHeatCapacityWithLatentHeat::dValue(
         spec_heat_capacities_.frozen->value(variable_array, pos, t, dt));
     auto const drho_dT = effective_density_property.template dValue<double>(
         variable_array, Variable::temperature, pos, t, dt);
-    auto const dphi_fr_dT = frozen_fraction_property.template dValue<double>(
-        variable_array, Variable::temperature, pos, t, dt);
-    auto const d2phi_fr_dT2 = frozen_fraction_property.template d2Value<double>(
-        variable_array, Variable::temperature, Variable::temperature, pos, t,
-        dt);
+    auto const dS_fr_dT =
+        frozen_liquid_saturation_property.template dValue<double>(
+            variable_array, Variable::temperature, pos, t, dt);
+    auto const d2S_fr_dT2 =
+        frozen_liquid_saturation_property.template d2Value<double>(
+            variable_array, Variable::temperature, Variable::temperature, pos,
+            t, dt);
+    auto const phi =
+        std::get<double>(porosity_property.value(variable_array, pos, t, dt));
     auto const Cvol =
         effectiveVolumetricHeatCapacity(variable_array, pos, t, dt);
     // TODO: avoid duplicate code, call value()?
-    auto const C_app = (Cvol - l_ * rho_eff * dphi_fr_dT) / rho_eff;
-    auto const dCvol_dphi_fr = rho_fr * c_fr - rho_li * c_li;
+    auto const C_app = (Cvol - l_ * rho_fr * phi * dS_fr_dT) / rho_eff;
+    auto const dCvol_dS_fr = phi * (rho_fr * c_fr - rho_li * c_li);
     auto const dCvol_app_dT =
-        dCvol_dphi_fr * dphi_fr_dT - l_ * rho_eff * d2phi_fr_dT2;
+        dCvol_dS_fr * dS_fr_dT - l_ * rho_fr * phi * d2S_fr_dT2;
 
-    return (dCvol_app_dT - drho_dT / rho_eff * C_app) / rho_eff;
+    return (dCvol_app_dT - drho_dT * C_app) / rho_eff;
 }
 }  // namespace MaterialPropertyLib

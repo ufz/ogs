@@ -5,6 +5,8 @@
 
 #include <memory>
 
+#include "Sigmoid.h"
+
 namespace BaseLib
 {
 class ConfigTree;
@@ -12,11 +14,6 @@ class ConfigTree;
 
 namespace MaterialPropertyLib
 {
-class TemperatureDependentFraction;
-}
-
-namespace MaterialPropertyLib
-{
-std::unique_ptr<TemperatureDependentFraction>
-createTemperatureDependentFraction(BaseLib::ConfigTree const& config);
+/// Create a Sigmoid property from XML configuration
+std::unique_ptr<Sigmoid> createSigmoid(BaseLib::ConfigTree const& config);
 }  // namespace MaterialPropertyLib

@@ -1,17 +1,17 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProjectDiff base_file="Stefan_problem.prj">
-    <!-- Replace the TemperatureDependentFraction (Sigmoid, k=5, T_c=273.15,
-         S_r=0) volume_fraction property with an analytically identical MPL
-         Function. This exercises Function::value/dValue/d2Value end-to-end in
-         the THM freezing assembly. With porosity=1 the ice volume fraction
-         equals the sigmoid shape phi = 1/(1+exp(k(T-T_c))). Derivatives are
-         written in the numerically stable phi*(1-phi) form:
+    <!-- Replace the Sigmoid (k=5, T_c=273.15, S_r=0) frozen_liquid_saturation
+         property with an analytically identical MPL Function. This exercises
+         Function::value/dValue/d2Value end-to-end in the THM freezing assembly.
+         With porosity=1 the ice volume fraction equals the sigmoid shape
+         phi = 1/(1+exp(k(T-T_c))). Derivatives are written in the numerically
+         stable phi*(1-phi) form:
            dphi/dT   = -k phi (1-phi)
            d2phi/dT2 =  k^2 phi (1-phi) (1-2 phi) -->
-    <remove sel="/*/media/medium/properties/property/name[text()=&quot;volume_fraction&quot;]/.." />
+    <remove sel="/*/media/medium/properties/property/name[text()=&quot;frozen_liquid_saturation&quot;]/.." />
     <add sel="/*/media/medium/properties">
         <property>
-            <name>volume_fraction</name>
+            <name>frozen_liquid_saturation</name>
             <type>Function</type>
             <value>
                 <expression>1 / (1 + exp(5 * (temperature - 273.15)))</expression>
