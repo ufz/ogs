@@ -1,8 +1,8 @@
 {
   "minimum_version": {
     "gcc": "15.2.0",
-    "clang": "16.0",
-    "apple_clang": "15.0.0",
+    "clang": "21.0",
+    "apple_clang": "21.0.0",
     "msvc": {
       "year": "2022",
       "number": "17",
