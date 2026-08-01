@@ -39,9 +39,6 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
 
 int main(int argc, char* argv[])
 {
-    BaseLib::RunTime run_time;
-    run_time.start();
-
     TCLAP::CmdLine cmd(
         "Checks if the subdomain meshes are part of the bulk mesh and writes "
         "the 'bulk_node_ids' and the 'bulk_element_ids' in each of them. The "
@@ -96,6 +93,13 @@ int main(int argc, char* argv[])
 
     BaseLib::MPI::Setup mpi_setup(argc, argv);
     BaseLib::initOGSLogger(log_level_arg.getValue());
+
+    // Started only here: with PETSc RunTime uses MPI_Wtime(), which is
+    // undefined before MPI_Init() and on macOS returns a value from a
+    // different epoch than the post-init clock, yielding a negative elapsed
+    // time.
+    BaseLib::RunTime run_time;
+    run_time.start();
 
     //
     // The bulk mesh.
