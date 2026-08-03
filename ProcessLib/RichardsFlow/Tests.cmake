@@ -24,17 +24,13 @@ endif()
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE Parabolic/Richards/RichardsFlow_2d_small_iteration_adaptive_dt.prj
-        RUNTIME 8
-        # TODO: The original test missed DIFF_DATA and was therefore never evaluated.
-        PROPERTIES WILL_FAIL TRUE
+        RUNTIME 24
     )
     OgsTest(
         PROJECTFILE Parabolic/Richards/RichardsFlow_2d_small_iteration_adaptive_dt.prj
         PATCH_FILES iteration_adaptive_dt_PiecewiseLinear.xml
         NAME_SUFFIX PiecewiseLinear
-        RUNTIME 8
-        # TODO: The original test missed DIFF_DATA and was therefore never evaluated.
-        PROPERTIES WILL_FAIL TRUE
+        RUNTIME 24
     )
 endif()
 
