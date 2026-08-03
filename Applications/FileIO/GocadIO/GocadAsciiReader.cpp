@@ -414,21 +414,21 @@ void extendMaterialIDs(MeshLib::PropertyVector<int>& mat_ids,
     mat_ids.resize(mat_ids.size() + count, current_mat_id);
 }
 
-/// Creates Line elements from parsed node ID pairs
-bool createLineElements(
-    std::vector<std::array<std::size_t, 2>> const& segment_data,
+/// Creates elements from parsed node ID tuples, appending them to elems. The
+/// number of nodes per element is taken from the element type.
+template <typename ElementType>
+bool createElements(
+    std::vector<std::array<std::size_t, ElementType::n_all_nodes>> const&
+        element_data,
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element*>& elems,
-    std::map<std::size_t, std::size_t> const& node_id_map,
-    MeshLib::PropertyVector<int>& mat_ids)
+    std::map<std::size_t, std::size_t> const& node_id_map)
 {
-    extendMaterialIDs(mat_ids, segment_data.size());
-
     std::size_t id = elems.size();
-    for (auto const& data : segment_data)
+    for (auto const& data : element_data)
     {
-        std::array<MeshLib::Node*, 2> elem_nodes{};
-        for (std::size_t i = 0; i < 2; ++i)
+        std::array<MeshLib::Node*, ElementType::n_all_nodes> elem_nodes{};
+        for (std::size_t i = 0; i < ElementType::n_all_nodes; ++i)
         {
             auto const it = node_id_map.find(data[i]);
             if (it == node_id_map.end() || it->second >= nodes.size())
@@ -439,40 +439,30 @@ bool createLineElements(
             }
             elem_nodes[i] = nodes[it->second];
         }
-        elems.push_back(new MeshLib::Line(elem_nodes, id++));
+        elems.push_back(new ElementType(elem_nodes, id++));
     }
 
     return true;
 }
 
-/// Creates Triangle elements from parsed node ID triplets
-bool createTriElements(
-    std::vector<std::array<std::size_t, 3>> const& element_data,
+/// Creates elements from parsed node ID tuples and extends the MaterialIDs
+/// property vector accordingly.
+template <typename ElementType>
+bool createElementsAndMaterialIDs(
+    std::vector<std::array<std::size_t, ElementType::n_all_nodes>> const&
+        element_data,
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element*>& elems,
     std::map<std::size_t, std::size_t> const& node_id_map,
-    MeshLib::PropertyVector<int>& mat_ids)
+    MeshLib::Properties& mesh_prop)
 {
-    extendMaterialIDs(mat_ids, element_data.size());
-
-    std::size_t id = elems.size();
-    for (auto const& data : element_data)
+    MeshLib::PropertyVector<int>& mat_ids =
+        *mesh_prop.getPropertyVector<int>(mat_id_name);
+    if (!createElements<ElementType>(element_data, nodes, elems, node_id_map))
     {
-        std::array<MeshLib::Node*, 3> elem_nodes{};
-        for (std::size_t i = 0; i < 3; ++i)
-        {
-            auto const it = node_id_map.find(data[i]);
-            if (it == node_id_map.end() || it->second >= nodes.size())
-            {
-                ERR("Error: Node ID ({:d}) out of range (0, {:d}).", data[i],
-                    nodes.back()->getID());
-                return false;
-            }
-            elem_nodes[i] = nodes[it->second];
-        }
-        elems.push_back(new MeshLib::Tri(elem_nodes, id++));
+        return false;
     }
-
+    extendMaterialIDs(mat_ids, element_data.size());
     return true;
 }
 
@@ -492,9 +482,8 @@ bool parseLine(std::ifstream& in,
     {
         return false;
     }
-    MeshLib::PropertyVector<int>& mat_ids =
-        *mesh_prop.getPropertyVector<int>(mat_id_name);
-    if (!createLineElements(segment_data, nodes, elems, node_id_map, mat_ids))
+    if (!createElementsAndMaterialIDs<MeshLib::Line>(segment_data, nodes, elems,
+                                                     node_id_map, mesh_prop))
     {
         return false;
     }
@@ -567,9 +556,8 @@ bool parseSurface(std::ifstream& in,
     {
         return false;
     }
-    MeshLib::PropertyVector<int>& mat_ids =
-        *mesh_prop.getPropertyVector<int>(mat_id_name);
-    if (!createTriElements(element_data, nodes, elems, node_id_map, mat_ids))
+    if (!createElementsAndMaterialIDs<MeshLib::Tri>(element_data, nodes, elems,
+                                                    node_id_map, mesh_prop))
     {
         return false;
     }
