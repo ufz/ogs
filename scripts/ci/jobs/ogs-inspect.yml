@@ -1,0 +1,43 @@
+.ogs-inspect:
+  stage: check
+  needs: []
+  tags: [envinf, shell]
+  allow_failure: true
+
+  variables:
+    PROJECT_ID: "755"
+    PACKAGE_NAME: "ogs-inspect"
+    PACKAGE_VERSION: "latest"
+
+  before_script:
+    - |
+      curl --fail -L \
+        --header "JOB-TOKEN: $CI_JOB_TOKEN" \
+        -o ogs-inspect \
+        "${CI_API_V4_URL}/projects/${PROJECT_ID}/packages/generic/${PACKAGE_NAME}/${PACKAGE_VERSION}/ogs-inspect-linux-x86_64"
+    - chmod +x ogs-inspect
+
+ogs-inspect:
+  extends: .ogs-inspect
+  rules:
+    - if: $CI_MERGE_REQUEST_IID
+  script:
+    - |
+        git diff --name-only -z --diff-filter=ACMR "$CI_MERGE_REQUEST_DIFF_BASE_SHA" "$CI_COMMIT_SHA" |
+          { grep -z '\.prj$' || true; } |
+          xargs -0 -r ./ogs-inspect lint \
+            --format codeclimate \
+            --repo-root . \
+            --output ogs-inspect-code-quality.json
+    - test -s ogs-inspect-code-quality.json || echo "[]" > ogs-inspect-code-quality.json
+
+  artifacts:
+    reports:
+      codequality: ogs-inspect-code-quality.json
+
+ogs-inspect:all-tests:
+  extends: .ogs-inspect
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  script:
+    - find Tests/Data -type f -name '*.prj' -print0 | xargs -0 -r ./ogs-inspect lint

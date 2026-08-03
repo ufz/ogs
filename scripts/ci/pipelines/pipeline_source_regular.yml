@@ -29,3 +29,6 @@ include:
   - local: "/scripts/ci/pipelines/coverage.yml"
     rules:
       - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/
+  - local: "/scripts/ci/jobs/ogs-inspect.yml"
+    rules:
+      - if: '$CI_MERGE_REQUEST_LABELS !~ /(^|,)ci::[^,]*only[^,]*(,|$)/'
