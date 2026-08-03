@@ -75,6 +75,7 @@ These pipelines can be selected by using merge request labels:
 - `ci::web only`: Runs Jupyter notebook ctests only and builds the web site.
 - `ci::web only (fast)`: Creates a static web site preview without running Jupyter notebook ctests.
 - `ci::linux only` and `ci::mac only` and `ci::win only`: Runs platform specific builds only.
+- `ci::petsc only`: Runs the PETSc builds (useful for testing PETSc-specific changes) and builds a web site preview; the non-PETSc Linux build runs Jupyter notebook ctests only.
 
 More MR labels affecting CI pipelines:
 
