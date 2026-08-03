@@ -33,7 +33,7 @@ The initial soil temperature of the domain is set with 12 $^\circ$C.
 The top surface is assumed as Dirichlet boundary condition with a fixed temperature of 12 $^\circ$C over the entire simulation.
 To be noticed is that in this benchmark project file, the initial soil temperature and all boundary conditions are set to be 42 $^\circ$C, which is 30 $^\circ$C higher than they are described in the documentation.
 The reason for this is to prevent the circulation fluid (water) from freezing when calculating the TESPy pipe network model.
-The freezing of circulation fluid will actually lead to unexpected results in the TESPy solver (causing an enthalpy calculation error by the CoolProp library).
+The freezing of circulation fluid will actually lead to unexpected results in the TESPy solver (causing an enthalpy calculation error in the fluid property library).
 Therefore all simulated temperature values are subtracted by 30 $^\circ$C before they are plotted and illustrated in the figures here.
 The detailed input parameters can be found in the 3bhes\_1U.prj file, they are also listed in the following table.
 
@@ -59,7 +59,8 @@ The detailed input parameters can be found in the 3bhes\_1U.prj file, they are a
 
 Here, the TESPy software developed by Francesco Witte is employed to simulate the coupled thermal-hydraulic status of a pipe network, which is composed of pre-defined components including pipes, heat exchangers, and different types of turbo machinery.
 Interested readers may refer to the online documentation of TESPy for the detailed introduction of the software.
-The TESPy version 0.3.2 is used in this benchmark.
+This benchmark is tested with TESPy 0.11.x.
+Fluid properties are evaluated with the IAPWS-IF97 formulation through TESPy's `IAPWSWrapper`, which requires the `iapws` package.
 
 Two different pipe network setup were constructed for this benchmark.
 
@@ -72,8 +73,8 @@ The refrigerant flowing out of the BHEs array will be firstly mixed at the mergi
 After that, the refrigerant will flow out from the network.
 For the boundary condition, a constant thermal load of 3750 $W$ is imposed on the heat pump over the entire simulation period.
 In this case, the fluid enthalpy value at the splitter point is set to be equal to the sink point enthalpy, that means all the consumed heat on the heat pump is supplied by the BHEs array.
-During the calculation of the TESPy solver, the flow density and the related specific heat capacity in the pipe network are automatically adjusted by calling the CoolProp library.
-To check their concrete value under specific temperature and pressure conditions, interested readers may refer to e.g. the 'PropsSI' function introduced in the webpage of CoolProp.
+During the calculation of the TESPy solver, the flow density and the related specific heat capacity in the pipe network are automatically adjusted by evaluating the IAPWS-IF97 water properties.
+To check their concrete value under specific temperature and pressure conditions, interested readers may refer to e.g. the `IAPWS97` class of the `iapws` package.
 For the fast execution of this benchmark, the total simulation time is shorten to 600 seconds. If the reader wishes to reproduce the same results, a full simulation of 6 months needs to be performed.
 
 {{< figure src="BHE_network.png" caption="One-way pipeline network model" >}}
