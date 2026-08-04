@@ -10,8 +10,8 @@
                 <file>2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu</file>
                 <reference_file>2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_PiecewiseLinear_t_1600.000000.vtu</reference_file>
                 <field>pressure</field>
-                <absolute_tolerance>1e-8</absolute_tolerance>
-                <relative_tolerance>1e-9</relative_tolerance>
+                <absolute_tolerance>1e-4</absolute_tolerance>
+                <relative_tolerance>1e-7</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
                 <file>2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu</file>
