@@ -113,6 +113,7 @@
         </xs:element>
         <xs:element name="nonlinear_solvers" minOccurs="0"/> <!--ignore-->
         <xs:element name="linear_solvers" minOccurs="0"/> <!--ignore-->
+        <xs:element name="test_definition" minOccurs="0"/> <!--ignore-->
       </xs:sequence>
     </xs:complexType>
   </xs:element>
