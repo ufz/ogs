@@ -12,4 +12,30 @@
     <replace msel="/*/media/medium[3]/phases/phase[1]/properties/property[2]/type/text()">
         VapourDiffusionDeVries
     </replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>Decovalex-THuni-0_DeVries_ts_10_t_864000.000000.vtu</file>
+                <reference_file>expected_Decovalex-0_DeVries_ts_10_t_864000.000000.vtu</reference_file>
+                <field>pressure</field>
+                <absolute_tolerance>5e-2</absolute_tolerance>
+                <relative_tolerance>1e-6</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>Decovalex-THuni-0_DeVries_ts_10_t_864000.000000.vtu</file>
+                <reference_file>expected_Decovalex-0_DeVries_ts_10_t_864000.000000.vtu</reference_file>
+                <field>saturation</field>
+                <absolute_tolerance>5e-5</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>Decovalex-THuni-0_DeVries_ts_10_t_864000.000000.vtu</file>
+                <reference_file>expected_Decovalex-0_DeVries_ts_10_t_864000.000000.vtu</reference_file>
+                <field>temperature</field>
+                <absolute_tolerance>5e-5</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

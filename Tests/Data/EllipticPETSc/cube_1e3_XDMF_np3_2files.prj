@@ -18,4 +18,24 @@
     </time_loop>
     
     <include file="cube_1e3.include"/>
+    <test_definition>
+        <xdmfdiff>
+            <reference_file>XDMF_NP3_2/cube_1e3_np3_2files_0.xdmf</reference_file>
+            <file>cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-3</absolute_tolerance>
+            <relative_tolerance>1e-3</relative_tolerance>
+            <reference_timestep>1</reference_timestep>
+            <timestep>1</timestep>
+        </xdmfdiff>
+        <xdmfdiff>
+            <reference_file>XDMF_NP3_2/cube_1e3_np3_2files_0.xdmf</reference_file>
+            <file>cube_1e3_np3_cube_1x1x1_hex_1e3.xdmf</file>
+            <field>v</field>
+            <absolute_tolerance>1e-3</absolute_tolerance>
+            <relative_tolerance>1e-3</relative_tolerance>
+            <reference_timestep>1</reference_timestep>
+            <timestep>1</timestep>
+        </xdmfdiff>
+    </test_definition>
 </OpenGeoSysProject>

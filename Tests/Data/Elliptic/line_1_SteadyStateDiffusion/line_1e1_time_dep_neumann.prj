@@ -143,4 +143,30 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>line_1e1_time_dep_neumann_ts_1_t_1.000000.vtu</file>
+            <reference_file>line_1_time_dep_dirichlet.vtu</reference_file>
+            <field>pressure</field>
+            <reference_field>t_1s</reference_field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>line_1e1_time_dep_neumann_ts_5_t_5.000000.vtu</file>
+            <reference_file>line_1_time_dep_dirichlet.vtu</reference_file>
+            <field>pressure</field>
+            <reference_field>t_5s</reference_field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>line_1e1_time_dep_neumann_ts_10_t_10.000000.vtu</file>
+            <reference_file>line_1_time_dep_dirichlet.vtu</reference_file>
+            <field>pressure</field>
+            <reference_field>t_10s</reference_field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

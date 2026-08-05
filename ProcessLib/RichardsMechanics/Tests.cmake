@@ -34,74 +34,7 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS) AND OGS_USE_MFRONT)
     OgsTest(PROJECTFILE RichardsMechanics/DoubleStructureBenchmark/double_porosity_swelling_RM.prj RUNTIME 1)
 endif()
 
-AddTest(
-    NAME RichardsMechanics_square_1e2_confined_compression_restart
-    PATH RichardsMechanics
-    EXECUTABLE ogs
-    RUNTIME 4
-    EXECUTABLE_ARGS confined_compression_fully_saturated_restart.prj
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    # Does not exist?
-    # PROPERTIES DEPENDS ogs-RichardsMechanics_square_1e2_confined_compression-time-vtkdiff
-    DIFF_DATA
-    confined_compression_fully_saturated_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_ts_0_t_100.000000.vtu displacement displacement 1e-16 0
-    confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu displacement displacement 1e-16 0
-    confined_compression_fully_saturated_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_ts_400_t_4000.000000.vtu displacement displacement 1e-16 0
-
-    confined_compression_fully_saturated_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_ts_0_t_100.000000.vtu pressure pressure 1e-16 0
-    confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu pressure pressure 1e-16 0
-    confined_compression_fully_saturated_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_ts_400_t_4000.000000.vtu pressure pressure 1e-16 0
-
-    confined_compression_fully_saturated_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_ts_0_t_100.000000.vtu sigma sigma 5e-14 0
-    confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu sigma sigma 5e-14 0
-    confined_compression_fully_saturated_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_ts_400_t_4000.000000.vtu sigma sigma 5e-14 0
-
-    confined_compression_fully_saturated_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_ts_0_t_100.000000.vtu epsilon epsilon 5e-14 0
-    confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu epsilon epsilon 5e-14 0
-    confined_compression_fully_saturated_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_ts_400_t_4000.000000.vtu epsilon epsilon 5e-14 0
-
-    confined_compression_fully_saturated_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_ts_0_t_100.000000.vtu saturation saturation 4e-15 0
-    confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu saturation saturation 4e-15 0
-    confined_compression_fully_saturated_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_ts_400_t_4000.000000.vtu saturation saturation 4e-15 0
-
-    confined_compression_fully_saturated_ts_20_t_100.000000.vtu confined_compression_fully_saturated_restart_ts_0_t_100.000000.vtu velocity velocity 1e-16 0
-    confined_compression_fully_saturated_ts_120_t_1000.000000.vtu confined_compression_fully_saturated_restart_ts_100_t_1000.000000.vtu velocity velocity 1e-16 0
-    confined_compression_fully_saturated_ts_420_t_4000.000000.vtu confined_compression_fully_saturated_restart_ts_400_t_4000.000000.vtu velocity velocity 1e-16 0
-)
-
-AddTest(
-    NAME RichardsMechanics_A2_total_initial_stress
-    PATH RichardsMechanics
-    EXECUTABLE ogs
-    RUNTIME 8
-    EXECUTABLE_ARGS A2_total_stress0.xml
-    WRAPPER time
-    TESTER vtkdiff
-    REQUIREMENTS NOT OGS_USE_MPI
-    DIFF_DATA
-    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu displacement displacement 1e-16 0
-    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu displacement displacement 1e-16 0
-    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu displacement displacement 1e-16 0
-
-    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu pressure pressure 1e-16 1e-12
-    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu pressure pressure 1e-16 1e-12
-    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu pressure pressure 1e-16 1e-12
-
-    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu sigma sigma 5e-8 0
-    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu sigma sigma 5e-8 0
-    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu sigma sigma 5e-8 0
-
-    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu epsilon epsilon 5e-14 0
-    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu epsilon epsilon 5e-14 0
-    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu epsilon epsilon 5e-14 0
-
-    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu saturation saturation 4e-15 0
-    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu saturation saturation 4e-15 0
-    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu saturation saturation 4e-15 0
-
-    A2_ts_3_t_4320.000000.vtu A2_total_stess0_test_ts_3_t_4320.000000.vtu velocity velocity 1e-16 0
-    A2_ts_42_t_20736.000000.vtu A2_total_stess0_test_ts_42_t_20736.000000.vtu velocity velocity 1e-16 0
-    A2_ts_76_t_2764800.000000.vtu A2_total_stess0_test_ts_76_t_2764800.000000.vtu velocity velocity 1e-16 0
-)
+if(NOT OGS_USE_MPI)
+    OgsTest(PROJECTFILE RichardsMechanics/confined_compression_fully_saturated_restart.prj RUNTIME 4)
+    OgsTest(PROJECTFILE RichardsMechanics/A2_total_stress0.xml RUNTIME 8)
+endif()

@@ -190,4 +190,14 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>transverse_E_ts_1_t_1.000000.vtu</file>
+                <reference_file>m_e_transiso_2D.vtu</reference_file>
+                <field>displacement</field>
+                <reference_field>DISPLACEMENT</reference_field>
+                <absolute_tolerance>1e-11</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

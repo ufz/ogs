@@ -65,6 +65,27 @@
                 <absolute_tolerance>1e-7</absolute_tolerance>
                 <relative_tolerance>1e-13</relative_tolerance>
             </vtkdiff>
+            <xdmfdiff>
+                <file>top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27.xdmf</file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+                <timestep>0</timestep>
+            </xdmfdiff>
+            <xdmfdiff>
+                <file>top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_bottom_boundary.xdmf</file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+                <timestep>0</timestep>
+            </xdmfdiff>
+            <xdmfdiff>
+                <file>top_boundary_to_bottom_boundary_cuboid_1x1x1_hex_27_cuboid_1x1x1_hex_27_top_boundary.xdmf</file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+                <timestep>0</timestep>
+            </xdmfdiff>
         </test_definition>
     </add>
 </OpenGeoSysProjectDiff>

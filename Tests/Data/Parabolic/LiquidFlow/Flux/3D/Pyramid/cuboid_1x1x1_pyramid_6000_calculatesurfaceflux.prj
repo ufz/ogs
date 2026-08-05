@@ -189,4 +189,38 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_entire_boundary_ts_0_t_0.000000.vtu</file>
+                <field>specific_flux</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_entire_boundary_ts_1_t_0.432000.vtu</file>
+                <field>specific_flux</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_entire_boundary_ts_2_t_0.864000.vtu</file>
+                <field>specific_flux</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_ts_1_t_0.432000.vtu</file>
+                <reference_file>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_ts_1_t_0.432000_expected.vtu</reference_file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_cuboid_1x1x1_pyramid_6000_ts_2_t_0.864000.vtu</file>
+                <reference_file>LF_cuboid_1x1x1_pyramid_6000_calculatesurfaceflux_ts_2_t_0.864000_expected.vtu</reference_file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

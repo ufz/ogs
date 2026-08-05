@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff>
+    <replace sel="/*/mesh/text()">square_1x1_quad_1e3.vtu</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">square_1e3_neumann</replace>
+    <replace sel="/*/parameters/parameter[2]/name/text()">p_neumann</replace>
+    <replace sel="/*/parameters/parameter[3]/name/text()">p_Dirichlet</replace>
+    <replace sel="/*/parameters/parameter[3]/value/text()">1</replace>
+    <replace sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]/parameter/text()">p_Dirichlet</replace>
+    <replace sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[2]/type/text()">Neumann</replace>
+    <replace sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[2]/parameter/text()">p_neumann</replace>
+    <add sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition[1]" pos="after">
+        <boundary_condition>
+            <geometrical_set>square_1x1_geometry</geometrical_set>
+            <geometry>bottom</geometry>
+            <type>Dirichlet</type>
+            <parameter>p_Dirichlet</parameter>
+        </boundary_condition>
+    </add>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>square_1e3_neumann_ts_1_t_1.000000.vtu</file>
+                <reference_file>square_1x1_quad_1e3.vtu</reference_file>
+                <field>pressure</field>
+                <reference_field>D1_left_bottom_N1_right</reference_field>
+                <absolute_tolerance>1e-1</absolute_tolerance>
+                <relative_tolerance>1e-1</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>

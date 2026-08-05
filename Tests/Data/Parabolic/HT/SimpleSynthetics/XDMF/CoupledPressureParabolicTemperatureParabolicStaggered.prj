@@ -303,4 +303,27 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <xdmfdiff>
+            <file>CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf</file>
+            <field>T</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+            <timestep>1</timestep>
+        </xdmfdiff>
+        <xdmfdiff>
+            <file>CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf</file>
+            <field>p</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+            <timestep>2</timestep>
+        </xdmfdiff>
+        <xdmfdiff>
+            <file>CoupledPressureParabolicTemperatureParabolicStaggered_square_1x1_quad_1e3.xdmf</file>
+            <field>darcy_velocity</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>1e-10</relative_tolerance>
+            <timestep>3</timestep>
+        </xdmfdiff>
+    </test_definition>
 </OpenGeoSysProject>

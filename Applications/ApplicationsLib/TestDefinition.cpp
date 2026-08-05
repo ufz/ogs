@@ -267,7 +267,8 @@ TestDefinition::TestDefinition(BaseLib::ConfigTree const& config_tree,
         std::string const reference_field_name =
             vtkdiff_config
                 //! \ogs_file_param{prj__test_definition__vtkdiff__reference_field}
-                .getConfigParameter<std::string>("reference_field", field_name);
+                .getConfigParameterOptional<std::string>("reference_field")
+                .value_or(field_name);
 
         FilePairs filenames;
         if (auto const regex_string =

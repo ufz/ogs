@@ -338,4 +338,13 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>anisotropic_thermal_expansion_y45_ts_1_t_1000000.000000.vtu</file>
+                <reference_file>expected_anisotropic_thermal_expansion_y45_ts_1_t_1000000.000000.vtu</reference_file>
+                <field>epsilon</field>
+                <absolute_tolerance>1e-12</absolute_tolerance>
+                <relative_tolerance>1e-12</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

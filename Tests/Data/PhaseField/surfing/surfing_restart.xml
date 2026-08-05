@@ -15,4 +15,23 @@
     <replace sel="/*/time_loop/processes/process[2]/time_stepping/t_initial/text()">0.5</replace>
     <!-- Modify the output prefix -->
     <replace sel="/*/time_loop/output/prefix/text()">surfing_restart</replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>surfing_restart_ts_10_t_1.000000.vtu</file>
+                <reference_file>expected_surfing_ts_20_t_1_000000.vtu</reference_file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-10</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>surfing_restart_ts_10_t_1.000000.vtu</file>
+                <reference_file>expected_surfing_ts_20_t_1_000000.vtu</reference_file>
+                <field>phasefield</field>
+                <absolute_tolerance>1e-6</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

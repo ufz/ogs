@@ -134,4 +134,20 @@
             </boundary_conditions>
         </process_variable>
     </process_variables>
+    <test_definition>
+        <xdmfdiff>
+            <file>square_1x1_quad_1e2_GMRES_GML_output_square_1x1_quad_1e2.xdmf</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+            <timestep>0</timestep>
+        </xdmfdiff>
+        <xdmfdiff>
+            <file>square_1x1_quad_1e2_GMRES_GML_output_square_1x1_geometry_left.xdmf</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+            <timestep>0</timestep>
+        </xdmfdiff>
+    </test_definition>
 </OpenGeoSysProject>

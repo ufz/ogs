@@ -130,4 +130,14 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>inhomogeneous_permeability_ts_1_t_1.000000.vtu</file>
+                <reference_file>inhomogeneous_permeability.vtu</reference_file>
+                <field>mass_flux</field>
+                <reference_field>mass_flux_ref</reference_field>
+                <absolute_tolerance>4e-2</absolute_tolerance>
+                <relative_tolerance>1e-16</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

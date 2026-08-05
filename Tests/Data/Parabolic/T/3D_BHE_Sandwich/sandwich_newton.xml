@@ -6,4 +6,23 @@
     <replace sel="/*/nonlinear_solvers/nonlinear_solver/name/text()">newton_nonlinear_solver</replace>
     <replace sel="/*/nonlinear_solvers/nonlinear_solver/type/text()">Newton</replace>
     <replace sel="/*/nonlinear_solvers/nonlinear_solver/max_iter/text()">10</replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>sandwich_newton_ts_10_t_600.000000.vtu</file>
+                <reference_file>sandwich_ts_10_t_600.000000.vtu</reference_file>
+                <field>temperature_BHE1</field>
+                <absolute_tolerance>0</absolute_tolerance>
+                <relative_tolerance>1e-14</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>sandwich_newton_ts_10_t_600.000000.vtu</file>
+                <reference_file>sandwich_ts_10_t_600.000000.vtu</reference_file>
+                <field>temperature_soil</field>
+                <absolute_tolerance>0</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

@@ -4,4 +4,17 @@
     <add sel="/*/linear_solvers/linear_solver/eigen" after_includes="true">
       <triangular_matrix>Upper</triangular_matrix>
     </add>
+    <remove sel="/*/test_definition" />
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>1e0_cube_1x1x1_hex_1e0_upper_ts_1_t_1.000000.vtu</file>
+                <reference_file>cube_1x1x1_hex_1e0.vtu</reference_file>
+                <field>pressure</field>
+                <reference_field>Linear_1_to_minus1</reference_field>
+                <absolute_tolerance>1e-13</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

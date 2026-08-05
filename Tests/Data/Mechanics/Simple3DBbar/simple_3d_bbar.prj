@@ -169,4 +169,27 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>simple_3d_bbar_ts_1_t_1.000000.vtu</file>
+                <field>displacement</field>
+                <reference_field>analytic_displacement</reference_field>
+                <absolute_tolerance>1.e-10</absolute_tolerance>
+                <relative_tolerance>1.e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>simple_3d_bbar_ts_1_t_1.000000.vtu</file>
+                <field>sigma</field>
+                <reference_field>analytic_sigma</reference_field>
+                <absolute_tolerance>6.e-5</absolute_tolerance>
+                <relative_tolerance>5.e-7</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>simple_3d_bbar_ts_1_t_1.000000.vtu</file>
+                <field>epsilon</field>
+                <reference_field>analytic_eps</reference_field>
+                <absolute_tolerance>1.e-9</absolute_tolerance>
+                <relative_tolerance>5.e-7</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

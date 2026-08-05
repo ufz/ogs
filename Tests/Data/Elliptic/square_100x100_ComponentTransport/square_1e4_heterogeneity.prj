@@ -223,4 +223,20 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+            <vtkdiff>
+                <file>square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu</file>
+                <field>pressure</field>
+                <reference_field>pressure_expected</reference_field>
+                <absolute_tolerance>2e-2</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>square_100x100_quad_1e4_ComponentTransport_ts_1_t_1.000000.vtu</file>
+                <field>darcy_velocity</field>
+                <reference_field>darcy_velocity_expected</reference_field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-10</relative_tolerance>
+            </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

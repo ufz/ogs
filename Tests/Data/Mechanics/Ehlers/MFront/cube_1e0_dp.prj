@@ -354,4 +354,28 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <!-- The reference solution has been computed by OGS's Ehlers model. See also the prj file. -->
+        <vtkdiff>
+            <file>cube_1e0_dp_ts_203_t_5.100000.vtu</file>
+            <field>displacement</field>
+            <reference_file>cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu</reference_file>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>cube_1e0_dp_ts_203_t_5.100000.vtu</file>
+            <field>sigma</field>
+            <reference_file>cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu</reference_file>
+            <absolute_tolerance>2e-13</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>cube_1e0_dp_ts_203_t_5.100000.vtu</file>
+            <field>epsilon</field>
+            <reference_file>cube_1e0_dp_ref_created_with_OGS_Ehlers.vtu</reference_file>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
 </OpenGeoSysProject>

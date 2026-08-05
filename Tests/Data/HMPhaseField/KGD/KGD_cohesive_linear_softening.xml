@@ -6,4 +6,30 @@
     </add>
     <replace msel="/*/processes/process/phasefield_model/text()">COHESIVE</replace>
     <replace msel="/*/time_loop/output/prefix/text()">KGD_4core_cohesive_linear_softening</replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>KGD_4core_cohesive_linear_softening_ts_5_t_200_000000.vtu</file>
+                <reference_file>expected_KGD_4core_cohesive_linear_softening_ts_5_t_200_000000.vtu</reference_file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-08</absolute_tolerance>
+                <relative_tolerance>1e-05</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>KGD_4core_cohesive_linear_softening_ts_5_t_200_000000.vtu</file>
+                <reference_file>expected_KGD_4core_cohesive_linear_softening_ts_5_t_200_000000.vtu</reference_file>
+                <field>phasefield</field>
+                <absolute_tolerance>1e-08</absolute_tolerance>
+                <relative_tolerance>1e-05</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>KGD_4core_cohesive_linear_softening_ts_5_t_200_000000.vtu</file>
+                <reference_file>expected_KGD_4core_cohesive_linear_softening_ts_5_t_200_000000.vtu</reference_file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-08</absolute_tolerance>
+                <relative_tolerance>1e-05</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
 </OpenGeoSysProjectDiff>

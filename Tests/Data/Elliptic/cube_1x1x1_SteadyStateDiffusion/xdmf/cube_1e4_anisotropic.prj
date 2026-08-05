@@ -192,4 +192,20 @@
             </petsc>
         </linear_solver>
     </linear_solvers>
+    <test_definition>
+        <xdmfdiff>
+            <file>cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>1e-14</relative_tolerance>
+            <timestep>0</timestep>
+        </xdmfdiff>
+        <xdmfdiff>
+            <file>cube_1e4_anisotropic_cube_1x1x1_hex_1e4_material_groups_cube_1x1x1_hex_1e4_material_groups.xdmf</file>
+            <field>darcy_velocity</field>
+            <absolute_tolerance>1e-13</absolute_tolerance>
+            <relative_tolerance>1e-13</relative_tolerance>
+            <timestep>0</timestep>
+        </xdmfdiff>
+    </test_definition>
 </OpenGeoSysProject>
