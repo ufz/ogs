@@ -26,6 +26,7 @@ ogs-inspect:
         git diff --name-only -z --diff-filter=ACMR "$CI_MERGE_REQUEST_DIFF_BASE_SHA" "$CI_COMMIT_SHA" |
           { grep -z '\.prj$' || true; } |
           xargs -0 -r ./ogs-inspect lint \
+            --fail-on-warnings \
             --format codeclimate \
             --repo-root . \
             --output ogs-inspect-code-quality.json
@@ -40,4 +41,4 @@ ogs-inspect:all-tests:
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   script:
-    - find Tests/Data -type f -name '*.prj' -print0 | xargs -0 -r ./ogs-inspect lint
+    - find Tests/Data -type f -name '*.prj' -print0 | xargs -0 -r ./ogs-inspect lint --fail-on-warnings
