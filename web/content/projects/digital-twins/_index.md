@@ -3,7 +3,7 @@ title = 'Software-Engineering for Digital Twins'
 links = [
   ['EURAD opinion paper on digitalisation', 'https://doi.org/10.1007/s12665-022-10675-4'],
   ['EURAD opinion paper on high-fidelity modeling', 'https://doi.org/10.1007/s12665-024-11832-7'],
-  ['TODO: White Paper: Digital Twins for Geosystems', '#'],
+  ['White Paper: Digital Twins of Geosystems', 'https://www.sciencedirect.com/science/article/pii/S3117951726000013?via%3Dihub'],
   ['OpenWorkFlow', 'https://doi.org/10.1007/s00767-024-00566-9'],
   ['Container technologies for reproducibility', 'https://link.springer.com/article/10.1007/s12665-025-12501-z']
 ]

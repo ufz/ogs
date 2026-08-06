@@ -165,7 +165,7 @@ weight = 4
 category = "User"
 
 [[menu.docs]]
-name = "DigBen & EURAD Model Hub"
+name = "DigBen Model-Hub"
 url = "/hub"
 post = "The Model Hub the entry point to a collection of interactive benchmark and validation models."
 weight = 9

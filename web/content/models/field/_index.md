@@ -4,8 +4,8 @@ abbreviation= 'FSM'
 
 links = [
   ['Glaciation cycles', 'https://ogs.ogs.xyz/tools/ogstools/auto_examples/howto_plot/plot_contourf_2d.html', 'https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg'],
-  ['TODO: Far-field processes', '#'],
-  ['TODO: GeoLab citing', '#'],
+  # ['TODO: Far-field processes', '#'],
+  # ['TODO: GeoLab citing', '#'],
 ]
 +++
 

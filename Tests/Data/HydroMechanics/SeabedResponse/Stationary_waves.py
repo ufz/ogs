@@ -18,6 +18,7 @@
 # date = "2026-03-03"
 # author = "Linda Günther, Hannah Keese, Lars Bilke"
 # web_subsection = "hydro-mechanics"
+# models = ["lab"]
 # +++
 #
 
