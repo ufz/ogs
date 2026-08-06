@@ -132,6 +132,18 @@ OutputConfig createOutputConfig(
         return 1048576;  // default chunk size in bytes according to
                          // https://www.hdfgroup.org/2022/10/improve-hdf5-performance-using-caching/
     }();
+    output_config.store_static_data_separately = [&hdf]() -> bool
+    {
+        if (hdf)
+        {
+            return hdf
+                //! \ogs_file_param{prj__time_loop__output__hdf__store_static_data_separately}
+                ->getConfigParameterOptional<bool>(
+                    "store_static_data_separately")
+                .value_or(false);
+        }
+        return false;  // default store_static_data_separately == false
+    }();
 
     output_config.data_mode =
         //! \ogs_file_param{prj__time_loop__output__data_mode}

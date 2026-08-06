@@ -30,6 +30,7 @@ struct OutputConfig
     std::string prefix;
     std::string suffix;
     bool compress_output = false;
+    bool store_static_data_separately = false;
     unsigned int number_of_files = 1;
     unsigned int chunk_size_bytes = 0;
     std::string data_mode;

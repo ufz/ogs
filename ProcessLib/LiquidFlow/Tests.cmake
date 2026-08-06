@@ -134,6 +134,11 @@ if(TARGET xdmfdiff AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(
         PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/XDMF/FunctionParameterTest_XDMF.prj
     )
+
+    OgsTest(
+        PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/XDMF/separate_static_dynamic_data_h5_writing.xml
+    )
+
     OgsTest(
         PROJECTFILE
             Parabolic/LiquidFlow/SimpleSynthetics/XDMF_compression_off/FunctionParameterTest_XDMF.prj

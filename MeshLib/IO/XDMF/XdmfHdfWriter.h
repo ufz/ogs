@@ -27,13 +27,16 @@ public:
      * @param n_files number of hdf5 output files
      * @param chunk_size_bytes Data will be split into chunks. The parameter
      * specifies the size (in bytes) of the largest chunk.
+     * @param store_static_data_separately If true, geometry, topology, and
+     * constant attributes are written to a separate static HDF5 file
+     * (mesh_static.h5). If false, the single-file layout is used.
      */
     XdmfHdfWriter(
         std::vector<std::reference_wrapper<const MeshLib::Mesh>> const& meshes,
         std::filesystem::path const& filepath, unsigned long long time_step,
         double initial_time, std::set<std::string> const& output_variable_names,
         bool use_compression, unsigned int n_files,
-        unsigned int chunk_size_bytes);
+        unsigned int chunk_size_bytes, bool store_static_data_separately);
 
     /**
      * \brief Adds data for either lazy (xdmf) or eager (hdf) writing algorithm
@@ -42,6 +45,7 @@ public:
     void writeStep(double time);
 
 private:
+    std::unique_ptr<HdfWriter> _static_hdf_writer;
     // hdf_writer must be destructed before xdmf_writer
     std::unique_ptr<HdfWriter> _hdf_writer;
     std::vector<std::unique_ptr<XdmfWriter>> _xdmf_writer;

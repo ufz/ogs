@@ -54,12 +54,12 @@ static std::vector<Hdf5DimType> prependDimension(
     return dims;
 }
 
-static hid_t createDataSet(
-    hid_t const data_type, std::vector<Hdf5DimType> const& data_dims,
-    std::vector<Hdf5DimType> const& max_dims,
-    [[maybe_unused]] std::vector<Hdf5DimType> const& chunk_dims,
-    bool const use_compression, hid_t const section,
-    std::string const& dataset_name)
+static hid_t createDataSet(hid_t const data_type,
+                           std::vector<Hdf5DimType> const& data_dims,
+                           std::vector<Hdf5DimType> const& max_dims,
+                           std::vector<Hdf5DimType> const& chunk_dims,
+                           bool const use_compression, hid_t const section,
+                           std::string const& dataset_name)
 {
     int const time_dim_local_size = data_dims.size() + 1;
 
@@ -206,46 +206,84 @@ HdfWriter::HdfWriter(std::vector<MeshHdfData> const& meshes,
                      std::filesystem::path const& filepath,
                      bool const use_compression,
                      bool const is_file_manager,
-                     unsigned int const n_files)
+                     unsigned int const n_files,
+                     bool const static_file)
     : _hdf5_filepath(filepath),
       _file(createFile(filepath, n_files)),
       _meshes_group(
           H5Gcreate2(_file, "/meshes", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)),
       _step_times{initial_time},
       _use_compression(checkCompression() && use_compression),
-      _is_file_manager(is_file_manager)
+      _is_file_manager(is_file_manager),
+      _static_file(static_file)
 {
+    auto const createAndWriteDataSet = [&](hid_t const group,
+                                           auto const& attribute) -> hid_t
+    {
+        hid_t const dataset = createDataSet(
+            attribute.data_type, attribute.data_space, attribute.file_space,
+            attribute.chunk_space, _use_compression, group, attribute.name);
+
+        checkHdfStatus(dataset, "Creating HDF5 Dataset: {:s} failed.",
+                       attribute.name);
+
+        writeDataSet(attribute.data_start, attribute.data_type,
+                     attribute.data_space, attribute.offsets,
+                     attribute.file_space, attribute.chunk_space,
+                     attribute.name, initial_step, dataset);
+        return dataset;
+    };
+
+    if (_static_file)
+    {
+        for (auto const& mesh : meshes)
+        {
+            hid_t const group =
+                H5Gcreate2(_meshes_group, mesh.name.c_str(), H5P_DEFAULT,
+                           H5P_DEFAULT, H5P_DEFAULT);
+
+            for (auto const& attribute : mesh.constant_attributes)
+            {
+                hid_t const dataset = createAndWriteDataSet(group, attribute);
+                if (auto const err = H5Dclose(dataset); err < 0)
+                {
+                    ERR("Could not close dataset with dataset id '{}' - status "
+                        "is '{}'.",
+                        dataset, err);
+                }
+            }
+
+            if (auto const err = H5Gclose(group); err < 0)
+            {
+                ERR("Could not close group with group id '{}' - status is "
+                    "'{}'.",
+                    group, err);
+            }
+        }
+        closeMeshesGroupAndFile();
+        return;
+    }
+
     for (auto const& mesh : meshes)
     {
         hid_t const group = H5Gcreate2(_meshes_group, mesh.name.c_str(),
                                        H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
-        auto const createAndWriteDataSet = [&](auto const& attribute) -> hid_t
-        {
-            hid_t const dataset = createDataSet(
-                attribute.data_type, attribute.data_space, attribute.file_space,
-                attribute.chunk_space, _use_compression, group, attribute.name);
-
-            checkHdfStatus(dataset, "Creating HDF5 Dataset: {:s} failed.",
-                           attribute.name);
-
-            writeDataSet(attribute.data_start, attribute.data_type,
-                         attribute.data_space, attribute.offsets,
-                         attribute.file_space, attribute.chunk_space,
-                         attribute.name, initial_step, dataset);
-            return dataset;
-        };
-
         for (auto const& attribute : mesh.constant_attributes)
         {
-            hid_t const dataset = createAndWriteDataSet(attribute);
-            H5Dclose(dataset);
+            hid_t const dataset = createAndWriteDataSet(group, attribute);
+            if (auto const err = H5Dclose(dataset); err < 0)
+            {
+                ERR("Could not close dataset with dataset id '{}' - status is "
+                    "'{}'.",
+                    dataset, err);
+            }
         }
 
         std::map<std::string, hid_t> datasets;
         for (auto const& attribute : mesh.variable_attributes)
         {
-            hid_t const dataset = createAndWriteDataSet(attribute);
+            hid_t const dataset = createAndWriteDataSet(group, attribute);
             // datasets are kept open
             datasets.insert({attribute.name, dataset});
         }
@@ -257,6 +295,11 @@ HdfWriter::HdfWriter(std::vector<MeshHdfData> const& meshes,
 
 HdfWriter::~HdfWriter()
 {
+    if (_static_file)
+    {
+        return;
+    }
+
     writeTimeSeries(_file, _step_times, _is_file_manager);
 
     for (auto const& mesh : _hdf_meshes)
@@ -275,6 +318,11 @@ HdfWriter::~HdfWriter()
                 mesh->group, err);
         }
     }
+    closeMeshesGroupAndFile();
+}
+
+void HdfWriter::closeMeshesGroupAndFile()
+{
     if (auto const group_err = H5Gclose(_meshes_group); group_err < 0)
     {
         ERR("Could not close group with group id '{}' - status is '{}'.",
@@ -285,11 +333,20 @@ HdfWriter::~HdfWriter()
         ERR("Could not flush data to file '{}' - status is '{}'.",
             _hdf5_filepath.string(), status);
     }
-    H5Fclose(_file);
+    if (auto const err = H5Fclose(_file); err < 0)
+    {
+        ERR("Could not close file '{}' - status is '{}'.",
+            _hdf5_filepath.string(), err);
+    }
 }
 
 void HdfWriter::writeStep(double const time)
 {
+    if (_static_file)
+    {
+        return;
+    }
+
     auto const output_step = _step_times.size();
     _step_times.push_back(time);
 
