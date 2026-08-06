@@ -177,6 +177,15 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
 
     //----------------------------------------------------------------------------------
     // Read ghost element
+    if (_mesh_info.number_of_ghost_elements > 0)
+    {
+        WARN(
+            "The mesh partition contains {:d} ghost elements. Reading ghost "
+            "elements is deprecated: the current mesh partitioner no longer "
+            "writes them. Please re-run the mesh partitioner to regenerate the "
+            "partitioned mesh.",
+            _mesh_info.number_of_ghost_elements);
+    }
     std::vector<unsigned long> ghost_elem_data(
         _mesh_info.number_of_ghost_elements + _mesh_info.offset[1]);
 
