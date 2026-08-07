@@ -34,7 +34,7 @@ if(OGS_USE_PETSC)
         PROPERTIES PROCESSORS 2
     )
     NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCellHM_VPF_propagating.py
-        RUNTIME 800
+        RUNTIME 3800
         PROPERTIES PROCESSORS 4
     )
 endif()
