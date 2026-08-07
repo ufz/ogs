@@ -34,16 +34,42 @@
         CMAKE_ARGS="${CMAKE_ARGS} -DOGS_ENABLE_NON_OMP_TEST_VARIANTS=ON"
       fi
     - echo "########################" + `date` + "########################"
-    - cmake --preset=$CMAKE_PRESET --log-level=VERBOSE -Wno-dev $CMAKE_ARGS
+    - |
+      build_with_ctest=false
+      ctest_group="Experimental"
+      if [ "${CI_COMMIT_BRANCH}" = "master" ]; then
+        ctest_group="master"
+      fi
+      if [ "$BUILD_CTEST" = true ] && [[ -z "$TARGETS" ]] && \
+         [[ "$CI_PIPELINE_SOURCE" != "pipeline" ]] && \
+         [[ ! "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
+        build_with_ctest=true
+      fi
+
+      if [ "$build_with_ctest" = true ]; then
+        export CMAKE_ARGS
+        export CTEST_BINARY_DIRECTORY="$build_dir_full"
+        export CTEST_GROUP="$ctest_group"
+        export CTEST_DASHBOARD_PHASE=configure
+        ctest -S scripts/ci/ctest-dashboard.cmake -VV > >(tee "$log_file")
+      else
+        cmake --preset=$CMAKE_PRESET --log-level=VERBOSE -Wno-dev $CMAKE_ARGS
+      fi
     # Activate .venv via .envrc
     - test -f $build_dir_full/.venv/bin/activate && source $build_dir_full/.envrc
     - |
+
       if [[ -z "$TARGETS" ]]; then
 
-        if [[ ! -z "$ADDITIONAL_TARGETS_PRE" ]]; then
+        if [ "$build_with_ctest" = true ]; then
+          export CTEST_DASHBOARD_PHASE=build
+          ctest -S scripts/ci/ctest-dashboard.cmake -VV > >(tee -a "$log_file")
+        fi
+
+        if [[ ! -z "$ADDITIONAL_TARGETS_PRE" ]] && [ "$build_with_ctest" = false ]; then
 
           echo "########################" + `date` + "########################"
-          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_PRE} > >(tee $log_file)
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_PRE} > >(tee -a $log_file)
 
         fi
 
@@ -51,8 +77,10 @@
           build_package="--target package"
         fi
 
-        echo "########################" + `date` + "########################"
-        $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET ${build_package} > >(tee $log_file)
+        if [ "$build_with_ctest" = false ]; then
+          echo "########################" + `date` + "########################"
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET ${build_package} > >(tee -a $log_file)
+        fi
 
         echo "########################" + `date` + "########################"
         if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target tests ; fi
@@ -94,16 +122,16 @@
             ctest_timeout="$CTEST_TIMEOUT"
           fi
 
-          ctest_group="Experimental"
-          if [ "${CI_COMMIT_BRANCH}" = "master" ]; then
-            ctest_group="master"
-          fi
-
           # Don't submit on multi-project pipelines, e.g. triggered from ogstools
           # as they run just a subset of benchmarks and therefore CDash complains
           # about missing tests.
           if [ "${CI_PIPELINE_SOURCE}" != "pipeline" ]; then
             ctest_arguments="${ctest_arguments} -T Submit"
+          fi
+
+          ctest_actions="-T Test"
+          if [ "$build_with_ctest" = false ]; then
+            ctest_actions="-T Start -T Test"
           fi
 
           if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
@@ -113,7 +141,7 @@
             echo "ctest arguments: ${ctest_arguments}"
             ctest \
                 -M Experimental --group "${ctest_group}" "${regex_argument}" \
-                --test-dir "${build_dir_full}" -T Start -T Test \
+                --test-dir "${build_dir_full}" ${ctest_actions} \
                 --no-tests=error \
                 ${ctest_arguments} \
                 --output-junit Tests/ctest.xml \
@@ -124,7 +152,7 @@
         if [[ ! -z "$ADDITIONAL_TARGETS_POST" ]]; then
 
           echo "########################" + `date` + "########################"
-          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_POST} > >(tee $log_file)
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_POST} > >(tee -a $log_file)
 
         fi
 
@@ -141,6 +169,8 @@
                                                          -e 'WARNING: no license files found' \
                                                          -e 'WARNING: multiple license files found' \
                                                          -e 'means the weak symbol cannot be overridden at runtime' \
+                                                         -e '[0-9]\+ Compiler warnings' \
+                                                         -e '\[CTest: warning matched\]' \
                                                          -e 'lto-wrapper: warning:' \
                                                          -e 'ld: warning:' \
                                                          -e "warning: 'has_denorm' is deprecated" \
