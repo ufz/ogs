@@ -56,7 +56,8 @@ std::unique_ptr<OutputFormat> createOutputFormat(
     std::string prefix, std::string suffix, std::string const& data_mode,
     bool const compress_output, unsigned int const number_of_files,
     unsigned int const chunk_size_bytes,
-    bool const store_static_data_separately)
+    bool const store_static_data_separately,
+    std::set<std::string> static_variables)
 {
     switch (output_type)
     {
@@ -68,7 +69,7 @@ std::unique_ptr<OutputFormat> createOutputFormat(
             return std::make_unique<OutputXDMFHDF5Format>(
                 output_directory, std::move(prefix), std::move(suffix),
                 compress_output, number_of_files, chunk_size_bytes,
-                store_static_data_separately);
+                store_static_data_separately, std::move(static_variables));
         default:
             OGS_FATAL(
                 "No supported file type provided. Read '{}' from "
@@ -84,7 +85,7 @@ Output createOutput(OutputConfig&& oc, std::string const& output_directory,
         output_directory, oc.output_type, std::move(oc.prefix),
         std::move(oc.suffix), oc.data_mode, oc.compress_output,
         oc.number_of_files, oc.chunk_size_bytes,
-        oc.store_static_data_separately);
+        oc.store_static_data_separately, std::move(oc.static_output_variables));
 
     OutputDataSpecification output_data_specification{
         std::move(oc.output_variables), std::move(oc.fixed_output_times),

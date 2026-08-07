@@ -41,20 +41,31 @@ constexpr std::array constant_output_names{
     MeshLib::getBulkIDString(MeshLib::MeshItemType::Node),
     MeshLib::getBulkIDString(MeshLib::MeshItemType::Cell),
     MeshLib::getBulkIDString(MeshLib::MeshItemType::Edge),
-    MeshLib::getBulkIDString(MeshLib::MeshItemType::Face)};
+    MeshLib::getBulkIDString(MeshLib::MeshItemType::Face),
+    MeshLib::globalIDString(MeshLib::MeshItemType::Node),
+    MeshLib::globalIDString(MeshLib::MeshItemType::Cell)};
+
+bool isStaticAttribute(std::string const& attribute_name,
+                       std::set<std::string> const& static_attribute_names)
+{
+    return ranges::contains(constant_output_names, attribute_name) ||
+           static_attribute_names.contains(attribute_name);
+}
 
 template <typename Data>
 std::function<bool(Data)> isVariableAttribute(
-    std::set<std::string> const& output_variable_names)
+    std::set<std::string> const& output_variable_names,
+    std::set<std::string> const& static_attribute_names)
 {
     if (output_variable_names.empty())
     {
-        return [](Data const& data) -> bool
-        { return !ranges::contains(constant_output_names, data.name); };
+        return [&static_attribute_names](Data const& data) -> bool
+        { return !isStaticAttribute(data.name, static_attribute_names); };
     }
-    return [&output_variable_names](Data const& data) -> bool
+    return [&output_variable_names,
+            &static_attribute_names](Data const& data) -> bool
     {
-        if (ranges::contains(constant_output_names, data.name))
+        if (isStaticAttribute(data.name, static_attribute_names))
         {
             return false;
         }
@@ -67,6 +78,7 @@ XdmfHdfWriter::XdmfHdfWriter(
     std::filesystem::path const& filepath, unsigned long long const time_step,
     double const initial_time,
     std::set<std::string> const& output_variable_names,
+    std::set<std::string> const& static_attribute_names,
     bool const use_compression, unsigned int const n_files,
     unsigned int const chunk_size_bytes,
     bool const store_static_data_separately)
@@ -118,8 +130,8 @@ XdmfHdfWriter::XdmfHdfWriter(
                            std::move(attributes), mesh.get().getName(),
                            std::move(xdmf_conforming_data)};
     };
-    auto isVariableHdfAttribute =
-        isVariableAttribute<HdfData>(output_variable_names);
+    auto isVariableHdfAttribute = isVariableAttribute<HdfData>(
+        output_variable_names, static_attribute_names);
 
     // extract meta data relevant for HDFWriter
     auto const transform_metamesh_to_hdf =
@@ -211,8 +223,8 @@ XdmfHdfWriter::XdmfHdfWriter(
         return;
     }
 
-    auto isVariableXdmfAttribute =
-        isVariableAttribute<XdmfData>(output_variable_names);
+    auto isVariableXdmfAttribute = isVariableAttribute<XdmfData>(
+        output_variable_names, static_attribute_names);
     // xdmf section
     // extract meta data relevant for XDMFWriter
     auto const transform_metamesh_to_xdmf =
