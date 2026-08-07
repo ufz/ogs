@@ -2,14 +2,15 @@
 <VTKFile type="PUnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
   <PUnstructuredGrid GhostLevel="1">
     <FieldData>
-      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="19" format="binary" RangeMin="45" RangeMax="103">
-        AQAAAAAAAAAAgAAAAAAAABMAAAAAAAAAGwAAAAAAAAA=eF4z0zPVM9U1MrXQTU9KNbA0N0hMAgAqtgS3
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="24" format="binary" RangeMin="45" RangeMax="121">
+        AQAAAAAAAAAAgAAAAAAAABgAAAAAAAAAIAAAAAAAAAA=eF4z0zPVs9A1MdZNTzRNNbZITDLQS8ksKqkEAEmBBts=
       </DataArray>
     </FieldData>
     <PPointData>
       <PDataArray type="Float64" Name="NodalForces" NumberOfComponents="2"/>
       <PDataArray type="Float64" Name="displacement" NumberOfComponents="2"/>
       <PDataArray type="Float64" Name="epsilon" NumberOfComponents="4"/>
+      <PDataArray type="UInt64" Name="global_node_ids"/>
       <PDataArray type="Float64" Name="pf-ic"/>
       <PDataArray type="Float64" Name="phasefield"/>
       <PDataArray type="Float64" Name="pressure"/>
@@ -19,6 +20,7 @@
     <PCellData>
       <PDataArray type="Int32" Name="MaterialIDs"/>
       <PDataArray type="Float64" Name="damage"/>
+      <PDataArray type="UInt64" Name="global_element_ids"/>
       <PDataArray type="UInt8" Name="vtkGhostType"/>
       <PDataArray type="Float64" Name="width"/>
       <PDataArray type="Float64" Name="width_ic"/>
