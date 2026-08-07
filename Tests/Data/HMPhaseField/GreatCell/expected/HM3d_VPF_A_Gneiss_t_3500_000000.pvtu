@@ -2,8 +2,8 @@
 <VTKFile type="PUnstructuredGrid" version="1.0" byte_order="LittleEndian" header_type="UInt64" compressor="vtkZLibDataCompressor">
   <PUnstructuredGrid GhostLevel="1">
     <FieldData>
-      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="24" format="binary" RangeMin="45" RangeMax="121">
-        AQAAAAAAAAAAgAAAAAAAABgAAAAAAAAAIAAAAAAAAAA=eF4z0zPVs9A1MdZNTzRNNbZITDLQS8ksKqkEAEmBBts=
+      <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="19" format="binary" RangeMin="45" RangeMax="103">
+        AQAAAAAAAAAAgAAAAAAAABMAAAAAAAAAGwAAAAAAAAA=eF4z0zPVs9A1sjTRTU+1TDI0NE8xAwAqpgST
       </DataArray>
     </FieldData>
     <PPointData>
@@ -28,9 +28,9 @@
     <PPoints>
       <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
     </PPoints>
-    <Piece Source="HM3d_VPF_A_Gneiss_ts_78_t_3500_000000_0.vtu"/>
-    <Piece Source="HM3d_VPF_A_Gneiss_ts_78_t_3500_000000_1.vtu"/>
-    <Piece Source="HM3d_VPF_A_Gneiss_ts_78_t_3500_000000_2.vtu"/>
-    <Piece Source="HM3d_VPF_A_Gneiss_ts_78_t_3500_000000_3.vtu"/>
+    <Piece Source="HM3d_VPF_A_Gneiss_t_3500_000000_0.vtu"/>
+    <Piece Source="HM3d_VPF_A_Gneiss_t_3500_000000_1.vtu"/>
+    <Piece Source="HM3d_VPF_A_Gneiss_t_3500_000000_2.vtu"/>
+    <Piece Source="HM3d_VPF_A_Gneiss_t_3500_000000_3.vtu"/>
   </PUnstructuredGrid>
 </VTKFile>

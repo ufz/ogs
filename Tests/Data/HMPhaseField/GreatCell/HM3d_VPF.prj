@@ -247,35 +247,35 @@
     </media>
     <time_loop>
         <global_process_coupling>
-            <max_iter> 1000 </max_iter>
+            <max_iter> 100 </max_iter>
             <convergence_criteria>
                 <!-- convergence criterion for the first process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1.e-12</abstol>
-                    <reltol>1.e-6</reltol>
+                    <reltol>1.e-5</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the second process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1.e-12</abstol>
-                    <reltol>1.e-6</reltol>
+                    <reltol>1.e-5</reltol>
                 </convergence_criterion>
                 <!-- convergence criterion for the third process -->
                 <convergence_criterion>
                     <type>DeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <abstol>1.e-12</abstol>
-                    <reltol>1.e-6</reltol>
+                    <reltol>1.e-5</reltol>
                 </convergence_criterion>
             </convergence_criteria>
-            <!-- <local_coupling_processes>
+            <local_coupling_processes>
                 <max_iter> 5 </max_iter>
                 <process_name>pressure</process_name>
                 <process_name>displacement</process_name>
-            </local_coupling_processes> -->
+            </local_coupling_processes>
         </global_process_coupling>
         <processes>
             <process ref="HMPhaseField">
@@ -298,7 +298,7 @@
                     <initial_dt>2</initial_dt>
                     <minimum_dt>0.1</minimum_dt>
                     <maximum_dt>50</maximum_dt>
-                    <number_iterations>1 2 5 10  20</number_iterations>
+                    <number_iterations>1 20 40 60 80</number_iterations>
                     <multiplier>       1.6 1.4 1.0 0.7 0.5</multiplier>
                 </time_stepping>
             </process>
@@ -322,7 +322,7 @@
                     <initial_dt>2</initial_dt>
                     <minimum_dt>0.1</minimum_dt>
                     <maximum_dt>50</maximum_dt>
-                    <number_iterations>1 2 5 10  20</number_iterations>
+                    <number_iterations>1 20 40 60 80</number_iterations>
                     <multiplier>       1.6 1.4 1.0 0.7 0.5</multiplier>
                 </time_stepping>
             </process>
@@ -346,7 +346,7 @@
                     <initial_dt>2</initial_dt>
                     <minimum_dt>0.1</minimum_dt>
                     <maximum_dt>50</maximum_dt>
-                    <number_iterations>1 2 5 10  20</number_iterations>
+                    <number_iterations>1 20 40 60 80</number_iterations>
                     <multiplier>       1.6 1.4 1.0 0.7 0.5</multiplier>
                 </time_stepping>
             </process>
@@ -354,6 +354,7 @@
         <output>
             <type>VTK</type>
             <prefix>GreatCell_2D</prefix>
+            <suffix>_t_{:time}</suffix>
             <variables>
             </variables>
             <output_iteration_results>false</output_iteration_results>
