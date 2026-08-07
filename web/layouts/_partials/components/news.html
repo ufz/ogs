@@ -1,9 +1,9 @@
 <div class="relative mx-auto lg:max-w-7xl">
-  {{ template "discours-posts" (dict "page" . "category" "announcements" "count" "3") }}
+  {{ template "discourse-posts" (dict "page" . "category" "announcements" "count" "3") }}
 </div>
 
 <div class="hidden md:block relative md:mx-auto lg:max-w-7xl mt-8">
-  {{ template "discours-posts" (dict "page" . "category" "usability" "count" "3" "heading" "Discussions") }}
+  {{ template "discourse-posts" (dict "page" . "category" "usability" "count" "3" "heading" "Discussions") }}
 </div>
 
 {{/*
@@ -15,8 +15,8 @@
 </div>
 */}}
 
-{{ define "discours-posts" }}
-<h3 class="font-mono text-xs font-semibold uppercase tracking-widest text-gray-500">
+{{ define "discourse-posts" }}
+<h3 class="font-mono text-xs font-semibold uppercase tracking-widest text-teal-600">
   {{ if .heading }}
   {{ .heading }}
   {{ else }}

@@ -1,9 +1,6 @@
 {{ define "main" }}
 {{ partial "components/hero" .Params.hero }}
 {{ partial "components/stat-band" . }}
-{{ partial "components/application-areas" . }}
-{{ partial "components/feature-grid" . }}
-{{ partial "components/workflow" . }}
 
 <section class="border-t border-gray-200 bg-white">
   <div class="mx-auto w-full px-4 py-12 sm:px-6 lg:max-w-7xl lg:py-16">
@@ -27,6 +24,10 @@
     </div>
   </div>
 </section>
+
+{{ partial "components/application-areas" . }}
+{{ partial "components/feature-grid" . }}
+{{ partial "components/workflow" . }}
 
 {{ $publicationPages := where .Site.RegularPages "Section" "publications" }}
 {{ $publicationPagesWithImage := slice }}
