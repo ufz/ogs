@@ -301,7 +301,7 @@
                     <initial_dt>2</initial_dt>
                     <minimum_dt>1</minimum_dt>
                     <maximum_dt>200</maximum_dt>
-                    <number_iterations>1 2 5 10  20</number_iterations>
+                    <number_iterations>1 10 20 30 40</number_iterations>
                     <multiplier>       1.6 1.4 1.0 0.7 0.5</multiplier>
                 </time_stepping>
             </process>
@@ -325,7 +325,7 @@
                     <initial_dt>2</initial_dt>
                     <minimum_dt>1</minimum_dt>
                     <maximum_dt>200</maximum_dt>
-                    <number_iterations>1 2 5 10  20</number_iterations>
+                    <number_iterations>1 10 20 30 40</number_iterations>
                     <multiplier>       1.6 1.4 1.0 0.7 0.5</multiplier>
                 </time_stepping>
             </process>
@@ -349,7 +349,7 @@
                     <initial_dt>2</initial_dt>
                     <minimum_dt>1</minimum_dt>
                     <maximum_dt>200</maximum_dt>
-                    <number_iterations>1 2 5 10  20</number_iterations>
+                    <number_iterations>1 10 20 30 40</number_iterations>
                     <multiplier>       1.6 1.4 1.0 0.7 0.5</multiplier>
                 </time_stepping>
             </process>
@@ -357,6 +357,7 @@
         <output>
             <type>VTK</type>
             <prefix>GreatCell_2D</prefix>
+            <suffix>_t_{:time}</suffix>
             <variables>
             </variables>
             <output_iteration_results>false</output_iteration_results>

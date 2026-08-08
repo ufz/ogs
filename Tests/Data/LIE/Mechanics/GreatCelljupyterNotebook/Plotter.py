@@ -3,6 +3,7 @@
 
 import colorsys
 import math
+import os
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from subprocess import run
@@ -17,6 +18,39 @@ if pv.global_theme.trame.server_proxy_enabled:
     pv.set_jupyter_backend("client")
 else:
     pv.set_jupyter_backend("static")
+
+
+# An OGS utility built against PETSc initialises MPI on every invocation, which
+# on some hosts costs over a second while the conversion itself takes ~50 ms.
+# Restricting the transports to shared memory removes most of that: measured
+# 1636 ms -> 200 ms per pvtu2vtu call.
+_MPI_STARTUP_ENV = {
+    "OMPI_MCA_pml": "ob1",
+    "OMPI_MCA_btl": "self,vader",
+}
+
+
+def _utility_env() -> dict:
+    """Environment for short-lived serial OGS utilities."""
+    return {**os.environ, **_MPI_STARTUP_ENV}
+
+
+def _mesh_series_without_pvtu2vtu(path: Path) -> ot.MeshSeries:
+    """MeshSeries that reads .pvtu files directly instead of via the CLI.
+
+    ogstools converts every single time step by spawning the pvtu2vtu
+    executable, so reading a series costs one process launch per time step
+    (~1.6 s each here, against ~15 ms for a direct read). The conversion only
+    merges the partition ghost nodes, which does not affect values sampled at a
+    point - probing both ways gives bit-identical results.
+    """
+    mesh_series = ot.MeshSeries(path)
+    mesh_series.skip_pvtu2vtu = True
+    # The constructor already read time step 0 through the CLI to determine the
+    # dimension. That cached mesh has the ghost nodes merged while every later
+    # step will not, and the differing point counts break stacking the values.
+    mesh_series._mesh_cache.clear()
+    return mesh_series
 
 
 class Plotter:
@@ -280,7 +314,11 @@ class Plotter:
 
         if path.suffix == ".pvtu":
             out_vtu = path.with_suffix(".vtu")
-            run(["pvtu2vtu", "-i", str(path), "-o", str(out_vtu)], check=True)
+            run(
+                ["pvtu2vtu", "-i", str(path), "-o", str(out_vtu)],
+                check=True,
+                env=_utility_env(),
+            )
             return out_vtu
 
         if path.suffix == ".pvd":
@@ -290,6 +328,7 @@ class Plotter:
                 run(
                     ["pvtu2vtu", "-i", str(last_pvtu), "-o", str(out_vtu)],
                     check=True,
+                    env=_utility_env(),
                 )
                 return out_vtu
             except RuntimeError:
@@ -1449,7 +1488,7 @@ class Plotter:
                 if materials_to_include and material not in materials_to_include:
                     continue
 
-                ms = ot.MeshSeries(self.output_dir / pvd)
+                ms = _mesh_series_without_pvtu2vtu(self.output_dir / pvd)
                 for obs_label, pts in obs_points.items():
                     probe = ot.MeshSeries.probe(ms, pts)
                     times = probe.timevalues

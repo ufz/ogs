@@ -148,7 +148,8 @@ class SingleOGSModel:
 
             return Path(self.out_dir, f"{output_file_name_prefix}.pvd").resolve()
         except Exception as e:
-            print(f"An error occurred run: {e}")
+            msg = f"An error occurred run: {e}"
+            raise RuntimeError(msg) from e
 
     def change_model_dt0_dt_min(self, dt0, dt_min, model_type):
         if model_type == "HM2a":

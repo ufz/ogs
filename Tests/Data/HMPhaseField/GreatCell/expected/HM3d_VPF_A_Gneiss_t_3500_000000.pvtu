@@ -3,13 +3,14 @@
   <PUnstructuredGrid GhostLevel="1">
     <FieldData>
       <DataArray type="Int8" Name="OGS_VERSION" NumberOfTuples="19" format="binary" RangeMin="45" RangeMax="103">
-        AQAAAAAAAAAAgAAAAAAAABMAAAAAAAAAGwAAAAAAAAA=eF4z0zPVM9U1MrXQTU9KNbA0N0hMAgAqtgS3
+        AQAAAAAAAAAAgAAAAAAAABMAAAAAAAAAGwAAAAAAAAA=eF4z0zPVs9A1sjTRTU+1TDI0NE8xAwAqpgST
       </DataArray>
     </FieldData>
     <PPointData>
       <PDataArray type="Float64" Name="NodalForces" NumberOfComponents="2"/>
       <PDataArray type="Float64" Name="displacement" NumberOfComponents="2"/>
       <PDataArray type="Float64" Name="epsilon" NumberOfComponents="4"/>
+      <PDataArray type="UInt64" Name="global_node_ids"/>
       <PDataArray type="Float64" Name="pf-ic"/>
       <PDataArray type="Float64" Name="phasefield"/>
       <PDataArray type="Float64" Name="pressure"/>
@@ -19,6 +20,7 @@
     <PCellData>
       <PDataArray type="Int32" Name="MaterialIDs"/>
       <PDataArray type="Float64" Name="damage"/>
+      <PDataArray type="UInt64" Name="global_element_ids"/>
       <PDataArray type="UInt8" Name="vtkGhostType"/>
       <PDataArray type="Float64" Name="width"/>
       <PDataArray type="Float64" Name="width_ic"/>
@@ -26,9 +28,9 @@
     <PPoints>
       <PDataArray type="Float64" Name="Points" NumberOfComponents="3"/>
     </PPoints>
-    <Piece Source="HM3d_VPF_A_Gneiss_ts_78_t_3500_000000_0.vtu"/>
-    <Piece Source="HM3d_VPF_A_Gneiss_ts_78_t_3500_000000_1.vtu"/>
-    <Piece Source="HM3d_VPF_A_Gneiss_ts_78_t_3500_000000_2.vtu"/>
-    <Piece Source="HM3d_VPF_A_Gneiss_ts_78_t_3500_000000_3.vtu"/>
+    <Piece Source="HM3d_VPF_A_Gneiss_t_3500_000000_0.vtu"/>
+    <Piece Source="HM3d_VPF_A_Gneiss_t_3500_000000_1.vtu"/>
+    <Piece Source="HM3d_VPF_A_Gneiss_t_3500_000000_2.vtu"/>
+    <Piece Source="HM3d_VPF_A_Gneiss_t_3500_000000_3.vtu"/>
   </PUnstructuredGrid>
 </VTKFile>

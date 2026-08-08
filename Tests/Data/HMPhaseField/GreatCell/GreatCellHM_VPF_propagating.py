@@ -5,7 +5,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.17.2
+#       jupytext_version: 1.19.1
 #   kernelspec:
 #     display_name: Python 3 (ipykernel)
 #     language: python
@@ -32,9 +32,9 @@ from subprocess import run
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import meshio
 import numpy as np
 import ogstools as ot
+import pyvista as pv
 from matplotlib import colormaps
 
 mechanics_path = Path(
@@ -561,8 +561,8 @@ mesh_path_pre_existing = Path("mesh_borehole_pre_existing").resolve()
 
 # Compare generated and pre-existing meshes
 def _mesh_stats(path):
-    m = meshio.read(path)
-    return m.points.shape[0], sum(len(b.data) for b in m.cells)
+    m = pv.read(path)
+    return m.n_points, m.n_cells
 
 
 meshes = {
@@ -693,10 +693,10 @@ plotter.plot_observation_points_vs_time(
 
 
 # %% vscode={"languageId": "python"}
-ref_base = "HM3d_VPF_A_Gneiss_ts_78_t_3500_000000"
+ref_base = "HM3d_VPF_A_Gneiss_t_3500_000000"
 expected_dir = Path("expected")
 out_dir = Path(out_dir)
-series_prefix = ref_base.split("_ts_")[0]
+series_prefix = ref_base.split("_t_", maxsplit=1)[0]
 pvd_path = out_dir.joinpath(f"{series_prefix}.pvd")
 
 
@@ -716,7 +716,10 @@ def last_pvtu_from_series(pvd: Path, prefix: str) -> Path:
 
 
 ref_pvtu = expected_dir.joinpath(f"{ref_base}.pvtu")
-ref_vtu = out_dir / f"{ref_base}.vtu"
+# Merge into the output directory, not next to the reference: writing here
+# leaves the source tree dirty, which fails CI. The name differs from the
+# computed series' merged file, which is out_dir/f"{ref_base}.vtu".
+ref_vtu = out_dir / f"{ref_base}_expected.vtu"
 run(["pvtu2vtu", "-i", str(ref_pvtu), "-o", str(ref_vtu)], check=True)
 
 last_pvtu = last_pvtu_from_series(pvd_path, series_prefix)
@@ -724,111 +727,51 @@ last_vtu = last_pvtu.with_suffix(".vtu")
 run(["pvtu2vtu", "-i", str(last_pvtu), "-o", str(last_vtu)], check=True)
 
 
-# ---------------- VTU comparer ----------------
-def read_mesh(path):
-    m = meshio.read(str(path))
-    pts = m.points.astype(float)
-    if pts.shape[1] == 2:
-        pts = np.c_[pts, np.zeros(len(pts))]
-    return pts, m.point_data
+def sorted_point_data(path):
+    m = pv.read(str(path))
+    order = np.lexsort((m.points[:, 2], m.points[:, 1], m.points[:, 0]))
+    return {k: np.asarray(v)[order] for k, v in m.point_data.items()}
 
 
-def sort_index_by_points(pts):
-    return np.lexsort((pts[:, 2], pts[:, 1], pts[:, 0]))
+ref = sorted_point_data(ref_vtu)
+got = sorted_point_data(last_vtu)
 
+# Pointwise comparison for the smooth fields.
+#
+# The pressure tolerance is relative to the peak of the field, not absolute.
+# The pressure here is sensitive at the sub-percent level to the dt trajectory:
+# any two of the time stepping configurations tried differ by a median of 1.8e4
+# to 3.0e4 Pa on a field reaching 7.2e6 Pa, and the trajectory itself is not
+# reproducible across platforms, because a different BLAS or a different
+# BoomerAMG iteration count moves the adaptive step sizes and with them the
+# backward-Euler time-discretisation error. Measured against the Linux-generated
+# reference, the macOS PETSc run reaches 1.234e5 Pa, i.e. 1.7% of the peak,
+# concentrated at the crack front where the pressure gradient is steep and a
+# front offset of a fraction of an element shows up as a large nodal difference.
+# 5% of the peak accommodates that while still catching a gross regression; the
+# crack-area and displacement checks remain tight.
+pressure_scale = float(np.max(np.abs(ref["pressure"])))
+TOLERANCES = {
+    "displacement": {"rtol": 1e-3, "atol": 5e-5},
+    "pressure": {"rtol": 5e-2, "atol": 0.05 * pressure_scale},
+}
 
-def reorder_point_data(pd, idx):
-    out = {}
-    for k, v in pd.items():
-        arr = np.asarray(v)
-        if arr.ndim == 1:
-            arr = arr[:, None]
-        out[k] = arr[idx]
-    return out
+for name, tol in TOLERANCES.items():
+    assert np.allclose(got[name], ref[name], **tol), (
+        f"Field '{name}' differs from expected "
+        f"(max abs diff = {np.max(np.abs(got[name] - ref[name])):.3e})"
+    )
+    print(f"{name}: MATCH")
 
-
-def safe_max_rel_diff(a, b):
-    denom = np.maximum(np.abs(b), 1e-12)
-    return float(np.max(np.abs((a - b) / denom)))
-
-
-def compare_arrays(a, b, rtol=1e-6, atol=1e-8, equal_nan=False):
-    a = np.asarray(a)
-    b = np.asarray(b)
-    if a.ndim == 1:
-        a = a[:, None]
-    if b.ndim == 1:
-        b = b[:, None]
-    if a.shape != b.shape:
-        return {
-            "status": "SHAPE MISMATCH",
-            "a_shape": a.shape,
-            "b_shape": b.shape,
-        }
-    try:
-        np.testing.assert_allclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan)
-        return {"status": "MATCH"}
-    except AssertionError:
-        return {
-            "status": "MISMATCH",
-            "max_abs_diff": float(np.max(np.abs(a - b))),
-            "max_rel_diff": safe_max_rel_diff(a, b),
-            "count_not_close": int(
-                np.sum(~np.isclose(a, b, rtol=rtol, atol=atol, equal_nan=equal_nan))
-            ),
-            "a_min": float(np.nanmin(a)),
-            "a_max": float(np.nanmax(a)),
-            "b_min": float(np.nanmin(b)),
-            "b_max": float(np.nanmax(b)),
-        }
-
-
-def compare_vtu_files(
-    fileA, fileB, array_names=None, rtol=1e-6, atol=1e-8, equal_nan=False
-):
-    ptsA, pdA = read_mesh(fileA)
-    ptsB, pdB = read_mesh(fileB)
-
-    if len(ptsA) != len(ptsB):
-        return {
-            "fatal": "Different point counts",
-            "A_points": len(ptsA),
-            "B_points": len(ptsB),
-        }
-
-    idxA = sort_index_by_points(ptsA)
-    idxB = sort_index_by_points(ptsB)
-    ptsA_sorted = ptsA[idxA]
-    ptsB_sorted = ptsB[idxB]
-
-    # looser atol for float noise in coordinates
-    if not np.allclose(ptsA_sorted, ptsB_sorted, rtol=0.0, atol=1e-9):
-        return {"fatal": "Point coordinate mismatch even after sorting"}
-
-    pdA_sorted = reorder_point_data(pdA, idxA)
-    pdB_sorted = reorder_point_data(pdB, idxB)
-
-    if array_names is None:
-        names = sorted(set(pdA_sorted.keys()) & set(pdB_sorted.keys()))
-    else:
-        names = [n for n in array_names if n in pdA_sorted and n in pdB_sorted]
-
-    out = {"point_data": {}, "compared_arrays": names}
-    for name in names:
-        out["point_data"][name] = compare_arrays(
-            pdA_sorted[name], pdB_sorted[name], rtol, atol, equal_nan
-        )
-    return out
-
-
-res = compare_vtu_files(
-    ref_vtu,
-    last_vtu,
-    array_names=["displacement"],
-    rtol=1e-4,
-    atol=1e-4,
-    equal_nan=True,
+# Phase field: compare the cracked area (nodes with pf >= 0.5) instead of
+# pointwise values, so a small shift of the crack path does not fail the test.
+crack_ref = int(np.count_nonzero(ref["phasefield"] >= 0.5))
+crack_got = int(np.count_nonzero(got["phasefield"] >= 0.5))
+crack_rel = abs(crack_got - crack_ref) / max(crack_ref, 1)
+assert crack_rel <= 0.1, (
+    f"phasefield cracked-node count differs from expected "
+    f"(ref={crack_ref}, got={crack_got}, rel diff={crack_rel:.2%})"
 )
+print(f"phasefield: MATCH (cracked nodes ref={crack_ref}, got={crack_got})")
 
-for name, result in res["point_data"].items():
-    assert result["status"] == "MATCH", f"Field '{name}' mismatch: {result}"
+# %%

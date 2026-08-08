@@ -354,6 +354,7 @@
         <output>
             <type>VTK</type>
             <prefix>GreatCell_2D</prefix>
+            <suffix>_t_{:time}</suffix>
             <variables>
             </variables>
             <output_iteration_results>false</output_iteration_results>
