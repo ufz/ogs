@@ -9,14 +9,32 @@
 .common-arch-cpp-rules: &common-arch-cpp-rules
   - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/'
     when: never
+  # 'build linux arch' is not skipped for these labels because 'preview web
+  # site' needs the web content and the feature_matrix target it generates.
+  # Its test suite is reduced to the notebook tests.
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::(web|petsc) only?($|,)/'
+    variables:
+      CTEST_ARGS: "-R nb-"
+  - when: on_success
+
+# Rules for the PETSc job with OGS_COVERAGE_PYTHON=OFF
+.common-petsc-cpp-rules: &common-petsc-cpp-rules
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/'
+    when: never
   - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/'
     variables:
       CTEST_ARGS: "-R nb-"
   - when: on_success
 
+# Rules for the PETSc job with OGS_COVERAGE_PYTHON=ON
+.common-petsc-python-rules: &common-petsc-python-rules
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/'
+    when: never
+  - when: on_success
+
 # Rules for OGS_COVERAGE_PYTHON=ON
 .common-arch-python-rules: &common-arch-python-rules
-  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/'
+  - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::(web|petsc) only?($|,)/'
     when: never
   - when: on_success
 
@@ -61,7 +79,7 @@ build linux arch (py-cov):
 build linux petsc:
   <<: *common-linux-arch-base
   tags: [envinf, shell, petsc]
-  rules: *common-arch-cpp-rules
+  rules: *common-petsc-cpp-rules
   variables:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON"
@@ -74,7 +92,7 @@ build linux petsc:
 build linux petsc (py-cov):
   <<: *common-linux-arch-base
   tags: [envinf, shell, petsc]
-  rules: *common-arch-python-rules
+  rules: *common-petsc-python-rules
   variables:
     CMAKE_PRESET: release-petsc
     CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON -DOGS_COVERAGE_PYTHON=ON"
@@ -90,9 +108,7 @@ build linux arch lis:
   <<: *common-linux-arch-base
   tags: [shell, envinf]
   rules:
-    - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::web only?($|,)/'
-      when: never
-    - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::coverage only?($|,)/'
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /.*ci::(web|coverage|petsc) only?($|,)/'
       when: never
     - when: on_success
   variables:

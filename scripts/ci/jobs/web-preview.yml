@@ -16,7 +16,7 @@ preview web site:
     - !reference [.web-setup, script]
     - echo "Website available at $CI_PAGES_URL"
   rules:
-    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::web only.*/
+    - if: $CI_MERGE_REQUEST_LABELS =~ /.*ci::(web|petsc) only.*/
     - if: $CI_MERGE_REQUEST_ID
       changes:
         - web/**/*
