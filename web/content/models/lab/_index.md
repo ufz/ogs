@@ -3,10 +3,10 @@ title = 'Lab scale'
 abbreviation = 'LAB'
 links = [
   ['HM: Soil liquefaction (FEniCS)', 'https://doi.org/10.1016/j.compgeo.2025.107321'],
-  ['TODO: THM (BGR-MAT: TL1)', '#'],
-  ['TODO: Oedometer, swelling', '#'],
-  ['TODO: Triax, polycyclic tests', '#'],
-  ['TODO: Thermo-shear', '#'],
+  # ['TODO: THM (BGR-MAT: TL1)', '#'],
+  # ['TODO: Oedometer, swelling', '#'],
+  # ['TODO: Triax, polycyclic tests', '#'],
+  # ['TODO: Thermo-shear', '#'],
 ]
 +++
 

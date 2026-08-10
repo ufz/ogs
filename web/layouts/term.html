@@ -1,98 +1,130 @@
 {{ define "main" }}
 
-<nav aria-label="Breadcrumb" class="flex mb-4">
-  <ol role="list" class="flex items-center space-x-4">
-    <li>
-      <div>
-        <a href='{{ relURL "" }}' class="text-gray-400 hover:text-gray-500">
-          <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5 shrink-0">
-            <path
-              d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
-              clip-rule="evenodd" fill-rule="evenodd" />
-          </svg>
-          <span class="sr-only">Home</span>
-        </a>
-      </div>
-    </li>
-    <li>
-      <div class="flex items-center">
-        <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true"
-          class="size-5 shrink-0 text-gray-400">
-          <path
-            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-            clip-rule="evenodd" fill-rule="evenodd" />
+{{ $logo := .Resources.Get "logo.svg" }}
+{{ if not $logo }}
+{{ $logo = .Resources.Get "logo.png" }}
+{{ end }}
+{{ if not $logo }}
+{{ $logo = .Resources.Get "logo.jpg" }}
+{{ end }}
+{{ $kind := "MODEL COLLECTION" }}
+{{ if hasPrefix .RelPermalink "/projects/" }}
+{{ $kind = "PROJECT" }}
+{{ end }}
+{{ $links := .Params.links | default (slice) }}
+{{ $hasExamples := or (gt (len $links) 0) (gt (len .Pages) 0) }}
+{{ $mainGrid := "grid grid-cols-1 gap-10" }}
+{{ if $hasExamples }}
+{{ $mainGrid = "grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,22rem)] lg:items-start" }}
+{{ end }}
+
+<article>
+  <section class="border-b border-gray-200 bg-gray-50">
+    <div class="mx-auto w-full px-4 py-8 sm:px-6 lg:max-w-7xl lg:py-12">
+      <a class="inline-flex items-center font-mono text-sm font-semibold text-brand-600 transition hover:text-brand-700"
+        href='{{ relURL "hub" }}'>
+        <svg class="mr-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M15 10a1 1 0 01-1 1H6.414l2.293 2.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L6.414 9H14a1 1 0 011 1z" clip-rule="evenodd" />
         </svg>
-        <a href='{{ relURL "docs" }}' class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">Docs</a>
-      </div>
-    </li>
-    <li>
-      <div class="flex items-center">
-        <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true"
-          class="size-5 shrink-0 text-gray-400">
-          <path
-            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-            clip-rule="evenodd" fill-rule="evenodd" />
-        </svg>
-        <a href='{{ relURL "hub" }}' class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700">HUB</a>
-      </div>
-    </li>
-    <li>
-      <div class="flex items-center">
-        <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true"
-          class="size-5 shrink-0 text-gray-400">
-          <path
-            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-            clip-rule="evenodd" fill-rule="evenodd" />
-        </svg>
-        <a href="#" aria-current="page" class="ml-4 text-sm font-medium text-blue-700 font-black hover:text-gray-700">{{
-          .Params.abbreviation }}</a>
-      </div>
-    </li>
-  </ol>
-</nav>
+        Back to Model Hub
+      </a>
 
-<div class="flex">
-
-  <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
-
-    <div class="flex items-center gap-6 mb-6">
-      {{ $logo := .Resources.Get "logo.svg" }}
-      {{ if not $logo }}
-      {{ $logo = .Resources.Get "logo.png" }}
-      {{ end }}
-      {{ if not $logo }}
-      {{ $logo = .Resources.Get "logo.jpg" }}
-      {{ end }}
-
-      {{ with $logo }}
-      <div class="flex-shrink-0 mx-4">
-        <img src="{{ .RelPermalink }}" alt="logo" class="h-16 lg:h-24 w-auto max-w-none">
-      </div>
-      {{ end }}
-      <h1 class="text-2xl font-bold">
-        {{ .Title | plainify }}{{ if .Params.abbreviation }} – {{ .Params.abbreviation }}{{ end }}
-      </h1>
-
-    </div>
-
-    {{ .Content }}
-    <h2>Examples</h2>
-    <div class="prose">
-      <ul class="mx-4 leading-tight">
-        {{ range .Page.Params.links }}
-        <li><a class="text-gray-700 no-underline hover:underline" href="{{ index . 1 }}">
-            {{ index . 0 }}
-          </a>{{ if index . 2 }}
-          &nbsp;<img src="{{ index . 2 }}" alt="logo" class="inline h-5 not-prose" />
+      <div class="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,26rem)] lg:items-center">
+        <div class="min-w-0">
+          <div class="font-mono text-xs font-semibold tracking-widest text-teal-700 sm:text-sm">
+            {{ $kind }}
+          </div>
+          <h1 class="mt-3 max-w-4xl text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl" style="line-height: 1.1;">
+            {{ .Title | plainify }}{{ if eq $kind "PROJECT" }}{{ with .Params.abbreviation }} <span class="text-brand-600">– {{ . }}</span>{{ end }}{{ end }}
+          </h1>
+          {{ with .Params.headline }}
+          <p class="mt-5 max-w-3xl text-lg leading-relaxed text-gray-600">
+            {{ . }}
+          </p>
           {{ end }}
-        </li>
+        </div>
+
+        {{ with $logo }}
+        <div class="flex min-h-0 aspect-[3/2] items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <img src="{{ .RelPermalink }}" alt="{{ $.Title | plainify }} logo"
+            class="h-full w-full object-contain no-fancybox" />
+        </div>
         {{ end }}
-        {{ range .Pages }}
-        <li><a class="text-gray-700 no-underline hover:underline" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>
-        </li>
-        {{ end }}
-      </ul>
+      </div>
     </div>
-  </div>
-</div>
+  </section>
+
+  <section class="border-b border-gray-200 bg-white">
+    <div class="mx-auto w-full px-4 py-10 sm:px-6 lg:max-w-7xl lg:py-14">
+      <div class="{{ $mainGrid }}">
+        <div class="section-docs prose prose-gray max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline prose-img:rounded-xl prose-img:shadow-sm">
+          {{ .Content }}
+        </div>
+
+        {{ if $hasExamples }}
+        <aside class="rounded-xl border border-gray-200 bg-gray-50 p-5 lg:sticky lg:top-4">
+          <div class="font-mono text-xs font-semibold tracking-widest text-teal-700">
+            EXAMPLES
+          </div>
+          <h2 class="mt-3 text-xl font-bold tracking-tight text-gray-950">
+            Explore this collection
+          </h2>
+          <div class="mt-5 space-y-2">
+            {{ range $links }}
+            {{ $href := index . 1 }}
+            {{ $icon := "arrow" }}
+            {{ $jupyterLogo := "https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" }}
+            {{ if or (hasPrefix $href "https://doi.org/") (in $href "sciencedirect.com/") (in $href "link.springer.com/") }}
+            {{ $icon = "paper" }}
+            {{ else if or (in $href "jupyter") (in $href "notebook") (in $href "/auto_examples/") }}
+            {{ $icon = "jupyter" }}
+            {{ if and (ge (len .) 3) (index . 2) }}
+            {{ $jupyterLogo = index . 2 }}
+            {{ end }}
+            {{ else if hasPrefix $href "http" }}
+            {{ $icon = "website" }}
+            {{ end }}
+            <a class="group flex items-start justify-between gap-3 rounded-lg border border-gray-200 bg-white p-3 text-sm font-semibold text-gray-800 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
+              href="{{ $href }}">
+              <span>{{ index . 0 }}</span>
+              <span class="flex flex-none items-center gap-2 text-brand-600" aria-hidden="true">
+                {{ if eq $icon "paper" }}
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5s3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18s-3.332.477-4.5 1.253" />
+                </svg>
+                {{ else if eq $icon "jupyter" }}
+                <img src="{{ $jupyterLogo }}" alt="" class="h-4 w-4 object-contain" />
+                {{ else if eq $icon "website" }}
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <circle cx="12" cy="12" r="9" />
+                  <path stroke-linecap="round" d="M3 12h18M12 3c2.25 2.46 3.5 5.46 3.5 9s-1.25 6.54-3.5 9c-2.25-2.46-3.5-5.46-3.5-9S9.75 5.46 12 3Z" />
+                </svg>
+                {{ end }}
+                {{ if eq $icon "arrow" }}→{{ end }}
+              </span>
+            </a>
+            {{ end }}
+
+            {{ range .Pages }}
+            {{ $jupyterLogo := "https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" }}
+            <a class="group flex items-start justify-between gap-3 rounded-lg border border-gray-200 bg-white p-3 text-sm font-semibold text-gray-800 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
+              href="{{ .RelPermalink }}">
+              <span>{{ .LinkTitle }}</span>
+              <span class="flex flex-none items-center text-brand-600" aria-hidden="true">
+                {{ if .Params.notebook }}
+                <img src="{{ $jupyterLogo }}" alt="" class="h-4 w-4 object-contain" />
+                {{ else }}
+                →
+                {{ end }}
+              </span>
+            </a>
+            {{ end }}
+          </div>
+        </aside>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+</article>
+
 {{ end }}

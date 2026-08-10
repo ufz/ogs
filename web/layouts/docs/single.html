@@ -9,30 +9,51 @@
 {{ if not .IsSection }}
 {{ $baseSubsection = .Parent.Parent }}
 {{ end }}
+{{ $couplingImage := "" }}
+{{ if isset .Params "coupling" }}
+{{ $couplingImage = printf "images/coupling-icons/%s-tet.svg" .Params.coupling }}
+{{ else if isset .Parent.Params "coupling" }}
+{{ $couplingImage = printf "images/coupling-icons/%s-tet.svg" .Parent.Params.coupling }}
+{{ end }}
+{{ $isBenchmarkPage := hasPrefix .RelPermalink "/docs/benchmarks/" }}
 
-<div class="flex">
+<div class="mx-auto flex w-full flex-col md:flex-row">
 
   {{ partial "docs/sidebar.html" . }}
 
-  <div class="overflow-y-auto focus:outline-none">
+  <main class="min-w-0 flex-1 px-4 py-5 focus:outline-none sm:px-5 lg:px-6">
 
-    {{ if isset .Params "coupling" }}
-    {{ $img := printf "images/coupling-icons/%s-tet.svg" .Params.coupling }}
-    <img class="h-12 md:h-16 lg:h-20 float-right" src="{{ absURL $img }}" alt="">
-    {{ else if isset .Parent.Params "coupling" }}
-    {{ $img := printf "images/coupling-icons/%s-tet.svg" .Parent.Params.coupling }}
-    <img class="h-12 md:h-16 lg:h-20 float-right" src="{{ absURL $img }}" alt="">
-    {{ end }}
+    <article class="mx-auto max-w-6xl">
+      {{ if .Params.breadcrumbs }}
+      <div class="mb-8">
+        {{ partial "docs/breadcrumbs.html" . }}
+      </div>
+      {{ end }}
 
-    {{ if .Params.breadcrumbs }}
-    {{ partial "docs/breadcrumbs.html" . }}
-    {{ end }}
+      <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+        <div class="min-w-0">
+          {{ if not $isBenchmarkPage }}
+          <div class="font-mono text-xs font-semibold tracking-widest text-teal-700">
+            {{ upper $baseSubsection.Title }}
+          </div>
+          {{ end }}
+          <h1
+            class="{{ if not $isBenchmarkPage }}mt-3 {{ end }}text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl lg:text-5xl"
+            style="line-height: 1.1;">
+            {{ .Title }}
+          </h1>
+        </div>
+        {{ if $couplingImage }}
+        <div class="hidden h-20 w-20 flex-shrink-0 items-center justify-center p-3 md:flex" title="Coupled process">
+          <img class="no-fancybox h-full w-full object-contain" src="{{ absURL $couplingImage }}"
+            alt="Coupled process icon">
+        </div>
+        {{ end }}
+      </div>
 
-    <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
-      <h1 class="text-3xl font-extrabold sm:text-4xl mb-8">{{ .Title }}</h1>
       {{ if $baseSubsection.Params.os_selector }}
-      <div class="flex justify-center">
-        <div class="invisible mb-8 bg-gray-200 shadow rounded-lg px-2 py-1 w-auto" id="os-selector">
+      <div class="mt-8 flex justify-center">
+        <div class="invisible w-auto rounded-lg border border-gray-200 bg-gray-50 px-3 py-2" id="os-selector">
           <span class="text-gray-600">Select OS:</span>
           <a class="btn mx-1" id="btn-win"><i class="fab fa-windows"></i><span class="hidden sm:inline">
               Windows</span></a>
@@ -45,20 +66,20 @@
 
       {{ if eq .Params.toc true }}
       {{/* "block md:hidden" only shows on small screen sizes */}}
-      <div class="block md:hidden mb-4">
-        <details>
-          <summary>
-            <span class="font-bold text-brand-500">Table of Contents</span>
-            <span class="text-sm italic text-gray-700">(click to toggle)</span>
+      <div class="mt-8 block md:hidden">
+        <details class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
+          <summary class="cursor-pointer">
+            <span class="font-bold text-brand-600">Table of contents</span>
           </summary>
-          <div class="ml-4 mt-2">
+          <div class="mt-3 text-sm">
             {{.TableOfContents}}
           </div>
         </details>
       </div>
       {{ end }}
 
-      <div class="section-docs prose prose-sm lg:prose max-w-none lg:max-w-none">
+      <div
+        class="section-docs prose prose-gray mt-8 max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-950 prose-img:rounded-lg">
 
 
         {{ $items := slice }}
@@ -71,53 +92,87 @@
         {{ $items = $items | append (dict "type" "model" "name" $m) }}
         {{ end }}
 
-        <div class="grid auto-cols-max grid-flow-col justify-around">
-
-          {{ range $item := $items }}
-          {{ with site.GetPage (printf "%s/%s" (pluralize $item.type) (urlize $item.name)) }}
-
-          {{ $link := .Permalink }}
-          {{ $logo := .Resources.Get "logo.svg" }}
-          {{ if not $logo }}
-          {{ $logo = .Resources.Get "logo.png" }}
+        {{ $hasModelHubLinks := gt (len $items) 0 }}
+        {{ if or .Params.notebook $hasModelHubLinks }}
+        <div class="my-5 rounded-xl border border-gray-200 bg-gray-50 p-2 shadow-sm sm:my-8 sm:p-5">
+          {{ if .Params.notebook }}
+          {{ partial "docs/notebook-banner.html" . }}
           {{ end }}
-          {{ if not $logo }}
-          {{ $logo = .Resources.Get "logo.jpg" }}
-          {{ end }}
+          {{ if $hasModelHubLinks }}
+          <div class="{{ if .Params.notebook }}mt-5 border-t border-gray-200 pt-5{{ end }}">
+            <div class="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
 
-          {{ with $logo }}
-          <div>
-            <a href="{{ $link }}">
-              <img src="{{ .RelPermalink }}" alt="{{ $item.type }} logo" class="h-16 no-fancybox">
-            </a>
+              {{ range $item := $items }}
+              {{ with site.GetPage (printf "%s/%s" (pluralize $item.type) (urlize $item.name)) }}
+
+              {{ $link := .Permalink }}
+              {{ $logo := .Resources.Get "logo.svg" }}
+              {{ if not $logo }}
+              {{ $logo = .Resources.Get "logo.png" }}
+              {{ end }}
+              {{ if not $logo }}
+              {{ $logo = .Resources.Get "logo.jpg" }}
+              {{ end }}
+
+              <a class="group flex min-w-0 items-center gap-4 rounded-xl border border-gray-200 bg-white p-3 text-left transition hover:border-brand-300 hover:bg-brand-50 sm:p-4"
+                href="{{ $link }}">
+                {{ with $logo }}
+                <div
+                  class="flex h-14 w-20 flex-shrink-0 items-center justify-center rounded-lg bg-white p-2 ring-1 ring-inset ring-gray-200">
+                  <img src="{{ .RelPermalink }}" alt="{{ $item.type }} logo"
+                    class="h-full w-full object-contain no-fancybox">
+                </div>
+                {{ end }}
+                <div class="min-w-0 flex-1">
+                  <div class="font-mono text-[10px] font-semibold tracking-widest text-teal-700">INCLUDED IN</div>
+                  <div class="mt-1 text-sm font-semibold text-brand-600 group-hover:text-brand-700">
+                    {{ if eq $item.type "project" }}
+                    {{ .Params.abbreviation | default (.Title | plainify) }}
+                    {{ else }}
+                    {{ .Title | plainify }}
+                    {{ end }} collection
+                  </div>
+                </div>
+                <svg class="h-4 w-4 flex-shrink-0 text-brand-500 transition group-hover:translate-x-0.5"
+                  viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clip-rule="evenodd" />
+                </svg>
+              </a>
+              {{ end }}
+              {{ end }}
+            </div>
           </div>
           {{ end }}
-          {{ end }}
-          {{ end }}
         </div>
+        {{ end }}
 
         {{ .Content }}
       </div>
 
-      {{ if and (ne (urls.Parse site.BaseURL).Hostname "localhost") (in .RelPermalink "/docs/benchmarks/") (not .IsSection) }}
+      {{ if and (ne (urls.Parse site.BaseURL).Hostname "localhost") (in .RelPermalink "/docs/benchmarks/") (not
+      .IsSection) }}
       {{ partial "docs/discourse-embed.html" . }}
       {{ end }}
 
-      <hr class="border my-4">
+      <hr class="my-8 border-gray-200">
       {{ partial "footer-nav.html" . }}
 
       {{ partial "page-info" . }}
-    </div>
-  </div>
+    </article>
+  </main>
 
   {{ if eq .Params.toc true }}
   {{/* "hidden md:flex" hides on small screen sizes */}}
-  <div class="hidden md:flex md:shrink-0">
-    <div class="w-48 md:w-64 lg:w-72 pl-2 pr-4 mt-1 text-sm lg:text-base overflow-y-auto h-screen sticky top-0 right-0">
-      <div class="mb-2 font-bold text-brand-500">On this page</div>
-      {{.TableOfContents}}
+  <aside class="hidden md:flex md:w-56 md:shrink-0 lg:w-72">
+    <div class="sticky top-4 h-screen w-full overflow-y-auto px-4 py-6 text-sm lg:text-base">
+      <div class="rounded-lg border border-gray-200 bg-white p-4">
+        <div class="mb-3 font-mono text-xs font-semibold tracking-widest text-teal-700">ON THIS PAGE</div>
+        {{.TableOfContents}}
+      </div>
     </div>
-  </div>
+  </aside>
   {{ end }}
 </div>
 {{ end }}

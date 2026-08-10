@@ -3,8 +3,8 @@ title = 'Materials'
 abbreviation= 'MAT'
 links = [
   ['Hoek-Brown yield criterion', 'https://www.opengeosys.org/docs/benchmarks/small-deformations/hoekbrownyieldcriterion/'],
-  ['TODO: Mohr-Coulomb', '#'],
-  ['TODO: Cam-Clay', '#']
+  # ['TODO: Mohr-Coulomb', '#'],
+  # ['TODO: Cam-Clay', '#']
 ]
 +++
 

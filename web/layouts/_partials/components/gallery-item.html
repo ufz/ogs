@@ -28,7 +28,7 @@
               src="https://upload.wikimedia.org/wikipedia/commons/3/38/Jupyter_logo.svg" alt="">
             {{ end }}
             {{ if isset .Params "coupling" }}
-            <img style="height: 2em;" class="inline-block mr-1"
+            <img style="height: 2em;" class="no-fancybox inline-block mr-1"
               src='{{ relURL (printf "images/coupling-icons/%s-tet.svg" .Params.coupling) }}' alt="">
             {{ end }}
             {{ .Title }}

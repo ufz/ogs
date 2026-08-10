@@ -4,8 +4,8 @@ title = 'Development of Coupled models and their VaLidation against Experiments'
 abbreviation = 'DECOVALEX'
 headline = 'Validation models against experimental data'
 links = [
-  ['TODO: SAFENET DFN', '#'],
-  ['TODO: Analog', '#']
+  ['SAFENET-2 DFN', 'https://decovalex.org/D-2027/safenet2'],
+  ['ANALOG', 'https://decovalex.org/D-2027/analog']
 ]
 +++
 

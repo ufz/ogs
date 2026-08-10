@@ -1,37 +1,57 @@
 {{ define "main" }}
 
-<div class="flex w-full">
+{{ $all := slice
+  (dict "taxonomy" "Project" "term" "EURAD" "pages" (index .Site.Taxonomies.projects "eurad") "label" "EURAD-2" "description" "Connecting models and knowledge." "showTitle" false)
+  (dict "taxonomy" "Project" "term" "DECOVALEX" "pages" (index .Site.Taxonomies.projects "decovalex") "label" "DECOVALEX" "description" "Validation models against experimental data." "showTitle" false)
+  (dict "taxonomy" "Project" "term" "digital-twins" "pages" (dict "Page" (.Site.GetPage "/projects/digital-twins")) "label" "Digital Twins" "description" "Software engineering for reproducible geosystems workflows." "showTitle" false)
+  (dict "taxonomy" "Model" "term" "ANALYTICAL" "pages" (index .Site.Taxonomies.models "analytical") "label" "Classic benchmarks" "description" "Analytical solutions for validating numerical methods." "showTitle" true)
+  (dict "taxonomy" "Model" "term" "material" "pages" (index .Site.Taxonomies.models "material") "label" "Materials" "description" "Constitutive models for porous and fractured media." "showTitle" true)
+  (dict "taxonomy" "Model" "term" "processes" "pages" (index .Site.Taxonomies.models "processes") "label" "Processes" "description" "Coupled process benchmarks and examples." "showTitle" true)
+  (dict "taxonomy" "Model" "term" "lab" "pages" (index .Site.Taxonomies.models "lab") "label" "Lab scale" "description" "Models based on laboratory experiments." "showTitle" true)
+  (dict "taxonomy" "Model" "term" "url" "pages" (index .Site.Taxonomies.models "url") "label" "URL scale" "description" "Field experiment models from underground research laboratories." "showTitle" true)
+  (dict "taxonomy" "Model" "term" "field" "pages" (index .Site.Taxonomies.models "field") "label" "Field scale" "description" "Validated models for field-scale safety analysis." "showTitle" true)
+}}
 
-  <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none">
+<section class="border-b border-gray-200 bg-gray-50">
+  <div class="mx-auto w-full px-4 py-12 sm:px-6 lg:max-w-7xl lg:py-16">
+    <div class="max-w-4xl">
+      <div class="font-mono text-xs font-semibold tracking-widest text-teal-700 sm:text-sm">
+        MODEL HUB
+      </div>
+      <h1 class="mt-4 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl" style="line-height: 1.1;">
+        DigBen <span class="text-brand-600">Model-Hub</span>
+      </h1>
+      <p class="mt-5 max-w-3xl text-lg leading-relaxed text-gray-600">
+        Browse a connected collection of benchmark and validation models for comparing modelling tools and results.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center gap-4">
+        <a class="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-600"
+          href="#model-catalogue">
+          Explore the catalogue
+          <svg class="ml-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v10.586l3.293-3.293a1 1 0 111.414 1.414l-5 5a1 1 0 01-1.414 0l-5-5a1 1 0 011.414-1.414L9 14.586V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <h2 class="prose prose-lg lg:hidden block">DigBen & EURAD#HERMES Model-Hub and Software Framework</h2>
+<section id="model-catalogue" class="scroll-mt-8 border-b border-gray-200 bg-white">
+  <div class="mx-auto w-full px-4 py-12 sm:px-6 lg:max-w-7xl lg:py-16">
+    <div class="max-w-3xl">
+      <div class="font-mono text-xs font-semibold tracking-widest text-teal-700 sm:text-sm">
+        MODEL CATALOGUE
+      </div>
+      <h2 class="mt-3 text-2xl font-bold tracking-tight text-gray-950 sm:text-3xl">
+        From analytical solutions to field-scale models
+      </h2>
+      <p class="mt-3 text-base leading-relaxed text-gray-600 sm:text-lg">
+        Select a collection to explore its models, benchmarks, workflows and supporting resources.
+      </p>
+    </div>
 
-    <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
-
-      {{ $all := slice
-      (dict "taxonomy" "Project" "term" "EURAD" "pages" (index .Site.Taxonomies.projects "eurad") "showTitle" false)
-      (dict "taxonomy" "Model" "term" "ANALYTICAL" "pages" (index .Site.Taxonomies.models "analytical") "showTitle"
-      true)
-      (dict "taxonomy" "Project" "term" "DECOVALEX" "pages" (index .Site.Taxonomies.projects "decovalex") "showTitle"
-      false)
-      (dict "taxonomy" "Model" "term" "material" "pages" (index .Site.Taxonomies.models "material") "showTitle" true)
-      (dict "taxonomy" "Custom" "term" "SPECIAL" "pages"
-      (dict
-      "Page" (dict
-      "Title" .Title
-      "Params" (dict "abbreviation" "HUB")
-      "RelPermalink" "/hub/"
-      "Color" "1"
-      )
-      "showTitle" true
-      )
-      )
-      (dict "taxonomy" "Model" "term" "processes" "pages" (index .Site.Taxonomies.models "processes") "showTitle" true)
-      (dict "taxonomy" "Model" "term" "lab" "pages" (index .Site.Taxonomies.models "lab") "showTitle" true)
-      (dict "taxonomy" "Model" "term" "url" "pages" (index .Site.Taxonomies.models "url") "showTitle" true)
-      (dict "taxonomy" "Model" "term" "field" "pages" (index .Site.Taxonomies.models "field") "showTitle" true)
-      }}
-
+    <ul role="list" class="mt-10 grid grid-cols-1 auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {{ range $all }}
       {{ $logo := false }}
       {{ if .pages }}
@@ -43,45 +63,54 @@
       {{ $logo = .pages.Page.Resources.Get "logo.jpg" }}
       {{ end }}
       {{ end }}
-      {{ if $logo }}
-      <li class="overflow-hidden rounded-xl outline outline-1 outline-gray-200">
-        <a href="{{ .pages.Page.RelPermalink }}">
-          {{ if .showTitle}}
-          <div class="-my-3 divide-y divide-gray-100 bg-gray-50 px-6 pt-6">
-            <div class="text-gray-500 text-center">
-              <span class="uppercase">{{ .pages.Page.Title | safeHTML }}</span>
+
+      <li>
+        <a class="group flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-5 transition hover:-translate-y-1 hover:border-brand-300 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+          href="{{ .pages.Page.RelPermalink }}">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <div class="font-mono text-[11px] font-semibold tracking-widest text-teal-700">
+                {{ upper .taxonomy }}
+              </div>
+              <h3 class="mt-2 text-xl font-bold tracking-tight text-gray-950">
+                {{ .label }}
+              </h3>
             </div>
+            <span class="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-brand-50 text-brand-600 transition group-hover:bg-brand-500 group-hover:text-white"
+              aria-hidden="true">
+              {{ if eq .taxonomy "Model" }}
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m12 3 8.25 4.5v9L12 21l-8.25-4.5v-9L12 3Zm0 0v9m8.25-4.5L12 12 3.75 7.5M12 12v9" />
+              </svg>
+              {{ else }}
+              <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2.25 6.75A2.25 2.25 0 0 1 4.5 4.5h4.379a2.25 2.25 0 0 1 1.591.659l1.341 1.341H19.5a2.25 2.25 0 0 1 2.25 2.25v7.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25v-9.5Z" />
+              </svg>
+              {{ end }}
+            </span>
+          </div>
+
+          {{ if $logo }}
+          <div class="mt-5 flex min-h-0 aspect-[3/2] items-center justify-center overflow-hidden rounded-lg bg-gray-50 p-5 ring-1 ring-inset ring-gray-200">
+            <img src="{{ $logo.RelPermalink }}" alt="{{ .label }} logo"
+              class="h-full w-full object-contain transition duration-300 group-hover:scale-105 no-fancybox" />
+          </div>
+          {{ else }}
+          <div class="mt-5 flex min-h-0 aspect-[3/2] items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-brand-50 to-gray-50 p-5 ring-1 ring-inset ring-brand-100">
+            <span class="font-mono text-5xl font-semibold tracking-tight text-brand-300" aria-hidden="true">
+              {{ .pages.Page.Params.abbreviation | default "OGS" }}
+            </span>
           </div>
           {{ end }}
-          <div class="items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-            {{ with $logo }}
-            <img src="{{ .RelPermalink }}" alt="Logo"
-              class="w-full h-48 p-2 flex-none rounded-lg bg-white object-contain ring-1 ring-gray-900/10 no-fancybox" />
-            {{ end }}
+
+          <div class="mt-5 flex-1 border-t border-gray-100 pt-4">
+            <p class="text-sm leading-relaxed text-gray-600">{{ .description }}</p>
           </div>
         </a>
       </li>
-      {{ else }}
-      {{ if eq .taxonomy "Custom" }}
-      <li
-        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 content-center bg-blue-600 text-gray-100 hidden lg:block">
-        {{ else }}
-      <li
-        class="overflow-hidden rounded-xl outline outline-1 outline-gray-200 content-center bg-gray-50 text-gray-500 h-40 md:h-60">
-        {{ end }}
-        <a href="{{ .pages.Page.RelPermalink }}">
-          <div class="-my-3 divide-y divide-gray-100 px-6 pt-6">
-            <div class="text-center leading-10 text-2xl ">
-              <span class="uppercase">{{ .pages.Page.Title | safeHTML }}</span>
-            </div>
-          </div>
-        </a>
-      </li>
-      {{ end }}
       {{ end }}
     </ul>
   </div>
-
-</div>
+</section>
 
 {{ end }}

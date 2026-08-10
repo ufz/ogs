@@ -1,13 +1,35 @@
-<div class="mb-4 md:mb-8 lg:mb-12">
-  <div class="flex flex-wrap items-center justify-center">
-    <div>
-      <h1 class="border-0 text-4xl md:text-6xl lg:text-8xl" style="line-height: 1.3;">Open<span
-          class="text-brand-500">GeoSys</span>
-      </h1>
-      <h2 class="text-right uppercase text-xs md:text-base lg:text-lg border-b-0 border-t-2">{{ .headline }}</h2>
+{{ $captions := slice }}
+{{ range .images }}{{ $captions = $captions | append .caption }}{{ end }}
+<div class="relative overflow-hidden bg-gray-50" x-data="{ i: 0 }"
+  x-init="setInterval(() => i = (i + 1) % {{ len .images }}, 6000)">
+  {{ range $idx, $img := .images }}
+  <img src="{{ $img.permalink }}" alt="{{ $img.alt }}" loading="{{ if eq $idx 0 }}eager{{ else }}lazy{{ end }}"
+    class="absolute inset-0 h-full w-full object-cover transition-opacity duration-[1800ms] ease-in-out [will-change:opacity]"
+    x-bind:class="{ 'opacity-45': i === {{ $idx }}, 'opacity-0': i !== {{ $idx }} }">
+  {{ end }}
+  <div class="absolute inset-0 bg-gradient-to-r from-gray-50 via-gray-50/88 to-gray-50/35"></div>
+  <div class="absolute inset-y-0 left-0 w-1.5 bg-gradient-to-b from-brand-500 to-teal-500"></div>
+  <div class="relative max-w-3xl px-6 py-12 sm:px-10 sm:py-14 lg:px-16 lg:py-20">
+    <div class="font-mono text-xs font-semibold tracking-widest text-teal-700 sm:text-sm">
+      {{ upper .eyebrow }}
+    </div>
+    <h1 class="mt-5 text-4xl font-bold tracking-tight text-gray-950 sm:text-5xl lg:text-6xl" style="line-height: 1.1;">
+      {{ .headline }}
+    </h1>
+    <div class="prose prose-lg mt-6 max-w-xl text-gray-600">
+      {{ markdownify .textline }}
+    </div>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      {{ range $i, $cta := .cta }}
+      <a href='{{ relURL .url }}'
+        class="rounded-lg px-6 py-3.5 text-center text-base font-semibold transition{{ if eq $i 0 }} bg-brand-500 text-white hover:bg-brand-600{{ else }} border border-gray-300 bg-white text-gray-800 hover:border-brand-300 hover:text-brand-700{{ end }}">
+        {{ .text }}
+      </a>
+      {{ end }}
     </div>
   </div>
-  <div class="prose mt-3 mx-auto md:mt-5 md:text-lg md:max-w-4xl">
-    {{ markdownify .textline }}
+  <div class="absolute bottom-3 right-4 hidden font-mono text-xs text-gray-500 sm:block"
+    x-text="({{ $captions | jsonify }})[i]">
+    {{ index $captions 0 }}
   </div>
 </div>

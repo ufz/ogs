@@ -6,24 +6,24 @@
 {{ $separator = false }}
 {{ end }}
 
-<li class="flex">
-  <div class="flex items-center">
+<li class="inline-flex min-w-0 items-center">
     {{ if $separator }}
-    <svg class="flex-shrink-0 w-4 h-full text-gray-200" viewBox="0 0 24 44" preserveAspectRatio="none"
-      fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M.293 0l22 22-22 22h1.414l22-22-22-22H.293z" />
+    <svg class="mx-2 h-4 w-4 flex-shrink-0 text-gray-300" viewBox="0 0 20 20" fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path fill-rule="evenodd"
+        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+        clip-rule="evenodd" />
     </svg>
     {{ end }}
     <a href="{{ .p1.RelPermalink }}"
-      class="{{ if $separator }}ml-4{{end}} text-sm font-medium hover:text-gray-700 {{ if eq .p1 .p2 }}text-brand-500{{ else }}text-gray-500{{ end }}">{{
-      .p1.Title }}</a>
-  </div>
+      class="truncate text-sm font-semibold hover:text-gray-900 {{ if eq .p1 .p2 }}text-brand-700{{ else }}text-gray-500{{ end }}">{{
+      .p1.LinkTitle }}</a>
 </li>
 
 {{ end }}
 
-<nav class="bg-white flex sticky top-0" aria-label="Breadcrumb">
-  <ol role="list" class="max-w-screen-xl w-full mx-auto px-2 md:px-4 flex space-x-4 sm:px-6 lg:px-8">
+<nav class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2" aria-label="Breadcrumb">
+  <ol role="list" class="flex min-w-0 flex-wrap items-center gap-y-1">
     {{ template "breadcrumbnav" (dict "p1" . "p2" .) }}
   </ol>
 </nav>

@@ -1,9 +1,11 @@
 +++
-title = "Processes"
+title = "Benchmarks"
+linkTitle = "Benchmarks"
 layout = "subsections"
 models = "processes"
 show_recent = true
 show_featured = false
+breadcrumbs = true
 
 [cascade]
 breadcrumbs = true
@@ -14,7 +16,7 @@ name = "Benchmarks"
 identifier = "benchmarks"
 weight = 3
 url = "./benchmarks"
-post = "Basic benchmarks are explained and input files are provided to get you started in using OGS."
+post = "A comprehensive benchmark gallery explains processes and input files by example to get you started in using OGS."
 [menu.docs.params]
 category = "User"
 +++

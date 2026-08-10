@@ -6,6 +6,7 @@ weight = 11
 toc = true
 
 aliases = [ "/docs/userguide/",
+            "/docs/user-guide/",
             "/docs/quickstart/",
             "/docs/quickstart/basics/quickstart" ] # Redirect for Hydrology III tutorial
 

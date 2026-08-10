@@ -1,22 +1,38 @@
 {{ define "main" }}
 
-<div class="flex">
+{{ $eyebrow := default .Title .LinkTitle }}
+{{ $isBenchmarkPage := hasPrefix .RelPermalink "/docs/benchmarks/" }}
+
+<div class="mx-auto flex w-full flex-col md:flex-row">
 
   {{ partial "docs/sidebar.html" . }}
 
-  <div class="bg-white">
-    {{ if .Params.breadcrumbs }}
-    {{ partial "docs/breadcrumbs.html" . }}
-    {{ end }}
+  <main class="min-w-0 flex-1 px-4 py-5 focus:outline-none sm:px-5 lg:px-6">
     {{ $sections := .Sections }}
     {{ if .Params.sort_alphabetically }}
     {{ $sections = sort .Sections "Title" }}
     {{ end }}
-    <div class="mx-auto py-2 px-4 max-w-7xl sm:px-6 lg:px-8 lg:py-4">
+    <article class="mx-auto max-w-6xl">
       <div class="space-y-8">
+        {{ if .Params.breadcrumbs }}
+        {{ partial "docs/breadcrumbs.html" . }}
+        {{ end }}
+
+        <header>
+          {{ if not $isBenchmarkPage }}
+          <div class="font-mono text-xs font-semibold tracking-widest text-teal-700">
+            {{ upper $eyebrow }}
+          </div>
+          {{ end }}
+          <h1 class="{{ if not $isBenchmarkPage }}mt-3 {{ end }}text-3xl font-bold tracking-tight text-gray-950 sm:text-4xl lg:text-5xl"
+            style="line-height: 1.1;">
+            {{ .Title }}
+          </h1>
+        </header>
+
         {{ if .Params.show_recent }}
-        <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none prose">
-          <h2 class="">Recent Entries</h2>
+        <div class="section-docs prose prose-gray max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-950 prose-img:rounded-lg">
+          <h2>Recent Entries</h2>
         </div>
         <ul role="list"
           class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-4 space-y-0 text-sm lg:text-base">
@@ -32,8 +48,8 @@
         {{ end }}
 
         {{ if .Params.show_featured }}
-        <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none prose">
-          <h1 class="">Featured {{ .Title }}</h1>
+        <div class="section-docs prose prose-gray max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-950 prose-img:rounded-lg">
+          <h2>Featured {{ .Title }}</h2>
         </div>
         <ul role="list"
           class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-8 space-y-0 text-sm lg:text-base">
@@ -45,8 +61,8 @@
         </ul>
         {{ end }}
 
-        <div class="space-y-5 sm:space-y-4 md:max-w-xl lg:max-w-3xl xl:max-w-none prose">
-          <h2 class="">All {{ .Title }}</h2>
+        <div class="section-docs prose prose-gray max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-950 prose-img:rounded-lg">
+          <h2>All {{ .Title }}</h2>
           {{ .Content }}
         </div>
         <ul role="list"
@@ -56,7 +72,7 @@
           {{ end }}
         </ul>
       </div>
-    </div>
-  </div>
+    </article>
+  </main>
 </div>
 {{ end }}
