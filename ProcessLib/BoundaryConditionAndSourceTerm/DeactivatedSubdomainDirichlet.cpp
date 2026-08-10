@@ -101,12 +101,7 @@ void DeactivatedSubdomainDirichlet::getEssentialBCValues(
         }
     }
 
-    auto time_interval_contains = [&](double const t)
-    {
-        return _time_interval.getSupportMin() <= t &&
-               t <= _time_interval.getSupportMax();
-    };
-    if (time_interval_contains(t))
+    if (isTimeInSupportInterval(_time_interval, t))
     {
         getEssentialBCValuesLocal(
             _parameter, _subdomain.mesh, inactive_nodes_in_bc_mesh,
