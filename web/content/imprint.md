@@ -10,18 +10,12 @@ This web site **does not** collect, store or process any user data. It **does no
 
 ## Copyright and License
 
-Unless otherwise stated, the contents of this website are copyright © 2012-{{< year >}} by the OpenGeoSys developers. Notable exceptions include:
+Unless otherwise stated, the contents of this website are copyright © 2012-{{< year >}} by the OpenGeoSys developers and licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/). Notable exceptions include:
 
 - Research papers, where you should contact the authors for relevant information.
 - Packaged software releases (zip-files, tarballs), where the packages include information about the copyright holders and license of the downloaded software.
 
 Note that this list does not claim to be complete. Moreover, this website contains resources from a number of [third-party projects](#third-party), which belong to the authors of those external projects and are covered by the respective upstream licenses.
-
-All information under the default copyright is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-sa/4.0/). Moreover, all source code that appears under this copyright is additionally licensed under the following license (the Unlicense):
-
-### Source code
-
-The source code of this website is available at <https://gitlab.opengeosys.org/ogs/ogs/-/tree/master/web>. Please take a look at the repository if you want to know the exact list of copyright holders.
 
 ### Third-party
 
@@ -44,10 +38,12 @@ In case of questions about the website or any of its contents, please contact us
 
 ## Impressum
 
-Verantwortlich für <https://www.opengeosys.org> im Sinne des Presserechts:
+Verantwortlich für <https://www.opengeosys.org> im Sinne des Presserechts / Responsible for https://www.opengeosys.org within the meaning of German press law:
 
 Prof. Dr. Olaf Kolditz, Helmholtz-Zentrum für Umweltforschung GmbH - UFZ, Permoserstr. 15, 04318 Leipzig.
 
 ## Hinweis für Benutzer in Deutschland
 
-Die Autoren der OpenGeoSys-Website übernehmen keinerlei Garantie für die Richtigkeit, Vollständigkeit und Aktualität der bereitgestellten Informationen. Insbesondere übernehmen die Autoren keinerlei Haftung für Inhalte, die als fremde Inhalte gekennzeichnet und sind nicht dafür verantwortlich, dass solche Inhalte vollständig, aktuell, richtig und rechtmässig sind und nicht in unzulässiger Weise in die Rechte Dritter eingreifen. Dies gilt insbesondere auch für externe Webseiten, auf die durch einen Link verwiesen wird.
+Die Autoren der OpenGeoSys-Website übernehmen keine Gewähr für die Richtigkeit, Vollständigkeit und Aktualität der bereitgestellten Informationen.
+
+Insbesondere übernehmen die Autoren keine Haftung für Inhalte, die als fremde Inhalte gekennzeichnet sind. Sie sind nicht dafür verantwortlich, dass solche Inhalte vollständig, aktuell, richtig und rechtmäßig sind oder keine Rechte Dritter verletzen. Dies gilt insbesondere für Inhalte externer Websites, auf die durch Links verwiesen wird.
