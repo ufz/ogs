@@ -1,0 +1,9 @@
+{{- $destination := .Destination -}}
+{{- if and (hasPrefix $destination "/") (not (hasPrefix $destination "//")) -}}
+  {{- $destination = relURL (strings.TrimPrefix $destination "/") -}}
+{{- end -}}
+<a href="{{ $destination | safeURL }}"
+  {{- with .Title }} title="{{ . }}"{{ end -}}
+>
+  {{- .Text -}}
+</a>

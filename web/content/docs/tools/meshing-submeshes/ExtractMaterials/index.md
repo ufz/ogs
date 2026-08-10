@@ -51,5 +51,5 @@ In this example we use a 3D mesh (Fig.1) and extract its elements of material ID
  <img src = in-out-1.png width = "60%" height = "60%" alt="Layered 3D mesh input and extracted material ID 3 output">
 </p>
 <p align='center'>
-Fig.1 The left side shows a layered 3D input mesh created from raster files using the tool <a href="/docs/tools/preprocessing/createlayeredmeshfromrasters/">createLayeredMeshFromRasters</a>. The different colors depict different material IDs. The z-values of the meshes are scaled by a factor of 10. The right mesh shows the extracted mesh. In this graphic it is translated along the x-axis, its spatial coordinates are not altered by the ExtractMaterials-tool.
+Fig.1 The left side shows a layered 3D input mesh created from raster files using the tool [createLayeredMeshFromRasters](/docs/tools/preprocessing/createlayeredmeshfromrasters/). The different colors depict different material IDs. The z-values of the meshes are scaled by a factor of 10. The right mesh shows the extracted mesh. In this graphic it is translated along the x-axis, its spatial coordinates are not altered by the ExtractMaterials-tool.
 </p>
