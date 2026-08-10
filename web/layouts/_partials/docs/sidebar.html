@@ -20,7 +20,7 @@
 {{ $indexRelPermalink := .indexRelPermalink }}
   {{ if .context.Pages }}
     {{ range .context.Pages}}
-      {{ if eq .Kind "page" }}
+      {{ if and (eq .Kind "page") (not .Params.hide_from_sidebar) }}
         <li
         class="rounded px-2 py-1 {{ if eq .RelPermalink $indexRelPermalink }}bg-brand-50 text-brand-700{{ else }}text-gray-600 hover:bg-gray-50 hover:text-gray-950{{ end }}">
 
@@ -34,7 +34,9 @@
         </a>
       </li>
       {{ end }}
-      {{ template "subpages" (dict "indexRelPermalink" $indexRelPermalink "context" .) }}
+      {{ if not .Params.hide_from_sidebar }}
+        {{ template "subpages" (dict "indexRelPermalink" $indexRelPermalink "context" .) }}
+      {{ end }}
     {{ end }}
   {{ end }}
 {{ end }}
@@ -69,6 +71,9 @@
       {{ $subsections = sort $baseSubsection.Sections "Title" }}
     {{ end }}
     {{ range $subsections }}
+      {{ if .Params.hide_from_sidebar }}
+        {{ continue }}
+      {{ end }}
       {{ $isListPage := eq .RelPermalink $subSubsection.RelPermalink }}
       {{ $margin := "mt-6"}}
       {{ if and (.Params.collapsed) (not $isListPage) }}
