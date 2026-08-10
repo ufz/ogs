@@ -18,7 +18,7 @@
 {{ $notebooksURL := relURL "docs/benchmarks/notebooks" }}
 {{ $cellClasses := "px-6 py-6 sm:px-8" }}
 <div
-  class="hidden border-y border-gray-200 bg-gray-50 lg:grid lg:grid-cols-5 lg:divide-x lg:divide-gray-200">
+  class="hidden w-full border-t border-gray-200 bg-gray-50 lg:grid lg:grid-cols-5 lg:divide-x lg:divide-gray-200">
   {{ if $latestRelease }}
   {{ with index $latestRelease 0 }}
   <a href="{{ .RelPermalink }}" class="{{ $cellClasses }} hover:bg-gray-100">
