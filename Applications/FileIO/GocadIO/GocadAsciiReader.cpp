@@ -5,8 +5,13 @@
 
 #include <algorithm>
 #include <fstream>
+#include <iterator>
 #include <memory>
-#include <range/v3/algorithm/copy.hpp>
+#include <optional>
+#include <range/v3/algorithm/max.hpp>
+#include <range/v3/algorithm/transform.hpp>
+#include <range/v3/view/zip.hpp>
+#include <string_view>
 
 #include "Applications/FileIO/GocadIO/CoordinateSystem.h"
 #include "BaseLib/FileTools.h"
@@ -387,10 +392,16 @@ bool parseNodes(std::ifstream& in,
     return false;
 }
 
-/// Parses the segments of the current line, returning parsed node ID pairs
-bool parseLineSegments(std::ifstream& in,
-                       std::vector<std::array<std::size_t, 2>>& segment_data)
+/// Parses the node ID tuples of all consecutive lines starting with \c keyword,
+/// e.g. the segments of a line ("SEG") or the triangles of a surface ("TRGL").
+/// The stream is rewound to the first line that does not start with \c keyword.
+/// Returns std::nullopt if the file ended while parsing, or if a line does not
+/// carry the expected number of node IDs.
+template <std::size_t N>
+std::optional<std::vector<std::array<std::size_t, N>>> parseNodeIdTuples(
+    std::ifstream& in, std::string_view const keyword)
 {
+    std::vector<std::array<std::size_t, N>> tuples;
     std::streampos pos = in.tellg();
     std::string line;
     while (std::getline(in, line))
@@ -399,23 +410,29 @@ bool parseLineSegments(std::ifstream& in,
         {
             continue;
         }
-        if (line.substr(0, 3) == "SEG")
-        {
-            std::stringstream sstr(line);
-            std::string keyword;
-            std::array<std::size_t, 2> data{};
-            sstr >> keyword >> data[0] >> data[1];
-            segment_data.push_back(data);
-        }
-        else
+        if (!line.starts_with(keyword))
         {
             in.seekg(pos);
-            return true;
+            return tuples;
         }
+        std::stringstream sstr(line);
+        std::string parsed_keyword;
+        sstr >> parsed_keyword;
+        std::array<std::size_t, N> data{};
+        for (auto& node_id : data)
+        {
+            if (!(sstr >> node_id))
+            {
+                ERR("Error: Could not read {:d} node IDs of {:s} line: {:s}", N,
+                    keyword, line);
+                return std::nullopt;
+            }
+        }
+        tuples.push_back(data);
         pos = in.tellg();
     }
     ERR("{:s}", eof_error);
-    return false;
+    return std::nullopt;
 }
 
 /// Appends \c count material IDs to \c mat_ids for the elements of the Gocad
@@ -428,9 +445,7 @@ bool parseLineSegments(std::ifstream& in,
 void extendMaterialIDs(MeshLib::PropertyVector<int>& mat_ids,
                        std::size_t const count)
 {
-    int const current_mat_id =
-        mat_ids.empty() ? 0
-                        : *std::max_element(mat_ids.begin(), mat_ids.end()) + 1;
+    int const current_mat_id = mat_ids.empty() ? 0 : ranges::max(mat_ids) + 1;
     mat_ids.resize(mat_ids.size() + count, current_mat_id);
 }
 
@@ -452,36 +467,34 @@ bool createElements(
     for (auto const& data : element_data)
     {
         std::array<MeshLib::Node*, ElementType::n_all_nodes> elem_nodes{};
-        for (std::size_t i = 0; i < ElementType::n_all_nodes; ++i)
+        for (auto&& [node_id, elem_node] : ranges::views::zip(data, elem_nodes))
         {
-            auto const it = node_id_map.find(data[i]);
+            auto const it = node_id_map.find(node_id);
             if (it == node_id_map.end() || it->second >= nodes.size())
             {
-                ERR("Error: Node ID ({:d}) out of range [0, {:d}).", data[i],
+                ERR("Error: Node ID ({:d}) out of range [0, {:d}).", node_id,
                     nodes.size());
                 return false;
             }
-            elem_nodes[i] = nodes[it->second];
+            elem_node = nodes[it->second];
         }
         new_elems.push_back(std::make_unique<ElementType>(elem_nodes, id++));
     }
 
     elems.reserve(elems.size() + new_elems.size());
-    for (auto& new_elem : new_elems)
-    {
-        elems.push_back(new_elem.release());
-    }
+    ranges::transform(new_elems, std::back_inserter(elems),
+                      [](auto& new_elem) { return new_elem.release(); });
 
     return true;
 }
 
-/// Creates elements from parsed node ID tuples and extends the MaterialIDs
-/// property vector accordingly. Neither elems nor the material IDs are changed
-/// if the elements cannot be created.
+/// Parses the node ID tuples of all lines starting with \c keyword and creates
+/// the corresponding elements including their material IDs. Neither elems nor
+/// the material IDs are changed if the elements cannot be created.
 template <typename ElementType>
-bool createElementsAndMaterialIDs(
-    std::vector<std::array<std::size_t, ElementType::n_all_nodes>> const&
-        element_data,
+bool parseAndCreateElements(
+    std::ifstream& in,
+    std::string_view const keyword,
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element*>& elems,
     std::map<std::size_t, std::size_t> const& node_id_map,
@@ -495,11 +508,18 @@ bool createElementsAndMaterialIDs(
         ERR("GocadAsciiReader: Property vector '{:s}' not found.", mat_id_name);
         return false;
     }
-    if (!createElements<ElementType>(element_data, nodes, elems, node_id_map))
+
+    auto const element_data =
+        parseNodeIdTuples<ElementType::n_all_nodes>(in, keyword);
+    if (!element_data)
     {
         return false;
     }
-    extendMaterialIDs(*mat_ids, element_data.size());
+    if (!createElements<ElementType>(*element_data, nodes, elems, node_id_map))
+    {
+        return false;
+    }
+    extendMaterialIDs(*mat_ids, element_data->size());
     return true;
 }
 
@@ -514,13 +534,8 @@ bool parseLine(std::ifstream& in,
     {
         return false;
     }
-    std::vector<std::array<std::size_t, 2>> segment_data;
-    if (!parseLineSegments(in, segment_data))
-    {
-        return false;
-    }
-    if (!createElementsAndMaterialIDs<MeshLib::Line>(segment_data, nodes, elems,
-                                                     node_id_map, mesh_prop))
+    if (!parseAndCreateElements<MeshLib::Line>(in, "SEG", nodes, elems,
+                                               node_id_map, mesh_prop))
     {
         return false;
     }
@@ -545,38 +560,6 @@ bool parseLine(std::ifstream& in,
     return false;
 }
 
-/// Parses the element data for the current mesh, returning parsed node ID
-/// triplets
-bool parseElements(std::ifstream& in,
-                   std::vector<std::array<std::size_t, 3>>& element_data)
-{
-    std::streampos pos = in.tellg();
-    std::string line;
-    while (std::getline(in, line))
-    {
-        if (line.empty() || isCommentLine(line))
-        {
-            continue;
-        }
-        if (line.substr(0, 4) == "TRGL")
-        {
-            std::stringstream sstr(line);
-            std::string keyword;
-            std::array<std::size_t, 3> data{};
-            sstr >> keyword >> data[0] >> data[1] >> data[2];
-            element_data.push_back(data);
-        }
-        else
-        {
-            in.seekg(pos);
-            return true;
-        }
-        pos = in.tellg();
-    }
-    ERR("{:s}", eof_error);
-    return false;
-}
-
 /// Parses the surface information (nodes, triangles, properties)
 bool parseSurface(std::ifstream& in,
                   std::vector<MeshLib::Node*>& nodes,
@@ -588,13 +571,8 @@ bool parseSurface(std::ifstream& in,
     {
         return false;
     }
-    std::vector<std::array<std::size_t, 3>> element_data;
-    if (!parseElements(in, element_data))
-    {
-        return false;
-    }
-    if (!createElementsAndMaterialIDs<MeshLib::Tri>(element_data, nodes, elems,
-                                                    node_id_map, mesh_prop))
+    if (!parseAndCreateElements<MeshLib::Tri>(in, "TRGL", nodes, elems,
+                                              node_id_map, mesh_prop))
     {
         return false;
     }
