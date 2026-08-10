@@ -3,7 +3,10 @@
 
 #include "GocadAsciiReader.h"
 
+#include <algorithm>
 #include <fstream>
+#include <memory>
+#include <range/v3/algorithm/copy.hpp>
 
 #include "Applications/FileIO/GocadIO/CoordinateSystem.h"
 #include "BaseLib/FileTools.h"
@@ -267,34 +270,44 @@ bool parseAtomRegionIndicators(std::ifstream& in)
     return false;
 }
 
+/// Buffers the values of a single node property column while the nodes of one
+/// section are parsed.
+struct PropertyBuffer
+{
+    std::vector<double> values;
+    MeshLib::PropertyVector<double>* property;
+};
+
 /// Parses the node data for the current mesh
 bool parseNodes(std::ifstream& in,
                 std::vector<MeshLib::Node*>& nodes,
                 std::map<std::size_t, std::size_t>& node_id_map,
                 MeshLib::Properties const& mesh_prop)
 {
-    // temporary data structure to use push_back() of std::vector
-    std::map<std::string, std::vector<double>> mesh_properties;
+    // The buffers follow the iteration over mesh_prop, which is ordered by
+    // property name, while the values of a PVRTX line follow the order of the
+    // PROPERTIES declaration. Zipping the two below therefore assumes that
+    // declaration to be in alphabetical order.
+    std::vector<PropertyBuffer> property_buffers;
     for (auto const& [name, property] : mesh_prop)
     {
         if (name == mat_id_name)
         {
             continue;
         }
-        if (dynamic_cast<MeshLib::PropertyVector<double>*>(property))
+        if (auto* const p =
+                dynamic_cast<MeshLib::PropertyVector<double>*>(property))
         {
-            mesh_properties[name] = std::vector<double>{};
+            property_buffers.push_back({{}, p});
         }
     }
-    auto const assign_property_vectors = [&mesh_properties, &mesh_prop]()
+    // Appends the buffered values of this section to the values of the already
+    // parsed sections with a single bulk write per property.
+    auto const append_property_buffers = [&property_buffers]()
     {
-        for (auto const& [name, property] : mesh_prop)
+        for (auto& buffer : property_buffers)
         {
-            if (auto* const p =
-                    dynamic_cast<MeshLib::PropertyVector<double>*>(property))
-            {
-                p->assign(mesh_properties[name]);
-            }
+            MeshLib::appendValues(*buffer.property, buffer.values);
         }
     };
 
@@ -307,7 +320,7 @@ bool parseNodes(std::ifstream& in,
         if (line.substr(0, 3) == "SEG" || line.substr(0, 4) == "TRGL")
         {
             in.seekg(pos);
-            assign_property_vectors();
+            append_property_buffers();
             return true;
         }
 
@@ -318,7 +331,7 @@ bool parseNodes(std::ifstream& in,
                 ERR("File ended while parsing Atom Region Indicators...");
                 return false;
             }
-            assign_property_vectors();
+            append_property_buffers();
             return true;
         }
 
@@ -344,13 +357,19 @@ bool parseNodes(std::ifstream& in,
         {
             t = NodeType::PVRTX;
             nodes.push_back(createNode(sstr));
-            for (auto& [name, property] : mesh_properties)
+            for (auto& buffer : property_buffers)
             {
-                // mesh_properties only holds PropertyVector<double> entries,
+                // property_buffers only holds PropertyVector<double> entries,
                 // so reading a double per column is safe here.
                 double value;
-                sstr >> value;
-                property.push_back(value);
+                if (!(sstr >> value))
+                {
+                    ERR("Error: Could not read the value of property '{:s}' "
+                        "of PVRTX line: {:s}",
+                        buffer.property->getPropertyName(), line);
+                    return false;
+                }
+                buffer.values.push_back(value);
             }
         }
         else if (line.substr(0, 4) == "ATOM")
@@ -365,7 +384,6 @@ bool parseNodes(std::ifstream& in,
         pos = in.tellg();
     }
     ERR("{:s}", eof_error);
-
     return false;
 }
 
@@ -397,25 +415,29 @@ bool parseLineSegments(std::ifstream& in,
         pos = in.tellg();
     }
     ERR("{:s}", eof_error);
-
     return false;
 }
 
-/// Appends material IDs for count new elements, assigning them a fresh
-/// material ID one larger than the current maximum.
+/// Appends \c count material IDs to \c mat_ids for the elements of the Gocad
+/// surface or line section that has just been parsed.
+///
+/// All Gocad sections of a data set share one MaterialIDs vector. Each section
+/// gets a fresh material ID, one larger than the current maximum in \c mat_ids
+/// (or 0 if \c mat_ids is still empty). The IDs already assigned to earlier
+/// sections are not modified.
 void extendMaterialIDs(MeshLib::PropertyVector<int>& mat_ids,
                        std::size_t const count)
 {
-    int current_mat_id = 0;
-    if (!mat_ids.empty())
-    {
-        current_mat_id = *std::max_element(mat_ids.begin(), mat_ids.end()) + 1;
-    }
+    int const current_mat_id =
+        mat_ids.empty() ? 0
+                        : *std::max_element(mat_ids.begin(), mat_ids.end()) + 1;
     mat_ids.resize(mat_ids.size() + count, current_mat_id);
 }
 
-/// Creates elements from parsed node ID tuples, appending them to elems. The
-/// number of nodes per element is taken from the element type.
+/// Creates elements from parsed node ID tuples. All elements are constructed
+/// first and appended to elems only if every element could be created, i.e.
+/// elems is left unchanged on error. The number of nodes per element is taken
+/// from the element type.
 template <typename ElementType>
 bool createElements(
     std::vector<std::array<std::size_t, ElementType::n_all_nodes>> const&
@@ -425,6 +447,8 @@ bool createElements(
     std::map<std::size_t, std::size_t> const& node_id_map)
 {
     std::size_t id = elems.size();
+    std::vector<std::unique_ptr<ElementType>> new_elems;
+    new_elems.reserve(element_data.size());
     for (auto const& data : element_data)
     {
         std::array<MeshLib::Node*, ElementType::n_all_nodes> elem_nodes{};
@@ -433,20 +457,27 @@ bool createElements(
             auto const it = node_id_map.find(data[i]);
             if (it == node_id_map.end() || it->second >= nodes.size())
             {
-                ERR("Error: Node ID ({:d}) out of range (0, {:d}).", data[i],
-                    nodes.back()->getID());
+                ERR("Error: Node ID ({:d}) out of range [0, {:d}).", data[i],
+                    nodes.size());
                 return false;
             }
             elem_nodes[i] = nodes[it->second];
         }
-        elems.push_back(new ElementType(elem_nodes, id++));
+        new_elems.push_back(std::make_unique<ElementType>(elem_nodes, id++));
+    }
+
+    elems.reserve(elems.size() + new_elems.size());
+    for (auto& new_elem : new_elems)
+    {
+        elems.push_back(new_elem.release());
     }
 
     return true;
 }
 
 /// Creates elements from parsed node ID tuples and extends the MaterialIDs
-/// property vector accordingly.
+/// property vector accordingly. Neither elems nor the material IDs are changed
+/// if the elements cannot be created.
 template <typename ElementType>
 bool createElementsAndMaterialIDs(
     std::vector<std::array<std::size_t, ElementType::n_all_nodes>> const&
@@ -456,13 +487,19 @@ bool createElementsAndMaterialIDs(
     std::map<std::size_t, std::size_t> const& node_id_map,
     MeshLib::Properties& mesh_prop)
 {
-    MeshLib::PropertyVector<int>& mat_ids =
-        *mesh_prop.getPropertyVector<int>(mat_id_name);
+    // Looked up before the elements are created: a failure here must not
+    // leave elems extended without the matching material IDs.
+    auto* const mat_ids = mesh_prop.getPropertyVector<int>(mat_id_name);
+    if (mat_ids == nullptr)
+    {
+        ERR("GocadAsciiReader: Property vector '{:s}' not found.", mat_id_name);
+        return false;
+    }
     if (!createElements<ElementType>(element_data, nodes, elems, node_id_map))
     {
         return false;
     }
-    extendMaterialIDs(mat_ids, element_data.size());
+    extendMaterialIDs(*mat_ids, element_data.size());
     return true;
 }
 
