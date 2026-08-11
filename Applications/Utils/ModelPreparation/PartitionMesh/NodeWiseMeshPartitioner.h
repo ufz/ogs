@@ -24,7 +24,7 @@ struct Partition
     std::size_t number_of_base_nodes = 0;
     std::size_t number_of_mesh_base_nodes = 0;
     std::size_t number_of_mesh_all_nodes = 0;
-    std::vector<const MeshLib::Element*> regular_elements;
+    std::vector<const MeshLib::Element*> elements;
 
     std::size_t number_of_integration_points = 0;
 

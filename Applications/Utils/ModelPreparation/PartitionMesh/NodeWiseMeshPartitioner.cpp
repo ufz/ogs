@@ -8,7 +8,6 @@
 #include <range/v3/algorithm/transform.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <unordered_map>
-#include <unordered_set>
 
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
@@ -31,7 +30,7 @@ std::size_t Partition::numberOfMeshItems(
         case MeshLib::MeshItemType::Node:
             return nodes.size();
         case MeshLib::MeshItemType::Cell:
-            return regular_elements.size();
+            return elements.size();
         case MeshLib::MeshItemType::IntegrationPoint:
             return number_of_integration_points;
         default:
@@ -74,7 +73,7 @@ std::ostream& Partition::writeConfig(std::ostream& os) const
     long const data[] = {
         static_cast<long>(nodes.size()),
         static_cast<long>(number_of_base_nodes),
-        static_cast<long>(regular_elements.size()),
+        static_cast<long>(elements.size()),
         // Ghost elements are no longer used; kept as zero for a
         // format-compatible binary layout.
         0,
@@ -82,8 +81,7 @@ std::ostream& Partition::writeConfig(std::ostream& os) const
         static_cast<long>(number_of_regular_nodes),
         static_cast<long>(number_of_mesh_base_nodes),
         static_cast<long>(number_of_mesh_all_nodes),
-        static_cast<long>(
-            getNumberOfIntegerVariablesOfElements(regular_elements)),
+        static_cast<long>(getNumberOfIntegerVariablesOfElements(elements)),
         // Integer-variable count of the (empty) ghost element section.
         0,
     };
@@ -126,13 +124,12 @@ splitIntoBaseAndHigherOrderNodes(std::vector<MeshLib::Node const*> const& nodes,
 /// partition's elements. A ghost node is a node referenced by one of the
 /// partition's elements but owned by another partition.
 std::tuple<std::vector<MeshLib::Node*>, std::vector<MeshLib::Node*>>
-findGhostNodesInPartition(
-    std::size_t const part_id,
-    std::vector<MeshLib::Node*> const& nodes,
-    std::vector<MeshLib::Element const*> const& elements,
-    std::vector<std::size_t> const& partition_ids,
-    MeshLib::Mesh const& mesh,
-    std::span<std::size_t const> const node_id_mapping)
+findGhostNodesInPartition(std::size_t const part_id,
+                          std::vector<MeshLib::Node*> const& nodes,
+                          std::vector<MeshLib::Element const*> const& elements,
+                          std::vector<std::size_t> const& partition_ids,
+                          MeshLib::Mesh const& mesh,
+                          std::span<std::size_t const> const node_id_mapping)
 {
     std::vector<MeshLib::Node*> base_ghost_nodes;
     std::vector<MeshLib::Node*> higher_order_ghost_nodes;
@@ -198,15 +195,15 @@ std::size_t copyCellPropertyVectorValues(
     MeshLib::PropertyVector<T> const& pv,
     MeshLib::PropertyVector<T>& partitioned_pv)
 {
-    std::size_t const n_regular(p.regular_elements.size());
+    std::size_t const n_elements(p.elements.size());
     auto const n_components = pv.getNumberOfGlobalComponents();
-    for (std::size_t i = 0; i < n_regular; ++i)
+    for (std::size_t i = 0; i < n_elements; ++i)
     {
-        const auto id = p.regular_elements[i]->getID();
+        const auto id = p.elements[i]->getID();
         std::copy_n(&pv[n_components * id], n_components,
                     &partitioned_pv[offset + n_components * i]);
     }
-    return n_components * n_regular;
+    return n_components * n_elements;
 }
 
 /// Copies the data from the property vector \c pv belonging to the given
@@ -256,7 +253,7 @@ std::size_t copyFieldPropertyDataToPartitions(
         }
     };
 
-    copyFieldData(p.regular_elements);
+    copyFieldData(p.elements);
 
     return id_offset;
 }
@@ -301,8 +298,7 @@ void setIntegrationPointNumberOfPartition(MeshLib::Properties const& properties,
 
         for (auto& p : partitions)
         {
-            p.number_of_integration_points =
-                countIntegrationPoints(p.regular_elements);
+            p.number_of_integration_points = countIntegrationPoints(p.elements);
         }
         return;
     }
@@ -406,23 +402,30 @@ void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
     assert(vtk_ghost_type->size() == total_number_of_cells);
 
     // A cell that crosses partition boundaries is contained in every partition
-    // it touches. The first occurrence in partition iteration order is kept as a
-    // regular cell; every later occurrence is flagged as a duplicate so that
+    // it touches. The first occurrence in partition iteration order is kept as
+    // a regular cell; every later occurrence is flagged as a duplicate so that
     // merging tools (e.g. PVTU2VTU) keep a single copy.
-    std::unordered_set<std::size_t> visited_cells;
+    // Cell ids are dense in [0, number of global cells), and the total number
+    // of cells over all partitions counts every shared cell at least once, so
+    // it is a valid upper bound for the largest cell id.
+    std::vector<bool> cell_was_visited(total_number_of_cells, false);
     std::size_t offset = 0;
     for (auto const& partition : partitions)
     {
-        for (std::size_t i = 0; i < partition.regular_elements.size(); ++i)
+        for (std::size_t i = 0; i < partition.elements.size(); ++i)
         {
-            auto const cell_id = partition.regular_elements[i]->getID();
-            if (!visited_cells.insert(cell_id).second)
+            auto const cell_id = partition.elements[i]->getID();
+            if (cell_was_visited[cell_id])
             {
                 (*vtk_ghost_type)[offset + i] |=
                     vtkDataSetAttributes::DUPLICATECELL;
             }
+            else
+            {
+                cell_was_visited[cell_id] = true;
+            }
         }
-        offset += partition.regular_elements.size();
+        offset += partition.elements.size();
     }
 }
 
@@ -618,7 +621,7 @@ void distributeElementsIntoPartitions(
         // partitions; they are no longer distinguished as ghost elements.
         for (auto const partition_id : node_partition_ids)
         {
-            partitions[partition_id].regular_elements.push_back(element);
+            partitions[partition_id].elements.push_back(element);
         }
     }
 }
@@ -637,9 +640,9 @@ void determineAndAppendGhostNodesToPartitions(
         std::vector<MeshLib::Node*> base_ghost_nodes;
         std::vector<MeshLib::Node*> higher_order_ghost_nodes;
         std::tie(base_ghost_nodes, higher_order_ghost_nodes) =
-            findGhostNodesInPartition(
-                part_id, mesh.getNodes(), partition.regular_elements,
-                nodes_partition_ids, mesh, node_id_mapping);
+            findGhostNodesInPartition(part_id, mesh.getNodes(),
+                                      partition.elements, nodes_partition_ids,
+                                      mesh, node_id_mapping);
 
         std::copy(begin(base_ghost_nodes), end(base_ghost_nodes),
                   std::back_inserter(partition.nodes));
@@ -818,7 +821,7 @@ void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
             }
         };
 
-        map_elements(bulk_partition.regular_elements, 0);
+        map_elements(bulk_partition.elements, 0);
 
         // Renumber the local bulk_element_ids map.
         auto renumber_elements =
@@ -835,7 +838,7 @@ void NodeWiseMeshPartitioner::renumberBulkElementIdsProperty(
             return n_elements;
         };
 
-        offset += renumber_elements(local_partition.regular_elements, offset);
+        offset += renumber_elements(local_partition.elements, offset);
     }
 }
 
@@ -982,18 +985,15 @@ std::ostream& ConfigOffsets::writeConfig(std::ostream& os) const
 struct PartitionOffsets
 {
     long node;
-    long regular_elements;
-    long ghost_elements;
+    long elements;
 };
 
 PartitionOffsets computePartitionOffsets(Partition const& partition)
 {
     return {static_cast<long>(partition.nodes.size()),
-            static_cast<long>(partition.regular_elements.size() +
-                              getNumberOfIntegerVariablesOfElements(
-                                  partition.regular_elements)),
-            // Empty ghost element section, kept for format compatibility.
-            0};
+            static_cast<long>(
+                partition.elements.size() +
+                getNumberOfIntegerVariablesOfElements(partition.elements))};
 }
 
 ConfigOffsets incrementConfigOffsets(ConfigOffsets const& oldConfig,
@@ -1003,23 +1003,20 @@ ConfigOffsets incrementConfigOffsets(ConfigOffsets const& oldConfig,
         static_cast<long>(oldConfig.node_rank_offset +
                           offsets.node * sizeof(MeshLib::IO::NodeData)),
         // Offset the ending entry of the element integer variables of
-        // the non-ghost elements of this partition in the vector of elem_info.
+        // the elements of this partition in the vector of elem_info.
         static_cast<long>(oldConfig.element_rank_offset +
-                          offsets.regular_elements * sizeof(long)),
+                          offsets.elements * sizeof(long)),
 
-        // Offset the ending entry of the element integer variables of
-        // the ghost elements of this partition in the vector of elem_info.
-        static_cast<long>(oldConfig.ghost_element_rank_offset +
-                          offsets.ghost_elements * sizeof(long))};
+        // The ghost element section is empty, so this offset never advances.
+        // It is still part of the binary format and therefore written as 0.
+        0L};
 }
 
 /// Write the configuration data of the partition data in binary files.
-/// \return a pair of vectors for:
-///  1. The number of all non-ghost element integer variables for each
-///     partition.
-///  2. The number of all ghost element integer variables for each partition.
-std::tuple<std::vector<long>, std::vector<long>> writeConfigData(
-    const std::string& file_name_base, std::vector<Partition> const& partitions)
+/// \return For each partition the number of its elements plus the number of
+/// all of their element integer variables.
+std::vector<long> writeConfigData(const std::string& file_name_base,
+                                  std::vector<Partition> const& partitions)
 {
     auto const file_name_cfg = file_name_base + "_partitioned_msh_cfg" +
                                std::to_string(partitions.size()) + ".bin";
@@ -1031,8 +1028,6 @@ std::tuple<std::vector<long>, std::vector<long>> writeConfigData(
 
     std::vector<long> partitions_element_offsets;
     partitions_element_offsets.reserve(partitions.size());
-    std::vector<long> partitions_ghost_element_offsets;
-    partitions_ghost_element_offsets.reserve(partitions.size());
 
     ConfigOffsets config_offsets = {0, 0, 0};  // 0 for first partition.
     for (const auto& partition : partitions)
@@ -1044,14 +1039,10 @@ std::tuple<std::vector<long>, std::vector<long>> writeConfigData(
         config_offsets =
             incrementConfigOffsets(config_offsets, partition_offsets);
 
-        partitions_element_offsets.push_back(
-            partition_offsets.regular_elements);
-        partitions_ghost_element_offsets.push_back(
-            partition_offsets.ghost_elements);
+        partitions_element_offsets.push_back(partition_offsets.elements);
     }
 
-    return std::make_tuple(partitions_element_offsets,
-                           partitions_ghost_element_offsets);
+    return partitions_element_offsets;
 }
 
 /// Get integer variables, which are used to define an element
@@ -1099,13 +1090,12 @@ std::unordered_map<std::size_t, long> enumerateLocalNodeIds(
 /// Write the element integer variables of all partitions into binary files.
 /// \param file_name_base       The prefix of the file name.
 /// \param partitions           Partitions vector.
-/// \param regular_element_offsets The numbers of all non-ghost element
-///                             integer variables of each partitions.
-/// \param ghost_element_offsets  The numbers of all ghost element
+/// \param element_offsets      Per-partition sizes of the element-info
+///                             vectors, i.e. the number of elements plus the
+///                             number of their element integer variables.
 void writeElements(std::string const& file_name_base,
                    std::vector<Partition> const& partitions,
-                   std::vector<long> const& regular_element_offsets,
-                   std::vector<long> const& ghost_element_offsets)
+                   std::vector<long> const& element_offsets)
 {
     const std::string npartitions_str = std::to_string(partitions.size());
 
@@ -1117,6 +1107,8 @@ void writeElements(std::string const& file_name_base,
         OGS_FATAL("Could not open file '{:s}' for output.", file_name_ele);
     }
 
+    // Ghost elements are no longer used. The ghost element file is still
+    // created, but left empty, to keep the binary file format compatible.
     auto const file_name_ele_g =
         file_name_base + "_partitioned_msh_ele_g" + npartitions_str + ".bin";
     std::ofstream ghost_element_info_os(file_name_ele_g, std::ios::binary);
@@ -1129,10 +1121,6 @@ void writeElements(std::string const& file_name_base,
     {
         const auto& partition = partitions[i];
         auto const local_node_ids = enumerateLocalNodeIds(partition.nodes);
-
-        // Vector containing the offsets of the regular elements of this
-        // partition
-        std::vector<long> ele_info(regular_element_offsets[i]);
 
         auto writeElementData =
             [&local_node_ids](
@@ -1150,17 +1138,13 @@ void writeElements(std::string const& file_name_base,
                 getElementIntegerVariables(*elem, local_node_ids, ele_info,
                                            counter);
             }
-            // Write vector data of regular elements
+            // Write vector data of elements
             output_stream.write(reinterpret_cast<const char*>(ele_info.data()),
                                 ele_info.size() * sizeof(long));
         };
 
-        // regular elements.
-        writeElementData(partition.regular_elements, regular_element_offsets[i],
+        writeElementData(partition.elements, element_offsets[i],
                          element_info_os);
-        // Ghost elements are no longer used. An empty section is written to keep
-        // the binary file format compatible.
-        writeElementData({}, ghost_element_offsets[i], ghost_element_info_os);
     }
 }
 
@@ -1195,14 +1179,8 @@ void NodeWiseMeshPartitioner::write(const std::string& file_name_base)
     writeProperties(file_name_base, _partitioned_properties, _partitions,
                     MeshLib::MeshItemType::IntegrationPoint);
 
-    const auto elements_offsets = writeConfigData(file_name_base, _partitions);
-
-    const std::vector<IntegerType>& regular_element_offsets =
-        std::get<0>(elements_offsets);
-    const std::vector<IntegerType>& ghost_element_offsets =
-        std::get<1>(elements_offsets);
-    writeElements(file_name_base, _partitions, regular_element_offsets,
-                  ghost_element_offsets);
+    auto const element_offsets = writeConfigData(file_name_base, _partitions);
+    writeElements(file_name_base, _partitions, element_offsets);
 
     writeNodes(file_name_base, _partitions, _nodes_global_ids);
 }
@@ -1214,15 +1192,9 @@ void NodeWiseMeshPartitioner::writeOtherMesh(
 {
     writeNodes(output_filename_base, partitions, _nodes_global_ids);
 
-    const auto elem_integers =
+    auto const element_offsets =
         writeConfigData(output_filename_base, partitions);
-
-    const std::vector<IntegerType>& num_elem_integers =
-        std::get<0>(elem_integers);
-    const std::vector<IntegerType>& num_g_elem_integers =
-        std::get<1>(elem_integers);
-    writeElements(output_filename_base, partitions, num_elem_integers,
-                  num_g_elem_integers);
+    writeElements(output_filename_base, partitions, element_offsets);
 
     writeProperties(output_filename_base, partitioned_properties, partitions,
                     MeshLib::MeshItemType::Node);
