@@ -105,7 +105,7 @@ private:
 
     /*!
         Parallel reading of a binary file via MPI_File_read, reading mesh data
-        head, nodes, non-ghost elements and ghost elements.
+        head, nodes, elements and ghost elements.
 
         \note In case of failure during opening of the file, an error message is
               printed.
@@ -142,7 +142,7 @@ private:
         struct type (long, double double double) array of nodes information of
         global IDs and coordinates of all partitions, the third file contains
         a long type integer array of element information of material ID,
-        element type and node IDs of each non-ghost element of all partitions,
+        element type and node IDs of each element of all partitions,
         and the forth file contains a long type integer array of element
         information of material ID, element type and node IDs of each ghost
          element of all partitions.

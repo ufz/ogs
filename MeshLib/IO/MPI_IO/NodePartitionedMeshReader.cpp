@@ -162,7 +162,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
     setNodes(nodes, mesh_nodes, glb_node_ids);
 
     //----------------------------------------------------------------------------------
-    // Read non-ghost elements
+    // Read elements
     std::vector<unsigned long> elem_data(_mesh_info.number_of_elements +
                                          _mesh_info.offset[0]);
     if (!readDataFromFile(fname_header + "ele" + fname_num_p_ext,
