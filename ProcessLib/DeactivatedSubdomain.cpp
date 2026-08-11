@@ -17,11 +17,12 @@ const std::string DeactivatedSubdomain::zero_parameter_name =
     "zero_for_element_deactivation_approach";
 
 bool isTimeInSupportInterval(
-    MathLib::PiecewiseLinearInterpolation const& time_interval, double const t)
+    MathLib::PiecewiseLinearInterpolation const& deactivation_curve,
+    double const t)
 {
     NumLib::Time const time{t};
-    return NumLib::Time{time_interval.getSupportMin()} <= time &&
-           time <= NumLib::Time{time_interval.getSupportMax()};
+    return NumLib::Time{deactivation_curve.getSupportMin()} <= time &&
+           time <= NumLib::Time{deactivation_curve.getSupportMax()};
 }
 
 bool DeactivatedSubdomain::isDeactivated(MeshLib::Element const& element,
