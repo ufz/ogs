@@ -60,9 +60,8 @@ private:
             number_of_nodes;  ///< 0: Number of all nodes of a partition,
         unsigned long number_of_base_nodes;  ///< 1: Number of nodes for linear
                                              /// elements of a partition,
-        unsigned long
-            number_of_regular_elements;  ///< 2: Number of non-ghost elements
-                                         /// of a partition,
+        unsigned long number_of_elements;    ///< 2: Number of elements
+                                             /// of a partition,
         unsigned long
             number_of_ghost_elements;  ///< 3: Number of ghost element of
                                        /// a partition,
