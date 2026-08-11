@@ -13,21 +13,21 @@
 {{ end }}
 {{ $ctestsRounded := mul (math.Floor (div (float .Site.Data.stats.ctests) 10)) 10 }}
 {{ $notebookCount := len (where .Site.RegularPages "Params.notebook" true) }}
-{{ $releasePage := site.GetPage (printf "/releases/%s" .Site.Params.currentVersion) }}
+{{ $latestRelease := first 1 (site.GetPage "/releases/").Pages }}
 {{ $benchmarksURL := relURL "docs/benchmarks" }}
+{{ $notebooksURL := relURL "docs/benchmarks/notebooks" }}
 {{ $cellClasses := "px-6 py-6 sm:px-8" }}
 <div
-  class="hidden border-y border-gray-200 bg-gray-50 lg:grid lg:grid-cols-5 lg:divide-x lg:divide-gray-200">
-  {{ if $releasePage }}
-  <a href="{{ $releasePage.RelPermalink }}" class="{{ $cellClasses }} hover:bg-gray-100">
-    <div class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ .Site.Params.currentVersion }}</div>
+  class="hidden w-full border-t border-gray-200 bg-gray-50 lg:grid lg:grid-cols-5 lg:divide-x lg:divide-gray-200">
+  {{ if $latestRelease }}
+  {{ with index $latestRelease 0 }}
+  <a href="{{ .RelPermalink }}" class="{{ $cellClasses }} hover:bg-gray-100">
+    <div class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ .Params.tag }}</div>
     <div class="mt-1 font-mono text-[11px] tracking-wide text-gray-500">CURRENT RELEASE</div>
   </a>
+  {{ end }}
   {{ else }}
-  <div class="{{ $cellClasses }}">
-    <div class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ .Site.Params.currentVersion }}</div>
-    <div class="mt-1 font-mono text-[11px] tracking-wide text-gray-500">CURRENT RELEASE</div>
-  </div>
+  <div class="{{ $cellClasses }}">No release available</div>
   {{ end }}
   <a href="https://openalex.org/works?page=1&amp;filter=cites:w2037508882&amp;sort=publication_year:desc"
     class="{{ $cellClasses }} hover:bg-gray-100">
@@ -39,7 +39,7 @@
       }}<span class="text-teal-600">+</span></div>
     <div class="mt-1 font-mono text-[11px] tracking-wide text-gray-500">BENCHMARK TESTS</div>
   </a>
-  <a href="{{ $benchmarksURL }}" class="{{ $cellClasses }} hover:bg-gray-100">
+  <a href="{{ $notebooksURL }}" class="{{ $cellClasses }} hover:bg-gray-100">
     <div class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{{ $notebookCount }}</div>
     <div class="mt-1 font-mono text-[11px] tracking-wide text-gray-500">INTERACTIVE NOTEBOOK TESTS</div>
   </a>

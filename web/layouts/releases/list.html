@@ -68,7 +68,8 @@
                 <div class="flex items-start gap-3">
                   <i class="{{ .icon }} mt-1 text-amber-600"></i>
                   <div class="min-w-0">
-                    <a class="font-semibold text-gray-950 hover:text-brand-700" href="{{ .url }}">{{ .name }}</a>
+                    <a class="font-semibold text-gray-950 hover:text-brand-700"
+                      href='{{ if hasPrefix .url "http" }}{{ .url }}{{ else }}{{ relURL .url }}{{ end }}'>{{ .name }}</a>
                     {{ if .note }}
                     <div class="release-dev-note mt-1 text-sm leading-5 text-gray-600">{{ .note | markdownify }}</div>
                     {{ end }}

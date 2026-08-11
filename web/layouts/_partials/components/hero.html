@@ -1,6 +1,6 @@
 {{ $captions := slice }}
 {{ range .images }}{{ $captions = $captions | append .caption }}{{ end }}
-<div class="relative overflow-hidden bg-gray-50" x-data="{ i: 0 }"
+<div class="relative overflow-hidden bg-white" x-data="{ i: 0 }"
   x-init="setInterval(() => i = (i + 1) % {{ len .images }}, 6000)">
   {{ range $idx, $img := .images }}
   <img src="{{ $img.permalink }}" alt="{{ $img.alt }}" loading="{{ if eq $idx 0 }}eager{{ else }}lazy{{ end }}"

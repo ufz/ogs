@@ -1,4 +1,7 @@
 {{ $url := .Destination }}
+{{ if and (hasPrefix $url "/") (not (hasPrefix $url "//")) }}
+  {{ $url = relURL (strings.TrimPrefix $url "/") }}
+{{ end }}
 {{ if eq hugo.Environment "staging" }}
   {{ $imageFile := index (split .Destination "#") 0 }}
   {{ $imageResource := .Page.Resources.GetMatch ($imageFile) }}

@@ -1,8 +1,11 @@
 {{ define "main" }}
+<div class="space-y-3 py-3">
+<section class="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl border border-gray-200 bg-white">
 {{ partial "components/hero" .Params.hero }}
 {{ partial "components/stat-band" . }}
+</section>
 
-<section class="border-t border-gray-200 bg-white">
+<section class="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-white">
   <div class="mx-auto w-full px-4 py-12 sm:px-6 lg:max-w-7xl lg:py-16">
     <div class="flex items-baseline justify-between gap-4">
       <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
@@ -38,7 +41,7 @@
 {{ end }}
 {{ $latestPublications := first 3 $publicationPagesWithImage }}
 {{ if gt (len $latestPublications) 0 }}
-<section class="border-t border-gray-200 bg-gray-50">
+<section class="mx-auto w-full max-w-7xl overflow-hidden rounded-2xl bg-white">
   <div class="mx-auto w-full px-4 py-12 sm:px-6 lg:max-w-7xl lg:py-16">
     <div class="flex items-baseline justify-between gap-4">
       <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
@@ -82,4 +85,5 @@
 {{ end }}
 
 {{ partial "components/get-started" . }}
+</div>
 {{ end }}

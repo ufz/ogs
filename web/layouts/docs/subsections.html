@@ -47,20 +47,6 @@
         </ul>
         {{ end }}
 
-        {{ if .Params.show_featured }}
-        <div class="section-docs prose prose-gray max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-950 prose-img:rounded-lg">
-          <h2>Featured {{ .Title }}</h2>
-        </div>
-        <ul role="list"
-          class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-8 space-y-0 text-sm lg:text-base">
-          {{ range $sections }}
-          {{ if .Params.featured }}
-          {{ partial "components/gallery-item.html" . }}
-          {{ end }}
-          {{ end }}
-        </ul>
-        {{ end }}
-
         <div class="section-docs prose prose-gray max-w-none prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700 hover:prose-a:underline prose-code:rounded prose-code:px-1.5 prose-code:py-0.5 prose-code:text-gray-800 prose-pre:border prose-pre:border-gray-200 prose-pre:bg-gray-950 prose-img:rounded-lg">
           <h2>All {{ .Title }}</h2>
           {{ .Content }}

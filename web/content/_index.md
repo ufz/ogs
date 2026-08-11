@@ -21,9 +21,9 @@ hero:
       caption: contour visualisation of simulation results
   cta:
     - text: Download OGS-6
-      url: /releases
+      url: releases
     - text: Read the docs
-      url: /docs
+      url: docs
 
 stats:
   - value: BSD-3-Clause
@@ -141,12 +141,12 @@ get_started:
       textline: Start by downloading a prebuilt package for your platform and running the benchmarks.
       link:
         text: Download
-        url: /releases
+        url: releases
     - headline: Developing OpenGeoSys
       textline: Obtain the source, configure your toolchain and build the application from the Developer Guide.
       link:
         text: Developer Guide
-        url: /docs/devguide
+        url: docs/devguide
     - headline: Join the community
       textline: Get in touch through the Discourse forum, GitLab or email — every contribution is welcome.
       link:
