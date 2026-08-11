@@ -24,7 +24,7 @@ parseDirichletBoundaryConditionWithinTimeIntervalConfig(
 
     //! \ogs_file_param{prj__process_variables__process_variable__boundary_conditions__boundary_condition__DirichletWithinTimeInterval__time_interval}
     config.peekConfigParameter<std::string>("time_interval");
-    auto time_interval = BaseLib::createTimeInterval(config);
+    auto time_interval = NumLib::createTimeInterval(config);
 
     return {name, time_interval};
 }

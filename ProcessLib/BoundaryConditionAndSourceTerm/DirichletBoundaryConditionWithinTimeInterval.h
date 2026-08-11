@@ -6,14 +6,13 @@
 #include <memory>
 #include <vector>
 
-#include "BaseLib/TimeInterval.h"
 #include "BoundaryCondition.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/TimeStepping/TimeInterval.h"
 
 namespace BaseLib
 {
 class ConfigTree;
-struct TimeInterval;
 }  // namespace BaseLib
 
 namespace MeshLib
@@ -34,7 +33,7 @@ class DirichletBoundaryConditionWithinTimeInterval final
 {
 public:
     DirichletBoundaryConditionWithinTimeInterval(
-        BaseLib::TimeInterval time_interval,
+        NumLib::TimeInterval time_interval,
         ParameterLib::Parameter<double> const& parameter,
         MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,
@@ -56,6 +55,6 @@ private:
     int const _variable_id;
     int const _component_id;
 
-    BaseLib::TimeInterval const _time_interval;
+    NumLib::TimeInterval const _time_interval;
 };
 }  // namespace ProcessLib

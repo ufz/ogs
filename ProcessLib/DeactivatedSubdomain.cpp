@@ -8,7 +8,7 @@
 #include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
-#include "NumLib/TimeStepping/Time.h"
+#include "NumLib/TimeStepping/TimeInterval.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -20,9 +20,9 @@ bool isTimeInSupportInterval(
     MathLib::PiecewiseLinearInterpolation const& deactivation_curve,
     double const t)
 {
-    NumLib::Time const time{t};
-    return NumLib::Time{deactivation_curve.getSupportMin()} <= time &&
-           time <= NumLib::Time{deactivation_curve.getSupportMax()};
+    return NumLib::TimeInterval{deactivation_curve.getSupportMin(),
+                                deactivation_curve.getSupportMax()}
+        .contains(t);
 }
 
 bool DeactivatedSubdomain::isDeactivated(MeshLib::Element const& element,
