@@ -75,7 +75,7 @@ if(OGS_USE_MFRONT)
         set(_py_boost_comp
             "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}"
         )
-        find_package(Boost ${ogs.minimum_version.boost} COMPONENTS ${_py_boost_comp})
+        find_package(Boost ${ogs.minimum_version.boost} COMPONENTS ${_py_boost_comp} QUIET)
         if(Boost_${_py_boost_comp}_FOUND)
             set(_tfel_cmake_args
                 "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
@@ -494,7 +494,9 @@ elseif(NOT OGS_BUILD_VTK AND (NOT OGS_USE_MKL OR CONDA_BUILD))
     endforeach()
     message(STATUS "Searching VTK on system with components: ${VTK_COMPONENTS}")
     ogs_find_fast_float_for_system_vtk()
-    find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
+    find_package(
+        VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS} QUIET
+    )
 endif()
 if(NOT VTK_FOUND)
     file(
