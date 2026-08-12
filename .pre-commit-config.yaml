@@ -39,15 +39,14 @@ repos:
     hooks:
       - id: codespell
         exclude: 'Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp|^scripts/cmake/CPM.cmake|Documentation/.vale/.*|.*\.ipynb|.*\.svg|^GeoLib/predicates.c'
-  - repo: https://github.com/cheshirekow/cmake-format-precommit
-    rev: v0.6.13
+  # Bug fixes from https://github.com/solarispika/cmake_format
+  - repo: https://github.com/bilke/cmake-format-precommit
+    rev: v0.6.13.2
     hooks:
       - id: cmake-format
-        additional_dependencies: ["cmakelang[YAML]"]
-        args: [--config=.cmake-format.yaml]
+        args: [--config=.cmake-format.yaml, --in-place]
         exclude: "CPM.cmake|JSONParser.cmake|Tests.cmake|FindTFEL.cmake|FindMFrontGenericInterface.cmake"
       - id: cmake-lint
-        additional_dependencies: ["cmakelang[YAML]"]
         exclude: "CPM.cmake|JSONParser.cmake|BuildExternalProject.cmake|FindTFEL.cmake|FindMFrontGenericInterface.cmake|FindFastFloat.cmake"
   - repo: https://github.com/igorshubovych/markdownlint-cli
     rev: v0.42.0
