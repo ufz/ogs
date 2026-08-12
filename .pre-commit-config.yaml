@@ -71,10 +71,6 @@ repos:
     rev: v2.24.4
     hooks:
       - id: vale
-        name: vale sync
-        pass_filenames: false
-        args: [sync]
-      - id: vale
         args: [--output=line, --minAlertLevel=error]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: "v0.13.1"

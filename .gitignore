@@ -32,9 +32,6 @@ scripts/cmake/vtk-*.patch
 /.cpm
 nohup.out
 
-/Documentation/.vale
-!/Documentation/.vale/Vocab
-
 # Python build
 *.egg-info/
 /wheelhouse
