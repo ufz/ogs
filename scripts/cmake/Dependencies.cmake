@@ -641,6 +641,9 @@ if(NOT EXISTS ${_licenses_file})
     # Adapted from https://github.com/cpm-cmake/CPMLicenses.cmake:
     set(_print_delimiter OFF)
     foreach(package ${CPM_PACKAGES} ${_EXT_LIBS})
+        if("${${package}_SOURCE_DIR}" STREQUAL "")
+            continue()
+        endif()
         file(
             GLOB
             licenses
@@ -648,6 +651,7 @@ if(NOT EXISTS ${_licenses_file})
             "${${package}_SOURCE_DIR}/LICENCE*"
             "${${package}_SOURCE_DIR}/COPYING*"
             "${${package}_SOURCE_DIR}/Copyright*"
+            "${${package}_SOURCE_DIR}/LGPL-3.0.txt" # mgis
         )
         list(LENGTH licenses LICENSE_COUNT)
         if(LICENSE_COUNT GREATER_EQUAL 1)
@@ -657,22 +661,19 @@ if(NOT EXISTS ${_licenses_file})
                 )
             endif()
 
-            list(GET licenses 0 _license)
-            file(READ ${_license} license_TEXT)
             set(_licenses_string
-                "${_licenses_string}The following software may be included in this product: **${package}**.\nThis software contains the following license and notice below:\n\n${license_TEXT}\n"
+                "${_licenses_string}The following software may be included in this product: **${package}**.\n"
+                "This software contains the following licenses and notices below:\n\n"
             )
+            foreach(license IN LISTS licenses)
+                file(READ ${license} license_TEXT)
+                set(_licenses_string "${_licenses_string}${license_TEXT}\n")
+            endforeach()
             set(_print_delimiter ON)
         else()
             message(
-                VERBOSE
-                "WARNING: no license files found for package \"${package}\" in ${${package}_SOURCE_DIR} ."
-            )
-        endif()
-        if(LICENSE_COUNT GREATER 1)
-            message(
-                VERBOSE
-                "WARNING: multiple license files found for package \"${package}\": ${licenses}. Only first file will be used."
+                WARNING
+                "No license files found for package \"${package}\" in ${${package}_SOURCE_DIR} ."
             )
         endif()
     endforeach()
