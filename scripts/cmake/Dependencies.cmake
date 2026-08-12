@@ -617,23 +617,6 @@ configure_file(
     ${PROJECT_BINARY_DIR}/CTestCustom.cmake @ONLY
 )
 
-find_program(CLANG_FORMAT_PROGRAM clang-format)
-find_program(CMAKE_FORMAT_PROGRAM cmake-format)
-
-if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
-    if(NOT CMAKE_FORMAT_PROGRAM)
-        set(_skip_cmake "FORMAT_SKIP_CMAKE YES")
-    endif()
-    CPMAddPackage(
-        NAME Format.cmake
-        VERSION 1.7.0
-        GITHUB_REPOSITORY TheLartians/Format.cmake
-        OPTIONS
-            ${_skip_cmake}
-            "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/vector-of-bool/.*"
-    )
-endif()
-
 # Third-party licenses
 set(_licenses_file ${PROJECT_BINARY_DIR}/third_party_licenses.txt)
 if(NOT EXISTS ${_licenses_file})
