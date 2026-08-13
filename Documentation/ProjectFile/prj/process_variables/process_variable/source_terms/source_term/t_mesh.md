@@ -1,7 +1,7 @@
 Name of the mesh where the source term will be applied.
 
 The surface mesh must contain a nodal integer-valued field (unsigned 64bit)
-named \c bulk_node_ids, and a cell field named \c bulk_element_ids. These fields
+named \c `bulk_node_ids`, and a cell field named \c `bulk_element_ids`. These fields
 establish the mapping between the nodes of the surface mesh to the nodes in the
 bulk mesh.
 

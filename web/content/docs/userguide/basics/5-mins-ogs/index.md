@@ -40,7 +40,7 @@ Otherwise, maybe [Option 2](#binaries) might work for you.
 
 1. Create a Python virtual environment and activate it (for more details see
    [here](/docs/userguide/basics/introduction/)).
-2. Install the ogs python package:
+2. Install the OGS python package:
 
    `pip install {{% ogs-pip-package %}}`
 

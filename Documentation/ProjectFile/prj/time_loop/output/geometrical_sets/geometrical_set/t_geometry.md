@@ -1,7 +1,7 @@
 This is a link to the name of the geometrical object within the geometrical
 set specified in the `<name>` tag.
 
-In the example gml snippet
+In the example GML snippet
 
 ```xml
 <OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogs="http://www.opengeosys.org">
@@ -19,4 +19,4 @@ In the example gml snippet
 </OpenGeoSysGLI>
 ```
 
-the name of the geometry is __leftsurface__.
+the name of the geometry is `leftsurface`.

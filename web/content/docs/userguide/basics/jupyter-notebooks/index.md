@@ -62,9 +62,9 @@ http://127.0.0.1:8888/lab?token=xxx
 
 You may have to modify the IP address if this is running on a remote machine.
 
-### Install ogs
+### Install OGS
 
-Click on *Terminal* and install OGSTools (which also installs ogs itself):
+Click on *Terminal* and install OGSTools (which also installs `ogs` itself):
 
 ```bash
 pip install ogstools[ogs]

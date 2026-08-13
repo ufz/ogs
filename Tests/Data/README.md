@@ -4,9 +4,9 @@ Environment for notebook-based tests is defined in this directory's `pyproject.t
 
 3 dependency groups which select the used `ogs` wheel:
 
-- `ogs-local`: Builds ogs locally from source
-- `ogs-master` Downloads latest ogs wheel from master branch (requires `--upgrade-package ogs`-parameter)
-- `ogs-pypi` Downloads latest ogs release from PyPI
+- `ogs-local`: Builds OGS locally from source
+- `ogs-master` Downloads latest OGS wheel from master branch (requires `--upgrade-package ogs`-parameter)
+- `ogs-pypi` Downloads latest OGS release from PyPI
 
 ```bash
 uv run --group ogs-local pytest

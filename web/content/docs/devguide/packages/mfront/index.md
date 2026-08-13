@@ -11,7 +11,7 @@ weight = 1043
 
 <div class='note'>
 
-Please note that MFront is not available on Windows! You can use [WSL]({{< ref "wsl.md" >}}) to compile ogs with MFront-support on Windows.
+Please note that MFront is not available on Windows! You can use [WSL]({{< ref "wsl.md" >}}) to compile `ogs` with MFront-support on Windows.
 
 </div>
 

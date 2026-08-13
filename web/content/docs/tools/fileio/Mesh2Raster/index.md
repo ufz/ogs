@@ -42,7 +42,7 @@ The input mesh for this example is a homogeneous, unstructured triangle mesh wit
 Mesh2Raster -i input.vtu -o output.asc -c 50
 ```
 
-![output50](Mesh2Raster-output50.png#two-third "The generated output raster has a size of 340x333 pixels and represents the original surface well. Given the average edge length of 100m in the original mesh, an even smaller cellsize would not have contained more details but resulted in a larger file size. Conversely, a larger cellsize might result in artefacts due to undersampling, see [Nyquist criterion](https://en.wikipedia.org/wiki/Nyquist_rate).")
+![output50](Mesh2Raster-output50.png#two-third "The generated output raster has a size of 340x333 pixels and represents the original surface well. Given the average edge length of 100m in the original mesh, an even smaller cellsize would not have contained more details but resulted in a larger file size. Conversely, a larger cell size might result in artefacts due to undersampling, see [Nyquist criterion](https://en.wikipedia.org/wiki/Nyquist_rate).")
 
 **Command:**
 

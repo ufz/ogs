@@ -1,7 +1,7 @@
 The tag `<name>` selects the name of the geometrical set. Typically, the
-name is given within the gml file via the tag `<name>`.
+name is given within the GML file via the tag `<name>`.
 
-In the example gml file snippet
+In the example GML file snippet
 
 ```xml
 <OpenGeoSysGLI xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ogs="http://www.opengeosys.org">
@@ -10,4 +10,4 @@ In the example gml file snippet
 </OpenGeoSysGLI>
 ```
 
-the name of the geometrical set is __cube_geometry__.
+the name of the geometrical set is `cube_geometry`.

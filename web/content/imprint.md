@@ -32,7 +32,7 @@ This website uses a number of external projects:
 
 ## Contact us
 
-In case of questions about the website or any of its contents, please contact us at info@opengeosys.org.
+In case of questions about the website or any of its contents, please contact us at [info@opengeosys.org](mailto:info@opengeosys.org).
 
 <!-- vale off -->
 

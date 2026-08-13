@@ -33,7 +33,7 @@ All other cases on the top level do not represent separate input files but
 rather are shortcuts to certain project file sections, which are provided only in
 order to keep the documentation tree flat, they have no other special meaning.
 
-A path in the documentation tree corresponds to a path in the prj or gml input
+A path in the documentation tree corresponds to a path in the prj or GML input
 file, e.g., \ref ogs_file_param__prj__process_variables__process_variable__boundary_conditions__boundary_condition
 corresponds to the path `process_variables.process_variable.boundary_conditions.boundary_condition`
 in the project file (here parent and child tags are separated by a dot).  
@@ -45,7 +45,7 @@ prefix:
 
 1. Cases at the top level do not translate to XML tags. The cases
     \ref ogs_file_param__prj and \ref ogs_file_param__gml mark the root of the
-    prj and gml input file, respectively.
+    prj and GML input file, respectively.
     All other top level cases, however, belong somewhere in the project file XML tree.
     You can see where they belong in the *Additional Info* section of the `[tag]` and
     `[attr]` pages, e.g.,

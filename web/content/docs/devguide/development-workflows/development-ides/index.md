@@ -18,7 +18,7 @@ Here is a **link list** without specific order:
 
 - [Eclipse](https://www.eclipse.org/)
 - [Code::Blocks](https://www.codeblocks.org/)
-- [Netbeans](https://netbeans.org/)
+- [NetBeans](https://netbeans.org/)
 - [GDB](https://www.sourceware.org/gdb/)
 - [CLion](https://www.jetbrains.com/clion/)
 
@@ -172,7 +172,7 @@ You don't need a build-directory for CLion. It will create it by itself.
 1. *File / Import Project*
 2. Choose source-directory
 3. When prompted do not overwrite CMake file, instead choose *Open Project*
-4. Under *Run / Edit Configurations* choose the ogs-target and set the program working directory and arguments
-5. On the top right choose the ogs-target and click the green Debug-button
+4. Under *Run / Edit Configurations* choose the `ogs`-target and set the program working directory and arguments
+5. On the top right choose the `ogs`-target and click the green Debug-button
 
 Documentation: <https://www.jetbrains.com/clion/help/introduction.html>

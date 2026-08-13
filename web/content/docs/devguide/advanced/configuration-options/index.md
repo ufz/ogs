@@ -33,7 +33,7 @@ CMake switches to enable / disable parts of OGS.
 ### Python virtual environment
 
 - `OGS_USE_PIP` - Creates a python virtual environment in the .venv-directory
-  inside the build directory, that includes useful packages like ogstools,
+  inside the build directory, that includes useful packages like OGSTools,
   Jupyter and more. Defaults to *OFF*. See also
   https://www.opengeosys.org/docs/devguide/packages/python-env/.
 

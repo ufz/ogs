@@ -52,7 +52,7 @@ If there are incompatibilities to a system-installed library, e.g. HDF5, you can
 - `OGS_BUILD_VTK`
 
 External dependencies are cached in `~/.cache/CPM/`.
-If something goes wrong during the first build, then ogs will pick up the failed
+If something goes wrong during the first build, then OGS will pick up the failed
 build during subsequent cmake-runs without showing any error messages from the
 dependency.
 In that case you need to delete the corresponding folder in the CPM cache,

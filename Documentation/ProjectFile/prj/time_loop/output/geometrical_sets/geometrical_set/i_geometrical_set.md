@@ -1,5 +1,5 @@
 Tag that describes the mesh output according to a geometric object (point, polyline,
-(plane) surface). The geometric object is defined in a gml file.
+(plane) surface). The geometric object is defined in a GML file.
 
 ```xml
 <geometrical_sets>
@@ -17,4 +17,4 @@ Tag that describes the mesh output according to a geometric object (point, polyl
 
 The name of the internal generated mesh is constructed from the name of the
 geometrical set, an underscore, and the name of the geometrical object.
-In the case above the internal mesh name would be __cube_geometry_leftsurface__.
+In the case above the internal mesh name would be `cube_geometry_leftsurface`.

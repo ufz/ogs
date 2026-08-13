@@ -7,7 +7,7 @@ aliases = [ "/docs/tools/meshing/gmsh-interface" ]
 
 ## Introduction
 
-The tool `geometryToGmshGeo` takes OGS geometries (gml files) and creates a Gmsh
+The tool `geometryToGmshGeo` takes OGS geometries (GML files) and creates a Gmsh
 `.geo` file. The user can specify several command line arguments to influence the
 creation procedure. A list of the arguments as well as a description of each
 argument can be obtained with the `--help` option.
@@ -24,7 +24,7 @@ The `--input` argument is accepted multiple times.
 
 ### First Example: Simple Geometry
 
-First, the Gmsh geometry file is create from the gml file [square_1x1.gml](square_1x1.gml):
+First, the Gmsh geometry file is create from the GML file [square_1x1.gml](square_1x1.gml):
 
 ```bash
 geometryToGmshGeo -i square_1x1.gml -o /tmp/square_1x1.geo --mesh_density_scaling_at_points 0.05
@@ -43,7 +43,7 @@ gmsh /tmp/square_1x1.geo -2 -algo meshadapt -format msh22 -o /tmp/square_1x1.msh
 
 ### Second Example: Simple Geometry with Additional Geometrical Information
 
-First, the Gmsh geometry file is create from the gml files
+First, the Gmsh geometry file is create from the GML files
 
 - [square_1x1.gml](square_1x1.gml)
 - [square_0.15_0.25x0.15_0.25.gml](square_0.15_0.25x0.15_0.25.gml)
