@@ -8,6 +8,7 @@
 #include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
+#include "NumLib/TimeStepping/TimeInterval.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -15,10 +16,13 @@ namespace ProcessLib
 const std::string DeactivatedSubdomain::zero_parameter_name =
     "zero_for_element_deactivation_approach";
 
-bool DeactivatedSubdomain::isInTimeSupportInterval(double const t) const
+bool isTimeInSupportInterval(
+    MathLib::PiecewiseLinearInterpolation const& deactivation_curve,
+    double const t)
 {
-    return time_interval.getSupportMin() <= t &&
-           t <= time_interval.getSupportMax();
+    return NumLib::TimeInterval{deactivation_curve.getSupportMin(),
+                                deactivation_curve.getSupportMax()}
+        .contains(t);
 }
 
 bool DeactivatedSubdomain::isDeactivated(MeshLib::Element const& element,

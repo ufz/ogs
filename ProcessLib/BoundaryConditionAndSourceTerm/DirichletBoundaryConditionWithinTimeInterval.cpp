@@ -13,7 +13,7 @@ namespace ProcessLib
 {
 DirichletBoundaryConditionWithinTimeInterval::
     DirichletBoundaryConditionWithinTimeInterval(
-        BaseLib::TimeInterval time_interval,
+        NumLib::TimeInterval time_interval,
         ParameterLib::Parameter<double> const& parameter,
         MeshLib::Mesh const& bc_mesh,
         NumLib::LocalToGlobalIndexMap const& dof_table_bulk,

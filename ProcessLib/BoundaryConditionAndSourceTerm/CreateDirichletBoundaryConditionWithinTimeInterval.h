@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "BaseLib/TimeInterval.h"
+#include "NumLib/TimeStepping/TimeInterval.h"
 
 namespace BaseLib
 {
@@ -39,7 +39,7 @@ namespace ProcessLib
 struct DirichletBoundaryConditionConfig
 {
     std::string parameter_name;
-    BaseLib::TimeInterval time_interval;
+    NumLib::TimeInterval time_interval;
 };
 
 DirichletBoundaryConditionConfig

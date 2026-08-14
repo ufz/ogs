@@ -27,6 +27,17 @@ struct Parameter;
 
 namespace ProcessLib
 {
+/// \returns true if the given time is included in the deactivation curve's
+/// support, i.e. in the time interval the curve is defined on.
+///
+/// The comparison is done with the same tolerance as all other time comparisons
+/// in the time loop, cf. NumLib::Time, because the current time is an
+/// accumulated sum of time step sizes and may miss the interval's end by a few
+/// units in the last place.
+bool isTimeInSupportInterval(
+    MathLib::PiecewiseLinearInterpolation const& deactivation_curve,
+    double const t);
+
 struct DeactivatedSubdomainMesh
 {
     /// A mesh created from material ids (independent of time) for the
@@ -77,10 +88,6 @@ struct Ball
 /// between the active and inactive elements are not affected.
 struct DeactivatedSubdomain
 {
-    /// \returns true if the given time is included in the subdomains time
-    /// support interval.
-    bool isInTimeSupportInterval(double const t) const;
-
     /// \returns true if the element is in the deactivated part of the
     /// subdomain.
     /// If the line segment is available additionally the element's centre point

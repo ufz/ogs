@@ -326,9 +326,10 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
 
     // If none of the deactivated subdomains is active at current time, then the
     // _ids_of_active_elements remain empty.
-    if (std::none_of(begin(_deactivated_subdomains),
-                     end(_deactivated_subdomains), [&](auto const& ds)
-                     { return ds.isInTimeSupportInterval(time); }))
+    if (std::none_of(
+            begin(_deactivated_subdomains), end(_deactivated_subdomains),
+            [&](auto const& ds)
+            { return isTimeInSupportInterval(ds.time_interval, time); }))
     {
         // Also mark all of the elements as active.
         assert(_is_active != nullptr);  // guaranteed by constructor
@@ -340,7 +341,7 @@ void ProcessVariable::updateDeactivatedSubdomains(double const time)
     auto is_active_in_subdomain = [&](std::size_t const element_id,
                                       DeactivatedSubdomain const& ds) -> bool
     {
-        return (!ds.isInTimeSupportInterval(time)) ||
+        return (!isTimeInSupportInterval(ds.time_interval, time)) ||
                !ds.isDeactivated(*_mesh.getElement(element_id), time);
     };
 

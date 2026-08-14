@@ -4,7 +4,6 @@
 #include "CreateBoundaryCondition.h"
 
 #include "BaseLib/Error.h"
-#include "BaseLib/TimeInterval.h"
 #include "BoundaryCondition.h"
 #include "BoundaryConditionConfig.h"
 #include "ConstraintDirichletBoundaryCondition.h"
@@ -15,6 +14,7 @@
 #include "HCNonAdvectiveFreeComponentFlowBoundaryCondition.h"
 #include "NeumannBoundaryCondition.h"
 #include "NormalTractionBoundaryCondition.h"
+#include "NumLib/TimeStepping/TimeInterval.h"
 #include "ParameterLib/Parameter.h"
 #include "PhaseFieldIrreversibleDamageOracleBoundaryCondition.h"
 #include "PrimaryVariableConstraintDirichletBoundaryCondition.h"

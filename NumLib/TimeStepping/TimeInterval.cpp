@@ -3,13 +3,18 @@
 
 #include "TimeInterval.h"
 
-#include <memory>
+#include "BaseLib/ConfigTree.h"
+#include "Time.h"
 
-#include "ConfigTree.h"
-
-namespace BaseLib
+namespace NumLib
 {
-TimeInterval createTimeInterval(ConfigTree const& config)
+bool TimeInterval::contains(double const current_time) const
+{
+    Time const time{current_time};
+    return Time{start_time} <= time && time <= Time{end_time};
+}
+
+TimeInterval createTimeInterval(BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__time_loop__processes__process__time_interval}
     auto const& time_interval_config = config.getConfigSubtree("time_interval");
@@ -24,4 +29,4 @@ TimeInterval createTimeInterval(ConfigTree const& config)
 
     return {start_time, end_time};
 }
-}  // namespace BaseLib
+}  // namespace NumLib
