@@ -7,7 +7,7 @@ weight = 4
 
 <div class="note">
 
-### Work in progress
+## Work in progress
 
 This page is a work in progress.
 

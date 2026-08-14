@@ -11,7 +11,7 @@ weight = 1069
 
 <div class='note'>
 
-### <i class="far fa-info-circle"></i> Warning
+## <i class="far fa-info-circle"></i> Warning
 
 This page and OGS builds with GNU Guix are currently work-in-progress!
 

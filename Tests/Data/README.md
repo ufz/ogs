@@ -21,10 +21,10 @@ uv run --group ogs-local Notebooks/testrunner.py --out /tmp Mechanics/Linear/Sim
 
 ## Regression and maintenance testing
 
-| | Regression test| Maintenance test |
+| | Regression test | Maintenance test |
 | ------ | ------ | ------ |
-| OGS       | **latest**        | stable (tip of master)       |
-| Environment       | stable (pinned via lock-file)       |  **latest** |
+| OGS | **latest** | stable (tip of master) |
+| Environment | stable (pinned via lock-file) | **latest** |
 | Trigger | Merge-request | scheduled or master-build |
 | Role | Developer | Maintainer |
 
