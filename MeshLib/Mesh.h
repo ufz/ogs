@@ -142,7 +142,12 @@ protected:
     /// that have the same dimensionality as e.
     void setElementNeighbors();
 
-    std::size_t const _id;
+private:
+    /// Returns the next unused mesh id from the global mesh counter.
+    static std::size_t nextID();
+
+protected:
+    std::size_t const _id = nextID();
     unsigned _mesh_dimension = 0;
     /// The minimal and maximal distance of nodes within an element over all
     /// elements in the mesh
