@@ -9,7 +9,7 @@ This page describes Thermo-Hydro-Mechanics Process (THM).
 
 <div class="note">
 
-### Work in progress
+## Work in progress
 
 This page is a work in progress.
 
@@ -42,6 +42,37 @@ List of medium properties required by THM process.
 - bulk modulus
 - density
 - specific heat capacity
+
+Those properties are defined on medium level. See [medium properties]({{< ref "media#properties" >}}) for more details on defining them.
+
+| Property name | Mandatory | Constant | Function | Curve | Parameter | Other |
+| --- | --- | --- | --- | --- | --- | --- |
+| Thermo-osmosis coefficient | No | Yes | No | No | No | - |
+| Thermo-osmosis permeability | No | Yes | No | No | No | - |
+
+Thermo-osmosis can be parametrised in two, mutually exclusive, ways:
+
+- `thermal_osmosis_coefficient` sets the thermo-osmotic coefficient $k_T$
+  ($[k_T] = m^2/(K \cdot s)$) directly. Use this when a tabulated $k_T$ is
+  available.
+- `thermal_osmosis_permeability` sets the scalar thermo-osmotic permeability
+  $\epsilon_T$ ($[\epsilon_T] = Pa/K$), from which $k_T = \epsilon_T k / \mu$
+  is formed using the medium's intrinsic permeability $k$ and the
+  AqueousLiquid phase's dynamic viscosity $\mu$. Use this when
+  $\epsilon_T$ is the measured quantity and $k_T$ should track a spatially
+  varying $k$ and a temperature-dependent $\mu$.
+
+Note that `thermal_osmosis_permeability` is not a permeability and does not
+have a permeability's dimension; the name was kept for continuity with the
+existing property naming.
+
+Older project files defining `thermal_osmosis_coefficient` on the solid phase
+are moved to the medium level by the
+[`scripts/dev/move_thermal_osmosis.py`](https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/scripts/dev/move_thermal_osmosis.py)
+helper script, which with `--convert` also rewrites the property as
+`thermal_osmosis_permeability`. A `thermal_osmosis_coefficient` already given
+on the medium level is a valid parametrisation and is left unchanged by the
+script.
 
 ## Input parameters in the project file
 
