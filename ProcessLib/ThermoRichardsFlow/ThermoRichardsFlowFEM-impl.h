@@ -16,6 +16,7 @@
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "NumLib/Fem/Interpolation.h"
+#include "ProcessLib/Common/ThermoOsmosis/ThermoOsmoticCoefficient.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "RigidElasticityModel.h"
 #include "UniaxialElasticityModel.h"
@@ -356,14 +357,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         GlobalDimMatrixType const Ki_over_mu = K_intrinsic / mu;
         GlobalDimMatrixType const rho_Ki_over_mu = rho_LR * Ki_over_mu;
 
-        auto const K_pT_thermal_osmosis =
-            (solid_phase.hasProperty(
-                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
-                 ? MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                       solid_phase
-                           [MPL::PropertyType::thermal_osmosis_coefficient]
-                               .value(variables, x_position, t, dt))
-                 : Eigen::MatrixXd::Zero(GlobalDim, GlobalDim));
+        GlobalDimMatrixType const K_pT_thermal_osmosis =
+            ProcessLib::getThermoOsmoticCoefficient<GlobalDim>(
+                medium, variables, x_position, t, dt, K_intrinsic, mu);
 
         // Consider anisotropic thermal expansion.
         // Read in 3x3 tensor. 2D case also requires expansion coeff. for z-
@@ -837,15 +833,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
                 alpha, phi, _element.getID(), ip);
         }
 
-        auto const K_pT_thermal_osmosis =
-            (solid_phase.hasProperty(
-                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
-                 ? MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                       solid_phase
-                           [MPL::PropertyType::thermal_osmosis_coefficient]
-                               .value(variables, x_position, t, dt))
-                 : Eigen::MatrixXd::Zero(GlobalDim, GlobalDim));
-
         double const k_rel =
             medium[MPL::PropertyType::relative_permeability]
                 .template value<double>(variables, x_position, t, dt);
@@ -856,6 +843,10 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         auto const K_intrinsic = MPL::formEigenTensor<GlobalDim>(
             medium[MPL::PropertyType::permeability].value(variables, x_position,
                                                           t, dt));
+
+        GlobalDimMatrixType const K_pT_thermal_osmosis =
+            ProcessLib::getThermoOsmoticCoefficient<GlobalDim>(
+                medium, variables, x_position, t, dt, K_intrinsic, mu);
 
         GlobalDimMatrixType const Ki_over_mu = K_intrinsic / mu;
         GlobalDimMatrixType const rho_Ki_over_mu = rho_LR * Ki_over_mu;
@@ -1314,14 +1305,9 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
 
         auto const& b = _process_data.specific_body_force;
 
-        auto const K_pT_thermal_osmosis =
-            (solid_phase.hasProperty(
-                 MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
-                 ? MaterialPropertyLib::formEigenTensor<GlobalDim>(
-                       solid_phase
-                           [MPL::PropertyType::thermal_osmosis_coefficient]
-                               .value(variables, x_position, t, dt))
-                 : Eigen::MatrixXd::Zero(GlobalDim, GlobalDim));
+        GlobalDimMatrixType const K_pT_thermal_osmosis =
+            ProcessLib::getThermoOsmoticCoefficient<GlobalDim>(
+                medium, variables, x_position, t, dt, K_intrinsic, mu);
 
         // Compute the velocity
         auto const& dNdx = _ip_data[ip].dNdx;

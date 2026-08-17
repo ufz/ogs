@@ -18,6 +18,7 @@
 #include "NumLib/Fem/Interpolation.h"
 #include "NumLib/NumericalStability/AdvectionMatrixAssembler.h"
 #include "NumLib/NumericalStability/HydrodynamicDispersion.h"
+#include "ProcessLib/Common/ThermoOsmosis/ThermoOsmoticCoefficient.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "ThermoHydroMechanicsFEM.h"
 
@@ -432,14 +433,9 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             crv.solid_linear_thermal_expansion_coefficient * dT_int_pt;
 
     crv.K_pT_thermal_osmosis =
-        (solid_phase.hasProperty(
-             MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
-             ? MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-                   solid_phase
-                       .property(MaterialPropertyLib::PropertyType::
-                                     thermal_osmosis_coefficient)
-                       .value(vars, x_position, t, dt))
-             : GlobalDimMatrixType::Zero(DisplacementDim, DisplacementDim));
+        ProcessLib::getThermoOsmoticCoefficient<DisplacementDim>(
+            *medium, vars, x_position, t, dt, intrinsic_permeability,
+            ip_data_output.viscosity);
 
     GlobalDimVectorType const velocity =
         -crv.k_rel * crv.K_over_mu * dNdx * p -

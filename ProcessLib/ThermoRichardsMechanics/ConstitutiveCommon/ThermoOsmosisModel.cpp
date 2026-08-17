@@ -3,7 +3,7 @@
 
 #include "ThermoOsmosisModel.h"
 
-#include "MaterialLib/MPL/Utils/FormEigenTensor.h"
+#include "ProcessLib/Common/ThermoOsmosis/ThermoOsmoticCoefficient.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -12,20 +12,24 @@ void ThermoOsmosisModel<DisplacementDim>::eval(
     SpaceTimeData const& x_t, MediaData const& media_data,
     TemperatureData<DisplacementDim> const& T_data,
     LiquidDensityData const& rho_L_data,
+    PermeabilityData<DisplacementDim> const& perm_data,
+    LiquidViscosityData const& mu_L_data,
     ThermoOsmosisData<DisplacementDim>& out) const
 {
     namespace MPL = MaterialPropertyLib;
+    // Holds no primary variables: the properties read below are evaluated by
+    // the models this one takes its data from, not here.
     MPL::VariableArray variables;
 
-    auto const& solid_phase = media_data.solid;
+    // Ki is row-major, the helper takes the default column-major layout.
+    Eigen::Matrix<double, DisplacementDim, DisplacementDim> const
+        intrinsic_permeability = perm_data.Ki;
 
-    auto const K_pT_thermal_osmosis =
-        (solid_phase.hasProperty(
-             MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient)
-             ? MaterialPropertyLib::formEigenTensor<DisplacementDim>(
-                   solid_phase[MPL::PropertyType::thermal_osmosis_coefficient]
-                       .value(variables, x_t.x, x_t.t, x_t.dt))
-             : Eigen::MatrixXd::Zero(DisplacementDim, DisplacementDim));
+    Eigen::Matrix<double, DisplacementDim, DisplacementDim> const
+        K_pT_thermal_osmosis =
+            ProcessLib::getThermoOsmoticCoefficient<DisplacementDim>(
+                media_data.medium, variables, x_t.x, x_t.t, x_t.dt,
+                intrinsic_permeability, *mu_L_data);
 
     out.K_pT_Laplace = rho_L_data.rho_LR * K_pT_thermal_osmosis;
 

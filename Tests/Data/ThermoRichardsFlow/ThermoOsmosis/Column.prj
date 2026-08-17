@@ -65,11 +65,6 @@
                     <type>Solid</type>
                     <properties>
                         <property>
-                            <name>thermal_osmosis_coefficient</name>
-                            <type>Constant</type>
-                            <value>2.7e-10 0 0 2.7e-10</value>
-                        </property>
-                        <property>
                             <name>density</name>
                             <type>Constant</type>
                             <value>2610</value>
@@ -103,6 +98,11 @@
                 </phase>
             </phases>
             <properties>
+                <property>
+                    <name>thermal_osmosis_coefficient</name>
+                    <type>Constant</type>
+                    <value>2.7e-10 0 0 2.7e-10</value>
+                </property>
                 <property>
                     <name>permeability</name>
                     <type>Constant</type>
