@@ -32,6 +32,11 @@ namespace MeshLib
 {
 using namespace ranges;
 
+std::size_t Mesh::nextID()
+{
+    return global_mesh_counter++;
+}
+
 std::vector<std::vector<Element const*>> findElementsConnectedToNodes(
     Mesh const& mesh)
 {
@@ -56,8 +61,7 @@ Mesh::Mesh(std::string name,
                elements,
            bool const compute_element_neighbors,
            Properties const& properties)
-    : _id(global_mesh_counter++),
-      _node_distance(std::numeric_limits<double>::max(), 0),
+    : _node_distance(std::numeric_limits<double>::max(), 0),
       _name(std::move(name)),
       _nodes(std::move(nodes)),
       _elements(std::move(elements)),
@@ -77,8 +81,7 @@ Mesh::Mesh(std::string name,
 }
 
 Mesh::Mesh(const Mesh& mesh)
-    : _id(global_mesh_counter++),
-      _mesh_dimension(mesh.getDimension()),
+    : _mesh_dimension(mesh.getDimension()),
       _node_distance(mesh._node_distance.first, mesh._node_distance.second),
       _name(mesh.getName()),
       _nodes(mesh.getNumberOfNodes()),

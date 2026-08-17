@@ -459,6 +459,27 @@ set(_vtk_source GIT_REPOSITORY https://github.com/kitware/vtk.git GIT_TAG
 set(_vtk_source_file
     ${OGS_EXTERNAL_DEPENDENCIES_CACHE}/vtk-v${ogs.minimum_version.vtk}.tar.gz
 )
+
+# Resolve fast_float installation
+function(ogs_find_fast_float_for_system_vtk)
+    if(TARGET FastFloat::fast_float)
+        return()
+    endif()
+
+    find_package(FastFloat 8.0.0 QUIET)
+    if(TARGET FastFloat::fast_float)
+        return()
+    endif()
+
+    CPMFindPackage(
+        NAME fast_float
+        GITHUB_REPOSITORY fastfloat/fast_float
+        VERSION 8.0.0
+        GIT_TAG v8.0.0
+        EXCLUDE_FROM_ALL YES SYSTEM TRUE
+    )
+endfunction()
+
 if(GUIX_BUILD)
     find_package(VTK COMPONENTS ${VTK_COMPONENTS})
 elseif(EXISTS ${_vtk_source_file})
@@ -472,6 +493,7 @@ elseif(NOT OGS_BUILD_VTK AND (NOT OGS_USE_MKL OR CONDA_BUILD))
         endif()
     endforeach()
     message(STATUS "Searching VTK on system with components: ${VTK_COMPONENTS}")
+    ogs_find_fast_float_for_system_vtk()
     find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
 endif()
 if(NOT VTK_FOUND)
