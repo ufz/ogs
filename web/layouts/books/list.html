@@ -1,11 +1,11 @@
 {{ define "main" }}
-<div class="prose prose-sm lg:prose max-w-none lg:max-w-none">
+<div class="prose prose-sm lg:prose max-w-none lg:max-w-none mt-8">
   {{ with .Title }}<h1>{{ . }}</h1>{{ end }}
   {{ with .Content }}<div>{{ . }}</div>{{ end }}
 </div>
 
 <div class="grid gap-4 p-4 md:grid-cols-2 xl:grid-cols-3">
-  {{ range .Paginator.Pages }}
+  {{ range .Pages }}
   <div class="mt-2">
     <a href="{{ .RelPermalink }}">
       <div class="p-4 bg-gray-100 hover:bg-white rounded-lg shadow h-full">
@@ -40,5 +40,4 @@
   </div>
   {{ end }}
 </div>
-{{ partial "pagination.html" . }}
 {{ end }}
