@@ -399,7 +399,12 @@ void addVtkGhostTypeProperty(MeshLib::Properties& partitioned_properties,
                   MeshLib::vtkGhostTypeString);
     }
 
-    assert(vtk_ghost_type->size() == total_number_of_cells);
+    if (vtk_ghost_type->size() != total_number_of_cells)
+    {
+        OGS_FATAL("Size mismatch: '{}' has size {}, expected {}.",
+                  MeshLib::vtkGhostTypeString, vtk_ghost_type->size(),
+                  total_number_of_cells);
+    }
 
     // A cell that crosses partition boundaries is contained in every partition
     // it touches. The first occurrence in partition iteration order is kept as
