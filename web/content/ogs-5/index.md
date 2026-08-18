@@ -38,10 +38,6 @@ On Windows you may have to install the appropriate Visual Studio Redistributable
 - [macOS](https://vip.s3.ufz.de/ogs/public/binaries/ogs5/ogs-5.7.0-Darwin-15.2.0-x64.tar.gz)
 - [macOS Data Explorer](https://vip.s3.ufz.de/ogs/public/binaries/ogs5/ogs5-data_explorer-x64-mac.dmg)
 
-### Development builds
-
-TODO: You can get the latest OpenGeoSys-5 (with recent bug-fixes) version from the CI system. Binaries for Windows (64-Bit) and Linux are provided for the OGS FEM-simulator under *"Last successful Artifacts"*.
-
 ### Source code
 
 Source code is hosted on GitHub: <https://github.com/ufz/ogs5>
