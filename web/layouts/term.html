@@ -11,6 +11,7 @@
 {{ if hasPrefix .RelPermalink "/projects/" }}
 {{ $kind = "PROJECT" }}
 {{ end }}
+{{ $modelHub := .Site.GetPage "/docs/hub" }}
 {{ $links := .Params.links | default (slice) }}
 {{ $hasExamples := or (gt (len $links) 0) (gt (len .Pages) 0) }}
 {{ $mainGrid := "grid grid-cols-1 gap-10" }}
@@ -22,7 +23,7 @@
   <section class="border-b border-gray-200 bg-gray-50">
     <div class="mx-auto w-full px-4 py-8 sm:px-6 lg:max-w-7xl lg:py-12">
       <a class="inline-flex items-center font-mono text-sm font-semibold text-brand-600 transition hover:text-brand-700"
-        href='{{ relURL "hub" }}'>
+        href="{{ $modelHub.RelPermalink }}">
         <svg class="mr-2 h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
           <path fill-rule="evenodd" d="M15 10a1 1 0 01-1 1H6.414l2.293 2.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L6.414 9H14a1 1 0 011 1z" clip-rule="evenodd" />
         </svg>

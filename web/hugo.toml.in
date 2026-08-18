@@ -164,14 +164,6 @@ weight = 4
 [menu.docs.params]
 category = "User"
 
-[[menu.docs]]
-name = "DigBen Model-Hub"
-url = "/../hub"
-post = "The Model Hub the entry point to a collection of interactive benchmark and validation models."
-weight = 9
-[menu.docs.params]
-category = "User"
-
 [security.funcs]
 getenv = ['^HUGO_', '^CI_']
 
