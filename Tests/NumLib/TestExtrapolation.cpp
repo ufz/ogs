@@ -212,7 +212,7 @@ void extrapolate(
 {
     namespace LinAlg = MathLib::LinAlg;
 
-    auto const tolerance_dx = 31.0 * std::numeric_limits<double>::epsilon();
+    auto const tolerance_dx = 45.0 * std::numeric_limits<double>::epsilon();
     auto const tolerance_res = 15.0 * std::numeric_limits<double>::epsilon();
 
     const double t = 0.0;
