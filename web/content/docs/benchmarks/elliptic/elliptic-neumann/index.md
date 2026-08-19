@@ -63,7 +63,7 @@ As of now a small portion of possible inputs is implemented; one can change:
 - introduce more/different Dirichlet boundary conditions (different geometry or other constant values)
 - introduce more/different Neumann boundary conditions (different geometry or other constant values)
 
-The geometries used to specify the boundary conditions are given in the [square_1x1.gml]({{% data-url "Elliptic/square_1x1_SteadyStateDiffusion/square_1x1.gml" %}}) file.
+The geometries used to specify the boundary conditions are given in the [`square_1x1.gml`]({{% data-url "Elliptic/square_1x1_SteadyStateDiffusion/square_1x1.gml" %}}) file.
 
 The input mesh `square_1x1_quad_1e2.vtu` is stored in the VTK file format and can be directly visualized in ParaView for example.
 

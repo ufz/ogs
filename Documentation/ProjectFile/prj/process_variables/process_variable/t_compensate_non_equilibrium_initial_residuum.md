@@ -6,7 +6,7 @@ If this option tag is not given or set to false for all variables, the calculati
  vector, which are associated with the variables without this option enabled are set to zero.
 
 With this equation variable option, one can flexibly set which portions of the equations can
- have initial non_equilibrium compensation. For example, in a numerical simulation of
+ have initial `non_equilibrium` compensation. For example, in a numerical simulation of
  coupled THM processes in porous medium, if you want to avoid the initial stress
   influence the displacement result, you can simply set this option to true only
  for the variable of displacement in the variable configuration in the project file.

@@ -5,7 +5,7 @@ author = "Lars Bilke and Feliks Kiszkurno"
 weight = 1
 +++
 
-## Windows only: `ogs`` or any of its tools cannot open an existing file with a long path
+## Windows only: `ogs` or any of its tools cannot open an existing file with a long path
 
 Windows has a [default path length limit of 260 characters](https://learn.microsoft.com/en-us/windows/win32/fileio/maximum-file-path-limitation). Especially in workflows this limit can be exceeded easily. To enable long paths on Windows you need to alter the Windows registry which requires administrative user privileges:
 

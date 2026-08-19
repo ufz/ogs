@@ -22,6 +22,8 @@ include(scripts/cmake/UseCompilerCache.cmake)
 if(NOT OGS_DISABLE_COMPILER_CACHE)
     useCompilerCache()
 endif()
+# Suppress dev-warning in CPMFindPackage(NAME Boost)
+set(CMAKE_POLICY_DEFAULT_CMP0167 NEW)
 include(scripts/cmake/CPM.cmake)
 include(scripts/cmake/CMakeSetup.cmake)
 include(ParseCMakeArgs)
@@ -72,10 +74,11 @@ option(EIGEN_NO_DEBUG "Disables Eigen's assertions" OFF)
 
 # Code coverage
 option(OGS_COVERAGE "Enables code coverage measurements with gcov/lcov." OFF)
-option(OGS_COVERAGE_PYTHON "Enables code coverage measurements in Python code." OFF)
+option(OGS_COVERAGE_PYTHON "Enables code coverage measurements in Python code."
+       OFF
+)
 
-# Profiling
-# Find gnu profiler gprof
+# Profiling Find gnu profiler gprof
 find_program(GPROF_PATH gprof DOC "GNU profiler gprof" QUIET)
 if(COMPILER_IS_GCC AND GPROF_PATH)
     option(OGS_PROFILE
@@ -117,8 +120,8 @@ option(OGS_USE_NETCDF "Add NetCDF support." OFF)
 # to take a look at https://gitlab.opengeosys.org/ogs/ogs/-/issues/1881.
 option(EIGEN_DONT_VECTORIZE "Disables explicit vectorization when defined." ON)
 
-# When left as "Default":
-#  Build type Release or RelWithDebInfo: OFF, otherwise ON, see MathLib/CMakeLists.txt.
+# When left as "Default": Build type Release or RelWithDebInfo: OFF, otherwise
+# ON, see MathLib/CMakeLists.txt.
 set(OGS_EIGEN_DYNAMIC_SHAPE_MATRICES "Default"
     CACHE STRING "Use dynamically allocated shape matrices"
 )
@@ -194,8 +197,8 @@ endif()
 
 include(UnityBuildSettings)
 include(GenerateEnvrcFile)
-# Add an alias target to all_verify_interface_header_sets.
-# Individual libs can be checked, e.g.: MathLib_verify_interface_header_sets
+# Add an alias target to all_verify_interface_header_sets. Individual libs can
+# be checked, e.g.: MathLib_verify_interface_header_sets
 add_custom_target(check-headers)
 add_dependencies(check-headers all_verify_interface_header_sets)
 include(Features)
@@ -204,24 +207,30 @@ printMKLUsage()
 
 # Check wheel binaries
 list(SORT _OGS_EXECUTABLES)
-list(REMOVE_ITEM _OGS_EXECUTABLES testrunner SWMMConverter) # SWMMConverter is win-only
+# SWMMConverter is win-only
+list(REMOVE_ITEM _OGS_EXECUTABLES testrunner SWMMConverter)
 
 if(OGS_BUILD_WHEEL)
     execute_process(
-        COMMAND ${Python_EXECUTABLE} scripts/python/compare_binaries.py "${_OGS_EXECUTABLES}"
-        ECHO_OUTPUT_VARIABLE
-        ECHO_ERROR_VARIABLE
+        COMMAND ${Python_EXECUTABLE} scripts/python/compare_binaries.py
+                "${_OGS_EXECUTABLES}" ECHO_OUTPUT_VARIABLE ECHO_ERROR_VARIABLE
         RESULT_VARIABLE result
     )
     if(NOT result EQUAL 0)
-        message(FATAL_ERROR "Binary list comparison failed. Please update binaries_list in provide_ogs_cli_tools_via_wheel.py!")
+        message(
+            FATAL_ERROR
+                "Binary list comparison failed. Please update binaries_list in provide_ogs_cli_tools_via_wheel.py!"
+        )
     endif()
 endif()
 
 if(TARGET ogs_test_dlopen)
-    # Has to come last in this top-level CMakeLists.txt to add tests for all shared libraries.
-    # We pass ${Python_LIBRARIES} as additional lib(s) to load, because many OGS libs
-    # (e.g. each process, because of a cyclic dependency between the generic process lib and (Python) BCs)
-    # depend on them and they are not explicitly linked against.
-    for_each_subdir("${PROJECT_SOURCE_DIR}" add_dlopen_tests ${Python_LIBRARIES})
+    # Has to come last in this top-level CMakeLists.txt to add tests for all
+    # shared libraries. We pass ${Python_LIBRARIES} as additional lib(s) to
+    # load, because many OGS libs (e.g. each process, because of a cyclic
+    # dependency between the generic process lib and (Python) BCs) depend on
+    # them and they are not explicitly linked against.
+    for_each_subdir(
+        "${PROJECT_SOURCE_DIR}" add_dlopen_tests ${Python_LIBRARIES}
+    )
 endif()

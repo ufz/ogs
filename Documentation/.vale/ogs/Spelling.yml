@@ -7,4 +7,4 @@ dictionaries:
   - en_US
   - en_GB
 ignore:
-  - Documentation/.vale/Vocab/ogs/ignore.txt
+  - Documentation/.vale/config/vocabularies/ogs/ignore.txt

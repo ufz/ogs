@@ -310,7 +310,7 @@ else:
     raise SystemExit()
 ```
 
-Finally, the mesh file which has been created using the python interface of Gmsh, will be converted to OGS mesh, in particular to VTU file format. Please, add ogs.exe to the directory of this example file to run GMSH2OGS or give the full path of your ogs executable. Here, option -v (--validation) validate the mesh and shows crucial information of mesh. Option -i takes Gmsh input file name as string and -o is output file name as string as well.
+Finally, the mesh file which has been created using the python interface of Gmsh, will be converted to OGS mesh, in particular to VTU file format. Please, add `ogs.exe` to the directory of this example file to run GMSH2OGS or give the full path of your OGS executable. Here, option -v (--validation) validate the mesh and shows crucial information of mesh. Option -i takes Gmsh input file name as string and -o is output file name as string as well.
 
 ```python
 !GMSH2OGS -i {out_dir}/{bhe_mesh_file_name}.msh -o {out_dir}/{bhe_mesh_file_name}.vtu -v

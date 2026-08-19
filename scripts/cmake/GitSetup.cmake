@@ -36,8 +36,7 @@ if(Git_FOUND AND NOT DEFINED _is_git_repo)
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE _GIT_STATUS
         OUTPUT_VARIABLE _GIT_IS_INSIDE_WORK_TREE
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET
     )
     if(_GIT_STATUS EQUAL 0 AND _GIT_IS_INSIDE_WORK_TREE STREQUAL "true")
         set(_is_git_repo TRUE)
@@ -70,8 +69,7 @@ if(Git_FOUND AND _is_git_repo)
             WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
             RESULT_VARIABLE _GIT_BRANCH_RESULT
             OUTPUT_VARIABLE OGS_GIT_BRANCH
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            ERROR_QUIET
+            OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET
         )
         if(NOT _GIT_BRANCH_RESULT EQUAL 0)
             unset(OGS_GIT_BRANCH)
@@ -85,8 +83,7 @@ if(Git_FOUND AND _is_git_repo)
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE _GIT_SHA1_RESULT
         OUTPUT_VARIABLE GIT_SHA1
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET
     )
     if(NOT _GIT_SHA1_RESULT EQUAL 0)
         unset(GIT_SHA1)
@@ -98,8 +95,7 @@ if(Git_FOUND AND _is_git_repo)
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE _GIT_SHA1_SHORT_RESULT
         OUTPUT_VARIABLE GIT_SHA1_SHORT
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET
     )
     if(NOT _GIT_SHA1_SHORT_RESULT EQUAL 0)
         unset(GIT_SHA1_SHORT)
@@ -116,8 +112,7 @@ if(Git_FOUND AND _is_git_repo AND NOT _ogs_version_user_provided)
         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
         RESULT_VARIABLE _describe_result
         OUTPUT_VARIABLE _describe_stdout
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET
     )
     if(_describe_result EQUAL 0)
         unset(DESCRIBE_DIRTY)
@@ -160,7 +155,9 @@ if(Git_FOUND AND _is_git_repo AND NOT _ogs_version_user_provided)
         if(DESCRIBE_DIRTY)
             if(DEFINED ENV{CI})
                 string(TIMESTAMP DESCRIBE_DIRTY_TIMESTAMP "%Y%m%d%H%M%S" UTC)
-                set(OGS_VERSION "${OGS_VERSION}.dirty.${DESCRIBE_DIRTY_TIMESTAMP}")
+                set(OGS_VERSION
+                    "${OGS_VERSION}.dirty.${DESCRIBE_DIRTY_TIMESTAMP}"
+                )
             else()
                 set(OGS_VERSION "${OGS_VERSION}.dirty")
             endif()
@@ -172,9 +169,13 @@ if(Git_FOUND AND _is_git_repo AND NOT _ogs_version_user_provided)
         else()
             set(OGS_VERSION "NO_VERSION")
         endif()
+        set(_msg_type WARNING)
+        if(OGS_BUILD_WHEEL)
+            set(_msg_type FATAL_ERROR)
+        endif()
         message(
-            WARNING
-                "Could not determine OGS_VERSION from git. Using fallback OGS_VERSION=${OGS_VERSION}. Please run: git fetch --tags"
+            ${_msg_type}
+            "Could not determine OGS_VERSION from git. Using fallback OGS_VERSION=${OGS_VERSION}. Please run: git fetch --tags"
         )
     endif()
 endif()

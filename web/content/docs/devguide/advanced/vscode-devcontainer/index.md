@@ -11,7 +11,7 @@ weight = 1061
 
 [Visual Studio Code](https://code.visualstudio.com/) is a powerful text editor which can be expanded to a full featured integrated development environment (IDE) with plugins. With the  [Visual Studio Code Remote - Containers](https://code.visualstudio.com/docs/remote/containers) extension you can use prebuilt Docker container as the runtime environment for your code development (also called *Dev Container*). This page serves as an alternative to the [Getting Started]({{< relref "docs/devguide/getting-started/introduction.md" >}})-section. The following features make this a nice development environment:
 
-- All ogs prerequisites (except of MPI / PETSc support, may come later) already setup, including `uv`, `ruff`, `hugo`, `direnv`.
+- All OGS prerequisites (except of MPI / PETSc support, may come later) already setup, including `uv`, `ruff`, `hugo`, `direnv`.
 - Code editing with auto-completion.
 - Easy build configuration by simply selecting CMake presets.
 - Start a debugging session with a click of a button.
@@ -39,9 +39,9 @@ This takes now some time as the container is downloaded from the registry. Once 
 
 ## Example use cases
 
-### Debug ogs
+### Debug OGS
 
-As an example use case we configure, build and debug the ogs executable.
+As an example use case we configure, build and debug the `ogs` executable.
 
 CMake configuration is handled by using CMake presets which can be selected from the bottom status bar in VS Code. See the [Configure and build with CMake Presets in Visual Studio Code](https://github.com/microsoft/vscode-cmake-tools/blob/main/docs/cmake-presets.md) for details.
 

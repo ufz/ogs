@@ -12,7 +12,7 @@ projects = [ "decovalex" ]
 
 ## Problem description
 
-This example is based on the The TASK D_THM1 of the DECOVALEX-THMC project.
+This example is based on the TASK D_THM1 of the DECOVALEX-THMC project.
 The TASK D_THM1 of the DECOVALEX-THMC project studies the coupled thermal hydraulic
  and mechanical (THM) processes in the FEBEX type nuclear waster repository.
  In the FEBEX type repository, nuclear waster canisters are stored in the

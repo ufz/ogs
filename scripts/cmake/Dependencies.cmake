@@ -3,8 +3,10 @@ list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 set(CMAKE_FOLDER ThirdParty)
 
 if(NOT CPM_SOURCE_CACHE)
-    message(WARNING "CPM_SOURCE_CACHE is not set. We highly recommend to set it, "
-                    "see https://www.opengeosys.org/docs/devguide/packages/cpm/.")
+    message(
+        WARNING "CPM_SOURCE_CACHE is not set. We highly recommend to set it, "
+                "see https://www.opengeosys.org/docs/devguide/packages/cpm/."
+    )
 endif()
 
 if(OGS_BUILD_TESTING)
@@ -14,8 +16,8 @@ if(OGS_BUILD_TESTING)
         add_library(gmock ALIAS GTest::gmock)
         find_program(VTKDIFF_TOOL vtkdiff REQUIRED)
         add_executable(vtkdiff IMPORTED GLOBAL)
-        set_target_properties(vtkdiff PROPERTIES
-            IMPORTED_LOCATION "${VTKDIFF_TOOL}"
+        set_target_properties(
+            vtkdiff PROPERTIES IMPORTED_LOCATION "${VTKDIFF_TOOL}"
         )
         add_library(autocheck INTERFACE IMPORTED)
     else()
@@ -38,8 +40,7 @@ if(OGS_BUILD_TESTING)
             NAME autocheck
             GITHUB_REPOSITORY ufz/autocheck
             GIT_TAG e388ecbb31c49fc2724c8d0436da313b6edca7fd
-            DOWNLOAD_ONLY YES
-            SYSTEM TRUE
+            DOWNLOAD_ONLY YES SYSTEM TRUE
         )
         if(autocheck_ADDED)
             add_library(autocheck INTERFACE IMPORTED)
@@ -75,8 +76,7 @@ else()
         GIT_REPOSITORY https://git.code.sf.net/p/tclap/code
         GIT_TAG 81b3d2a0c47895c22e9bb8c577f5ab521f76e5d2
         VERSION 1.4.0
-        DOWNLOAD_ONLY YES
-        SYSTEM TRUE
+        DOWNLOAD_ONLY YES SYSTEM TRUE
     )
     if(tclap_ADDED)
         add_library(tclap INTERFACE IMPORTED)
@@ -91,7 +91,8 @@ if(GUIX_BUILD)
 else()
     set(PYBIND11_FINDPYTHON ON)
     CPMFindPackage(
-        NAME pybind11 GITHUB_REPOSITORY pybind/pybind11
+        NAME pybind11
+        GITHUB_REPOSITORY pybind/pybind11
         VERSION ${ogs.minimum_version.pybind11} SYSTEM TRUE
         OPTIONS "CMAKE_POLICY_VERSION_MINIMUM 3.10"
     )
@@ -106,7 +107,9 @@ if(_build_chemistry_lib)
         target_link_libraries(IPhreeqc INTERFACE ${IPhreeqc_LIBRARY})
     else()
         CPMAddPackage(
-            NAME iphreeqc GITHUB_REPOSITORY ufz/iphreeqc GIT_TAG 3.5.0-1
+            NAME iphreeqc
+            GITHUB_REPOSITORY ufz/iphreeqc
+            GIT_TAG 3.5.0-1
             OPTIONS "CMAKE_POLICY_VERSION_MINIMUM 3.10" SYSTEM TRUE
         )
         if(iphreeqc_ADDED)
@@ -161,8 +164,7 @@ CPMFindPackage(
     # GITLAB_REPOSITORY libeigen/eigen
     URL ${_eigen_url}
     VERSION ${_eigen_version}
-    DOWNLOAD_ONLY YES
-    SYSTEM TRUE
+    DOWNLOAD_ONLY YES SYSTEM TRUE
 )
 if(Eigen3_ADDED)
     add_library(Eigen3::Eigen INTERFACE IMPORTED)
@@ -193,9 +195,12 @@ if(OGS_USE_MFRONT)
         # logic can be removed if
         # https://github.com/cpm-cmake/CPM.cmake/issues/577 is resolved.
         if(NOT CPM_SOURCE_CACHE)
-            message(FATAL_ERROR "CPM_SOURCE_CACHE not set but is required when "
-                "patched third-party libraries are use, see "
-                "https://www.opengeosys.org/docs/devguide/packages/cpm/.")
+            message(
+                FATAL_ERROR
+                    "CPM_SOURCE_CACHE not set but is required when "
+                    "patched third-party libraries are use, see "
+                    "https://www.opengeosys.org/docs/devguide/packages/cpm/."
+            )
         endif()
         set(_mgis_patch_args
             PATCHES ${PROJECT_SOURCE_DIR}/scripts/cmake/mgis-flags.patch
@@ -209,10 +214,19 @@ if(OGS_USE_MFRONT)
             GITHUB_REPOSITORY thelfer/MFrontGenericInterfaceSupport
             GIT_TAG rliv-2.2
             OPTIONS "enable-doxygen-doc OFF" "enable-fortran-bindings OFF"
-                    "enable-website OFF" "CMAKE_POLICY_VERSION_MINIMUM 3.10" ${_enable_portable_build_option}
+                    "enable-website OFF" "CMAKE_POLICY_VERSION_MINIMUM 3.10"
+                    ${_enable_portable_build_option}
             EXCLUDE_FROM_ALL YES SYSTEM TRUE ${_mgis_patch_args}
         )
-        list(APPEND DISABLE_WARNINGS_TARGETS MFrontGenericInterface TFELMaterial TFELMaterialInterface TFELUtilities TFELException)
+        list(
+            APPEND
+            DISABLE_WARNINGS_TARGETS
+            MFrontGenericInterface
+            TFELMaterial
+            TFELMaterialInterface
+            TFELUtilities
+            TFELException
+        )
     endif()
 endif()
 
@@ -239,14 +253,14 @@ else()
         NAME Boost
         VERSION ${ogs.minimum_version.boost}
         URL https://github.com/boostorg/boost/releases/download/boost-${ogs.minimum_version.boost}/boost-${ogs.minimum_version.boost}.tar.xz
-        OPTIONS "BOOST_ENABLE_CMAKE ON"
-                "CMAKE_POLICY_VERSION_MINIMUM 3.10"
-                ${_boost_options}
-        SYSTEM TRUE
+        OPTIONS "BOOST_ENABLE_CMAKE ON" "CMAKE_POLICY_VERSION_MINIMUM 3.10"
+                ${_boost_options} SYSTEM TRUE
     )
 endif()
 if(Boost_ADDED)
-    list(APPEND DISABLE_WARNINGS_TARGETS boost_serialization boost_wserialization)
+    list(APPEND DISABLE_WARNINGS_TARGETS boost_serialization
+         boost_wserialization
+    )
 else()
     # Boost from system found. There are only Boost::headers and Boost::boost
     # targets.
@@ -287,7 +301,9 @@ else()
         OPTIONS "BUILD_SHARED_LIBS OFF" SYSTEM TRUE
     )
     if(NOT WIN32)
-        ogs_add_executable(apply_xmlpatch ${xmlpatch_SOURCE_DIR}/tests/xml_patch_main.c)
+        ogs_add_executable(
+            apply_xmlpatch ${xmlpatch_SOURCE_DIR}/tests/xml_patch_main.c
+        )
         target_link_libraries(apply_xmlpatch PRIVATE xmlpatch)
         target_compile_definitions(apply_xmlpatch PRIVATE -DVERSION="0.4.3")
         install(TARGETS apply_xmlpatch RUNTIME DESTINATION bin)
@@ -315,8 +331,7 @@ CPMFindPackage(
     # the git repo is incredibly large, so we download the archived include
     # directory
     URL https://github.com/nlohmann/json/releases/download/v${ogs.minimum_version.json}/include.zip
-    URL_HASH SHA256=${ogs.minimum_version.json_sha}
-    SYSTEM TRUE
+    URL_HASH SHA256=${ogs.minimum_version.json_sha} SYSTEM TRUE
 )
 if(nlohmann_json_ADDED)
     add_library(nlohmann_json::nlohmann_json INTERFACE IMPORTED)
@@ -378,8 +393,7 @@ else()
         GITHUB_REPOSITORY ArashPartow/exprtk
         VERSION 0.0.3
         GIT_TAG 0.0.3
-        DOWNLOAD_ONLY YES
-        SYSTEM TRUE
+        DOWNLOAD_ONLY YES SYSTEM TRUE
     )
     if(exprtk_ADDED)
         add_library(exprtk INTERFACE IMPORTED)
@@ -404,8 +418,7 @@ if(NOT (GUIX_BUILD OR CONDA_BUILD))
     if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS))
         CPMAddPackage(
             NAME vtkdiff GITHUB_REPOSITORY ufz/vtkdiff
-            GIT_TAG 628c4694783f865d7f0ab3ba9bdd5530ce4567e9
-            SYSTEM TRUE
+            GIT_TAG 628c4694783f865d7f0ab3ba9bdd5530ce4567e9 SYSTEM TRUE
         )
         if(vtkdiff_ADDED)
             list(APPEND DISABLE_WARNINGS_TARGETS vtkdiff)
@@ -431,8 +444,14 @@ endif()
 if(GUIX_BUILD)
     find_package(Xdmf REQUIRED)
     add_library(OgsXdmf::OgsXdmf INTERFACE IMPORTED)
-    target_include_directories(OgsXdmf::OgsXdmf SYSTEM INTERFACE ${XDMF_INCLUDE_DIRS} ${XDMF_LIBXML2_INCLUDE_DIR})
-    target_link_libraries(OgsXdmf::OgsXdmf INTERFACE Xdmf XdmfCore ${XDMF_LIBXML2_LIBRARY} ${HDF5_LIBRARIES})
+    target_include_directories(
+        OgsXdmf::OgsXdmf SYSTEM INTERFACE ${XDMF_INCLUDE_DIRS}
+                                          ${XDMF_LIBXML2_INCLUDE_DIR}
+    )
+    target_link_libraries(
+        OgsXdmf::OgsXdmf INTERFACE Xdmf XdmfCore ${XDMF_LIBXML2_LIBRARY}
+                                   ${HDF5_LIBRARIES}
+    )
 else()
     set(XDMF_LIBNAME OgsXdmf CACHE STRING "")
     CPMAddPackage(
@@ -521,14 +540,19 @@ if(OGS_BUILD_UTILS)
             NAME metis
             GIT_REPOSITORY https://github.com/KarypisLab/METIS
             VERSION 5.2.1
-            EXCLUDE_FROM_ALL YES UPDATE_DISCONNECTED ON
-            PATCHES ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch ${_metis_genric_patch}
+            EXCLUDE_FROM_ALL
+                YES
+                UPDATE_DISCONNECTED ON PATCHES
+                ${PROJECT_SOURCE_DIR}/scripts/cmake/metis.patch
+                ${_metis_genric_patch}
             OPTIONS ${_metis_options} "CMAKE_POLICY_VERSION_MINIMUM 3.10"
-            SYSTEM TRUE
+                    SYSTEM TRUE
         )
         if(GKlib_ADDED AND metis_ADDED)
             if(DEFINED OpenMP_C_INCLUDE_DIRS)
-                target_include_directories(GKlib PUBLIC ${OpenMP_C_INCLUDE_DIRS})
+                target_include_directories(
+                    GKlib PUBLIC ${OpenMP_C_INCLUDE_DIRS}
+                )
             endif()
             target_include_directories(
                 metis SYSTEM
@@ -617,23 +641,6 @@ configure_file(
     ${PROJECT_BINARY_DIR}/CTestCustom.cmake @ONLY
 )
 
-find_program(CLANG_FORMAT_PROGRAM clang-format)
-find_program(CMAKE_FORMAT_PROGRAM cmake-format)
-
-if(CLANG_FORMAT_PROGRAM OR CMAKE_FORMAT_PROGRAM)
-    if(NOT CMAKE_FORMAT_PROGRAM)
-        set(_skip_cmake "FORMAT_SKIP_CMAKE YES")
-    endif()
-    CPMAddPackage(
-        NAME Format.cmake
-        VERSION 1.7.0
-        GITHUB_REPOSITORY TheLartians/Format.cmake
-        OPTIONS
-            ${_skip_cmake}
-            "CMAKE_FORMAT_EXCLUDE scripts/cmake/CPM.cmake|.*/Tests.cmake|scripts/cmake/vector-of-bool/.*"
-    )
-endif()
-
 # Third-party licenses
 set(_licenses_file ${PROJECT_BINARY_DIR}/third_party_licenses.txt)
 if(NOT EXISTS ${_licenses_file})
@@ -641,6 +648,9 @@ if(NOT EXISTS ${_licenses_file})
     # Adapted from https://github.com/cpm-cmake/CPMLicenses.cmake:
     set(_print_delimiter OFF)
     foreach(package ${CPM_PACKAGES} ${_EXT_LIBS})
+        if("${${package}_SOURCE_DIR}" STREQUAL "")
+            continue()
+        endif()
         file(
             GLOB
             licenses
@@ -648,6 +658,7 @@ if(NOT EXISTS ${_licenses_file})
             "${${package}_SOURCE_DIR}/LICENCE*"
             "${${package}_SOURCE_DIR}/COPYING*"
             "${${package}_SOURCE_DIR}/Copyright*"
+            "${${package}_SOURCE_DIR}/LGPL-3.0.txt" # mgis
         )
         list(LENGTH licenses LICENSE_COUNT)
         if(LICENSE_COUNT GREATER_EQUAL 1)
@@ -657,22 +668,19 @@ if(NOT EXISTS ${_licenses_file})
                 )
             endif()
 
-            list(GET licenses 0 _license)
-            file(READ ${_license} license_TEXT)
             set(_licenses_string
-                "${_licenses_string}The following software may be included in this product: **${package}**.\nThis software contains the following license and notice below:\n\n${license_TEXT}\n"
+                "${_licenses_string}The following software may be included in this product: **${package}**.\n"
+                "This software contains the following licenses and notices below:\n\n"
             )
+            foreach(license IN LISTS licenses)
+                file(READ ${license} license_TEXT)
+                set(_licenses_string "${_licenses_string}${license_TEXT}\n")
+            endforeach()
             set(_print_delimiter ON)
         else()
             message(
-                VERBOSE
-                "WARNING: no license files found for package \"${package}\" in ${${package}_SOURCE_DIR} ."
-            )
-        endif()
-        if(LICENSE_COUNT GREATER 1)
-            message(
-                VERBOSE
-                "WARNING: multiple license files found for package \"${package}\": ${licenses}. Only first file will be used."
+                WARNING
+                    "No license files found for package \"${package}\" in ${${package}_SOURCE_DIR} ."
             )
         endif()
     endforeach()

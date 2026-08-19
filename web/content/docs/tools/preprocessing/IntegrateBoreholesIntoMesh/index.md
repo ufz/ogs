@@ -7,7 +7,7 @@ author = "Julian Heinze"
 ## Description
 
 This tool is used to integrate line elements representing boreholes into a pre-existing 3D mesh.
-Corresponding nodes matching the (x,y)-coordinates given in the gml-file are found in the mesh and connected from top to bottom via line elements.
+Corresponding nodes matching the (x,y)-coordinates given in the GML-file are found in the mesh and connected from top to bottom via line elements.
 Each borehole (i.e. all points at a given (x,y)-location but at different depths) is assigned a unique material ID.
 Vertical limits of boreholes can be specified via Material IDs and/or elevation.
 Points that do not match any mesh nodes or are located outside the mesh are ignored.
@@ -55,8 +55,8 @@ Where:
 ## Example
 
 In this example we apply the tool to integrate boreholes into a mesh.
-For this purpose we need to generate a .gml-file that holds the information about the x-y-coordinates for these boreholes.
-The .gml-file is given as:
+For this purpose we need to generate a `.gml`-file that holds the information about the x-y-coordinates for these boreholes.
+The `.gml`-file is given as:
 
 ```bash
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -86,7 +86,7 @@ This procedure is useful because the mesh is generated in a way that the coordin
 Otherwise the borehole's coordinates need to be adjusted according to a existing mesh.
 This process is schematically depicted in Fig.1, below.
 <p align='center'>
- <img src = schematic.png width = "100%" height = "100%">
+ <img src="schematic.png" width="100%" height="100%" alt="Mesh generation process">
 </p>
 <p align = "center">
 Fig.1 A schematic to visualize the methods of the tool. It does not refer to the upper example.

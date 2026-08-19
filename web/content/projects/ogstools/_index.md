@@ -9,11 +9,8 @@ links = [
 +++
 
 <div class="not-prose">
-{{< figure
-  src="ogstools-circles.png"
-  class="float-right w-64"
->}}
+{{< figure src="ogstools-circles.png" class="float-right w-64" >}}
 </div>
 
-The `ogstools` pip-package is a collection of Python tools aimed at evolving into a modeling toolchain around OpenGeoSys, a finite element solver for coupled thermo-hydro-chemo-mechanical problems in the subsurface. ogstools is the framework for developing benchmarking workflows using on Jupyter notebooks.
+The `ogstools` pip-package is a collection of Python tools aimed at evolving into a modeling toolchain around OpenGeoSys, a finite element solver for coupled thermo-hydro-chemo-mechanical problems in the subsurface. OGSTools is the framework for developing benchmarking workflows using on Jupyter notebooks.
 Benchmarking workflows are being developed for material, LAB, URL and field scale modelling as well as supporting community projects such as EURAD and DECOVALEX.

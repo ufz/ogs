@@ -6,7 +6,7 @@ weight = 51
 +++
 <div class="note">
 
-### Work in progress
+## Work in progress
 
 This page is a work in progress.
 
@@ -27,7 +27,7 @@ page or GitLab).
 
 ## Modifying an existing project file
 
-### Manipulation of project files using ogstools
+### Manipulation of project files using OGSTools
 
 Visit webpage of [ogstools](https://ogstools.opengeosys.org/stable/reference/ogstools.ogs6py.html) for more information
 and have a look at [the examples showing how to interact with project files using Python](https://ogstools.opengeosys.org/stable/auto_examples/howto_prjfile/index.html)

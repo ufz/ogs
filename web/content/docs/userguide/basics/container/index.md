@@ -11,7 +11,7 @@ This page describes how to **run** OGS with the help of a Linux container (for *
 
 * A running installation of Apptainer:
   * Available on Eve (UFZ),  all envinfs (UFZ), Juwels (SC Jülich), Taurus (TU Dresden).
-  * See the Apptainers Admin guide for [install instructions](https://apptainer.org/docs/admin/latest/admin_quickstart.html#installation).
+  * See the Apptainer's Admin guide for [install instructions](https://apptainer.org/docs/admin/latest/admin_quickstart.html#installation).
 
 ## Get a container image
 

@@ -5,7 +5,7 @@ pre commit:
     - if: $CI_MERGE_REQUEST_IID
   variables:
     SKIP: git-diff-check
-    PRE_COMMIT_VERSION: 4.5.1
+    PRE_COMMIT_VERSION: 4.6.2
   script:
     - uvx pre-commit==${PRE_COMMIT_VERSION} install
     - uvx pre-commit==${PRE_COMMIT_VERSION} run --from-ref ${CI_MERGE_REQUEST_DIFF_BASE_SHA} --to-ref HEAD

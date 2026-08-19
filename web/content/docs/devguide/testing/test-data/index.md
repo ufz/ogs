@@ -101,7 +101,7 @@ environment variable `OGS_PERFORMANCE_TESTS_ALLOWED_TO_FAIL`. The behaviour is a
 * environment variable unset or set to `false`: performance test failure will be treated
   as a failure
 * environment variable set to `true`: performance test failure will be treated
-  as an expected failure (*xfail* in `pytest` terms) and will not make the test
+  as an expected failure (`xfail` in `pytest` terms) and will not make the test
   suite fail
 
 Hence, the default is "treat as failure". On most CI agents the environment

@@ -4,9 +4,9 @@ Environment for notebook-based tests is defined in this directory's `pyproject.t
 
 3 dependency groups which select the used `ogs` wheel:
 
-- `ogs-local`: Builds ogs locally from source
-- `ogs-master` Downloads latest ogs wheel from master branch (requires `--upgrade-package ogs`-parameter)
-- `ogs-pypi` Downloads latest ogs release from PyPI
+- `ogs-local`: Builds OGS locally from source
+- `ogs-master` Downloads latest OGS wheel from master branch (requires `--upgrade-package ogs`-parameter)
+- `ogs-pypi` Downloads latest OGS release from PyPI
 
 ```bash
 uv run --group ogs-local pytest
@@ -21,10 +21,10 @@ uv run --group ogs-local Notebooks/testrunner.py --out /tmp Mechanics/Linear/Sim
 
 ## Regression and maintenance testing
 
-| | Regression test| Maintenance test |
+| | Regression test | Maintenance test |
 | ------ | ------ | ------ |
-| OGS       | **latest**        | stable (tip of master)       |
-| Environment       | stable (pinned via lock-file)       |  **latest** |
+| OGS | **latest** | stable (tip of master) |
+| Environment | stable (pinned via lock-file) | **latest** |
 | Trigger | Merge-request | scheduled or master-build |
 | Role | Developer | Maintainer |
 

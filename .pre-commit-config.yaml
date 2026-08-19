@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
         args: [--markdown-linebreak-ext=md, --markdown-linebreak-ext=pandoc]
@@ -24,13 +24,13 @@ repos:
       - id: mixed-line-ending
         exclude: ".*\\.vtu|.*@@"
   - repo: https://github.com/psf/black
-    rev: 26.1.0
+    rev: 26.5.1
     hooks:
       - id: black
         exclude: "LinearMFront/generate_ref.py"
   # Run black on markdown notebooks
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.7.0
+    rev: 1.9.1
     hooks:
       - id: nbqa-black
         additional_dependencies: [jupytext, black==26.1.0]
@@ -39,21 +39,20 @@ repos:
     hooks:
       - id: codespell
         exclude: 'Tests/Data/.*|.*\.ya?ml|.*\.bib|^web/content/imprint.md|^GeoLib/IO/XmlIO/OpenGeoSysSTN.xsd|^Applications/FileIO/Legacy/OGSIOVer4.cpp|^scripts/cmake/CPM.cmake|Documentation/.vale/.*|.*\.ipynb|.*\.svg|^GeoLib/predicates.c'
-  - repo: https://github.com/cheshirekow/cmake-format-precommit
-    rev: v0.6.13
+  # Bug fixes from https://github.com/solarispika/cmake_format
+  - repo: https://github.com/bilke/cmake-format-precommit
+    rev: v0.6.13.2
     hooks:
       - id: cmake-format
-        additional_dependencies: ["cmakelang[YAML]"]
-        args: [--config=.cmake-format.yaml]
-        exclude: "CPM.cmake|FindFilesystem.cmake|FindMKL.cmake|JSONParser.cmake|Tests.cmake|FindTFEL.cmake|FindMFrontGenericInterface.cmake"
+        args: [--config=.cmake-format.yaml, --in-place]
+        exclude: "CPM.cmake|JSONParser.cmake|Tests.cmake|FindTFEL.cmake|FindMFrontGenericInterface.cmake"
       - id: cmake-lint
-        additional_dependencies: ["cmakelang[YAML]"]
-        exclude: "CPM.cmake|FindFilesystem.cmake|FindMKL.cmake|JSONParser.cmake|BuildExternalProject.cmake|FindTFEL.cmake|FindMFrontGenericInterface.cmake|FindFastFloat.cmake"
+        exclude: "CPM.cmake|JSONParser.cmake|BuildExternalProject.cmake|FindTFEL.cmake|FindMFrontGenericInterface.cmake|FindFastFloat.cmake"
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.42.0
+    rev: v0.49.1
     hooks:
       - id: markdownlint
-        language_version: 22.11.0
+        # language_version: 22.11.0
   - repo: local
     hooks:
       - id: git-diff-check
@@ -69,16 +68,12 @@ repos:
         files: '.*\.cpp'
         stages: [pre-commit, manual]
   - repo: https://github.com/errata-ai/vale
-    rev: v2.24.4
+    rev: v3.17.1
     hooks:
-      - id: vale
-        name: vale sync
-        pass_filenames: false
-        args: [sync]
       - id: vale
         args: [--output=line, --minAlertLevel=error]
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.13.1"
+    rev: "v0.16.2"
     hooks:
       - id: ruff-check
         types_or: [python, pyi, jupyter]
@@ -88,14 +83,14 @@ repos:
   # Run this hook (and all other manual hooks if any) with:
   # pre-commit run --hook-stage manual
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.13.1"
+    rev: "v0.16.2"
     hooks:
       - id: ruff-check
         types_or: [python, pyi, jupyter]
         args: [--output-format=full, --fix, --exit-non-zero-on-fix]
         stages: [manual]
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: v22.1.1
+    rev: v22.1.8
     hooks:
     # git commit hook
     - id: clang-format
@@ -114,7 +109,7 @@ repos:
       stages: [manual]
       always_run: true
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.8.18
+    rev: 0.12.3
     hooks:
       # Check lock file up-to-date
       - id: uv-lock

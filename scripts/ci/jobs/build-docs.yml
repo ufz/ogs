@@ -158,7 +158,9 @@ check docs links:
       - .lycheecache
 
 spell check docs:
-  image: registry.gitlab.com/gitlab-org/gitlab-docs/lint-markdown:alpine-3.18-vale-2.27.0-markdownlint-0.35.0-markdownlint2-0.8.1
+  image:
+    name: registry.gitlab.com/gitlab-ci-utils/container-images/vale:latest
+    entrypoint: [""]
   stage: check
   needs: []
   script:

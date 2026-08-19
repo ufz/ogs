@@ -12,14 +12,16 @@ set(OGS_EXTERNAL_DEPENDENCIES_CACHE ""
 
 set(_defaultCMakeArgs "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>")
 if(CCACHE_EXECUTABLE)
-    list(APPEND _defaultCMakeArgs "-DCMAKE_C_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
-                                  "-DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
+    list(APPEND _defaultCMakeArgs
+         "-DCMAKE_C_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
+         "-DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE_EXECUTABLE}"
     )
 endif()
 
 if(CMAKE_GENERATOR MATCHES "Ninja Multi-Config")
     message(FATAL_ERROR "${CMAKE_GENERATOR} generator is not supported for "
-        "building external dependencies.")
+                        "building external dependencies."
+    )
 endif()
 
 if(MSVC)
@@ -31,7 +33,7 @@ if(MSVC)
     endif()
     # MKL env setup may override compiler
     list(APPEND _defaultCMakeArgs "-DCMAKE_CXX_COMPILER=cl.exe"
-                                  "-DCMAKE_C_COMPILER=cl.exe"
+         "-DCMAKE_C_COMPILER=cl.exe"
     )
 endif()
 
@@ -75,12 +77,14 @@ if(OGS_USE_MFRONT)
         set(_py_boost_comp
             "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}"
         )
-        find_package(Boost ${ogs.minimum_version.boost} COMPONENTS ${_py_boost_comp})
+        find_package(
+            Boost ${ogs.minimum_version.boost} COMPONENTS ${_py_boost_comp}
+            QUIET
+        )
         if(Boost_${_py_boost_comp}_FOUND)
             set(_tfel_cmake_args
                 "-DPython_ADDITIONAL_VERSIONS=${_py_version_major_minor}"
-                "-Denable-python-bindings=ON"
-                "-Denable-numpy-support=OFF"
+                "-Denable-python-bindings=ON" "-Denable-numpy-support=OFF"
             )
         else()
             # Cleanup variables from previous find_package()-call
@@ -181,24 +185,28 @@ if(OGS_USE_PETSC)
     if(EXISTS ${_petsc_source_file})
         set(_petsc_source URL ${_petsc_source_file})
     elseif(NOT (OGS_PETSC_CONFIG_OPTIONS OR OGS_BUILD_PETSC))
-        # Replace with cmake_pkg_config(IMPORT PETSc REQUIRED)
-        # when cmake min. > 4.1
+        # Replace with cmake_pkg_config(IMPORT PETSc REQUIRED) when cmake min. >
+        # 4.1
         find_package(PkgConfig REQUIRED)
         pkg_search_module(PETSc IMPORTED_TARGET PETSc)
     endif()
 
     if(NOT TARGET PkgConfig::PETSc)
-        message(STATUS "Using ogs-compiled PETSc. If you want to find a system "
-        "installation in a non-standard path, try setting CMAKE_PREFIX_PATH to "
-        "the PETSc install location, e.g.\n"
-        "     cmake --preset petsc -DCMAKE_PREFIX_PATH=/path/to/petsc/install/arch-linux-c-opt --fresh OR\n"
-        "     cmake --preset petsc -DCMAKE_PREFIX_PATH=\${PETSC_DIR}/\${PETSC_ARCH} --fresh")
+        message(
+            STATUS
+                "Using ogs-compiled PETSc. If you want to find a system "
+                "installation in a non-standard path, try setting CMAKE_PREFIX_PATH to "
+                "the PETSc install location, e.g.\n"
+                "     cmake --preset petsc -DCMAKE_PREFIX_PATH=/path/to/petsc/install/arch-linux-c-opt --fresh OR\n"
+                "     cmake --preset petsc -DCMAKE_PREFIX_PATH=\${PETSC_DIR}/\${PETSC_ARCH} --fresh"
+        )
         set(_configure_opts "")
         if(NOT "--download-fc" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
             list(APPEND _configure_opts --with-fc=0)
         endif()
         if(APPLE)
-            # fixes "error moving ...f2cblaslapack... libraries", uses newer make
+            # fixes "error moving ...f2cblaslapack... libraries", uses newer
+            # make
             list(APPEND _configure_opts --download-make)
         endif()
 
@@ -285,9 +293,9 @@ elseif(NOT OGS_BUILD_ZLIB)
 endif()
 if(NOT ZLIB_FOUND)
     BuildExternalProject(
-        ZLIB ${_zlib_source} CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
-                                        "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
-                                        ${_defaultCMakeArgs}
+        ZLIB ${_zlib_source}
+        CMAKE_ARGS "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                   "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" ${_defaultCMakeArgs}
     )
     message(
         STATUS
@@ -335,7 +343,9 @@ set(_hdf5_options
 if("${ZLIB_INCLUDE_DIRS}" MATCHES "${build_dir_ZLIB}")
     list(APPEND _hdf5_options "-DZLIB_ROOT=${build_dir_ZLIB}")
     if(WIN32)
-        list(APPEND _hdf5_options "-DZLIB_USE_STATIC_LIBS=ON" "-DZLIB_LIBRARIES=${ZLIB_LIBRARIES}")
+        list(APPEND _hdf5_options "-DZLIB_USE_STATIC_LIBS=ON"
+             "-DZLIB_LIBRARIES=${ZLIB_LIBRARIES}"
+        )
     endif()
 endif()
 if(OGS_USE_MPI)
@@ -346,7 +356,9 @@ if(WIN32 OR HDF5_USE_STATIC_LIBRARIES)
     list(APPEND _hdf5_options "-DBUILD_SHARED_LIBS=OFF")
 endif()
 if(APPLE)
-    list(APPEND _hdf5_options "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+    list(APPEND _hdf5_options
+         "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+    )
 endif()
 
 # With apple clang 15 there are errors when the cpm compiled hdf5 has a
@@ -440,7 +452,9 @@ list(APPEND VTK_OPTIONS "-DBUILD_SHARED_LIBS=OFF"
      "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
 )
 if(APPLE)
-    list(APPEND VTK_OPTIONS "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+    list(APPEND VTK_OPTIONS
+         "-DCMAKE_OSX_DEPLOYMENT_TARGET=${CMAKE_OSX_DEPLOYMENT_TARGET}"
+    )
 endif()
 message(STATUS "VTK_OPTIONS: ${VTK_OPTIONS}")
 if(OGS_USE_PETSC AND EXISTS ${build_dir_HDF5})
@@ -494,7 +508,9 @@ elseif(NOT OGS_BUILD_VTK AND (NOT OGS_USE_MKL OR CONDA_BUILD))
     endforeach()
     message(STATUS "Searching VTK on system with components: ${VTK_COMPONENTS}")
     ogs_find_fast_float_for_system_vtk()
-    find_package(VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS})
+    find_package(
+        VTK ${ogs.minimum_version.vtk} COMPONENTS ${VTK_COMPONENTS} QUIET
+    )
 endif()
 if(NOT VTK_FOUND)
     file(

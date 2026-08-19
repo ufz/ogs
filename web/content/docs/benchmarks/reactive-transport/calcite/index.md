@@ -49,7 +49,7 @@ where $\alpha_L$ (m) and $\alpha_T$ (m) are the longitudinal and transversal dis
 
 ## Model setup
 
-A one-dimensional (1D) model domain of 0.5 m discretised into 100 uniform elements has been selected for the spatial discretization of the system. Dirichlet (constant concentration) and Neumannn (no flux) boundary condition are defined for the upstream inflow and the downstream, respectively. A longitudinal dispersivity of 0.0067 m and a time step size of 100 s have been taken into account in the simulation. See Figure below:
+A one-dimensional (1D) model domain of 0.5 m discretised into 100 uniform elements has been selected for the spatial discretization of the system. Dirichlet (constant concentration) and Neumann (no flux) boundary condition are defined for the upstream inflow and the downstream, respectively. A longitudinal dispersivity of 0.0067 m and a time step size of 100 s have been taken into account in the simulation. See Figure below:
 
 {{< figure src="Scheme.png" title="Schematic representation of the model setup and parameters.">}}
 

@@ -134,7 +134,7 @@ Equations can be set with typical LaTeX syntax by using [MathJax](https://www.ma
 
 #### Files and downloads
 
-Files belonging directly to a page (e.g. images shown on that same page) should be added directly. Other stuff such as linked PDF files, book chapter input files should be uploaded elsewhere and linked to. You can ask @bilke to host these files for you (on S3 storage).
+Files belonging directly to a page (e.g. images shown on that same page) should be added directly. Other stuff such as linked PDF files, book chapter input files should be uploaded elsewhere and linked to. Use persistent cloud storage for these files.
 
 #### Bibliography references
 
