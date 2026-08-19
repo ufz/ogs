@@ -42,8 +42,7 @@ public:
                               ... regular higher order nodes| ...
                               ... ghost higher order nodes|
         \param glb_node_ids  Global IDs of nodes of a partition.
-        \param elements      Vector for elements. Ghost elements are stored
-                             after regular (non-ghost) elements.
+        \param elements      Vector for elements.
         \param properties    Mesh property.
         \param n_global_base_nodes Number of the base nodes of the global mesh.
         \param n_global_nodes      Number of all nodes of the global mesh.

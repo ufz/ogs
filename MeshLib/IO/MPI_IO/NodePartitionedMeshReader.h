@@ -60,9 +60,8 @@ private:
             number_of_nodes;  ///< 0: Number of all nodes of a partition,
         unsigned long number_of_base_nodes;  ///< 1: Number of nodes for linear
                                              /// elements of a partition,
-        unsigned long
-            number_of_regular_elements;  ///< 2: Number of non-ghost elements
-                                         /// of a partition,
+        unsigned long number_of_elements;    ///< 2: Number of elements
+                                             /// of a partition,
         unsigned long
             number_of_ghost_elements;  ///< 3: Number of ghost element of
                                        /// a partition,
@@ -106,7 +105,7 @@ private:
 
     /*!
         Parallel reading of a binary file via MPI_File_read, reading mesh data
-        head, nodes, non-ghost elements and ghost elements.
+        head, nodes, elements and ghost elements.
 
         \note In case of failure during opening of the file, an error message is
               printed.
@@ -143,7 +142,7 @@ private:
         struct type (long, double double double) array of nodes information of
         global IDs and coordinates of all partitions, the third file contains
         a long type integer array of element information of material ID,
-        element type and node IDs of each non-ghost element of all partitions,
+        element type and node IDs of each element of all partitions,
         and the forth file contains a long type integer array of element
         information of material ID, element type and node IDs of each ghost
          element of all partitions.

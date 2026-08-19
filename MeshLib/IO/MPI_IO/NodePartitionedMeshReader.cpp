@@ -162,8 +162,8 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
     setNodes(nodes, mesh_nodes, glb_node_ids);
 
     //----------------------------------------------------------------------------------
-    // Read non-ghost elements
-    std::vector<unsigned long> elem_data(_mesh_info.number_of_regular_elements +
+    // Read elements
+    std::vector<unsigned long> elem_data(_mesh_info.number_of_elements +
                                          _mesh_info.offset[0]);
     if (!readDataFromFile(fname_header + "ele" + fname_num_p_ext,
                           static_cast<MPI_Offset>(_mesh_info.offset[3]),
@@ -171,12 +171,20 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::readMesh(
         return nullptr;
 
     std::vector<MeshLib::Element*> mesh_elems(
-        _mesh_info.number_of_regular_elements +
-        _mesh_info.number_of_ghost_elements);
+        _mesh_info.number_of_elements + _mesh_info.number_of_ghost_elements);
     setElements(mesh_nodes, elem_data, mesh_elems);
 
     //----------------------------------------------------------------------------------
     // Read ghost element
+    if (_mesh_info.number_of_ghost_elements > 0)
+    {
+        WARN(
+            "The mesh partition contains {:d} ghost elements. Reading ghost "
+            "elements is deprecated: the current mesh partitioner no longer "
+            "writes them. Please re-run the mesh partitioner to regenerate the "
+            "partitioned mesh.",
+            _mesh_info.number_of_ghost_elements);
+    }
     std::vector<unsigned long> ghost_elem_data(
         _mesh_info.number_of_ghost_elements + _mesh_info.offset[1]);
 
@@ -437,9 +445,9 @@ void NodePartitionedMeshReader::setElements(
 {
     // Number of elements, either ghost or regular
     unsigned long const ne = ghost ? _mesh_info.number_of_ghost_elements
-                                   : _mesh_info.number_of_regular_elements;
+                                   : _mesh_info.number_of_elements;
     unsigned long const id_offset_ghost =
-        ghost ? _mesh_info.number_of_regular_elements : 0;
+        ghost ? _mesh_info.number_of_elements : 0;
 
     for (unsigned long i = 0; i < ne; i++)
     {
