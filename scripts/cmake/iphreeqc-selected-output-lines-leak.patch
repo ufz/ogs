@@ -1,0 +1,10 @@
+--- a/src/IPhreeqc.cpp
++++ b/src/IPhreeqc.cpp
+@@ -1151,6 +1151,7 @@
+ 	}
+ 	this->SelectedOutputMap.clear();
+ 	this->SelectedOutputStringMap.clear();
++	this->SelectedOutputLinesMap.clear();
+ 
+ 	// release
+ 	this->LogString.clear();
