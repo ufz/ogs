@@ -255,6 +255,11 @@ img[src$='#two-third'] {
 .jupyter-output pre {
   @apply border-l-4;
   @apply border-red-500;
+  @apply py-4;
+}
+
+.jupyter-output code {
+  @apply text-gray-100;
 }
 
 .jupyter-output img {
