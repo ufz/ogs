@@ -204,6 +204,12 @@ if(OGS_USE_PETSC)
         if(NOT "--download-fc" IN_LIST OGS_PETSC_CONFIG_OPTIONS)
             list(APPEND _configure_opts --with-fc=0)
         endif()
+        if(CMAKE_C_COMPILER_ID STREQUAL "GNU" AND CMAKE_C_COMPILER_VERSION
+                                                  VERSION_GREATER_EQUAL 15
+        )
+            # PETSc 3.22's f2cblaslapack is incompatible with GCC's C23 default.
+            list(APPEND _configure_opts CFLAGS=-std=gnu17)
+        endif()
         if(APPLE)
             # fixes "error moving ...f2cblaslapack... libraries", uses newer
             # make
