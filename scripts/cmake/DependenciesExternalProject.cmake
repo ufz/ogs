@@ -210,6 +210,26 @@ if(OGS_USE_PETSC)
             # PETSc 3.22's f2cblaslapack is incompatible with GCC's C23 default.
             list(APPEND _configure_opts CFLAGS=-std=gnu17)
         endif()
+        set(_petsc_download_scalapack OFF)
+        set(_petsc_download_scalapack_cmake_arguments OFF)
+        foreach(_petsc_config_option IN LISTS OGS_PETSC_CONFIG_OPTIONS)
+            if(_petsc_config_option MATCHES "^--download-scalapack(=1)?$")
+                set(_petsc_download_scalapack ON)
+            elseif(_petsc_config_option MATCHES
+                   "^--download-scalapack-cmake-arguments="
+            )
+                set(_petsc_download_scalapack_cmake_arguments ON)
+            endif()
+        endforeach()
+        if(_petsc_download_scalapack
+           AND NOT _petsc_download_scalapack_cmake_arguments
+        )
+            list(
+                APPEND
+                _configure_opts
+                "--download-scalapack-cmake-arguments=-DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+            )
+        endif()
         if(APPLE)
             # fixes "error moving ...f2cblaslapack... libraries", uses newer
             # make
@@ -221,6 +241,10 @@ if(OGS_USE_PETSC)
             PETSc ${_petsc_source}
             LOG_OUTPUT_ON_FAILURE ON
             CONFIGURE_COMMAND
+                ${CMAKE_COMMAND}
+                -E
+                env
+                CMAKE_POLICY_VERSION_MINIMUM=3.5
                 ./configure
                 --prefix=<INSTALL_DIR>
                 --download-f2cblaslapack=1
