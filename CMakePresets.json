@@ -238,7 +238,7 @@
       "name": "ci-no-unity",
       "inherits": [
         "release-all",
-        "release-petsc"
+        "release-petsc-full"
       ],
       "cacheVariables": {
         "OGS_USE_UNITY_BUILDS": "OFF"

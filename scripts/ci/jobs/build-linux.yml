@@ -23,7 +23,7 @@ linux ctest large:
 build linux (no unity):
   extends:
     - .template-build-linux
-  tags: [shell, envinf, petsc]
+  tags: [shell, envinf]
   needs: [meta]
   timeout: 3h
   variables:
