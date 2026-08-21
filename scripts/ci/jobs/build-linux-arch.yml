@@ -106,14 +106,9 @@ build linux petsc ext:
   tags: [envinf, shell]
   rules: *common-petsc-cpp-rules
   variables:
-    CMAKE_PRESET: release-petsc
+    CMAKE_PRESET: release-petsc-full
     CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON"
-    OGS_PETSC_CONFIG_OPTIONS: "--download-superlu;--download-superlu_dist;--download-scalapack;--download-mumps;--with-cc=mpicc;--with-cxx=mpic++;--with-fc=mpif90"
-    ADDITIONAL_TARGETS_PRE: "check-headers"
-    ADDITIONAL_TARGETS_POST: ""
     CTEST_ARGS: "-L petsc-mumps"
-    BUILD_CTEST_LARGE_ON_MASTER: "true"
-  before_script: *common-linux-arch-before-script
 
 # ============================================================
 # LIS
