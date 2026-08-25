@@ -1,8 +1,8 @@
 {{ define "main" }}
 
 {{ $all := slice
-  (dict "taxonomy" "Project" "term" "EURAD" "pages" (index .Site.Taxonomies.projects "eurad") "label" "EURAD-2" "description" "Connecting models and knowledge." "showTitle" false)
-  (dict "taxonomy" "Project" "term" "DECOVALEX" "pages" (index .Site.Taxonomies.projects "decovalex") "label" "DECOVALEX" "description" "Validation models against experimental data." "showTitle" false)
+  (dict "taxonomy" "Project" "term" "EURAD" "pages" (dict "Page" (.Site.GetPage "/projects/eurad")) "label" "EURAD-2" "description" "Connecting models and knowledge." "showTitle" false)
+  (dict "taxonomy" "Project" "term" "DECOVALEX" "pages" (dict "Page" (.Site.GetPage "/projects/decovalex")) "label" "DECOVALEX" "description" "Validation models against experimental data." "showTitle" false)
   (dict "taxonomy" "Project" "term" "digital-twins" "pages" (dict "Page" (.Site.GetPage "/projects/digital-twins")) "label" "Digital Twins" "description" "Software engineering for reproducible geosystems workflows." "showTitle" false)
   (dict "taxonomy" "Model" "term" "ANALYTICAL" "pages" (index .Site.Taxonomies.models "analytical") "label" "Classic benchmarks" "description" "Analytical solutions for validating numerical methods." "showTitle" true)
   (dict "taxonomy" "Model" "term" "material" "pages" (index .Site.Taxonomies.models "material") "label" "Materials" "description" "Constitutive models for porous and fractured media." "showTitle" true)

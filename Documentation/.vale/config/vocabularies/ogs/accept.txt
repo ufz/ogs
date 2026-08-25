@@ -52,6 +52,7 @@ Dirichlet
 Dockerfile
 dolomitisation
 Dominik
+DONUT
 Doxygen
 Dupuit
 Ehlers
