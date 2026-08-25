@@ -18,3 +18,11 @@ links = [
 </div>
 
 The [DECOVALEX](https://decovalex.org) project is an international research collaboration and model comparison initiative, established in 1992, aimed at advancing the understanding and modelling of coupled thermo-hydro-mechanical-chemical (THMC) processes in geological systems. The current project (2024-2027) is now in its ninth phase and we want to introduce a new framework for online benchmarking and model comparison. The first examples have been implemented in the [SAFENET](https://decovalex.org/D-2027/safenet2) and [ANALOG](https://decovalex.org/D-2027/analog) tasks.
+
+## References
+
+- {{< bib "Park2025" >}}
+- {{< bib "Kaiser2025" >}}
+- {{< bib "Kolditz2025" >}}
+- {{< bib "Radeisen2024" >}}
+- {{< bib "Mollaali2023" >}}
