@@ -3,20 +3,20 @@ revision = 3
 requires-python = ">=3.11, <3.15"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
-    "python_full_version == '3.12.*' and sys_platform == 'linux'",
-    "python_full_version == '3.13.*' and sys_platform == 'linux'",
-    "python_full_version < '3.12' and sys_platform == 'linux'",
     "python_full_version >= '3.14' and sys_platform == 'win32'",
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'linux'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'linux'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'linux'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
 ]
 conflicts = [[
@@ -1049,8 +1049,8 @@ version = "4.15.0.dev1+nox"
 source = { registry = "https://gmsh.info/python-packages-dev-nox" }
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
-    "python_full_version == '3.12.*' and sys_platform == 'linux'",
     "python_full_version == '3.13.*' and sys_platform == 'linux'",
+    "python_full_version == '3.12.*' and sys_platform == 'linux'",
     "python_full_version < '3.12' and sys_platform == 'linux'",
 ]
 wheels = [
@@ -1065,14 +1065,14 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
 ]
 wheels = [
@@ -1284,17 +1284,17 @@ version = "9.12.0"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
-    "python_full_version == '3.12.*' and sys_platform == 'linux'",
-    "python_full_version == '3.13.*' and sys_platform == 'linux'",
     "python_full_version >= '3.14' and sys_platform == 'win32'",
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'linux'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'linux'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
 ]
 dependencies = [
     { name = "colorama", marker = "(python_full_version >= '3.12' and sys_platform == 'win32') or (python_full_version < '3.12' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (python_full_version < '3.12' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (python_full_version < '3.12' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (sys_platform != 'win32' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (sys_platform != 'win32' and extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (sys_platform != 'win32' and extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
@@ -2410,20 +2410,20 @@ name = "ogs"
 source = { directory = "../../" }
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
-    "python_full_version == '3.12.*' and sys_platform == 'linux'",
-    "python_full_version == '3.13.*' and sys_platform == 'linux'",
-    "python_full_version < '3.12' and sys_platform == 'linux'",
     "python_full_version >= '3.14' and sys_platform == 'win32'",
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'linux'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'linux'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'linux'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
 ]
 dependencies = [
@@ -2453,23 +2453,59 @@ dev-all = [
 [[package]]
 name = "ogs"
 version = "6.5.7"
-source = { registry = "https://pypi.org/simple" }
+source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" }
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
-    "python_full_version == '3.12.*' and sys_platform == 'linux'",
-    "python_full_version == '3.13.*' and sys_platform == 'linux'",
-    "python_full_version < '3.12' and sys_platform == 'linux'",
     "python_full_version >= '3.14' and sys_platform == 'win32'",
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'linux'",
     "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
     "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
     "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'linux'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'linux'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
+    "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+]
+dependencies = [
+    { name = "pandas" },
+]
+wheels = [
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/69f9e345ae62da0757d912f4a8ac515cd00539741a4930e8a1ce6a7a061432e6/ogs-6.5.7-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:69f9e345ae62da0757d912f4a8ac515cd00539741a4930e8a1ce6a7a061432e6" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/72fa5c87aa4432355cfe7b3c58620848c67adae4500ee19940edc9570c65edcf/ogs-6.5.7-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:72fa5c87aa4432355cfe7b3c58620848c67adae4500ee19940edc9570c65edcf" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/7837c4168d8f47b7d73f278b626c22ab94c8f1517477e6d7faedfff1fe67c8b1/ogs-6.5.7-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:7837c4168d8f47b7d73f278b626c22ab94c8f1517477e6d7faedfff1fe67c8b1" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/d92355b6179ddc0d971a4dcea80b5e163123562b76979171c873da1a13225a9a/ogs-6.5.7-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:d92355b6179ddc0d971a4dcea80b5e163123562b76979171c873da1a13225a9a" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/7a56b61ce452089b3e3026e3abf976cd60f9c5c7d9c2704f829f3789f7993832/ogs-6.5.7-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:7a56b61ce452089b3e3026e3abf976cd60f9c5c7d9c2704f829f3789f7993832" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/c086662594e79df66525797962a29dcdd590010cf1aaaddb888562dd7ee187ca/ogs-6.5.7-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:c086662594e79df66525797962a29dcdd590010cf1aaaddb888562dd7ee187ca" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/411ed10a04b182a219588c1341dd823d36e6520e4643c76e0d9a2ee62785c455/ogs-6.5.7-cp314-cp314-macosx_12_0_arm64.whl", hash = "sha256:411ed10a04b182a219588c1341dd823d36e6520e4643c76e0d9a2ee62785c455" },
+    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/b894cb4a7cbb2894809dec83d023664d256f4b7a51d4bb10dcd5779c40ef1f16/ogs-6.5.7-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:b894cb4a7cbb2894809dec83d023664d256f4b7a51d4bb10dcd5779c40ef1f16" },
+]
+
+[[package]]
+name = "ogs"
+version = "6.5.7"
+source = { registry = "https://pypi.org/simple" }
+resolution-markers = [
+    "python_full_version >= '3.14' and sys_platform == 'linux'",
+    "python_full_version >= '3.14' and sys_platform == 'win32'",
+    "python_full_version >= '3.14' and sys_platform == 'emscripten'",
+    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'linux'",
+    "python_full_version == '3.13.*' and sys_platform == 'win32'",
+    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'linux'",
+    "python_full_version == '3.12.*' and sys_platform == 'win32'",
+    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
+    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'linux'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
 ]
 dependencies = [
@@ -2489,47 +2525,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/f0/23/6ff9049cd3a9b76e148a45d475b63eba689f786e0f60e56d28a501ecf334/ogs-6.5.7-cp314-cp314-macosx_12_0_arm64.whl", hash = "sha256:1269f9d858d802cd13aa254db38cc4fe023cc9991d884f15ad96839d6407136e", size = 42030058, upload-time = "2026-01-31T14:01:35.994Z" },
     { url = "https://files.pythonhosted.org/packages/00/6d/71265ca6be04d5bbe34ec6f3a967aa49024201122524dc25385f26657538/ogs-6.5.7-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:28aa90e8bc12d4de293b921a7c5ac780ac740a053c693658e6a40d979688ceb9", size = 66728993, upload-time = "2026-01-31T14:01:41.451Z" },
     { url = "https://files.pythonhosted.org/packages/7d/93/a06028a2c51bf97a26555310fb446ddc971597a78278151ea4f0523a1795/ogs-6.5.7-cp314-cp314-win_amd64.whl", hash = "sha256:4bd9bbfe2c1f4f34d8b1920b86d0e68b88bfc9cae95cdaf26a850502c18f5936", size = 53831439, upload-time = "2026-01-31T14:01:46.742Z" },
-]
-
-[[package]]
-name = "ogs"
-version = "6.5.9.dev193"
-source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" }
-resolution-markers = [
-    "python_full_version >= '3.14' and sys_platform == 'linux'",
-    "python_full_version == '3.12.*' and sys_platform == 'linux'",
-    "python_full_version == '3.13.*' and sys_platform == 'linux'",
-    "python_full_version < '3.12' and sys_platform == 'linux'",
-    "python_full_version >= '3.14' and sys_platform == 'win32'",
-    "python_full_version >= '3.14' and sys_platform == 'emscripten'",
-    "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'win32'",
-    "python_full_version == '3.13.*' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
-    "python_full_version == '3.12.*' and sys_platform == 'emscripten'",
-    "python_full_version == '3.13.*' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
-    "python_full_version == '3.12.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-    "python_full_version == '3.13.*' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-    "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
-]
-dependencies = [
-    { name = "pandas" },
-]
-sdist = { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/711709547213570b3e5a7334ecec9c162974421579b201959704b99ffcf3145a/ogs-6.5.9.dev193.tar.gz", hash = "sha256:711709547213570b3e5a7334ecec9c162974421579b201959704b99ffcf3145a" }
-wheels = [
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/f6284be355d6c7d94c6f71e1ad7bfec538c0eaa849e326a78223e2884b605465/ogs-6.5.9.dev193-cp311-cp311-macosx_26_0_arm64.whl", hash = "sha256:f6284be355d6c7d94c6f71e1ad7bfec538c0eaa849e326a78223e2884b605465" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/bc71ec99db4a17917b22d9f0991a5b1569de465cf4e2756e47b1327339c17ba6/ogs-6.5.9.dev193-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:bc71ec99db4a17917b22d9f0991a5b1569de465cf4e2756e47b1327339c17ba6" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/a297c6b05d0ac939ac8e934b03b7d7779575cb86ffd047392ab91b1a70950b3c/ogs-6.5.9.dev193-cp311-cp311-win_amd64.whl", hash = "sha256:a297c6b05d0ac939ac8e934b03b7d7779575cb86ffd047392ab91b1a70950b3c" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/b23a5ea7c33b409659028bb50dfbbe2a1755e2a227a155263bae0d93aa304176/ogs-6.5.9.dev193-cp312-cp312-macosx_26_0_arm64.whl", hash = "sha256:b23a5ea7c33b409659028bb50dfbbe2a1755e2a227a155263bae0d93aa304176" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/b432250ee840a8b52a13ef8a09136e814075e37bb0ee5da9ff0952f10d72db9c/ogs-6.5.9.dev193-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:b432250ee840a8b52a13ef8a09136e814075e37bb0ee5da9ff0952f10d72db9c" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/5540c9c644ee1c5188e7f17f2cdc1091bb9f1207f527386c14f13151a0a7b56b/ogs-6.5.9.dev193-cp312-cp312-win_amd64.whl", hash = "sha256:5540c9c644ee1c5188e7f17f2cdc1091bb9f1207f527386c14f13151a0a7b56b" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/fadd627a99ac98f199b9a77932ecf85080c5dea1419d194cd4a62751bf72d421/ogs-6.5.9.dev193-cp313-cp313-macosx_26_0_arm64.whl", hash = "sha256:fadd627a99ac98f199b9a77932ecf85080c5dea1419d194cd4a62751bf72d421" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/f7a974e556f6e84d78dd4ab44db368274150990ace2e9225ec2fa0a4ccbad92b/ogs-6.5.9.dev193-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:f7a974e556f6e84d78dd4ab44db368274150990ace2e9225ec2fa0a4ccbad92b" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/9af39202ebfa754f3f9a2cbb43d3ab76541f6712fb111cd27563920194608e5d/ogs-6.5.9.dev193-cp313-cp313-win_amd64.whl", hash = "sha256:9af39202ebfa754f3f9a2cbb43d3ab76541f6712fb111cd27563920194608e5d" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/2a69e7ee141988337c3de98be408b30f45d360d9d299e71599902d952c84e9be/ogs-6.5.9.dev193-cp314-cp314-macosx_26_0_arm64.whl", hash = "sha256:2a69e7ee141988337c3de98be408b30f45d360d9d299e71599902d952c84e9be" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/32a858a14860c1cc2643ec9e15da3df18a68351c15485caf554cdace04169475/ogs-6.5.9.dev193-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:32a858a14860c1cc2643ec9e15da3df18a68351c15485caf554cdace04169475" },
-    { url = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/files/f9dcde2988d1b96c94d7cb16da5ba4004a51aeb44a066f5cd8c77f9448bb82a1/ogs-6.5.9.dev193-cp314-cp314-win_amd64.whl", hash = "sha256:f9dcde2988d1b96c94d7cb16da5ba4004a51aeb44a066f5cd8c77f9448bb82a1" },
 ]
 
 [[package]]
@@ -2567,7 +2562,7 @@ ogs-local = [
     { name = "ogs", source = { directory = "../../" } },
 ]
 ogs-master = [
-    { name = "ogs", version = "6.5.9.dev193", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
+    { name = "ogs", version = "6.5.7", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
 ]
 ogs-pypi = [
     { name = "ogs", version = "6.5.7", source = { registry = "https://pypi.org/simple" } },
@@ -2589,7 +2584,7 @@ requires-dist = [
     { name = "nbconvert", specifier = ">=7.16.5" },
     { name = "nbformat", specifier = ">=5.7.3" },
     { name = "numpy" },
-    { name = "ogstools", git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=61ac64820df8093c250f37923dfa177b2b6049cf" },
+    { name = "ogstools", git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.2.RC0" },
     { name = "pandas", specifier = ">=1.5" },
     { name = "papermill", specifier = ">=2.6.0" },
     { name = "pytest", specifier = ">=8.2.2" },
@@ -2607,8 +2602,8 @@ ogs-pypi = [{ name = "ogs" }]
 
 [[package]]
 name = "ogstools"
-version = "0.8.1.post1.dev35"
-source = { git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=61ac64820df8093c250f37923dfa177b2b6049cf#61ac64820df8093c250f37923dfa177b2b6049cf" }
+version = "0.8.2rc0"
+source = { git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.2.RC0#7f4dcf14e772e374bc17dae2e0fc44c93bcffe1c" }
 dependencies = [
     { name = "bokeh" },
     { name = "gmsh", version = "4.15.0.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "sys_platform == 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
