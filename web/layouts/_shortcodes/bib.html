@@ -57,10 +57,10 @@
   {{ with $publication.Params.publisher }}{{ . }}, {{ end }}
   {{ with $publication.Params.institution }}{{ . }}, {{ end }}
   {{ with $doiUrl }}
-  DOI:<a href="{{ . }}" class="mt-4">{{ $doiLabel }}</a>
+  DOI:<a href="{{ . }}" class="mt-4">{{ $doiLabel }}</a>{{ if $showSourceLink }},{{ end }}
   {{ end }}
   {{ if $showSourceLink }}
-  <a href="{{ $sourceUrl }}" class="mt-4">{{ $sourceUrl }}</a>
+  <a href="{{ $sourceUrl }}" class="mt-4">Publisher link</a>
   {{ end }}
   {{ with $bibtex }}
   <button
