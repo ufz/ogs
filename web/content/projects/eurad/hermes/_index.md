@@ -3,10 +3,6 @@ title = 'EURAD2-HERMES'
 headline = 'High fidElity numeRical siMulations of strongly coupled processes for rEpository syStems and design optimisation with physical models and machine learning'
 
 links = [
-  ['HM: Tunnel excavation', 'https://ogs.ogs.xyz/ogs/docs/benchmarks/th2m/excavation_th2m/', 'jupyter'],
-  ['Reactive transport: Matrix acidification in a calcite-containing interlayer', 'https://ogs.ogs.xyz/ogs/docs/benchmarks/reactive-transport/porosityincrease/', 'jupyter'],
-  ['Workflow for DFN generation', 'https://ogs.ogs.xyz/ogs/docs/benchmarks/reactive-transport/dfnbyporepy/', 'jupyter'],
-  ['Workflow for RTP modelling in DFN', 'https://ogs.ogs.xyz/ogs/docs/benchmarks/reactive-transport/dfnbyporepy_to_ogs/', 'jupyter'],
   ['PSI-Hub (maintained by congineer)', 'https://geoml.eu/'],
 ]
 +++

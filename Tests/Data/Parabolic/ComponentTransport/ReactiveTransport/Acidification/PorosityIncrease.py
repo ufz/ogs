@@ -22,6 +22,7 @@
 # image = "figures/schematic.png"
 # web_subsection = "reactive-transport"
 # weight = 3
+# projects = [ "eurad/hermes" ]
 # +++
 
 # %%

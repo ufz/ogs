@@ -20,7 +20,7 @@
 # image = "figures/excavation_th2m_pls.png"
 # web_subsection = "th2m"
 # weight = 3
-# projects = [ "owf" ]
+# projects = [ "owf", "eurad/hermes" ]
 # models = [ "analytical" ]
 # +++
 

@@ -18,6 +18,7 @@
 # date = "2023-03-03"
 # title = "Hydraulic Fracturing in the Toughness-Dominated Regime"
 # web_subsection = "phase-field"
+# projects = [ "eurad/donut" ]
 # +++
 #
 

@@ -18,6 +18,7 @@
 # date = "2022-08-05"
 # author = "Renchao Lu, Christoph Behrens, Dmitri Naumov, Christoph Lehmann, Haibing Shao"
 # web_subsection = "reactive-transport"
+# projects = [ "eurad/donut" ]
 # +++
 #
 

@@ -18,6 +18,7 @@
 # date = "2025-04-28"
 # author = "Mostafa Mollaali, Thomas Nagel"
 # web_subsection = "reactive-transport"
+# projects = [ "eurad/hermes" ]
 # +++
 
 # %%

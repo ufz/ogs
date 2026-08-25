@@ -4,8 +4,6 @@ headline = 'Development and improvement of numerical methods and tools for model
 
 links = [
   ['THM mechanics: FE benchmark (new), Buchwald et al. ', 'https://doi.org/10.1016/j.applthermaleng.2024.125379'],
-  ['M / HM fracture mechanics: Hydraulic fracturing', 'https://ogs.ogs.xyz/ogs/docs/benchmarks/phase-field/kregime_propagating_jupyter/'],
-  ['Reactive transport: Decay chain in radionuclide transport', 'https://ogs.ogs.xyz/ogs/docs/benchmarks/reactive-transport/decaychain/', 'jupyter'],
 ]
 +++
 
