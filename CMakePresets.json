@@ -120,6 +120,29 @@
       ]
     },
     {
+      "name": "_petsc_full",
+      "hidden": true,
+      "environment": {
+       "OGS_PETSC_CONFIG_OPTIONS": "--download-superlu;--download-superlu_dist;--download-scalapack;--download-mumps;--with-cc=$env{CC};--with-cxx=$env{CXX};--with-fc=mpif90"
+      }
+    },
+    {
+      "name": "release-petsc-full",
+      "inherits": [
+        "release",
+        "_petsc",
+        "_petsc_full"
+      ]
+    },
+    {
+      "name": "debug-petsc-full",
+      "inherits": [
+        "debug",
+        "_petsc",
+        "_petsc_full"
+      ]
+    },
+    {
       "name": "msvc-release",
       "inherits": [
         "_msvc",
@@ -215,7 +238,7 @@
       "name": "ci-no-unity",
       "inherits": [
         "release-all",
-        "release-petsc"
+        "release-petsc-full"
       ],
       "cacheVariables": {
         "OGS_USE_UNITY_BUILDS": "OFF"
@@ -299,6 +322,14 @@
     {
       "name": "debug-petsc",
       "configurePreset": "debug-petsc"
+    },
+    {
+      "name": "release-petsc-full",
+      "configurePreset": "release-petsc-full"
+    },
+    {
+      "name": "debug-petsc-full",
+      "configurePreset": "debug-petsc-full"
     },
     {
       "name": "msvc-release",
