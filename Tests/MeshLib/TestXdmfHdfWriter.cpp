@@ -46,7 +46,7 @@ public:
         pressure->resize(mesh->getNumberOfNodes(), 0.0);
 
         auto* static_data = props.createNewPropertyVector<double>(
-            "static_data", MeshLib::MeshItemType::Node, 1);
+            "example static attribute", MeshLib::MeshItemType::Node, 1);
         static_data->resize(mesh->getNumberOfNodes(), 0.0);
 
         auto* mat_ids = props.createNewPropertyVector<int>(
@@ -71,8 +71,8 @@ protected:
         MeshLib::IO::XdmfHdfWriter writer(
             {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0,
             {"MaterialIDs", "pressure"},
-            {"static_data"} /* static_attribute_names */, false, 1, 1024,
-            store_static_data_separately);
+            {"example static attribute"} /* static_attribute_names */, false, 1,
+            1024, store_static_data_separately);
     }
 
     // Return true when the named dataset exists under /meshes/<mesh>/ in
@@ -261,8 +261,8 @@ TEST_F(XdmfHdfWriterTest, UserDeclaredStaticAttributeGoesToStaticFile)
             /*time_step=*/0,
             /*initial_time=*/0.0,
             /*output_variable_names=*/
-            {"MaterialIDs", "pressure", "static_data"},
-            /*static_attribute_names=*/{"static_data"},
+            {"MaterialIDs", "pressure", "example static attribute"},
+            /*static_attribute_names=*/{"example static attribute"},
             /*use_compression=*/false,
             /*n_files=*/1,
             /* chunk_size_bytes=*/1024,
@@ -270,9 +270,9 @@ TEST_F(XdmfHdfWriterTest, UserDeclaredStaticAttributeGoesToStaticFile)
         writer.writeStep(1.0);
     }
 
-    EXPECT_TRUE(datasetExists(static_h5_path, "static_data"))
+    EXPECT_TRUE(datasetExists(static_h5_path, "example static attribute"))
         << "user-declared static attribute must be in the static file";
-    EXPECT_FALSE(datasetExists(h5_path, "static_data"))
+    EXPECT_FALSE(datasetExists(h5_path, "example static attribute"))
         << "user-declared static attribute must NOT be in the dynamic file";
 }
 
