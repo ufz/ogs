@@ -110,7 +110,7 @@ jupyter lab [path-to-source-directory]     # Starts Jupyter Lab
 Instead of activating the environment and manually running `jupyter lab` you can also just build the `jupyter` target:
 
 ```bash
-cmake --preset release -t jupyter
+cmake --build --preset release -t jupyter
 # or in the build directory:
 ninja jupyter
 ```
