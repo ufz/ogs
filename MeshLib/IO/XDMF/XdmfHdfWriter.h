@@ -23,9 +23,9 @@ public:
      * <table>
      * <tr><th>OGS</th><th>XDMF</th></tr>
      * <tr><td></td><td></td></tr>
-     * <tr><td>process variable</td><td>dynamic attribute</td></tr>
-     * <tr><td>secondary variable, derived variable</td><td>dynamic attribute</td></tr>
-     * <tr><td>general time-dependent data in PropertyVector</td><td> dynamic attribute</td></tr>
+     * <tr><td>process variable</td><td>dynamic_attribute / variable attribute (legacy)</td></tr>
+     * <tr><td>secondary variable, derived variable</td><td>dynamic attribute / variable attribute (legacy)</td></tr>
+     * <tr><td>general time-dependent data in PropertyVector</td><td> dynamic attribute / variable attribute (legacy)</td></tr>
      * <tr><td>mesh nodes / geometry</td><td> static attribute</td></tr>
      * <tr><td>mesh elements topology</td><td> static attribute</td></tr>
      * <tr><td>MaterialIDs, bulk IDs, global IDs </td><td> static attribute</td></tr>
