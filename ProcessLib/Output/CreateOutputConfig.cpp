@@ -224,6 +224,43 @@ OutputConfig createOutputConfig(
         output_variables.insert(out_var);
     }
 
+    // XDMF specific settings
+    auto const xdmf_config =
+        //! \ogs_file_param{prj__time_loop__output__xdmf_config}
+        config.getConfigSubtreeOptional("xdmf_config");
+
+    // Optional list of output variables that are written once instead of per
+    // time step, i.e. as static attributes.
+    if (auto const static_vars =
+            xdmf_config
+                ?  //! \ogs_file_param{prj__time_loop__output__xdmf_config__static_variables}
+                xdmf_config->getConfigSubtreeOptional("static_variables")
+                : std::optional<BaseLib::ConfigTree>{})
+    {
+        auto& static_output_variables = output_config.static_output_variables;
+        for (
+            auto const& var :
+            //! \ogs_file_param{prj__time_loop__output__xdmf_config__static_variables__variable}
+            static_vars->getConfigParameterList<std::string>("variable"))
+        {
+            // static variable has to be in output_variables
+            if (!output_variables.empty() &&
+                output_variables.find(var) == output_variables.cend())
+            {
+                OGS_FATAL(
+                    "static output `{:s}' is not in output variables list.",
+                    var);
+            }
+            if (!static_output_variables.insert(var).second)
+            {
+                OGS_FATAL(
+                    "static output variable `{:s}' specified more than once.",
+                    var);
+            }
+            DBUG("adding static output variable `{:s}'", var);
+        }
+    }
+
     output_config.output_extrapolation_residuals =
         //! \ogs_file_param{prj__time_loop__output__output_extrapolation_residuals}
         config.getConfigParameter<bool>("output_extrapolation_residuals",

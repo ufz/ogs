@@ -49,6 +49,9 @@ struct OutputConfig
     /// for restart) for example `sigma_ip`.  Available names are process and
     /// material models specific and can not be listed here.
     std::set<std::string> output_variables;
+    /// static_output_variables are passed to the XdmfHdfWriter
+    /// see documentation @ref XdmfHdfWriter_static_attribute_names
+    std::set<std::string> static_output_variables;
     bool output_extrapolation_residuals = false;
     std::vector<std::string> mesh_names_for_output;
     /// A list of points in time for output. These fixed output times are taken

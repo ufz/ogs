@@ -4,6 +4,7 @@
 #pragma once
 
 #include <iosfwd>
+#include <set>
 #include <vector>
 
 #include "MeshLib/IO/VtkIO/PVDFile.h"
@@ -93,9 +94,11 @@ struct OutputXDMFHDF5Format final : public OutputFormat
                          std::string suffix, bool const compression,
                          unsigned int const n_files,
                          unsigned int const chunk_size_bytes,
-                         bool const store_static_data_separately)
+                         bool const store_static_data_separately,
+                         std::set<std::string> static_variables)
         : OutputFormat(directory, std::move(prefix), std::move(suffix),
                        compression),
+          static_variables(std::move(static_variables)),
           n_files(n_files),
           chunk_size_bytes(chunk_size_bytes),
           store_static_data_separately(store_static_data_separately)
@@ -118,6 +121,9 @@ struct OutputXDMFHDF5Format final : public OutputFormat
                                   bool const converged) const override;
 
     mutable std::unique_ptr<MeshLib::IO::XdmfHdfWriter> mesh_xdmf_hdf_writer;
+    //! user-declared time-independent output variables (in addition to the
+    //! always-static built-in fields)
+    std::set<std::string> const static_variables;
     //! Specifies the number of hdf5 output files.
     unsigned int n_files;
     //! Specifies the chunks size in bytes per hdf5 output file.

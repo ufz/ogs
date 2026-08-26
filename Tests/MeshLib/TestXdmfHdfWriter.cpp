@@ -45,6 +45,10 @@ public:
             "pressure", MeshLib::MeshItemType::Node, 1);
         pressure->resize(mesh->getNumberOfNodes(), 0.0);
 
+        auto* static_data = props.createNewPropertyVector<double>(
+            "example static attribute", MeshLib::MeshItemType::Node, 1);
+        static_data->resize(mesh->getNumberOfNodes(), 0.0);
+
         auto* mat_ids = props.createNewPropertyVector<int>(
             "MaterialIDs", MeshLib::MeshItemType::Cell, 1);
         mat_ids->resize(mesh->getNumberOfElements(), 0);
@@ -64,10 +68,11 @@ protected:
     // = tmp_dir/"out".
     void createExampleFile(bool const store_static_data_separately) const
     {
-        MeshLib::IO::XdmfHdfWriter writer({std::cref(*mesh)}, tmp_dir / "out",
-                                          0, 0.0, {"MaterialIDs", "pressure"},
-                                          false, 1, 1024,
-                                          store_static_data_separately);
+        MeshLib::IO::XdmfHdfWriter writer(
+            {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0,
+            {"MaterialIDs", "pressure"},
+            {"example static attribute"} /* static_attribute_names */, false, 1,
+            1024, store_static_data_separately);
     }
 
     // Return true when the named dataset exists under /meshes/<mesh>/ in
@@ -113,8 +118,8 @@ TEST_F(XdmfHdfWriterTest, SeparateStaticModeMakesTwoHDF5Files)
 {
     {
         MeshLib::IO::XdmfHdfWriter writer(
-            {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0, {"pressure"}, false, 1,
-            1024,
+            {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0, {"pressure"},
+            {} /* static_attribute_names */, false, 1, 1024,
             /*store_static_data_separately=*/true);
         writer.writeStep(1.0);
     }
@@ -126,8 +131,8 @@ TEST_F(XdmfHdfWriterTest, SingleFileModeDoesNotCreateStaticFile)
 {
     {
         MeshLib::IO::XdmfHdfWriter writer(
-            {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0, {"pressure"}, false, 1,
-            1024,
+            {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0, {"pressure"},
+            {} /* static_attribute_names */, false, 1, 1024,
             /*store_static_data_separately=*/false);
         writer.writeStep(1.0);
     }
@@ -182,9 +187,9 @@ TEST_F(XdmfHdfWriterTest, DynamicFileVariableAttributeHasTimeDimension)
     // Dynamic file pressure: shape (n_steps, n_nodes) — rank 2, time as axis 0
     constexpr unsigned n_steps = 3;  // constructor + 2 writeStep calls
     {
-        MeshLib::IO::XdmfHdfWriter writer({std::cref(*mesh)}, tmp_dir / "out",
-                                          0, 0.0, {"pressure"}, false, 1, 1024,
-                                          true);
+        MeshLib::IO::XdmfHdfWriter writer(
+            {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0, {"pressure"},
+            {} /* static_attribute_names */, false, 1, 1024, true);
         for (unsigned i = 1; i < n_steps; ++i)
         {
             writer.writeStep(static_cast<double>(i));
@@ -213,8 +218,9 @@ TEST_F(XdmfHdfWriterTest, StaticFileIsNotModifiedAfterConstruction)
 {
     // The static file is fully written in HdfWriter's constructor and closed.
     // Subsequent writeStep calls must not alter it.
-    MeshLib::IO::XdmfHdfWriter writer({std::cref(*mesh)}, tmp_dir / "out", 0,
-                                      0.0, {"pressure"}, false, 1, 1024, true);
+    MeshLib::IO::XdmfHdfWriter writer(
+        {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0, {"pressure"},
+        {} /* static_attribute_names */, false, 1, 1024, true);
 
     auto const mtime = std::filesystem::last_write_time(static_h5_path);
 
@@ -247,6 +253,54 @@ TEST_F(XdmfHdfWriterTest, StaticFileAbsentFromDynamicFile)
         << "geometry must be in the static file";
 }
 
+TEST_F(XdmfHdfWriterTest, UserDeclaredStaticAttributeGoesToStaticFile)
+{
+    {
+        MeshLib::IO::XdmfHdfWriter writer(
+            {std::cref(*mesh)}, tmp_dir / "out",
+            /*time_step=*/0,
+            /*initial_time=*/0.0,
+            /*output_variable_names=*/
+            {"MaterialIDs", "pressure", "example static attribute"},
+            /*static_attribute_names=*/{"example static attribute"},
+            /*use_compression=*/false,
+            /*n_files=*/1,
+            /* chunk_size_bytes=*/1024,
+            /*store_static_data_separately=*/true);
+        writer.writeStep(1.0);
+    }
+
+    EXPECT_TRUE(datasetExists(static_h5_path, "example static attribute"))
+        << "user-declared static attribute must be in the static file";
+    EXPECT_FALSE(datasetExists(h5_path, "example static attribute"))
+        << "user-declared static attribute must NOT be in the dynamic file";
+}
+
+TEST_F(XdmfHdfWriterTest, GlobalIdsAreAlwaysStatic)
+{
+    auto& props = mesh->getProperties();
+    auto* g_nodes = props.createNewPropertyVector<std::size_t>(
+        "global_node_ids", MeshLib::MeshItemType::Node, 1);
+    g_nodes->resize(mesh->getNumberOfNodes(), 0);
+    auto* g_elems = props.createNewPropertyVector<std::size_t>(
+        "global_element_ids", MeshLib::MeshItemType::Cell, 1);
+    g_elems->resize(mesh->getNumberOfElements(), 0);
+
+    {
+        MeshLib::IO::XdmfHdfWriter writer(
+            {std::cref(*mesh)}, tmp_dir / "out", 0, 0.0,
+            {"pressure", "global_node_ids", "global_element_ids"},
+            {} /* static_attribute_names */, false, 1, 1024,
+            /*store_static_data_separately=*/true);
+        writer.writeStep(1.0);
+    }
+
+    EXPECT_TRUE(datasetExists(static_h5_path, "global_node_ids"));
+    EXPECT_TRUE(datasetExists(static_h5_path, "global_element_ids"));
+    EXPECT_FALSE(datasetExists(h5_path, "global_node_ids"));
+    EXPECT_FALSE(datasetExists(h5_path, "global_element_ids"));
+}
+
 TEST_F(XdmfHdfWriterTest, MaterialIDsInStaticFileHasCorrectShape)
 {
     // In separate-file mode, MaterialIDs in the static hdf5 file must be
@@ -273,8 +327,6 @@ TEST_F(XdmfHdfWriterTest, MaterialIDsInStaticFileHasCorrectShape)
 
 TEST_F(XdmfHdfWriterTest, MaterialIDsInStaticFileHasCorrectValues)
 {
-    // Check that the written MaterialIDs values are the same as the ones passed
-    // to the XdmdfHdfWriter
     auto* mat_ids = mesh->getProperties().getPropertyVector<int>("MaterialIDs");
     ASSERT_NE(mat_ids, nullptr);
     std::vector<int> const expected = {10, 20, 30, 40};
