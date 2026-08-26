@@ -107,4 +107,5 @@ endif()
 
 if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/TotalInitialStress/total_initial_stress_HM.prj RUNTIME 1)
+    NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/mont_terri_deep_borehole/mont_terri_deep_borehole.py RUNTIME 1)
 endif()
