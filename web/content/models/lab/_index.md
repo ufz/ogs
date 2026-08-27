@@ -3,11 +3,11 @@ title = 'Lab scale'
 abbreviation = 'LAB'
 links = [
   ['HM: Soil liquefaction (FEniCS)', 'https://doi.org/10.1016/j.compgeo.2025.107321'],
+  ['HM: Triaxial tests of Opalinus clay under saturated and unsaturated conditions ', 'https://www.mdpi.com/2075-163X/16/3/279']
   # ['TODO: THM (BGR-MAT: TL1)', '#'],
   # ['TODO: Oedometer, swelling', '#'],
-  # ['TODO: Triax, polycyclic tests', '#'],
   # ['TODO: Thermo-shear', '#'],
 ]
 +++
 
-The OGS benchmark collection uses numerous analytical solutions to test the correct implementation of the numerical method. In addition, the models must be validated using experimental data (model validation). Following examples are based on laboratory experiments (with increasing complexity).
+Laboratory experiments lay an important foundation for complex models, as physical conditions such as ambient temperatures, fluid pressures and mechanical loads, as well as boundary conditions, can be controlled during the experimental procedure.
