@@ -74,8 +74,8 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 
     std::vector<GlobalIndexType> row_pos(2);
     std::vector<GlobalIndexType> col_pos(2);
-    row_pos[0] = 2 * mpi.rank;
-    row_pos[1] = 2 * mpi.rank + 1;
+    row_pos[0] = m.getRangeBegin();
+    row_pos[1] = m.getRangeBegin() + 1;
     col_pos[0] = row_pos[0];
     col_pos[1] = row_pos[1];
 
@@ -99,10 +99,10 @@ void checkGlobalMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
     ASSERT_EQ(sqrt(3 * (3 * 3 + 7 * 7)), norm2(y));
 
     // set a value
-    m_c.set(2 * mpi.rank, 2 * mpi.rank, 5.0);
+    m_c.set(m.getRangeBegin(), m.getRangeBegin(), 5.0);
     MathLib::finalizeMatrixAssembly(m_c);
     // add a value
-    m_c.add(2 * mpi.rank + 1, 2 * mpi.rank + 1, 5.0);
+    m_c.add(m.getRangeBegin() + 1, m.getRangeBegin() + 1, 5.0);
     MathLib::finalizeMatrixAssembly(m_c);
 
     matMult(m_c, v, y);
@@ -137,11 +137,13 @@ void checkGlobalRectangularMatrixInterfaceMPI(T_MATRIX& m, T_VECTOR& v)
 
     std::vector<GlobalIndexType> row_pos(2);
     std::vector<GlobalIndexType> col_pos(3);
-    row_pos[0] = 2 * mpi.rank;
-    row_pos[1] = 2 * mpi.rank + 1;
-    col_pos[0] = 3 * mpi.rank;
-    col_pos[1] = 3 * mpi.rank + 1;
-    col_pos[2] = 3 * mpi.rank + 2;
+    row_pos[0] = m.getRangeBegin();
+    row_pos[1] = m.getRangeBegin() + 1;
+    // Column layout has 3 cols per 2 rows; derive col_start from row_start.
+    GlobalIndexType const col_start = 3 * m.getRangeBegin() / 2;
+    col_pos[0] = col_start;
+    col_pos[1] = col_start + 1;
+    col_pos[2] = col_start + 2;
 
     m.add(row_pos, col_pos, loc_m);
 
