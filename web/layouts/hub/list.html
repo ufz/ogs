@@ -1,10 +1,14 @@
 {{ define "main" }}
 
+<!-- (dict "taxonomy" "Model" "term" "ANALYTICAL" "pages" (index .Site.Taxonomies.models "analytical") "label" "Classic benchmarks" "description" "Analytical solutions for validating numerical methods." "showTitle" true) -->
+
 {{ $all := slice
   (dict "taxonomy" "Project" "term" "EURAD" "pages" (dict "Page" (.Site.GetPage "/projects/eurad")) "label" "EURAD-2" "description" "Connecting models and knowledge." "showTitle" false)
   (dict "taxonomy" "Project" "term" "DECOVALEX" "pages" (dict "Page" (.Site.GetPage "/projects/decovalex")) "label" "DECOVALEX" "description" "Validation models against experimental data." "showTitle" false)
-  (dict "taxonomy" "Project" "term" "digital-twins" "pages" (dict "Page" (.Site.GetPage "/projects/digital-twins")) "label" "Digital Twins" "description" "Software engineering for reproducible geosystems workflows." "showTitle" false)
-  (dict "taxonomy" "Model" "term" "ANALYTICAL" "pages" (index .Site.Taxonomies.models "analytical") "label" "Classic benchmarks" "description" "Analytical solutions for validating numerical methods." "showTitle" true)
+  (dict "taxonomy" "Project" "term" "OpenWorkFlow" "pages" (dict "Page" (.Site.GetPage "/projects/owf")) "label"
+  "OpenWorkFlow" "description" "Software engineering for reproducible geosystems workflows." "showTitle" false)
+  (dict "taxonomy" "Project" "term" "digital-twins" "pages" (dict "Page" (.Site.GetPage "/projects/digital-twins"))
+  "label" "Digital Twins" "description" "Software engineering for reproducible geosystems workflows." "showTitle" false)
   (dict "taxonomy" "Model" "term" "material" "pages" (index .Site.Taxonomies.models "material") "label" "Materials" "description" "Constitutive models for porous and fractured media." "showTitle" true)
   (dict "taxonomy" "Model" "term" "processes" "pages" (index .Site.Taxonomies.models "processes") "label" "Processes" "description" "Coupled process benchmarks and examples." "showTitle" true)
   (dict "taxonomy" "Model" "term" "lab" "pages" (index .Site.Taxonomies.models "lab") "label" "Lab scale" "description" "Models based on laboratory experiments." "showTitle" true)
