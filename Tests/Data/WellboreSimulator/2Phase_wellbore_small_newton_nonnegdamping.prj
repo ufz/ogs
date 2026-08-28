@@ -190,7 +190,7 @@
                     <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
                     <reltols>1e-10 1e-10 1e-10</reltols>
-                    <damping_alpha>8.0 0.0 0.0</damping_alpha>
+                    <damping_alpha>16.0 0.0 0.0</damping_alpha>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
