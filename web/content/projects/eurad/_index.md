@@ -1,5 +1,4 @@
 +++
-affiliation = 'University of Chicago'
 title = 'European Partnership on Radioactive Waste Management'
 abbreviation = 'EURAD-2'
 headline = 'Connecting models and knowledge'

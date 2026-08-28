@@ -1,5 +1,4 @@
 +++
-affiliation = 'University of Chicago'
 title = 'Development of Coupled models and their VaLidation against Experiments'
 abbreviation = 'DECOVALEX'
 headline = 'Validation models against experimental data'
