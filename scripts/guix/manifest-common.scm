@@ -34,5 +34,7 @@
         (specification->package "bash")))
 
 (define (manifest-eigen-transform-options)
-  '((with-commit . "eigen=9000b3767770f6dd0f4cfb12f4e19c71921885a4")
+  ; OpenMP fix by Jörg
+  ; https://gitlab.com/libeigen/eigen/-/merge_requests/1786
+  '((with-commit . "eigen=24e0c2a125d2b37b35719124d1f758777c150ca8")
     (without-tests . "eigen")))
