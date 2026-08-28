@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
+  <title id="title">Double through-diffusion experiment</title>
+  <desc id="desc">Helium and methane diffuse in opposite directions through a fully water-saturated Boom Clay sample between two reservoirs.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1677b8"/></marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#d66520"/></marker>
+    <pattern id="clay" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#b99b78"/><circle cx="3" cy="4" r="1" fill="#8c704f"/><circle cx="10" cy="9" r="1.2" fill="#8c704f"/></pattern>
+  </defs>
+  <rect width="1200" height="440" fill="white"/>
+  <text x="600" y="45" text-anchor="middle" font-family="sans-serif" font-size="27" font-weight="bold" fill="#1c2733">Double through-diffusion experiment</text>
+  <text x="600" y="76" text-anchor="middle" font-family="sans-serif" font-size="17" fill="#455764">Fully water-saturated Boom Clay; no imposed pressure gradient across the sample</text>
+  <g stroke="#334e5c" stroke-width="3">
+    <rect x="65" y="125" width="280" height="220" rx="10" fill="#eef7fb"/>
+    <rect x="855" y="125" width="280" height="220" rx="10" fill="#fff5ed"/>
+    <rect x="440" y="168" width="320" height="134" rx="4" fill="url(#clay)"/>
+    <rect x="405" y="182" width="35" height="106" fill="#d7e0e3"/>
+    <rect x="760" y="182" width="35" height="106" fill="#d7e0e3"/>
+    <line x1="345" y1="235" x2="405" y2="235"/><line x1="795" y1="235" x2="855" y2="235"/>
+  </g>
+  <rect x="82" y="142" width="246" height="78" rx="5" fill="#bfe7f4"/><rect x="872" y="142" width="246" height="78" rx="5" fill="#f8c58b"/>
+  <path d="M86 220 H324 V325 H86 Z" fill="#4a9bc5" opacity=".48"/><path d="M876 220 H1114 V325 H876 Z" fill="#6ca7c2" opacity=".48"/>
+  <text x="205" y="181" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#135c8d">Helium reservoir</text><text x="205" y="205" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#135c8d">gas phase + water</text>
+  <text x="995" y="181" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#a9470b">Methane reservoir</text><text x="995" y="205" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#a9470b">gas phase + water</text>
+  <text x="600" y="227" text-anchor="middle" font-family="sans-serif" font-size="22" font-weight="bold" fill="#493a29">Boom Clay core</text><text x="600" y="253" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#493a29">30 mm long · fully water-saturated</text>
+  <text x="422" y="324" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#455764">filter</text><text x="778" y="324" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#455764">filter</text>
+  <path d="M185 110 C350 95, 705 105, 1005 112" fill="none" stroke="#1677b8" stroke-width="6" marker-end="url(#arrow-blue)"/><text x="600" y="100" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#1677b8">He diffusion →</text>
+  <path d="M1015 370 C830 395, 470 393, 190 370" fill="none" stroke="#d66520" stroke-width="6" marker-end="url(#arrow-orange)"/><text x="600" y="405" text-anchor="middle" font-family="sans-serif" font-size="18" font-weight="bold" fill="#b44e10">← CH₄ diffusion</text>
+</svg>
