@@ -1,6 +1,7 @@
 +++
 title = 'Lab scale'
 abbreviation = 'LAB'
+headline = 'Models based on laboratory experiments.'
 links = [
   ['HM: Wave-induced soil liquefaction (Bundesanstalt für Wasserbau)', 'https://doi.org/10.1016/j.compgeo.2025.107321'],
   ['HM: Triaxial tests of Opalinus clay under saturated and unsaturated conditions', 'https://www.mdpi.com/2075-163X/16/3/279'],

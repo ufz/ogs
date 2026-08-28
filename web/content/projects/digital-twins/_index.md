@@ -1,6 +1,7 @@
 +++
 title = 'Software-Engineering for Digital Twins'
 abbreviation = 'DT'
+headline = 'Software engineering for reproducible geosystems workflows.'
 links = [
   ['EURAD opinion paper on digitalisation', 'https://doi.org/10.1007/s12665-022-10675-4'],
   ['EURAD opinion paper on high-fidelity modeling', 'https://doi.org/10.1007/s12665-024-11832-7'],

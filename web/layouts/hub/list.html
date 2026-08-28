@@ -1,19 +1,15 @@
 {{ define "main" }}
 
-<!-- (dict "taxonomy" "Model" "term" "ANALYTICAL" "pages" (index .Site.Taxonomies.models "analytical") "label" "Classic benchmarks" "description" "Analytical solutions for validating numerical methods." "showTitle" true) -->
-
 {{ $all := slice
-  (dict "taxonomy" "Project" "term" "EURAD" "pages" (dict "Page" (.Site.GetPage "/projects/eurad")) "label" "EURAD-2" "description" "Connecting models and knowledge." "showTitle" false)
-  (dict "taxonomy" "Project" "term" "DECOVALEX" "pages" (dict "Page" (.Site.GetPage "/projects/decovalex")) "label" "DECOVALEX" "description" "Validation models against experimental data." "showTitle" false)
-  (dict "taxonomy" "Project" "term" "OpenWorkFlow" "pages" (dict "Page" (.Site.GetPage "/projects/owf")) "label"
-  "OpenWorkFlow" "description" "Software engineering for reproducible geosystems workflows." "showTitle" false)
-  (dict "taxonomy" "Project" "term" "digital-twins" "pages" (dict "Page" (.Site.GetPage "/projects/digital-twins"))
-  "label" "Digital Twins" "description" "Software engineering for reproducible geosystems workflows." "showTitle" false)
-  (dict "taxonomy" "Model" "term" "material" "pages" (index .Site.Taxonomies.models "material") "label" "Materials" "description" "Constitutive models for porous and fractured media." "showTitle" true)
-  (dict "taxonomy" "Model" "term" "processes" "pages" (index .Site.Taxonomies.models "processes") "label" "Processes" "description" "Coupled process benchmarks and examples." "showTitle" true)
-  (dict "taxonomy" "Model" "term" "lab" "pages" (index .Site.Taxonomies.models "lab") "label" "Lab scale" "description" "Models based on laboratory experiments." "showTitle" true)
-  (dict "taxonomy" "Model" "term" "url" "pages" (index .Site.Taxonomies.models "url") "label" "URL scale" "description" "Field experiment models from underground research laboratories." "showTitle" true)
-  (dict "taxonomy" "Model" "term" "field" "pages" (index .Site.Taxonomies.models "field") "label" "Field scale" "description" "Validated models for field-scale safety analysis." "showTitle" true)
+  (dict "taxonomy" "Project" "pages" (dict "Page" (.Site.GetPage "/projects/eurad")) "label" "EURAD-2")
+  (dict "taxonomy" "Project" "pages" (dict "Page" (.Site.GetPage "/projects/decovalex")) "label" "DECOVALEX")
+  (dict "taxonomy" "Project" "pages" (dict "Page" (.Site.GetPage "/projects/owf")) "label" "OpenWorkFlow")
+  (dict "taxonomy" "Project" "pages" (dict "Page" (.Site.GetPage "/projects/digital-twins")) "label" "Digital Twins")
+  (dict "taxonomy" "Model" "pages" (index .Site.Taxonomies.models "material") "label" "Materials")
+  (dict "taxonomy" "Model" "pages" (index .Site.Taxonomies.models "processes") "label" "Processes")
+  (dict "taxonomy" "Model" "pages" (index .Site.Taxonomies.models "lab") "label" "Lab scale")
+  (dict "taxonomy" "Model" "pages" (index .Site.Taxonomies.models "url") "label" "URL scale")
+  (dict "taxonomy" "Model" "pages" (index .Site.Taxonomies.models "field") "label" "Field scale")
 }}
 
 <section class="border-b border-gray-200 bg-gray-50">
@@ -57,6 +53,7 @@
 
     <ul role="list" class="mt-10 grid grid-cols-1 auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {{ range $all }}
+      {{ $page := .pages.Page }}
       {{ $logo := false }}
       {{ if .pages }}
       {{ $logo = .pages.Page.Resources.Get "logo.svg" }}
@@ -102,13 +99,15 @@
           {{ else }}
           <div class="mt-5 flex min-h-0 aspect-[3/2] items-center justify-center overflow-hidden rounded-lg bg-gradient-to-br from-brand-50 to-gray-50 p-5 ring-1 ring-inset ring-brand-100">
             <span class="font-mono text-5xl font-semibold tracking-tight text-brand-300" aria-hidden="true">
-              {{ .pages.Page.Params.abbreviation | default "OGS" }}
+              {{ $page.Params.abbreviation | default "OGS" }}
             </span>
           </div>
           {{ end }}
 
           <div class="mt-5 flex-1 border-t border-gray-100 pt-4">
-            <p class="text-sm leading-relaxed text-gray-600">{{ .description }}</p>
+            {{ with $page.Params.headline }}
+            <p class="text-sm leading-relaxed text-gray-600">{{ . }}</p>
+            {{ end }}
           </div>
         </a>
       </li>
