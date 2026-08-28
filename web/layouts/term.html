@@ -25,7 +25,7 @@
 {{ $title := .Title | default $headerPage.Title }}
 {{ $headline := .Params.headline | default $headerPage.Params.headline }}
 {{ $links := .Params.links | default (slice) }}
-{{ $projectName := strings.TrimPrefix "/projects/" .RelPermalink }}
+{{ $projectName := strings.TrimPrefix "/projects/" .Path }}
 {{ $projectName = strings.TrimSuffix "/" $projectName }}
 {{ $subprojectPrefix := printf "%s/" $projectName }}
 {{ $collectionPages := slice }}
