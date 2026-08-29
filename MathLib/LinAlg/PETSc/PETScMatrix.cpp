@@ -34,10 +34,12 @@ PETScMatrix::PETScMatrix(const PETScMatrix& A)
       n_loc_rows_(A.n_loc_rows_),
       n_loc_cols_(A.n_loc_cols_),
       start_rank_(A.start_rank_),
-      end_rank_(A.end_rank_)
+      end_rank_(A.end_rank_),
+      sparsity_col_idx_(A.sparsity_col_idx_)
 {
-    PetscCallAbort(PETSC_COMM_WORLD,
-                   MatConvert(A.A_, MATSAME, MAT_INITIAL_MATRIX, &A_));
+    // MatDuplicate reproduces the nonzero structure exactly, so the copy
+    // shares the source's structure.
+    PetscCallAbort(PETSC_COMM_WORLD, MatDuplicate(A.A_, MAT_COPY_VALUES, &A_));
 }
 
 PETScMatrix& PETScMatrix::operator=(PETScMatrix const& A)
@@ -51,15 +53,17 @@ PETScMatrix& PETScMatrix::operator=(PETScMatrix const& A)
 
     if (A_ != nullptr)
     {
-        // TODO this is the slowest option for copying
-        PetscCallAbort(PETSC_COMM_WORLD,
-                       MatCopy(A.A_, A_, DIFFERENT_NONZERO_PATTERN));
+        auto const pattern =
+            nonzeroPatternStructure(A.sparsity_col_idx_, sparsity_col_idx_);
+        sparsity_col_idx_ = A.sparsity_col_idx_;
+        PetscCallAbort(PETSC_COMM_WORLD, MatCopy(A.A_, A_, pattern));
     }
     else
     {
+        sparsity_col_idx_ = A.sparsity_col_idx_;
         destroy();
         PetscCallAbort(PETSC_COMM_WORLD,
-                       MatConvert(A.A_, MATSAME, MAT_INITIAL_MATRIX, &A_));
+                       MatDuplicate(A.A_, MAT_COPY_VALUES, &A_));
     }
 
     return *this;
@@ -210,6 +214,8 @@ void PETScMatrix::preallocateFromSparsityPattern(
     // here: matrices are constructed a handful of times per process, and the
     // loop costs one pass over the pattern, negligible next to assembly.
     PetscCallAbort(PETSC_COMM_WORLD, MatDestroy(&preallocator));
+
+    sparsity_col_idx_ = sparsity_pattern.col_idx;
 }
 
 bool finalizeMatrixAssembly(PETScMatrix& mat, const MatAssemblyType asm_type)
@@ -233,6 +239,11 @@ void PETScMatrix::addToDiagonal(const PetscScalar value)
         MatSetOption(A_, MAT_NEW_NONZERO_ALLOCATION_ERR, PETSC_TRUE));
 }
 
+// Matrices preallocated from equal column indices have, by construction,
+// identical nonzero structures: preallocation fills every position with an
+// explicit zero and setRowsColumnsZero() keeps the pattern. PETSc can then copy
+// the values array directly instead of merging row by row. An empty (unknown)
+// structure falls back to the safe, slower path.
 void setPreallocationNonzeroOption(PETScMatrix& matrix, bool const has_col_idx)
 {
     if (has_col_idx)
@@ -248,6 +259,13 @@ void setPreallocationNonzeroOption(PETScMatrix& matrix, bool const has_col_idx)
                        MatSetOption(matrix.getRawMatrix(),
                                     MAT_NEW_NONZERO_LOCATIONS, PETSC_TRUE));
     }
+}
+
+MatStructure nonzeroPatternStructure(std::vector<PetscInt> const& col_a,
+                                     std::vector<PetscInt> const& col_b)
+{
+    return (!col_a.empty() && col_a == col_b) ? SAME_NONZERO_PATTERN
+                                              : DIFFERENT_NONZERO_PATTERN;
 }
 
 }  // namespace MathLib

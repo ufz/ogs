@@ -75,6 +75,12 @@ public:
     PetscInt getRangeBegin() const { return start_rank_; }
     /// Get the end global index of the rows in the same rank.
     PetscInt getRangeEnd() const { return end_rank_; }
+    /// Column indices cached at preallocation (empty on the fallback path).
+    std::vector<PetscInt> const& getSparsityColumnIndices() const
+    {
+        return sparsity_col_idx_;
+    }
+
     /// Get matrix reference.
     Mat& getRawMatrix() { return A_; }
     /*! Get a matrix reference.
@@ -246,6 +252,9 @@ private:
     /// Ending index in a rank
     PetscInt end_rank_;
 
+    /// Column indices from preallocation (empty when fallback path was used).
+    std::vector<PetscInt> sparsity_col_idx_;
+
     /*!
       \brief Create the matrix, configure memory allocation and set the
       related member data.
@@ -258,7 +267,9 @@ private:
 
       Uses a MATPREALLOCATOR helper matrix to reserve, type-agnostically,
       exactly the nonzero positions described by \c sparsity_pattern, then
-      transfers the preallocation to the real matrix.
+      transfers the preallocation to the real matrix. Also caches the column
+      indices in
+      \c sparsity_col_idx_ for later nonzero-pattern comparisons.
       \param sparsity_pattern CSR-style per-local-row column indices to reserve.
     */
     void preallocateFromSparsityPattern(
@@ -296,6 +307,12 @@ bool finalizeMatrixAssembly(
 /// are already in place, so the strict allocation error is enabled to catch
 /// assembly bugs. Otherwise (fallback path) new nonzero locations are allowed.
 void setPreallocationNonzeroOption(PETScMatrix& matrix, bool has_col_idx);
+
+/// Returns SAME_NONZERO_PATTERN when both cached column-index vectors are
+/// non-empty and equal, DIFFERENT_NONZERO_PATTERN otherwise. An empty pattern
+/// (fallback preallocation path) is treated as unknown, hence different.
+MatStructure nonzeroPatternStructure(std::vector<PetscInt> const& col_a,
+                                     std::vector<PetscInt> const& col_b);
 
 }  // namespace MathLib
 
