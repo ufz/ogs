@@ -198,10 +198,19 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
+    // Created before any nodes and elements are allocated such that a failure
+    // here cannot leak them.
+    MeshLib::Properties props;
+    auto* const new_mat_id_property_vec = props.createNewPropertyVector<int>(
+        "MaterialIDs", MeshLib::MeshItemType::Cell);
+    if (new_mat_id_property_vec == nullptr)
+    {
+        ERR("Could not create property vector 'MaterialIDs'.");
+        return EXIT_FAILURE;
+    }
+
     auto const& elems = mesh->getElements();
-
     std::vector<int> new_mat_ids(mat_ids->begin(), mat_ids->end());
-
     int const first_new_mat_id = MeshLib::nextUnusedMaterialId(*mat_ids);
     std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(nodes);
     std::size_t const n_points = points.size();
@@ -225,9 +234,6 @@ int main(int argc, char* argv[])
             new_mat_ids.push_back(first_new_mat_id + static_cast<int>(i));
         }
     }
-    MeshLib::Properties props;
-    auto* const new_mat_id_property_vec = props.createNewPropertyVector<int>(
-        "MaterialIDs", MeshLib::MeshItemType::Cell);
     new_mat_id_property_vec->assign(new_mat_ids);
 
     MeshLib::Mesh const result("result", new_nodes, new_elems,
