@@ -2584,7 +2584,7 @@ requires-dist = [
     { name = "nbconvert", specifier = ">=7.16.5" },
     { name = "nbformat", specifier = ">=5.7.3" },
     { name = "numpy" },
-    { name = "ogstools", git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.2.RC0" },
+    { name = "ogstools", git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.2.RC1" },
     { name = "pandas", specifier = ">=1.5" },
     { name = "papermill", specifier = ">=2.6.0" },
     { name = "pytest", specifier = ">=8.2.2" },
@@ -2602,8 +2602,8 @@ ogs-pypi = [{ name = "ogs" }]
 
 [[package]]
 name = "ogstools"
-version = "0.8.2rc0"
-source = { git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.2.RC0#7f4dcf14e772e374bc17dae2e0fc44c93bcffe1c" }
+version = "0.8.2rc1"
+source = { git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.2.RC1#9eccf36d3b9602c27139022f12eebc3145299d1e" }
 dependencies = [
     { name = "bokeh" },
     { name = "gmsh", version = "4.15.0.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "sys_platform == 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
