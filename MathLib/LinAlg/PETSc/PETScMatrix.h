@@ -29,7 +29,8 @@ public:
     /*!
       \brief        Constructor for a square matrix partitioning with more
       options
-      \param nrows  The number of rows of the matrix or the local matrix.
+      \param nrows  The number of local rows of the matrix; the global size is
+                    left to PETSc.
       \param sparsity_pattern CSR per-local-row column indices to reserve.
     */
     PETScMatrix(const PetscInt nrows,
@@ -38,8 +39,9 @@ public:
     /*!
       \brief        Constructor for a rectangular matrix partitioning with more
       options
-      \param nrows  The number of global or local rows.
-      \param ncols  The number of global or local columns.
+      \param nrows  The number of local rows; the global size is left to PETSc.
+      \param ncols  The number of local columns; the global size is left to
+                    PETSc.
       \param sparsity_pattern CSR per-local-row column indices to reserve.
     */
     PETScMatrix(const PetscInt nrows, const PetscInt ncols,
