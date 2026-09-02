@@ -1,12 +1,15 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <algorithm>
 #include <array>
 #include <numeric>
 #include <random>
+#include <range/v3/view/transform.hpp>
+#include <string>
 #include <vector>
 
 #include "BaseLib/Algorithm.h"
@@ -203,4 +206,44 @@ TEST(BaseLibAlgorithm, NoneOf)
         constexpr std::array<bool, 5> arr = {false, true, false, false, true};
         static_assert(!BL::none_of(arr));
     }
+}
+
+TEST(BaseLibAlgorithm, GetDuplicates)
+{
+    using StringVector = std::vector<std::string>;
+
+    EXPECT_THAT(BaseLib::getDuplicates(StringVector{}), testing::IsEmpty());
+    EXPECT_THAT(BaseLib::getDuplicates(StringVector{"left", "right", "top"}),
+                testing::IsEmpty());
+    EXPECT_THAT(BaseLib::getDuplicates(StringVector{"left", "right", "left"}),
+                testing::ElementsAre("left"));
+    // Each duplicate is reported once only.
+    EXPECT_THAT(BaseLib::getDuplicates(
+                    StringVector{"top", "left", "left", "top", "left"}),
+                testing::ElementsAre("left", "top"));
+    EXPECT_THAT(BaseLib::getDuplicates(std::vector<int>{1, 2, 3}),
+                testing::IsEmpty());
+    EXPECT_THAT(BaseLib::getDuplicates(std::vector<int>{1, 2, 2}),
+                testing::ElementsAre(2));
+}
+
+TEST(BaseLibAlgorithm, GetDuplicatesOfView)
+{
+    struct Field
+    {
+        std::string name;
+        int value;
+    };
+
+    std::vector<Field> const fields = {
+        {"top", 1}, {"left", 2}, {"left", 3}, {"bottom", 4}, {"top", 5}};
+
+    // The projection returns a reference; the duplicates are values.
+    EXPECT_THAT(
+        BaseLib::getDuplicates(fields | ranges::views::transform(&Field::name)),
+        testing::ElementsAre("left", "top"));
+
+    EXPECT_THAT(BaseLib::getDuplicates(fields |
+                                       ranges::views::transform(&Field::value)),
+                testing::IsEmpty());
 }

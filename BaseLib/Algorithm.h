@@ -13,6 +13,7 @@
 #include <range/v3/view/concat.hpp>
 #include <range/v3/view/partial_sum.hpp>
 #include <range/v3/view/single.hpp>
+#include <set>
 #include <string>
 #include <typeindex>
 #include <typeinfo>
@@ -165,6 +166,30 @@ OGS_NO_DANGLING typename Container::value_type const& getIfOrError(
                   error_message);
     }
     return *it;
+}
+
+/// Returns the elements occurring more than once in the range \c range, each of
+/// them reported once. The result is sorted ascendingly because the duplicates
+/// are collected in a std::set, which the elements are copied into. The
+/// returned vector is empty if all elements are pairwise different.
+template <ranges::input_range Range>
+    requires std::totally_ordered<ranges::range_value_t<Range>> &&
+             std::copyable<ranges::range_value_t<Range>>
+std::vector<ranges::range_value_t<Range>> getDuplicates(Range&& range)
+{
+    using Element = ranges::range_value_t<Range>;
+
+    std::set<Element> seen;
+    std::set<Element> duplicates;
+    for (auto const& element : range)
+    {
+        if (!seen.insert(element).second)
+        {
+            duplicates.insert(element);
+        }
+    }
+
+    return {duplicates.begin(), duplicates.end()};
 }
 
 /// Make the entries of the std::vector \c v unique. The remaining entries will

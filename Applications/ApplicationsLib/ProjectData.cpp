@@ -9,8 +9,6 @@
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
 #include <cctype>
-#include <range/v3/action/sort.hpp>
-#include <range/v3/action/unique.hpp>
 #include <range/v3/algorithm/contains.hpp>
 #include <range/v3/range/conversion.hpp>
 #include <range/v3/view/adjacent_remove_if.hpp>
@@ -451,16 +449,12 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
                   std::back_inserter(meshes));
     }
 
-    auto mesh_names = MeshLib::views::names | ranges::to<std::vector>() |
-                      ranges::actions::sort;
-    auto const sorted_names = meshes | mesh_names;
-    auto const unique_names = meshes | mesh_names | ranges::actions::unique;
-    if (unique_names.size() < sorted_names.size())
+    if (auto const duplicates =
+            BaseLib::getDuplicates(meshes | MeshLib::views::names);
+        !duplicates.empty())
     {
-        OGS_FATAL(
-            "Mesh names aren't unique. From project file read mesh names "
-            "are:\n- {}",
-            fmt::join(sorted_names, "\n- "));
+        OGS_FATAL("Mesh names aren't unique. Duplicate mesh names are:\n- {}",
+                  fmt::join(duplicates, "\n- "));
     }
 
     if (

@@ -9,10 +9,9 @@
 #include <range/v3/algorithm/find.hpp>
 #include <range/v3/iterator/operations.hpp>
 #include <range/v3/range/conversion.hpp>
-#include <range/v3/view/filter.hpp>
 #include <range/v3/view/transform.hpp>
-#include <unordered_set>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/Error.h"
 
 using nlohmann::json;
@@ -70,15 +69,9 @@ std::string IntegrationPointMetaData::toJsonString() const
 
 void IntegrationPointMetaData::checkFieldNamesAreUnique() const
 {
-    std::unordered_set<std::string> seen;
-
-    auto const duplicates =
-        fields_ |
-        ranges::views::transform(
-            &IntegrationPointMetaDataSingleField::field_name) |
-        ranges::views::filter([&seen](std::string const& name)
-                              { return !seen.insert(name).second; }) |
-        ranges::to<std::vector>;
+    auto const duplicates = BaseLib::getDuplicates(
+        fields_ | ranges::views::transform(
+                      &IntegrationPointMetaDataSingleField::field_name));
 
     if (!duplicates.empty())
     {
