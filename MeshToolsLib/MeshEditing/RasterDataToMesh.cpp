@@ -5,6 +5,7 @@
 
 #include <range/v3/algorithm/transform.hpp>
 
+#include "BaseLib/Error.h"
 #include "BaseLib/StringTools.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Node.h"
@@ -65,6 +66,13 @@ static bool projectToMeshItems(MeshLib::Mesh& mesh,
         BaseLib::getUniqueName(props.getPropertyVectorNames(), array_name);
     auto* const values = props.createNewPropertyVector<double>(
         name, item_type, mesh_items.size(), 1);
+    if (values == nullptr)
+    {
+        // MeshLib::Properties keys its property vectors by name alone, and the
+        // name above is unique among the existing ones, so this is a broken
+        // invariant rather than malformed input.
+        OGS_FATAL("Could not create the property vector '{:s}'.", name);
+    }
 
     double const no_data = raster.getHeader().no_data;
     ranges::transform(mesh_items, values->begin(),
