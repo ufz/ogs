@@ -3,7 +3,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include <iterator>
 #include <limits>
 #include <memory>
 #include <string>
@@ -22,6 +21,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/nextUnusedMaterialId.h"
 
 std::vector<std::size_t> getNodes(
     GeoLib::Point const& pnt, std::vector<MeshLib::Node*> const& nodes,
@@ -202,7 +202,7 @@ int main(int argc, char* argv[])
 
     std::vector<int> new_mat_ids(mat_ids->begin(), mat_ids->end());
 
-    int const max_id = *std::max_element(mat_ids->begin(), mat_ids->end());
+    int const first_new_mat_id = MeshLib::nextUnusedMaterialId(*mat_ids);
     std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(nodes);
     std::size_t const n_points = points.size();
     std::vector<MeshLib::Element*> new_elems =
@@ -222,7 +222,7 @@ int main(int argc, char* argv[])
             new_elems.push_back(new MeshLib::Line(
                 {new_nodes[line_nodes[j]], new_nodes[line_nodes[j + 1]]},
                 elems.size()));
-            new_mat_ids.push_back(max_id + i + 1);
+            new_mat_ids.push_back(first_new_mat_id + static_cast<int>(i));
         }
     }
     MeshLib::Properties props;

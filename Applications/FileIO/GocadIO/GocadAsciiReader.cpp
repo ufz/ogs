@@ -8,7 +8,6 @@
 #include <iterator>
 #include <memory>
 #include <optional>
-#include <range/v3/algorithm/max.hpp>
 #include <range/v3/algorithm/transform.hpp>
 #include <range/v3/view/zip.hpp>
 #include <string_view>
@@ -22,6 +21,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/nextUnusedMaterialId.h"
 
 namespace FileIO
 {
@@ -519,8 +519,8 @@ bool appendSectionMaterialIds(MeshLib::Properties& mesh_prop,
         ERR("GocadAsciiReader: Property vector '{:s}' not found.", mat_id_name);
         return false;
     }
-    int const material_id = mat_ids->empty() ? 0 : ranges::max(*mat_ids) + 1;
-    mat_ids->resize(mat_ids->size() + count, material_id);
+    mat_ids->resize(mat_ids->size() + count,
+                    MeshLib::nextUnusedMaterialId(*mat_ids));
     return true;
 }
 
