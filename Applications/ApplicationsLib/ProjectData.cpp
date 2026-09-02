@@ -4,6 +4,7 @@
 #include "ProjectData.h"
 
 #include <pybind11/eval.h>
+#include <spdlog/fmt/ranges.h>
 
 #include <algorithm>
 #include <boost/algorithm/string/predicate.hpp>
@@ -456,12 +457,10 @@ std::vector<std::unique_ptr<MeshLib::Mesh>> readMeshes(
     auto const unique_names = meshes | mesh_names | ranges::actions::unique;
     if (unique_names.size() < sorted_names.size())
     {
-        WARN(
-            "Mesh names aren't unique. From project file read mesh names are:");
-        for (auto const& name : meshes | MeshLib::views::names)
-        {
-            INFO("- {}", name);
-        }
+        OGS_FATAL(
+            "Mesh names aren't unique. From project file read mesh names "
+            "are:\n- {}",
+            fmt::join(sorted_names, "\n- "));
     }
 
     if (
