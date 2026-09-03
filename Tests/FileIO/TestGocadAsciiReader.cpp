@@ -7,6 +7,7 @@
 #include <filesystem>
 #include <fstream>
 #include <memory>
+#include <range/v3/range/conversion.hpp>
 #include <string>
 #include <vector>
 
@@ -112,6 +113,12 @@ TEST_F(GocadAsciiReaderLinesTest, ParsesSegmentsOfAllLines)
     {
         EXPECT_EQ(MeshLib::MeshElemType::LINE, element->getGeomType());
     }
+
+    // The element IDs continue across the ILINE sections instead of restarting
+    // at zero for each of them, so they are unique within the mesh.
+    EXPECT_EQ(
+        (std::vector<std::size_t>{0, 1, 2}),
+        mesh.getElements() | MeshLib::views::ids | ranges::to<std::vector>);
 
     auto const* const temperature =
         mesh.getProperties().getPropertyVector<double>(
@@ -239,6 +246,12 @@ TEST_F(GocadAsciiReaderSurfacesTest, AppendsNodePropertiesAcrossSurfaces)
     MeshLib::Mesh const& mesh = *meshes[0];
     ASSERT_EQ(10u, mesh.getNumberOfNodes());
     ASSERT_EQ(4u, mesh.getNumberOfElements());
+
+    // The element IDs continue across the TFACE sections instead of restarting
+    // at zero for each of them, so they are unique within the mesh.
+    EXPECT_EQ(
+        (std::vector<std::size_t>{0, 1, 2, 3}),
+        mesh.getElements() | MeshLib::views::ids | ranges::to<std::vector>);
 
     auto const* const temperature =
         mesh.getProperties().getPropertyVector<double>(
