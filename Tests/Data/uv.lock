@@ -2584,7 +2584,7 @@ requires-dist = [
     { name = "nbconvert", specifier = ">=7.16.5" },
     { name = "nbformat", specifier = ">=5.7.3" },
     { name = "numpy" },
-    { name = "ogstools", git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.2.RC1" },
+    { name = "ogstools", specifier = "==0.8.2" },
     { name = "pandas", specifier = ">=1.5" },
     { name = "papermill", specifier = ">=2.6.0" },
     { name = "pytest", specifier = ">=8.2.2" },
@@ -2602,8 +2602,8 @@ ogs-pypi = [{ name = "ogs" }]
 
 [[package]]
 name = "ogstools"
-version = "0.8.2rc1"
-source = { git = "https://gitlab.opengeosys.org/ogs/tools/ogstools.git?rev=0.8.2.RC1#9eccf36d3b9602c27139022f12eebc3145299d1e" }
+version = "0.8.2"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bokeh" },
     { name = "gmsh", version = "4.15.0.dev1+nox", source = { registry = "https://gmsh.info/python-packages-dev-nox" }, marker = "sys_platform == 'linux' or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-master') or (extra == 'group-20-ogs-test-environment-ogs-local' and extra == 'group-20-ogs-test-environment-ogs-pypi') or (extra == 'group-20-ogs-test-environment-ogs-master' and extra == 'group-20-ogs-test-environment-ogs-pypi')" },
@@ -2630,6 +2630,10 @@ dependencies = [
     { name = "types-pyyaml" },
     { name = "vtk" },
     { name = "watchdog" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f4/ab/4d0651a95ff5897443a4b0b171b986b61db3057bd2fd330ba0d6bd6bd2a8/ogstools-0.8.2.tar.gz", hash = "sha256:317606a499ff9c8f1c8e9bc0cb62c73439e108ec5bd023fcbdcefde9186cfae9", size = 27312296, upload-time = "2026-09-03T08:35:29.949Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/68/29/a6b762b0f7f0fb98acf691c2be701fcb907a7e70d5ebb466e8cdb189e6d2/ogstools-0.8.2-py3-none-any.whl", hash = "sha256:56d3aee35aebee9e5c604bcc925f1173f4e34734f16482fb5fbbb6c5474fd6ee", size = 9459549, upload-time = "2026-09-03T08:35:26.334Z" },
 ]
 
 [[package]]
