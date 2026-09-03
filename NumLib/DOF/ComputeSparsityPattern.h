@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#include "NumLib/NumericsConfig.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 
 namespace MeshLib
 {

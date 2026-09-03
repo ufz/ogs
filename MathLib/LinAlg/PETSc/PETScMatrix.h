@@ -3,11 +3,13 @@
 
 #pragma once
 
+#include <petscmat.h>
+
 #include <string>
 #include <vector>
 
 #include "MathLib/LinAlg/RowColumnIndices.h"
-#include "PETScMatrixOption.h"
+#include "MathLib/LinAlg/SparsityPattern.h"
 
 typedef Mat PETSc_Mat;
 
@@ -27,21 +29,23 @@ public:
     /*!
       \brief        Constructor for a square matrix partitioning with more
       options
-      \param nrows  The number of rows of the matrix or the local matrix.
-      \param mat_op The configuration information for creating a matrix.
+      \param nrows  The number of local rows of the matrix; the global size is
+                    left to PETSc.
+      \param sparsity_pattern CSR per-local-row column indices to reserve.
     */
     PETScMatrix(const PetscInt nrows,
-                const PETScMatrixOption& mat_op = PETScMatrixOption());
+                const PETScSparsityPattern& sparsity_pattern);
 
     /*!
       \brief        Constructor for a rectangular matrix partitioning with more
       options
-      \param nrows  The number of global or local rows.
-      \param ncols  The number of global or local columns.
-      \param mat_op The configuration information for creating a matrix.
+      \param nrows  The number of local rows; the global size is left to PETSc.
+      \param ncols  The number of local columns; the global size is left to
+                    PETSc.
+      \param sparsity_pattern CSR per-local-row column indices to reserve.
     */
     PETScMatrix(const PetscInt nrows, const PetscInt ncols,
-                const PETScMatrixOption& mat_op = PETScMatrixOption());
+                const PETScSparsityPattern& sparsity_pattern);
 
     ~PETScMatrix() { destroy(); }
     PETScMatrix(PETScMatrix const& A);
@@ -71,6 +75,12 @@ public:
     PetscInt getRangeBegin() const { return start_rank_; }
     /// Get the end global index of the rows in the same rank.
     PetscInt getRangeEnd() const { return end_rank_; }
+    /// Column indices cached at preallocation (empty on the fallback path).
+    std::vector<PetscInt> const& getSparsityColumnIndices() const
+    {
+        return sparsity_col_idx_;
+    }
+
     /// Get matrix reference.
     Mat& getRawMatrix() { return A_; }
     /*! Get a matrix reference.
@@ -242,15 +252,28 @@ private:
     /// Ending index in a rank
     PetscInt end_rank_;
 
+    /// Column indices from preallocation (empty when fallback path was used).
+    std::vector<PetscInt> sparsity_col_idx_;
+
     /*!
       \brief Create the matrix, configure memory allocation and set the
       related member data.
-      \param d_nz Number of nonzeros per row in the diagonal portion of
-                  local submatrix (same value is used for all local rows),
-      \param o_nz Number of nonzeros per row in the off-diagonal portion of
-                  local submatrix (same value is used for all local rows)
+      \param sparsity_pattern CSR per-local-row column indices to reserve.
     */
-    void create(const PetscInt d_nz, const PetscInt o_nz);
+    void create(const PETScSparsityPattern& sparsity_pattern);
+
+    /*!
+      \brief Preallocate the matrix storage from an exact sparsity pattern.
+
+      Uses a MATPREALLOCATOR helper matrix to reserve, type-agnostically,
+      exactly the nonzero positions described by \c sparsity_pattern, then
+      transfers the preallocation to the real matrix. Also caches the column
+      indices in
+      \c sparsity_col_idx_ for later nonzero-pattern comparisons.
+      \param sparsity_pattern CSR-style per-local-row column indices to reserve.
+    */
+    void preallocateFromSparsityPattern(
+        const PETScSparsityPattern& sparsity_pattern);
 
     friend bool finalizeMatrixAssembly(PETScMatrix& mat,
                                        const MatAssemblyType asm_type);
@@ -278,4 +301,35 @@ void PETScMatrix::add(std::vector<PetscInt> const& row_pos,
 bool finalizeMatrixAssembly(
     PETScMatrix& mat, const MatAssemblyType asm_type = MAT_FINAL_ASSEMBLY);
 
+/// Sets the PETSc new-nonzero matrix option according to whether a full column
+/// sparsity pattern was available at preallocation. When \c has_col_idx is true
+/// the matrix was preallocated via MATPREALLOCATOR and all structural nonzeros
+/// are already in place, so the strict allocation error is enabled to catch
+/// assembly bugs. Otherwise (fallback path) new nonzero locations are allowed.
+void setPreallocationNonzeroOption(PETScMatrix& matrix, bool has_col_idx);
+
+/// Returns SAME_NONZERO_PATTERN when both cached column-index vectors are
+/// non-empty and equal, DIFFERENT_NONZERO_PATTERN otherwise. An empty pattern
+/// (fallback preallocation path) is treated as unknown, hence different.
+MatStructure nonzeroPatternStructure(std::vector<PetscInt> const& col_a,
+                                     std::vector<PetscInt> const& col_b);
+
+}  // namespace MathLib
+
+#include "MathLib/LinAlg/SetMatrixSparsity.h"
+
+namespace MathLib
+{
+/// PETSc specialization. The non-trivial branch logic lives in
+/// setPreallocationNonzeroOption() (PETScMatrix.cpp).
+template <typename SPARSITY_PATTERN>
+struct SetMatrixSparsity<PETScMatrix, SPARSITY_PATTERN>
+{
+    void operator()(PETScMatrix& matrix,
+                    SPARSITY_PATTERN const& sparsity_pattern) const
+    {
+        setPreallocationNonzeroOption(matrix,
+                                      !sparsity_pattern.col_idx.empty());
+    }
+};
 }  // namespace MathLib

@@ -183,8 +183,9 @@ struct SetMatrixSparsity<LisMatrix, SPARSITY_PATTERN>
         row_sizes.reserve(n_rows);
 
         // LIS needs 1 more entry, otherwise it starts reallocating arrays.
-        transform(cbegin(sparsity_pattern), cend(sparsity_pattern),
-                  back_inserter(row_sizes), [](auto const i) { return i + 1; });
+        auto const& nnz = sparsity_pattern.number_non_zeros_per_row;
+        transform(cbegin(nnz), cend(nnz), back_inserter(row_sizes),
+                  [](auto const i) { return i + 1; });
 
         int ierr = lis_matrix_malloc(matrix.AA_, 0, row_sizes.data());
         checkLisError(ierr);

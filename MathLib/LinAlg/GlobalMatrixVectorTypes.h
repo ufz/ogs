@@ -43,4 +43,8 @@ static_assert(std::is_same_v<GlobalMatrix::IndexType, GlobalVector::IndexType>,
 // Both types are integral types and equal, define a single GlobalIndexType.
 using GlobalIndexType = GlobalMatrix::IndexType;
 
-using GlobalSparsityPattern = MathLib::SparsityPattern<GlobalIndexType>;
+#ifdef USE_PETSC
+using GlobalSparsityPattern = MathLib::PETScSparsityPattern;
+#else
+using GlobalSparsityPattern = MathLib::SerialSparsityPattern<GlobalIndexType>;
+#endif

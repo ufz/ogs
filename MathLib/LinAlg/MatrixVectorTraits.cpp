@@ -5,6 +5,7 @@
 
 #include <cassert>
 
+#include "BaseLib/Error.h"
 #include "MatrixSpecifications.h"
 
 #ifdef USE_PETSC
@@ -28,21 +29,13 @@ std::unique_ptr<PETScMatrix> MatrixVectorTraits<PETScMatrix>::newInstance(
     auto const nrows = spec.nrows;
     auto const ncols = spec.ncols;
 
-    if (spec.sparsity_pattern)
+    if (!spec.sparsity_pattern)
     {
-        // Assert that the misuse of the sparsity pattern is consistent.
-        assert(spec.sparsity_pattern->size() == 1);
-
-        auto const max_nonzeroes = spec.sparsity_pattern->front();
-
-        PETScMatrixOption mat_opt;
-        mat_opt.d_nz = max_nonzeroes;
-        mat_opt.o_nz = max_nonzeroes;
-        mat_opt.is_global_size = false;
-        return std::make_unique<PETScMatrix>(nrows, ncols, mat_opt);
+        OGS_FATAL(
+            "PETSc matrix creation requires a sparsity pattern for memory "
+            "preallocation.");
     }
-    else
-        return std::make_unique<PETScMatrix>(nrows, ncols);
+    return std::make_unique<PETScMatrix>(nrows, ncols, *spec.sparsity_pattern);
 }
 
 std::unique_ptr<PETScVector> MatrixVectorTraits<PETScVector>::newInstance()

@@ -123,17 +123,17 @@ void scale(PETScMatrix& A, PetscScalar const a)
 // Y = a*Y + X
 void aypx(PETScMatrix& Y, PetscScalar const a, PETScMatrix const& X)
 {
-    // TODO check sizes
-    // TODO sparsity pattern, currently they are assumed to be different (slow)
-    MatAYPX(Y.getRawMatrix(), a, X.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
+    auto const pattern = nonzeroPatternStructure(X.getSparsityColumnIndices(),
+                                                 Y.getSparsityColumnIndices());
+    MatAYPX(Y.getRawMatrix(), a, X.getRawMatrix(), pattern);
 }
 
 // Y = a*X + Y
 void axpy(PETScMatrix& Y, PetscScalar const a, PETScMatrix const& X)
 {
-    // TODO check sizes
-    // TODO sparsity pattern, currently they are assumed to be different (slow)
-    MatAXPY(Y.getRawMatrix(), a, X.getRawMatrix(), DIFFERENT_NONZERO_PATTERN);
+    auto const pattern = nonzeroPatternStructure(X.getSparsityColumnIndices(),
+                                                 Y.getSparsityColumnIndices());
+    MatAXPY(Y.getRawMatrix(), a, X.getRawMatrix(), pattern);
 }
 
 // Matrix and Vector

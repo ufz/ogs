@@ -6,6 +6,7 @@
 #include <tuple>
 
 #include "BaseLib/ConfigTree.h"
+#include "BaseLib/MPI.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/Eigen/EigenLinearSolver.h"
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
@@ -25,7 +26,10 @@
 #include "MathLib/LinAlg/PETSc/PETScLinearSolver.h"
 #include "MathLib/LinAlg/PETSc/PETScMatrix.h"
 #include "MathLib/LinAlg/PETSc/PETScVector.h"
+#include "Tests/MathLib/PETScSparsityPatternUtils.h"
 #include "Tests/TestTools.h"
+
+using PETScSparsityPatternUtils::denseBlockSparsityPattern;
 #endif
 
 #include "Tests/TestTools.h"
@@ -340,12 +344,8 @@ TEST(Math, CheckInterface_EigenLis)
 #ifdef USE_PETSC
 TEST(MPI_Math, CheckInterface_PETSc_Linear_Solver_basic)
 {
-    MathLib::PETScMatrixOption opt;
-    opt.d_nz = 2;
-    opt.o_nz = 0;
-    opt.is_global_size = false;
-    opt.n_local_cols = 2;
-    MathLib::PETScMatrix A(2, opt);
+    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
+    MathLib::PETScMatrix A(2, denseBlockSparsityPattern(2, 2, 2, 2 * mpi.rank));
 
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
@@ -370,12 +370,8 @@ TEST(MPI_Math, CheckInterface_PETSc_Linear_Solver_basic)
 
 TEST(MPI_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
 {
-    MathLib::PETScMatrixOption opt;
-    opt.d_nz = 2;
-    opt.o_nz = 0;
-    opt.is_global_size = false;
-    opt.n_local_cols = 2;
-    MathLib::PETScMatrix A(2, opt);
+    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
+    MathLib::PETScMatrix A(2, denseBlockSparsityPattern(2, 2, 2, 2 * mpi.rank));
 
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);
@@ -400,12 +396,8 @@ TEST(MPI_Math, CheckInterface_PETSc_Linear_Solver_chebyshev_sor)
 
 TEST(MPI_Math, CheckInterface_PETSc_Linear_Solver_gmres_amg)
 {
-    MathLib::PETScMatrixOption opt;
-    opt.d_nz = 2;
-    opt.o_nz = 0;
-    opt.is_global_size = false;
-    opt.n_local_cols = 2;
-    MathLib::PETScMatrix A(2, opt);
+    BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
+    MathLib::PETScMatrix A(2, denseBlockSparsityPattern(2, 2, 2, 2 * mpi.rank));
 
     const bool is_global_size = false;
     MathLib::PETScVector b(2, is_global_size);

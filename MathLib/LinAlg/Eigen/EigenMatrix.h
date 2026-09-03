@@ -178,9 +178,11 @@ struct SetMatrixSparsity<EigenMatrix, SPARSITY_PATTERN>
                       "row-major storage order.");
 
         assert(matrix.getNumberOfRows() ==
-               static_cast<EigenMatrix::IndexType>(sparsity_pattern.size()));
+               static_cast<EigenMatrix::IndexType>(
+                   sparsity_pattern.numberOfRows()));
 
-        matrix.getRawMatrix().reserve(sparsity_pattern);
+        matrix.getRawMatrix().reserve(
+            sparsity_pattern.number_non_zeros_per_row);
     }
 };
 
