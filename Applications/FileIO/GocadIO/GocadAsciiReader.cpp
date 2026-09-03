@@ -435,20 +435,6 @@ std::optional<std::vector<std::array<std::size_t, N>>> parseNodeIdTuples(
     return std::nullopt;
 }
 
-/// Appends \c count material IDs to \c mat_ids for the elements of the Gocad
-/// surface or line section that has just been parsed.
-///
-/// All Gocad sections of a data set share one MaterialIDs vector. Each section
-/// gets a fresh material ID, one larger than the current maximum in \c mat_ids
-/// (or 0 if \c mat_ids is still empty). The IDs already assigned to earlier
-/// sections are not modified.
-void extendMaterialIDs(MeshLib::PropertyVector<int>& mat_ids,
-                       std::size_t const count)
-{
-    int const current_mat_id = mat_ids.empty() ? 0 : ranges::max(mat_ids) + 1;
-    mat_ids.resize(mat_ids.size() + count, current_mat_id);
-}
-
 /// Creates elements from parsed node ID tuples. All elements are constructed
 /// first and appended to elems only if every element could be created, i.e.
 /// elems is left unchanged on error. The number of nodes per element is taken
@@ -489,37 +475,52 @@ bool createElements(
 }
 
 /// Parses the node ID tuples of all lines starting with \c keyword and creates
-/// the corresponding elements including their material IDs. Neither elems nor
-/// the material IDs are changed if the elements cannot be created.
+/// the corresponding elements. Returns the number of created elements, or
+/// nothing on error, in which case elems is left unchanged.
 template <typename ElementType>
-bool parseAndCreateElements(
+std::optional<std::size_t> parseAndCreateElements(
     std::ifstream& in,
     std::string_view const keyword,
     std::vector<MeshLib::Node*> const& nodes,
     std::vector<MeshLib::Element*>& elems,
-    std::map<std::size_t, std::size_t> const& node_id_map,
-    MeshLib::Properties& mesh_prop)
+    std::map<std::size_t, std::size_t> const& node_id_map)
 {
-    // Looked up before the elements are created: a failure here must not
-    // leave elems extended without the matching material IDs.
+    auto const element_data =
+        parseNodeIdTuples<ElementType::n_all_nodes>(in, keyword);
+    if (!element_data)
+    {
+        return std::nullopt;
+    }
+    if (!createElements<ElementType>(*element_data, nodes, elems, node_id_map))
+    {
+        return std::nullopt;
+    }
+    return element_data->size();
+}
+
+/// Assigns a fresh material ID to the \c count elements of the Gocad section
+/// that has just been parsed.
+///
+/// All Gocad sections of a data set share one MaterialIDs vector. Each section
+/// gets a material ID one larger than the current maximum in that vector (or 0
+/// if it is still empty). The IDs already assigned to earlier sections are not
+/// modified.
+///
+/// Called after the elements have been appended, so on a missing MaterialIDs
+/// vector the element vector already holds the section's elements. That is not
+/// observable: the caller aborts the parsing of the whole data set, which
+/// discards all nodes and elements read so far.
+bool appendSectionMaterialIds(MeshLib::Properties& mesh_prop,
+                              std::size_t const count)
+{
     auto* const mat_ids = mesh_prop.getPropertyVector<int>(mat_id_name);
     if (mat_ids == nullptr)
     {
         ERR("GocadAsciiReader: Property vector '{:s}' not found.", mat_id_name);
         return false;
     }
-
-    auto const element_data =
-        parseNodeIdTuples<ElementType::n_all_nodes>(in, keyword);
-    if (!element_data)
-    {
-        return false;
-    }
-    if (!createElements<ElementType>(*element_data, nodes, elems, node_id_map))
-    {
-        return false;
-    }
-    extendMaterialIDs(*mat_ids, element_data->size());
+    int const material_id = mat_ids->empty() ? 0 : ranges::max(*mat_ids) + 1;
+    mat_ids->resize(mat_ids->size() + count, material_id);
     return true;
 }
 
@@ -534,8 +535,9 @@ bool parseLine(std::ifstream& in,
     {
         return false;
     }
-    if (!parseAndCreateElements<MeshLib::Line>(in, "SEG", nodes, elems,
-                                               node_id_map, mesh_prop))
+    auto const n_elements = parseAndCreateElements<MeshLib::Line>(
+        in, "SEG", nodes, elems, node_id_map);
+    if (!n_elements || !appendSectionMaterialIds(mesh_prop, *n_elements))
     {
         return false;
     }
@@ -571,8 +573,9 @@ bool parseSurface(std::ifstream& in,
     {
         return false;
     }
-    if (!parseAndCreateElements<MeshLib::Tri>(in, "TRGL", nodes, elems,
-                                              node_id_map, mesh_prop))
+    auto const n_elements = parseAndCreateElements<MeshLib::Tri>(
+        in, "TRGL", nodes, elems, node_id_map);
+    if (!n_elements || !appendSectionMaterialIds(mesh_prop, *n_elements))
     {
         return false;
     }
