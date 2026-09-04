@@ -261,10 +261,11 @@ public:
             _integration_method.getNumberOfPoints();
         _ip_data.reserve(n_integration_points);
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        ParameterLib::SpatialPosition const element_pos({}, _element.getID(),
+                                                        {});
 
-        double const aperture_size = _process_data.aperture_size(0.0, pos)[0];
+        double const aperture_size =
+            _process_data.aperture_size(0.0, element_pos)[0];
 
         auto const shape_matrices =
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
@@ -274,6 +275,13 @@ public:
             *_process_data.media_map.getMedium(_element.getID());
         for (unsigned ip = 0; ip < n_integration_points; ip++)
         {
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(
+                        _element, shape_matrices[ip].N)));
+
             _ip_data.emplace_back(
                 shape_matrices[ip].dNdx,
                 _integration_method.getWeightedPoint(ip).getWeight() *
@@ -317,9 +325,6 @@ public:
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& Ns =
             _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
@@ -333,12 +338,12 @@ public:
             auto const& N = Ns[ip];
             auto const& chemical_system_id = ip_data.chemical_system_id;
 
-            // set position with N as the shape matrix at the current
-            // integration point
-            pos.setCoordinates(MathLib::Point3d(
-                NumLib::interpolateCoordinates<ShapeFunction,
-                                               ShapeMatricesType>(_element,
-                                                                  N)));
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             auto const n_component = _transport_process_variables.size();
             std::vector<double> C_int_pt(n_component);
@@ -373,9 +378,6 @@ public:
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& Ns =
             _process_data.shape_matrix_cache
                 .NsHigherOrder<typename ShapeFunction::MeshElement>();
@@ -391,8 +393,16 @@ public:
             auto const& porosity_prev = ip_data.porosity_prev;
             auto const& chemical_system_id = ip_data.chemical_system_id;
 
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
+
             auto const n_component = _transport_process_variables.size();
             std::vector<double> C_int_pt(n_component);
+
             for (unsigned component_id = 0; component_id < n_component;
                  ++component_id)
             {
@@ -577,9 +587,6 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         MaterialPropertyLib::VariableArray vars;
 
         // Get material properties
@@ -617,18 +624,18 @@ public:
             auto const& w = ip_data.integration_weight;
             auto& porosity = ip_data.porosity;
 
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
+
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
 
             NumLib::shapeFunctionInterpolate(C_nodal_values, N, C_int_pt);
             NumLib::shapeFunctionInterpolate(p_nodal_values, N, p_int_pt);
-
-            // set position with N as the shape matrix at the current
-            // integration point
-            pos.setCoordinates(MathLib::Point3d(
-                NumLib::interpolateCoordinates<ShapeFunction,
-                                               ShapeMatricesType>(_element,
-                                                                  N)));
 
             vars.concentration = C_int_pt;
             vars.liquid_phase_pressure = p_int_pt;
@@ -771,9 +778,6 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         MaterialPropertyLib::VariableArray vars;
 
         auto const& medium =
@@ -794,12 +798,12 @@ public:
             auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
 
-            // set position with N as the shape matrix at the current
-            // integration point
-            pos.setCoordinates(MathLib::Point3d(
-                NumLib::interpolateCoordinates<ShapeFunction,
-                                               ShapeMatricesType>(_element,
-                                                                  N)));
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             auto const retardation_factor =
                 component[MaterialPropertyLib::PropertyType::retardation_factor]
@@ -873,9 +877,6 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& b =
             _process_data
                 .projected_specific_body_force_vectors[_element.getID()];
@@ -900,6 +901,13 @@ public:
             auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
+
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             double const C_int_pt = N.dot(local_C);
             double const p_int_pt = N.dot(local_p);
@@ -1005,9 +1013,6 @@ public:
             local_M_data, temperature_size, temperature_size);
         auto local_K = MathLib::createZeroedMatrix<LocalBlockMatrixType>(
             local_K_data, temperature_size, temperature_size);
-
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(this->_element.getID());
 
         auto const& process_data = this->_process_data;
         auto const& medium =
@@ -1165,9 +1170,6 @@ public:
             ip_flux_vector.reserve(n_integration_points);
         }
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& b =
             _process_data
                 .projected_specific_body_force_vectors[_element.getID()];
@@ -1196,6 +1198,13 @@ public:
             auto const& N = Ns[ip];
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
+
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             double const C_int_pt = N.dot(local_C);
             double const p_int_pt = N.dot(local_p);
@@ -1364,8 +1373,6 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
         auto const& b =
             _process_data
                 .projected_specific_body_force_vectors[_element.getID()];
@@ -1390,6 +1397,13 @@ public:
             auto const& N = Ns[ip];
             auto& phi = ip_data.porosity;
             auto const& phi_prev = ip_data.porosity_prev;
+
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             double const p_ip = N.dot(p);
             double const c_ip = N.dot(c);
@@ -1483,9 +1497,6 @@ public:
         double average_velocity_norm = 0.0;
         ip_flux_vector.reserve(n_integration_points);
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& b =
             _process_data
                 .projected_specific_body_force_vectors[_element.getID()];
@@ -1512,6 +1523,13 @@ public:
             auto const& N = Ns[ip];
             auto& phi = ip_data.porosity;
             auto const& phi_prev = ip_data.porosity_prev;
+
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             double const p_ip = N.dot(p);
             double const c_ip = N.dot(c);
@@ -1613,9 +1631,6 @@ public:
         unsigned const n_integration_points =
             _integration_method.getNumberOfPoints();
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         MaterialPropertyLib::VariableArray vars;
         MaterialPropertyLib::VariableArray vars_prev;
 
@@ -1635,6 +1650,13 @@ public:
             auto& porosity = ip_data.porosity;
             auto const& porosity_prev = ip_data.porosity_prev;
             auto const chemical_system_id = ip_data.chemical_system_id;
+
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             double C_int_pt = 0.0;
             NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
@@ -1894,9 +1916,6 @@ public:
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, GlobalDim, n_integration_points);
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& b =
             _process_data
                 .projected_specific_body_force_vectors[_element.getID()];
@@ -1918,6 +1937,13 @@ public:
             auto const& dNdx = ip_data.dNdx;
             auto const& N = Ns[ip];
             auto const& porosity = ip_data.porosity;
+
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             double C_int_pt = 0.0;
             double p_int_pt = 0.0;
@@ -1984,8 +2010,12 @@ public:
                 _element, false /*is_axially_symmetric*/,
                 std::array{pnt_local_coords})[0];
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
+        ParameterLib::SpatialPosition const pos(
+            {}, _element.getID(),
+            MathLib::Point3d(NumLib::interpolateCoordinates<ShapeFunction,
+                                                            ShapeMatricesType>(
+                _element, shape_matrices.N)));
+
         auto const& b =
             _process_data
                 .projected_specific_body_force_vectors[_element.getID()];
@@ -2125,9 +2155,6 @@ public:
             Eigen::Matrix<double, GlobalDim, Eigen::Dynamic, Eigen::RowMajor>>(
             cache, GlobalDim, n_integration_points);
 
-        ParameterLib::SpatialPosition pos;
-        pos.setElementID(_element.getID());
-
         auto const& b =
             _process_data
                 .projected_specific_body_force_vectors[_element.getID()];
@@ -2152,6 +2179,13 @@ public:
             auto const& dNdx = ip_data.dNdx;
             auto const& N = Ns[ip];
             auto const& phi = ip_data.porosity;
+
+            ParameterLib::SpatialPosition const pos(
+                {}, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      N)));
 
             double const p_ip = N.dot(p);
             double const c_ip = N.dot(c);
