@@ -36,7 +36,11 @@ namespace detail
  *    which rules out the arbitrary minimizer that a degenerate history admits,
  *    and
  * -# its weights stay bounded, which rules out the mixtures of near-identical
- *    iterates whose value is pure cancellation error.
+ *    iterates whose value is pure cancellation error, and
+ * -# its predicted residual is not numerically zero while every stored step
+ *    still has a non-negligible norm, which rules out the collinear steps of
+ *    differing magnitude whose exact cancellation needs only modest weights
+ *    and therefore escapes the two tests above.
  *
  * Otherwise \f$ \theta = (0,\dots,0,1) \f$ is returned, i.e. unit weight on the
  * newest stored step, which reproduces the plain (damped) Picard update. The

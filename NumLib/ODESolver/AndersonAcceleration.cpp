@@ -107,9 +107,28 @@ Eigen::VectorXd computeAndersonWeights(Eigen::MatrixXd G)
     //     cases that slip past it.
     constexpr double max_weight = 1e2;
 
+    // (c) No exact cancellation of substantial steps: guards (a) and (b) both
+    //     miss the case of exactly (or near-exactly) collinear stored steps
+    //     whose magnitudes differ enough that cancelling them needs only
+    //     modest weights - e.g. two steps in a 2x ratio need theta = (2, -1),
+    //     well inside the max_weight cap, yet a rank-deficient G lets their
+    //     combination be driven to an exactly-zero model residual regardless
+    //     of how far either step actually is from the fixed point.
+    //     That is trustworthy only when it is explained by a stored step that
+    //     is already that small on its own (the ZeroResidualGetsFullWeight
+    //     case, where G has a genuine zero diagonal entry): if every stored
+    //     step still has a non-negligible norm, an exactly-zero mixed
+    //     residual can only be an algebraic artefact of the steps happening
+    //     to be parallel, not evidence of proximity to the fixed point.
+    constexpr double numerically_zero = 1e-8;
+    bool const exact_cancellation_of_substantial_steps =
+        mixed_residual_norm_2 < numerically_zero &&
+        G.diagonal().minCoeff() > numerically_zero;
+
     // Negated comparison, so that a NaN norm takes the fallback as well.
     if (!(mixed_residual_norm_2 < newest_step_norm_2) ||
-        theta.cwiseAbs().maxCoeff() > max_weight)
+        theta.cwiseAbs().maxCoeff() > max_weight ||
+        exact_cancellation_of_substantial_steps)
     {
         // A fallback silently changes the iterate the solver would otherwise
         // take, so it is reported at INFO level rather than hidden in DBUG.

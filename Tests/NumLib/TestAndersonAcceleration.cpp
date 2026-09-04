@@ -105,6 +105,22 @@ std::vector<AndersonWeightsCase> exactWeightsCases()
                          Eigen::Vector3d(0.0, 0.0, 1.0), 0.0});
     }
     {
+        // f_1 is exactly parallel to f_0 (a factor of 2 apart), unlike the two
+        // "nearly duplicate" cases above, whose magnitudes agree to several
+        // digits. Cancelling a 2x-apart pair needs only modest weights
+        // (theta = [2, -1], both well under the max_weight cap), so neither
+        // guard (a) nor (b) fires, yet the exactly collinear steps still let
+        // the least-squares solve drive the model residual to exactly zero -
+        // an artefact of their direction, not of either step actually being
+        // small (both have non-negligible norm). Expect the fallback.
+        Eigen::MatrixXd F(2, 2);
+        F << 1.0, 2.0,  //
+            0.0, 0.0;
+        cases.push_back(
+            {"CollinearStepsOfDifferentMagnitudeFallBackToNewestStep",
+             gramOf(F), Eigen::Vector2d(0.0, 1.0), 0.0});
+    }
+    {
         // The guards above must not fire on a healthy history: three decaying,
         // mutually orthogonal residuals, each a tenth of its predecessor. The
         // weights are the ones that zero out the model residual, concentrated
