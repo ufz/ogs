@@ -79,8 +79,7 @@ void incorporateFixedTimesForOutput(
 
     if (auto lower_bound = std::lower_bound(
             begin(fixed_times_for_output), end(fixed_times_for_output),
-            t_initial,
-            [](auto const time, NumLib::Time const& initial_time)
+            t_initial, [](auto const time, NumLib::Time const& initial_time)
             { return NumLib::Time(time) < initial_time; });
         lower_bound != begin(fixed_times_for_output))
     {

@@ -78,10 +78,9 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         config.getConfigSubtree("processes"), processes, nonlinear_solvers,
         compensate_non_equilibrium_initial_residuum, fixed_times_for_output);
 
-    const bool use_staggered_scheme =
-        ranges::any_of(processes.begin(), processes.end(),
-                       [](auto const& process)
-                       { return !(process->isMonolithicSchemeUsed()); });
+    const bool use_staggered_scheme = ranges::any_of(
+        processes.begin(), processes.end(), [](auto const& process)
+        { return !(process->isMonolithicSchemeUsed()); });
 
     std::unique_ptr<NumLib::StaggeredCoupling> staggered_coupling = nullptr;
     if (use_staggered_scheme)
@@ -106,7 +105,8 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         std::minmax_element(per_process_data.begin(),
                             per_process_data.end(),
                             [](std::unique_ptr<ProcessData> const& a,
-                               std::unique_ptr<ProcessData> const& b) {
+                               std::unique_ptr<ProcessData> const& b)
+                            {
                                 return (a->timestep_algorithm->end() <
                                         b->timestep_algorithm->end());
                             });
