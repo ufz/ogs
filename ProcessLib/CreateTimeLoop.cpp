@@ -4,6 +4,7 @@
 #include "CreateTimeLoop.h"
 
 #include <algorithm>
+#include <range/v3/algorithm/all_of.hpp>
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/view/join.hpp>
 #include <string>
@@ -99,6 +100,28 @@ std::unique_ptr<TimeLoop> createTimeLoop(
                 "want to use staggered scheme, please set the element of tag "
                 "\"<coupling_scheme>\" to \"staggered\".");
         }
+    }
+
+    auto const& first_timestep_algorithm =
+        *per_process_data.front()->timestep_algorithm;
+
+    if (!ranges::all_of(
+            per_process_data,
+            [t_initial = first_timestep_algorithm.begin()](
+                NumLib::Time const& t) { return t == t_initial; },
+            [](std::unique_ptr<ProcessData> const& process_data)
+            { return process_data->timestep_algorithm->begin(); }))
+    {
+        OGS_FATAL("All processes must have the same start time.");
+    }
+    if (!ranges::all_of(
+            per_process_data,
+            [t_end = first_timestep_algorithm.end()](NumLib::Time const& t)
+            { return t == t_end; },
+            [](std::unique_ptr<ProcessData> const& process_data)
+            { return process_data->timestep_algorithm->end(); }))
+    {
+        OGS_FATAL("All processes must have the same end time.");
     }
 
     const auto minmax_iter =
