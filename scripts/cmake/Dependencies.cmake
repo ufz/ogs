@@ -659,6 +659,7 @@ if(NOT EXISTS ${_licenses_file})
             "${${package}_SOURCE_DIR}/COPYING*"
             "${${package}_SOURCE_DIR}/Copyright*"
             "${${package}_SOURCE_DIR}/LGPL-3.0.txt" # mgis
+            "${${package}_SOURCE_DIR}/license.txt" # exprtk
         )
         list(LENGTH licenses LICENSE_COUNT)
         if(LICENSE_COUNT GREATER_EQUAL 1)
