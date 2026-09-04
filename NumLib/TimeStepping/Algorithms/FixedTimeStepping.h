@@ -52,7 +52,7 @@ public:
 
 private:
     /// a vector of time step sizes
-    std::vector<double> _dt_vector;
+    std::vector<double> dt_vector_;
 };
 
 std::size_t findDeltatInterval(Time const& t_initial,

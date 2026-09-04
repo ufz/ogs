@@ -15,9 +15,10 @@
 namespace
 {
 /// Returns sum of the newly added time increments.
-NumLib::Time addTimeIncrement(std::vector<double>& delta_ts,
-                              std::size_t const repeat, double const delta_t,
-                              NumLib::Time const t_curr)
+[[maybe_unused]] NumLib::Time addTimeIncrement(std::vector<double>& delta_ts,
+                                               std::size_t const repeat,
+                                               double const delta_t,
+                                               NumLib::Time const t_curr)
 {
     auto const new_size = delta_ts.size() + repeat;
     try
@@ -154,7 +155,7 @@ FixedTimeStepping::FixedTimeStepping(
     {
         if (t_curr <= _t_end)
         {
-            t_curr = addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
+            t_curr = addTimeIncrement(dt_vector_, repeat, delta_t, t_curr);
         }
     }
 
@@ -164,10 +165,10 @@ FixedTimeStepping::FixedTimeStepping(
         auto const delta_t = std::get<1>(repeat_dt_pairs.back());
         auto const repeat = static_cast<std::size_t>(
             std::ceil((_t_end() - t_curr()) / delta_t));
-        addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
+        addTimeIncrement(dt_vector_, repeat, delta_t, t_curr);
     }
 
-    incorporateFixedTimesForOutput(_t_initial, _t_end, _dt_vector,
+    incorporateFixedTimesForOutput(_t_initial, _t_end, dt_vector_,
                                    fixed_times_for_output);
 }
 
@@ -178,7 +179,7 @@ FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
         static_cast<std::size_t>(std::ceil((t_end - t0) / dt));
     try
     {
-        _dt_vector = std::vector<double>(new_size, dt);
+        dt_vector_ = std::vector<double>(new_size, dt);
     }
     catch (std::length_error const& e)
     {
@@ -209,13 +210,13 @@ double FixedTimeStepping::next(double const /*solution_error*/,
                                NumLib::TimeStep& ts_current)
 {
     // check if last time step
-    if (ts_current.timeStepNumber() == _dt_vector.size() ||
+    if (ts_current.timeStepNumber() == dt_vector_.size() ||
         ts_current.current() >= end())
     {
         return 0.0;
     }
 
-    double dt = _dt_vector[ts_current.timeStepNumber()];
+    double dt = dt_vector_[ts_current.timeStepNumber()];
     if (ts_current.current() + dt > end())
     {  // upper bound by t_end
         dt = end()() - ts_current.current()();
