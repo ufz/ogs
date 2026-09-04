@@ -77,6 +77,43 @@ std::vector<NumLib::RepeatDtPair> transformToRepeatDtPair(
     return repeat_dt_pairs;
 }
 
+// No time steps can be generated for an empty time interval. Both
+// constructors must reject it.
+struct NumLibFixedTimeSteppingEmptyTimeInterval
+    : public ::testing::TestWithParam<std::pair<double, double>>
+{
+};
+
+TEST_P(NumLibFixedTimeSteppingEmptyTimeInterval, ConstructionThrows)
+{
+    auto const [t_initial, t_end] = GetParam();
+    std::vector<NumLib::RepeatDtPair> const repeat_dt_pairs{{1, 1.0}};
+
+    EXPECT_ANY_THROW(
+        NumLib::FixedTimeStepping(t_initial, t_end, repeat_dt_pairs, {}));
+    EXPECT_ANY_THROW(NumLib::FixedTimeStepping(t_initial, t_end, 1.0));
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    NumLibFixedTimeStepping, NumLibFixedTimeSteppingEmptyTimeInterval,
+    // Initial time greater than the end time, initial time equal to it.
+    ::testing::Values(std::pair{1.0, 0.0}, std::pair{1.0, 1.0}));
+
+// The uniform time step size must be positive.
+struct NumLibFixedTimeSteppingNonPositiveUniformDt
+    : public ::testing::TestWithParam<double>
+{
+};
+
+TEST_P(NumLibFixedTimeSteppingNonPositiveUniformDt, ConstructionThrows)
+{
+    EXPECT_ANY_THROW(NumLib::FixedTimeStepping(0.0, 1.0, GetParam()));
+}
+
+INSTANTIATE_TEST_SUITE_P(NumLibFixedTimeStepping,
+                         NumLibFixedTimeSteppingNonPositiveUniformDt,
+                         ::testing::Values(0.0, -1.0));
+
 TEST_F(NumLibFixedTimeStepping, next)
 {
     auto test = [](std::vector<double>& expected_time_points) -> bool

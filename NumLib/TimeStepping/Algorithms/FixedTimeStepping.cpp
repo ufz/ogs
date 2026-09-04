@@ -147,10 +147,20 @@ FixedTimeStepping::FixedTimeStepping(
 {
     Time t_curr = _t_initial;
 
+    if (Time(tn) <= Time(t0))
+    {
+        OGS_FATAL(
+            "FixedTimeStepping: No time steps can be generated for the time "
+            "interval [{}, {}]. The end time must be larger than the start "
+            "time.",
+            t0, tn);
+    }
+
     if (!areRepeatDtPairsValid(repeat_dt_pairs))
     {
         OGS_FATAL("FixedTimeStepping: Couldn't construct object from data");
     }
+
     for (auto const& [repeat, delta_t] : repeat_dt_pairs)
     {
         if (t_curr <= _t_end)
@@ -168,6 +178,17 @@ FixedTimeStepping::FixedTimeStepping(
         addTimeIncrement(dt_vector_, repeat, delta_t, t_curr);
     }
 
+    // The non-empty interval and areRepeatDtPairsValid(), which guarantees at
+    // least one pair with <repeat> >= 1 and <delta_t> > 0, imply that the loop
+    // above has appended at least one step size.
+    if (dt_vector_.empty())
+    {
+        OGS_FATAL(
+            "FixedTimeStepping: No time steps were generated for the time "
+            "interval [{}, {}].",
+            t0, tn);
+    }
+
     incorporateFixedTimesForOutput(_t_initial, _t_end, dt_vector_,
                                    fixed_times_for_output);
 }
@@ -175,6 +196,17 @@ FixedTimeStepping::FixedTimeStepping(
 FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
     : TimeStepAlgorithm(t0, t_end)
 {
+    // Checked before the cast below, which is undefined for a negative value.
+    if (Time(t_end) <= Time(t0) || dt <= 0.0)
+    {
+        OGS_FATAL(
+            "FixedTimeStepping: No time steps can be generated for the time "
+            "interval [{}, {}] with the time step size {:g}. The end time must "
+            "be larger than the start time and the time step size must be "
+            "positive.",
+            t0, t_end, dt);
+    }
+
     auto const new_size =
         static_cast<std::size_t>(std::ceil((t_end - t0) / dt));
     try

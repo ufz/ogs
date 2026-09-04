@@ -80,6 +80,8 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     FixedTimeSteppingParameters const& parameters,
     std::vector<double> const& fixed_times_for_output)
 {
+    // Same condition as in the FixedTimeStepping constructor, but reported
+    // with the parsed parameters as context.
     if (Time(parameters.t_end) <= Time(parameters.t_initial))
     {
         OGS_FATAL(
