@@ -209,3 +209,113 @@ TEST_F(NumLibFixedTimeStepping, next_StaticTest)
     }
     ASSERT_EQ(ts_current.timeStepNumber(), dts.size());
 }
+
+// If the taken time steps are smaller than the prescribed ones, the prescribed
+// step sizes are used up before t_end is reached. The last prescribed step size
+// must be repeated then, because a returned step size of zero stops the time
+// loop.
+//
+// All tests of this fixture run the same time interval and take steps of the
+// same size, so that they differ in the prescribed step sizes only.
+struct NumLibFixedTimeSteppingMoreStepsThanPrescribed : public ::testing::Test
+{
+    static constexpr double t_initial = 0.0;
+    static constexpr double t_end = 10.0;
+    // Smaller than the prescribed step sizes of every test below, so the
+    // prescribed sizes are consumed faster than the time advances. That is
+    // what a process of the staggered coupling scheme experiences, since it
+    // advances with the minimum step size of all processes.
+    static constexpr double dt_taken = 1.0;
+    // The interval is covered by steps of dt_taken, so every test lists this
+    // many expected step sizes.
+    static constexpr std::size_t number_of_taken_steps = 10;
+
+    // Advances the time stepping scheme with steps of the fixed size dt_taken,
+    // which is independent of the returned step sizes. The returned step sizes
+    // must be the expected ones and t_end must be reached before a zero step
+    // size, which stops the time loop, is returned for the first time.
+    static void checkStepSizesForTakenSteps(
+        NumLib::FixedTimeStepping& fixed_time_stepping,
+        std::vector<double> const& expected_step_sizes)
+    {
+        ASSERT_EQ(number_of_taken_steps, expected_step_sizes.size());
+
+        NumLib::TimeStep ts_dummy(NumLib::Time(0), NumLib::Time(0), 0);
+        NumLib::TimeStep ts_current(NumLib::Time(0), NumLib::Time(t_initial),
+                                    0);
+        for (std::size_t k = 0; k < expected_step_sizes.size(); ++k)
+        {
+            ASSERT_EQ(expected_step_sizes[k],
+                      fixed_time_stepping.next(0.0 /* solution_error */,
+                                               0 /* number_of_iterations */,
+                                               ts_dummy,
+                                               ts_current))
+                << "at time step " << k << " and time "
+                << ts_current.current()();
+
+            ts_current += dt_taken;
+        }
+        ASSERT_TRUE(ts_current.current() == NumLib::Time(t_end));
+        ASSERT_EQ(0.0, fixed_time_stepping.next(0.0, 0, ts_dummy, ts_current));
+    }
+};
+
+TEST_F(NumLibFixedTimeSteppingMoreStepsThanPrescribed, PairsNotReachingEndTime)
+{
+    // The prescribed steps end at 8, so the constructor appends one more step
+    // of the last size 3 to reach t_end.
+    std::vector<NumLib::RepeatDtPair> const repeat_dt_pairs{
+        {1, 1.0}, {2, 2.0}, {1, 3.0}};
+    NumLib::FixedTimeStepping fixed_time_stepping{
+        t_initial, t_end, repeat_dt_pairs, {}};
+
+    // The first five sizes are those of the scheme: the four from the pairs
+    // above plus the appended one. From then on the last prescribed size of 3
+    // is repeated, clamped by the remaining time in the last two steps.
+    std::vector<double> const expected_step_sizes{1.0, 2.0, 2.0, 3.0, 3.0,
+                                                  3.0, 3.0, 3.0, 2.0, 1.0};
+
+    checkStepSizesForTakenSteps(fixed_time_stepping, expected_step_sizes);
+}
+
+// A fixed output time inside the last prescribed step splits that step into two
+// smaller ones, so the last entry of the internal step size vector is a
+// fragment of the last prescribed step size and must not be the size that is
+// repeated.
+TEST_F(NumLibFixedTimeSteppingMoreStepsThanPrescribed, FixedTimesForOutput)
+{
+    std::vector<NumLib::RepeatDtPair> const repeat_dt_pairs{{5, 2.0}};
+    // 9.5 lies inside the last prescribed step [8, 10], which is therefore
+    // split into 1.5 and 0.5.
+    std::vector<double> const fixed_times_for_output{9.5};
+    NumLib::FixedTimeStepping fixed_time_stepping{
+        t_initial, t_end, repeat_dt_pairs, fixed_times_for_output};
+
+    // The first six sizes are those of the scheme, including the split last
+    // prescribed step. From then on the last prescribed size of 2 is repeated,
+    // clamped by the remaining time in the final step.
+    std::vector<double> const expected_step_sizes{2.0, 2.0, 2.0, 2.0, 1.5,
+                                                  0.5, 2.0, 2.0, 2.0, 1.0};
+
+    checkStepSizesForTakenSteps(fixed_time_stepping, expected_step_sizes);
+}
+
+// A (repeat, delta_t) pair whose steps all start beyond t_end is no part of the
+// scheme, so its step size must not be the size that is repeated either.
+TEST_F(NumLibFixedTimeSteppingMoreStepsThanPrescribed, PairBeyondEndTime)
+{
+    // The steps of the first two pairs reach 12 and thus already overshoot
+    // t_end, so the third pair contributes no step at all.
+    std::vector<NumLib::RepeatDtPair> const repeat_dt_pairs{
+        {2, 1.0}, {5, 2.0}, {1, 100.0}};
+    NumLib::FixedTimeStepping fixed_time_stepping{
+        t_initial, t_end, repeat_dt_pairs, {}};
+
+    // The seven sizes of the first two pairs, then their last size of 2
+    // repeated---not the unused 100 of the third pair---clamped by the
+    // remaining time in the final step.
+    std::vector<double> const expected_step_sizes{1.0, 1.0, 2.0, 2.0, 2.0,
+                                                  2.0, 2.0, 2.0, 2.0, 1.0};
+
+    checkStepSizesForTakenSteps(fixed_time_stepping, expected_step_sizes);
+}
