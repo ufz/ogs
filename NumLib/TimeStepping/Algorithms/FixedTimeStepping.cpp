@@ -166,21 +166,22 @@ FixedTimeStepping::FixedTimeStepping(
         if (t_curr <= _t_end)
         {
             t_curr = addTimeIncrement(dt_vector_, repeat, delta_t, t_curr);
+            last_prescribed_dt_ = delta_t;
         }
     }
 
     // append last delta_t until t_end is reached
     if (t_curr <= _t_end)
     {
-        auto const delta_t = std::get<1>(repeat_dt_pairs.back());
         auto const repeat = static_cast<std::size_t>(
-            std::ceil((_t_end() - t_curr()) / delta_t));
-        addTimeIncrement(dt_vector_, repeat, delta_t, t_curr);
+            std::ceil((_t_end() - t_curr()) / last_prescribed_dt_));
+        addTimeIncrement(dt_vector_, repeat, last_prescribed_dt_, t_curr);
     }
 
     // The non-empty interval and areRepeatDtPairsValid(), which guarantees at
     // least one pair with <repeat> >= 1 and <delta_t> > 0, imply that the loop
-    // above has appended at least one step size.
+    // above has appended at least one step size and has set
+    // last_prescribed_dt_.
     if (dt_vector_.empty())
     {
         OGS_FATAL(
@@ -188,13 +189,20 @@ FixedTimeStepping::FixedTimeStepping(
             "interval [{}, {}].",
             t0, tn);
     }
+    if (last_prescribed_dt_ <= 0.0)
+    {
+        OGS_FATAL(
+            "FixedTimeStepping: The last prescribed time step size is {:g}, "
+            "but must be positive.",
+            last_prescribed_dt_);
+    }
 
     incorporateFixedTimesForOutput(_t_initial, _t_end, dt_vector_,
                                    fixed_times_for_output);
 }
 
 FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
-    : TimeStepAlgorithm(t0, t_end)
+    : TimeStepAlgorithm(t0, t_end), last_prescribed_dt_(dt)
 {
     // Checked before the cast below, which is undefined for a negative value.
     if (Time(t_end) <= Time(t0) || dt <= 0.0)
@@ -242,10 +250,34 @@ double FixedTimeStepping::next(double const /*solution_error*/,
                                NumLib::TimeStep& ts_current)
 {
     // check if last time step
-    if (ts_current.timeStepNumber() == dt_vector_.size() ||
-        ts_current.current() >= end())
+    if (ts_current.current() >= end())
     {
         return 0.0;
+    }
+
+    // The prescribed step sizes can be used up before t_end is reached if the
+    // steps actually taken are smaller than the prescribed ones. This is the
+    // case in the staggered coupling scheme, where all processes advance with
+    // the minimum of the step sizes of all processes, but each process consumes
+    // one of its own prescribed step sizes per time step. The last prescribed
+    // step size is repeated then, such that this process does not restrict the
+    // step size of the other processes any more.
+    if (ts_current.timeStepNumber() >= dt_vector_.size())
+    {
+        if (!reuse_of_last_dt_reported_)
+        {
+            reuse_of_last_dt_reported_ = true;
+            WARN(
+                "FixedTimeStepping: All {:d} time step sizes of the fixed time "
+                "stepping scheme are used up at time {} before the end time "
+                "{} is reached. The last prescribed time step size of {:g} "
+                "will be repeated until the end time. Please check whether the "
+                "prescribed number of time steps is large enough for the "
+                "number of time steps that are actually taken.",
+                dt_vector_.size(), ts_current.current()(), end()(),
+                last_prescribed_dt_);
+        }
+        return std::min(last_prescribed_dt_, end()() - ts_current.current()());
     }
 
     double dt = dt_vector_[ts_current.timeStepNumber()];

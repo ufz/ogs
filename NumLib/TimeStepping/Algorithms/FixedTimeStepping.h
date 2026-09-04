@@ -16,6 +16,11 @@ using RepeatDtPair = std::tuple<std::size_t, double>;
  * \brief Fixed time stepping algorithm
  *
  * This algorithm returns time step size defined by a user priori.
+ *
+ * If the prescribed time step sizes are used up before the end time is
+ * reached---which happens if the steps actually taken are smaller than the
+ * prescribed ones, as in the staggered coupling scheme---the last prescribed
+ * time step size taken by the scheme is repeated until the end time.
  */
 class FixedTimeStepping final : public TimeStepAlgorithm
 {
@@ -69,6 +74,19 @@ public:
 private:
     /// a vector of time step sizes
     std::vector<double> dt_vector_;
+
+    /// The size of the last time step the scheme takes as prescribed by the
+    /// user. Kept separately from dt_vector_ because the latter's last entry is
+    /// not necessarily a prescribed size: incorporateFixedTimesForOutput()
+    /// splits the interval containing a fixed output time into two smaller
+    /// ones. It is not the last (repeat, delta_t) pair's size either, because
+    /// pairs whose steps start beyond the end time are not part of the scheme.
+    double last_prescribed_dt_ = 0.0;
+
+    /// set if it has already been reported that the prescribed time step sizes
+    /// are used up and the last one is repeated, in order to report it once
+    /// only.
+    bool reuse_of_last_dt_reported_ = false;
 };
 
 std::size_t findDeltatInterval(Time const& t_initial,
