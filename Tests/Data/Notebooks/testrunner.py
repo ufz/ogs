@@ -122,7 +122,8 @@ def check_and_modify_frontmatter():
     if "CI_MERGE_REQUEST_SOURCE_PROJECT_URL" in os.environ:
         repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
         branch = os.environ["CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]
-    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/{petsc_prefix}{binder_tag}?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}%26depth=1"
+
+    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/{petsc_prefix}{binder_tag}?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}%26depth=1%26sparsePath={notebook_directory}"
     metadata = (
         "notebook = true\n"
         f'notebook_source_url = "{repo}/-/blob/{branch}/{notebook_file_path_relative}"\n'
@@ -164,6 +165,7 @@ for notebook_file in args.notebooks:
     notebook_file_path_relative = notebook_file_path.absolute().relative_to(
         ogs_source_path
     )
+    notebook_directory = notebook_file_path_relative.parent
 
     notebook_basename = notebook_file_path.parent.resolve() / notebook_file_path.stem
     _relpath = os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"])
