@@ -1,0 +1,144 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="1d_vertical_test.prj">
+    <remove sel="/*/parameters/parameter[name='kappa']" />
+    <remove sel="/*/parameters/parameter[name='porosity']"/>
+    <remove sel="/*/parameters/parameter[name='p0']"/>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>kappa</name>
+			<type>Function</type>
+            <expression>
+            var z_top := 25;
+			var z_bottom := -25;
+			var k_top := 2e-19;  
+			var k_bottom := 1e-19; 
+		    k_bottom + (k_top - k_bottom)/(z_top - z_bottom) * (z - z_bottom);  
+            <!--  Test of passing coordinates to calculate 
+            coordinate dependent medium properties -->
+            </expression>
+        </parameter>
+		<parameter>
+            <name>porosity</name>
+			<type>Function</type>
+            <expression>
+            var z_top := 25;
+			var z_bottom := -25;
+			var porosity_top := 0.2;  
+			var porosity_bottom := 0.1; 
+		    porosity_bottom + (porosity_top - porosity_bottom)/(z_top - z_bottom) * (z - z_bottom);  
+            <!--  Test of passing coordinates to calculate 
+            coordinate dependent medium properties -->
+            </expression>
+        </parameter>
+        	<parameter>
+            <name>p_bottom</name>
+            <type>Constant</type>
+            <value>2e5</value>
+        </parameter>
+		<parameter>
+            <name>p_top</name>
+            <type>Constant</type>
+            <value>1e5</value>
+        </parameter>
+    </add>
+    <replace msel="/*/time_loop/processes/process/time_stepping/t_end/text()">1e12</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">MP_1d_vertical_test</replace>
+    <remove sel="/*/process_variables/process_variable[name='pressure']" />
+    <add sel="/*/process_variables">
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>p_top</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>1d_vertical_test_bc_top</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_top</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>1d_vertical_test_bc_bot</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_bottom</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </add>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_0_t_0.vtu</file>
+                <field>Decay_UO2</field>
+                <absolute_tolerance>3e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_0_t_0.vtu</file>
+                <field>I</field>
+                <absolute_tolerance>3e-24</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_0_t_0.vtu</file>
+                <field>H</field>
+                <absolute_tolerance>2e-19</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_0_t_0.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>2e-9</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_1_t_5e+11.vtu</file>
+                <field>Decay_UO2</field>
+                <absolute_tolerance>2e-17</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_1_t_5e+11.vtu</file>
+                <field>I</field>
+                <absolute_tolerance>5e-24</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_1_t_5e+11.vtu</file>
+                <field>H</field>
+                <absolute_tolerance>2e-19</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_1_t_5e+11.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>2.2e-9</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_2_t_1e+12.vtu</file>
+                <field>Decay_UO2</field>
+                <absolute_tolerance>2e-17</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_2_t_1e+12.vtu</file>
+                <field>I</field>
+                <absolute_tolerance>2e-23</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_2_t_1e+12.vtu</file>
+                <field>H</field>
+                <absolute_tolerance>2e-19</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>MP_1d_vertical_test_ts_2_t_1e+12.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>2.2e-9</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
