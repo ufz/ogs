@@ -96,7 +96,9 @@ test-groups = "dev"
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_28_x86_64"
 before-all = "dnf install -y epel-release && dnf install -y ccache"
 # See https://github.com/NixOS/patchelf/issues/446, wait for patchelf 0.19
-before-build = "pipx install --force 'patchelf<0.17'"
+# Uninstall first: `pipx install --force` fails in the manylinux image, which
+# ships a pre-built patchelf venv that pipx refuses to recreate.
+before-build = "pipx uninstall patchelf || true; pipx install 'patchelf<0.17'"
 environment-pass = [
   "SETUPTOOLS_SCM_LOCAL_SCHEME",
   "CPM_SOURCE_CACHE",
