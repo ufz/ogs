@@ -6,6 +6,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "FixedTimeStepping.h"
+#include "NumLib/TimeStepping/Time.h"
 #include "TimeStepAlgorithm.h"
 
 namespace NumLib
@@ -79,11 +80,11 @@ std::unique_ptr<TimeStepAlgorithm> createFixedTimeStepping(
     FixedTimeSteppingParameters const& parameters,
     std::vector<double> const& fixed_times_for_output)
 {
-    if (parameters.t_end < parameters.t_initial)
+    if (Time(parameters.t_end) <= Time(parameters.t_initial))
     {
         OGS_FATAL(
-            "fixed timestepping: end time ({}) is smaller than initial time "
-            "({})",
+            "fixed timestepping: end time ({}) must be larger than initial "
+            "time ({})",
             parameters.t_end,
             parameters.t_initial);
     }

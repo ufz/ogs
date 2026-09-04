@@ -9,11 +9,15 @@
 
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
 
-TEST(NumLibCreateEvolutionaryPIDcontrollerTimeStepping,
-     InitialTimeGreaterThanEndTime)
+// No time steps can be generated for an empty time interval.
+struct NumLibCreateEvolutionaryPIDcontrollerEmptyTimeInterval
+    : public ::testing::TestWithParam<std::pair<double, double>>
 {
-    double const t_initial = 1;
-    double const t_end = 0;
+};
+
+TEST_P(NumLibCreateEvolutionaryPIDcontrollerEmptyTimeInterval, CreationThrows)
+{
+    auto const [t_initial, t_end] = GetParam();
 
     NumLib::EvolutionaryPIDcontrollerParameters parameters{
         t_initial, t_end, 0, 0, 0, 0, 0, 0};
@@ -21,3 +25,9 @@ TEST(NumLibCreateEvolutionaryPIDcontrollerTimeStepping,
         auto fixed_time_step_algorithm =
             NumLib::createEvolutionaryPIDcontroller(std::move(parameters), {}));
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    NumLibCreateEvolutionaryPIDcontrollerTimeStepping,
+    NumLibCreateEvolutionaryPIDcontrollerEmptyTimeInterval,
+    // Initial time greater than the end time, initial time equal to it.
+    ::testing::Values(std::pair{1.0, 0.0}, std::pair{1.0, 1.0}));
