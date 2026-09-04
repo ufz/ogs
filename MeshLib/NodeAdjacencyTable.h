@@ -38,6 +38,7 @@ public:
         return _data[node_id];
     }
 
+private:
     void createTable(Mesh const& mesh)
     {
         _data.resize(mesh.getNumberOfNodes());
@@ -55,7 +56,6 @@ public:
         }
     }
 
-private:
     std::vector<std::vector<std::size_t>> _data;
 };
 

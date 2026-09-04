@@ -68,7 +68,7 @@ repos:
         files: '.*\.cpp'
         stages: [pre-commit, manual]
   - repo: https://github.com/errata-ai/vale
-    rev: v3.17.1
+    rev: v3.20.0
     hooks:
       - id: vale
         args: [--output=line, --minAlertLevel=error]

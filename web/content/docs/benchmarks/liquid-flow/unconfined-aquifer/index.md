@@ -37,14 +37,14 @@ Since the formulation within OGS is basically based on pressure ($P$) and permea
 
 $$
 \begin{eqnarray}
-P= ρ g h
+P= \rho_{\text{w}} g h
 \label{Pressure vs. head}
 \end{eqnarray}
 $$
 
 $$
 \begin{eqnarray}
-K=  \frac{kgh}{μ}
+K=  \frac{k g \rho_{\text{w}}}{μ}
 \label{K & k}
 \end{eqnarray}
 $$
