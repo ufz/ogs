@@ -8,6 +8,7 @@
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "IterationNumberBasedTimeStepping.h"
+#include "NumLib/TimeStepping/Time.h"
 #include "TimeStepAlgorithm.h"
 
 namespace NumLib
@@ -23,11 +24,11 @@ parseIterationNumberBasedTimeStepping(BaseLib::ConfigTree const& config)
     auto const t_initial = config.getConfigParameter<double>("t_initial");
     //! \ogs_file_param{prj__time_loop__processes__process__time_stepping__IterationNumberBasedTimeStepping__t_end}
     auto const t_end = config.getConfigParameter<double>("t_end");
-    if (t_end < t_initial)
+    if (Time(t_end) <= Time(t_initial))
     {
         OGS_FATAL(
-            "iteration number based timestepping: t_end({}) is smaller than "
-            "t_initial({})",
+            "iteration number based timestepping: t_end({}) must be larger "
+            "than t_initial({})",
             t_end,
             t_initial);
     }
@@ -71,10 +72,10 @@ std::unique_ptr<TimeStepAlgorithm> createIterationNumberBasedTimeStepping(
     IterationNumberBasedTimeSteppingParameters&& parameters,
     std::vector<double> const& fixed_times_for_output)
 {
-    if (parameters.t_end < parameters.t_initial)
+    if (Time(parameters.t_end) <= Time(parameters.t_initial))
     {
         OGS_FATAL(
-            "iteration number based timestepping: end time ({}) is smaller "
+            "iteration number based timestepping: end time ({}) must be larger "
             "than initial time ({})",
             parameters.t_end,
             parameters.t_initial);

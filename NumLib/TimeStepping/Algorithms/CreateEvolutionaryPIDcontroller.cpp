@@ -6,6 +6,7 @@
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "EvolutionaryPIDcontroller.h"
+#include "NumLib/TimeStepping/Time.h"
 #include "TimeStepAlgorithm.h"
 
 namespace NumLib
@@ -45,11 +46,11 @@ std::unique_ptr<TimeStepAlgorithm> createEvolutionaryPIDcontroller(
     EvolutionaryPIDcontrollerParameters const& config,
     std::vector<double> const& fixed_times_for_output)
 {
-    if (config.t_end < config.t0)
+    if (Time(config.t_end) <= Time(config.t0))
     {
         OGS_FATAL(
-            "Evolutionary PID controller timestepping: end time ({}) is "
-            "smaller than initial time ({})",
+            "Evolutionary PID controller timestepping: end time ({}) must be "
+            "larger than initial time ({})",
             config.t_end,
             config.t0);
     }

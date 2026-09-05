@@ -10,11 +10,16 @@
 #include "NumLib/TimeStepping/Algorithms/MultiplyerInterpolationType.h"
 #include "NumLib/TimeStepping/Algorithms/TimeStepAlgorithm.h"
 
-TEST(NumLibCreateIterationNumberBasedTimeStepping,
-     InitialTimeGreaterThanEndTime)
+// No time steps can be generated for an empty time interval.
+struct NumLibCreateIterationNumberBasedTimeSteppingEmptyTimeInterval
+    : public ::testing::TestWithParam<std::pair<double, double>>
 {
-    double const t_initial = 1;
-    double const t_end = 0;
+};
+
+TEST_P(NumLibCreateIterationNumberBasedTimeSteppingEmptyTimeInterval,
+       CreationThrows)
+{
+    auto const [t_initial, t_end] = GetParam();
 
     NumLib::IterationNumberBasedTimeSteppingParameters parameters{
         t_initial, t_end,
@@ -25,3 +30,9 @@ TEST(NumLibCreateIterationNumberBasedTimeStepping,
                          NumLib::createIterationNumberBasedTimeStepping(
                              std::move(parameters), {}));
 }
+
+INSTANTIATE_TEST_SUITE_P(
+    NumLibCreateIterationNumberBasedTimeStepping,
+    NumLibCreateIterationNumberBasedTimeSteppingEmptyTimeInterval,
+    // Initial time greater than the end time, initial time equal to it.
+    ::testing::Values(std::pair{1.0, 0.0}, std::pair{1.0, 1.0}));

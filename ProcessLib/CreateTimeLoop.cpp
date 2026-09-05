@@ -4,6 +4,7 @@
 #include "CreateTimeLoop.h"
 
 #include <algorithm>
+#include <range/v3/algorithm/all_of.hpp>
 #include <range/v3/algorithm/any_of.hpp>
 #include <range/v3/view/join.hpp>
 #include <string>
@@ -78,10 +79,9 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         config.getConfigSubtree("processes"), processes, nonlinear_solvers,
         compensate_non_equilibrium_initial_residuum, fixed_times_for_output);
 
-    const bool use_staggered_scheme =
-        ranges::any_of(processes.begin(), processes.end(),
-                       [](auto const& process)
-                       { return !(process->isMonolithicSchemeUsed()); });
+    const bool use_staggered_scheme = ranges::any_of(
+        processes.begin(), processes.end(), [](auto const& process)
+        { return !(process->isMonolithicSchemeUsed()); });
 
     std::unique_ptr<NumLib::StaggeredCoupling> staggered_coupling = nullptr;
     if (use_staggered_scheme)
@@ -102,11 +102,34 @@ std::unique_ptr<TimeLoop> createTimeLoop(
         }
     }
 
+    auto const& first_timestep_algorithm =
+        *per_process_data.front()->timestep_algorithm;
+
+    if (!ranges::all_of(
+            per_process_data,
+            [t_initial = first_timestep_algorithm.begin()](
+                NumLib::Time const& t) { return t == t_initial; },
+            [](std::unique_ptr<ProcessData> const& process_data)
+            { return process_data->timestep_algorithm->begin(); }))
+    {
+        OGS_FATAL("All processes must have the same start time.");
+    }
+    if (!ranges::all_of(
+            per_process_data,
+            [t_end = first_timestep_algorithm.end()](NumLib::Time const& t)
+            { return t == t_end; },
+            [](std::unique_ptr<ProcessData> const& process_data)
+            { return process_data->timestep_algorithm->end(); }))
+    {
+        OGS_FATAL("All processes must have the same end time.");
+    }
+
     const auto minmax_iter =
         std::minmax_element(per_process_data.begin(),
                             per_process_data.end(),
                             [](std::unique_ptr<ProcessData> const& a,
-                               std::unique_ptr<ProcessData> const& b) {
+                               std::unique_ptr<ProcessData> const& b)
+                            {
                                 return (a->timestep_algorithm->end() <
                                         b->timestep_algorithm->end());
                             });

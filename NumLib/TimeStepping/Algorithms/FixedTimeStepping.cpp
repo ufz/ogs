@@ -15,9 +15,10 @@
 namespace
 {
 /// Returns sum of the newly added time increments.
-NumLib::Time addTimeIncrement(std::vector<double>& delta_ts,
-                              std::size_t const repeat, double const delta_t,
-                              NumLib::Time const t_curr)
+[[maybe_unused]] NumLib::Time addTimeIncrement(std::vector<double>& delta_ts,
+                                               std::size_t const repeat,
+                                               double const delta_t,
+                                               NumLib::Time const t_curr)
 {
     auto const new_size = delta_ts.size() + repeat;
     try
@@ -79,8 +80,7 @@ void incorporateFixedTimesForOutput(
 
     if (auto lower_bound = std::lower_bound(
             begin(fixed_times_for_output), end(fixed_times_for_output),
-            t_initial,
-            [](auto const time, NumLib::Time const& initial_time)
+            t_initial, [](auto const time, NumLib::Time const& initial_time)
             { return NumLib::Time(time) < initial_time; });
         lower_bound != begin(fixed_times_for_output))
     {
@@ -147,39 +147,79 @@ FixedTimeStepping::FixedTimeStepping(
 {
     Time t_curr = _t_initial;
 
+    if (Time(tn) <= Time(t0))
+    {
+        OGS_FATAL(
+            "FixedTimeStepping: No time steps can be generated for the time "
+            "interval [{}, {}]. The end time must be larger than the start "
+            "time.",
+            t0, tn);
+    }
+
     if (!areRepeatDtPairsValid(repeat_dt_pairs))
     {
         OGS_FATAL("FixedTimeStepping: Couldn't construct object from data");
     }
+
     for (auto const& [repeat, delta_t] : repeat_dt_pairs)
     {
         if (t_curr <= _t_end)
         {
-            t_curr = addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
+            t_curr = addTimeIncrement(dt_vector_, repeat, delta_t, t_curr);
+            last_prescribed_dt_ = delta_t;
         }
     }
 
     // append last delta_t until t_end is reached
     if (t_curr <= _t_end)
     {
-        auto const delta_t = std::get<1>(repeat_dt_pairs.back());
         auto const repeat = static_cast<std::size_t>(
-            std::ceil((_t_end() - t_curr()) / delta_t));
-        addTimeIncrement(_dt_vector, repeat, delta_t, t_curr);
+            std::ceil((_t_end() - t_curr()) / last_prescribed_dt_));
+        addTimeIncrement(dt_vector_, repeat, last_prescribed_dt_, t_curr);
     }
 
-    incorporateFixedTimesForOutput(_t_initial, _t_end, _dt_vector,
+    // The non-empty interval and areRepeatDtPairsValid(), which guarantees at
+    // least one pair with <repeat> >= 1 and <delta_t> > 0, imply that the loop
+    // above has appended at least one step size and has set
+    // last_prescribed_dt_.
+    if (dt_vector_.empty())
+    {
+        OGS_FATAL(
+            "FixedTimeStepping: No time steps were generated for the time "
+            "interval [{}, {}].",
+            t0, tn);
+    }
+    if (last_prescribed_dt_ <= 0.0)
+    {
+        OGS_FATAL(
+            "FixedTimeStepping: The last prescribed time step size is {:g}, "
+            "but must be positive.",
+            last_prescribed_dt_);
+    }
+
+    incorporateFixedTimesForOutput(_t_initial, _t_end, dt_vector_,
                                    fixed_times_for_output);
 }
 
 FixedTimeStepping::FixedTimeStepping(double t0, double t_end, double dt)
-    : TimeStepAlgorithm(t0, t_end)
+    : TimeStepAlgorithm(t0, t_end), last_prescribed_dt_(dt)
 {
+    // Checked before the cast below, which is undefined for a negative value.
+    if (Time(t_end) <= Time(t0) || dt <= 0.0)
+    {
+        OGS_FATAL(
+            "FixedTimeStepping: No time steps can be generated for the time "
+            "interval [{}, {}] with the time step size {:g}. The end time must "
+            "be larger than the start time and the time step size must be "
+            "positive.",
+            t0, t_end, dt);
+    }
+
     auto const new_size =
         static_cast<std::size_t>(std::ceil((t_end - t0) / dt));
     try
     {
-        _dt_vector = std::vector<double>(new_size, dt);
+        dt_vector_ = std::vector<double>(new_size, dt);
     }
     catch (std::length_error const& e)
     {
@@ -210,13 +250,37 @@ double FixedTimeStepping::next(double const /*solution_error*/,
                                NumLib::TimeStep& ts_current)
 {
     // check if last time step
-    if (ts_current.timeStepNumber() == _dt_vector.size() ||
-        ts_current.current() >= end())
+    if (ts_current.current() >= end())
     {
         return 0.0;
     }
 
-    double dt = _dt_vector[ts_current.timeStepNumber()];
+    // The prescribed step sizes can be used up before t_end is reached if the
+    // steps actually taken are smaller than the prescribed ones. This is the
+    // case in the staggered coupling scheme, where all processes advance with
+    // the minimum of the step sizes of all processes, but each process consumes
+    // one of its own prescribed step sizes per time step. The last prescribed
+    // step size is repeated then, such that this process does not restrict the
+    // step size of the other processes any more.
+    if (ts_current.timeStepNumber() >= dt_vector_.size())
+    {
+        if (!reuse_of_last_dt_reported_)
+        {
+            reuse_of_last_dt_reported_ = true;
+            WARN(
+                "FixedTimeStepping: All {:d} time step sizes of the fixed time "
+                "stepping scheme are used up at time {} before the end time "
+                "{} is reached. The last prescribed time step size of {:g} "
+                "will be repeated until the end time. Please check whether the "
+                "prescribed number of time steps is large enough for the "
+                "number of time steps that are actually taken.",
+                dt_vector_.size(), ts_current.current()(), end()(),
+                last_prescribed_dt_);
+        }
+        return std::min(last_prescribed_dt_, end()() - ts_current.current()());
+    }
+
+    double dt = dt_vector_[ts_current.timeStepNumber()];
     if (ts_current.current() + dt > end())
     {  // upper bound by t_end
         dt = end()() - ts_current.current()();
