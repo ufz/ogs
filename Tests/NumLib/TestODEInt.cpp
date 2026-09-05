@@ -316,6 +316,13 @@ void runLinearPicardStep(int const anderson_depth, double const damping)
 // Anderson acceleration would make the solver accept a modified iterate as
 // converged but wrong. NonlinearSolver<Picard>::solve must reject both on a
 // linear equation system (ODE1 is linear).
+//
+// ODE1::getMatrixSpecifications() provides no sparsity pattern, which the
+// PETSc backend requires for matrix preallocation (see the DISABLED_T1
+// comment above for the same issue, #1989). Under PETSc that unrelated
+// exception would satisfy EXPECT_ANY_THROW by accident while failing
+// EXPECT_NO_THROW for real, so disable these tests there too.
+#ifndef USE_PETSC
 TEST(NumLibPicardLinearGuard, AndersonDepthOnLinearSystemAborts)
 {
     EXPECT_ANY_THROW(
@@ -334,6 +341,15 @@ TEST(NumLibPicardLinearGuard, PlainPicardOnLinearSystemRuns)
 {
     EXPECT_NO_THROW(runLinearPicardStep(/*anderson_depth=*/0, /*damping=*/1.0));
 }
+
+// A depth below AndersonAcceleration::min_mixing_depth stores at most one step,
+// which the sum-to-one constraint forces to unit weight, i.e. the iterate is
+// the plain Picard one. The guard must therefore not fire for it either.
+TEST(NumLibPicardLinearGuard, InertAndersonDepthOnLinearSystemRuns)
+{
+    EXPECT_NO_THROW(runLinearPicardStep(/*anderson_depth=*/1, /*damping=*/1.0));
+}
+#endif  // USE_PETSC
 #endif  // OGS_FATAL_ABORT
 
 }  // namespace TestODEInt
