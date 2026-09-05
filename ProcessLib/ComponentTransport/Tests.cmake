@@ -227,8 +227,16 @@ if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/RadionuclidesMigration/RadionuclidesMigration.py RUNTIME 31)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/CO2Injection/CO2Injection.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/MultiLayerDiffusion/MultiLayerDiffusion.py RUNTIME 25)
-    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/DiffusionSorptionDecay.py RUNTIME 12)
-    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/elder_jupyter/elder_jupyter.py RUNTIME 11)
+    NotebookTest(
+        NOTEBOOKFILE Parabolic/ComponentTransport/DiffusionSorptionDecay/DiffusionSorptionDecay.py
+        RUNTIME 12
+        BINDER_ADDITIONAL_PATHS Parabolic/ComponentTransport/AdvectionDiffusionSorptionDecay
+    )
+    NotebookTest(
+        NOTEBOOKFILE Parabolic/ComponentTransport/elder_jupyter/elder_jupyter.py
+        RUNTIME 11
+        BINDER_ADDITIONAL_PATHS Parabolic/ComponentTransport/elder
+    )
     NotebookTest(NOTEBOOKFILE Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/heatpipe.py RUNTIME 10)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ThermalDiffusion/ThermalDiffusion.py RUNTIME 33)
 

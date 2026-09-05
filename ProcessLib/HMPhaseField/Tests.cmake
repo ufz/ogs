@@ -32,9 +32,11 @@ if(OGS_USE_PETSC)
     NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCellHM_VPF.py
         RUNTIME 1300
         PROPERTIES PROCESSORS 2
+        BINDER_ADDITIONAL_PATHS LIE/Mechanics/GreatCelljupyterNotebook
     )
     NotebookTest(NOTEBOOKFILE HMPhaseField/GreatCell/GreatCellHM_VPF_propagating.py
         RUNTIME 3800
         PROPERTIES PROCESSORS 4
+        BINDER_ADDITIONAL_PATHS LIE/Mechanics/GreatCelljupyterNotebook
     )
 endif()

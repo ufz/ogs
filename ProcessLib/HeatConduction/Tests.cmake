@@ -65,7 +65,11 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         RUNTIME 10
     )
     # Both tests above are executed in this notebook (without diff check). Maybe remove regular tests later?
-    NotebookTest(NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.py RUNTIME 15)
+    NotebookTest(
+        NOTEBOOKFILE Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder/heatconduction-line_source_term.py
+        RUNTIME 15
+        BINDER_ADDITIONAL_PATHS Parabolic/T/3D_line_source_term_tests/3D_line_source_term_in_cylinder_axisymmetric
+    )
 endif()
 if(OGS_USE_MPI)
     OgsTest(PROJECTFILE Parabolic/T/1D_neumann/petsc_newtonls.prj)
