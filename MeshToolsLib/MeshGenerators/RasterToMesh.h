@@ -86,6 +86,17 @@ private:
                                    GeoLib::RasterHeader const& header,
                                    MeshLib::MeshElemType elem_type)
     {
+        // each pixel is represented by two cells for triangles and prisms
+        bool const two_elements_per_cell =
+            (elem_type == MeshLib::MeshElemType::TRIANGLE) ||
+            (elem_type == MeshLib::MeshElemType::PRISM);
+        std::size_t const elements_per_cell = two_elements_per_cell ? 2 : 1;
+
+        // The iterator is filled below without growing prop_vec again.
+        auto out = MeshLib::extend(
+            prop_vec,
+            header.n_depth * header.n_cols * header.n_rows * elements_per_cell);
+
         for (std::size_t k = 0; k < header.n_depth; k++)
         {
             std::size_t const layer_idx = (k * header.n_rows * header.n_cols);
@@ -95,12 +106,10 @@ private:
                 for (std::size_t j = 0; j < header.n_rows; j++)
                 {
                     auto val(static_cast<T>(img[idx + j]));
-                    prop_vec.push_back(val);
-                    if (elem_type == MeshLib::MeshElemType::TRIANGLE ||
-                        elem_type == MeshLib::MeshElemType::PRISM)
+                    *out++ = val;
+                    if (two_elements_per_cell)
                     {
-                        prop_vec.push_back(val);  // because each pixel is
-                                                  // represented by two cells
+                        *out++ = val;
                     }
                 }
             }

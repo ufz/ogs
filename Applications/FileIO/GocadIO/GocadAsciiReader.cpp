@@ -3,7 +3,14 @@
 
 #include "GocadAsciiReader.h"
 
+#include <algorithm>
 #include <fstream>
+#include <iterator>
+#include <memory>
+#include <optional>
+#include <range/v3/algorithm/transform.hpp>
+#include <range/v3/view/zip.hpp>
+#include <string_view>
 
 #include "Applications/FileIO/GocadIO/CoordinateSystem.h"
 #include "BaseLib/FileTools.h"
@@ -14,6 +21,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Properties.h"
+#include "MeshLib/Utils/nextUnusedMaterialId.h"
 
 namespace FileIO
 {
@@ -267,12 +275,47 @@ bool parseAtomRegionIndicators(std::ifstream& in)
     return false;
 }
 
+/// Buffers the values of a single node property column while the nodes of one
+/// section are parsed.
+struct PropertyBuffer
+{
+    std::vector<double> values;
+    MeshLib::PropertyVector<double>* property;
+};
+
 /// Parses the node data for the current mesh
 bool parseNodes(std::ifstream& in,
                 std::vector<MeshLib::Node*>& nodes,
                 std::map<std::size_t, std::size_t>& node_id_map,
                 MeshLib::Properties const& mesh_prop)
 {
+    // The buffers follow the iteration over mesh_prop, which is ordered by
+    // property name, while the values of a PVRTX line follow the order of the
+    // PROPERTIES declaration. Zipping the two below therefore assumes that
+    // declaration to be in alphabetical order.
+    std::vector<PropertyBuffer> property_buffers;
+    for (auto const& [name, property] : mesh_prop)
+    {
+        if (name == mat_id_name)
+        {
+            continue;
+        }
+        if (auto* const p =
+                dynamic_cast<MeshLib::PropertyVector<double>*>(property))
+        {
+            property_buffers.push_back({{}, p});
+        }
+    }
+    // Appends the buffered values of this section to the values of the already
+    // parsed sections with a single bulk write per property.
+    auto const append_property_buffers = [&property_buffers]()
+    {
+        for (auto& buffer : property_buffers)
+        {
+            MeshLib::appendValues(*buffer.property, buffer.values);
+        }
+    };
+
     NodeType t = NodeType::UNSPECIFIED;
     std::streampos pos = in.tellg();
     std::string line;
@@ -282,6 +325,7 @@ bool parseNodes(std::ifstream& in,
         if (line.substr(0, 3) == "SEG" || line.substr(0, 4) == "TRGL")
         {
             in.seekg(pos);
+            append_property_buffers();
             return true;
         }
 
@@ -292,6 +336,7 @@ bool parseNodes(std::ifstream& in,
                 ERR("File ended while parsing Atom Region Indicators...");
                 return false;
             }
+            append_property_buffers();
             return true;
         }
 
@@ -317,19 +362,19 @@ bool parseNodes(std::ifstream& in,
         {
             t = NodeType::PVRTX;
             nodes.push_back(createNode(sstr));
-            for (auto [name, property] : mesh_prop)
+            for (auto& buffer : property_buffers)
             {
-                if (name == mat_id_name)
+                // property_buffers only holds PropertyVector<double> entries,
+                // so reading a double per column is safe here.
+                double value;
+                if (!(sstr >> value))
                 {
-                    continue;
+                    ERR("Error: Could not read the value of property '{:s}' "
+                        "of PVRTX line: {:s}",
+                        buffer.property->getPropertyName(), line);
+                    return false;
                 }
-                if (auto p = dynamic_cast<MeshLib::PropertyVector<double>*>(
-                        property))
-                {
-                    double value;
-                    sstr >> value;
-                    p->push_back(value);
-                }
+                buffer.values.push_back(value);
             }
         }
         else if (line.substr(0, 4) == "ATOM")
@@ -347,22 +392,17 @@ bool parseNodes(std::ifstream& in,
     return false;
 }
 
-/// Parses the segments of the current line
-bool parseLineSegments(std::ifstream& in,
-                       std::vector<MeshLib::Node*> const& nodes,
-                       std::vector<MeshLib::Element*>& elems,
-                       std::map<std::size_t, std::size_t> const& node_id_map,
-                       MeshLib::Properties& mesh_prop)
+/// Parses the node ID tuples of all consecutive lines starting with \c keyword,
+/// e.g. the segments of a line ("SEG") or the triangles of a surface ("TRGL").
+/// The stream is rewound to the first line that does not start with \c keyword.
+/// Returns std::nullopt if the file ended while parsing, or if a line does not
+/// carry the expected number of node IDs.
+template <std::size_t N>
+std::optional<std::vector<std::array<std::size_t, N>>> parseNodeIdTuples(
+    std::ifstream& in, std::string_view const keyword)
 {
-    MeshLib::PropertyVector<int>& mat_ids =
-        *mesh_prop.getPropertyVector<int>(mat_id_name);
-    int current_mat_id(0);
-    if (!mat_ids.empty())
-    {
-        current_mat_id = (*std::max_element(mat_ids.begin(), mat_ids.end()))++;
-    }
+    std::vector<std::array<std::size_t, N>> tuples;
     std::streampos pos = in.tellg();
-    std::size_t id(0);
     std::string line;
     while (std::getline(in, line))
     {
@@ -370,36 +410,118 @@ bool parseLineSegments(std::ifstream& in,
         {
             continue;
         }
-        if (line.substr(0, 3) == "SEG")
-        {
-            std::stringstream sstr(line);
-            std::string keyword;
-            std::array<std::size_t, 2> data{};
-            sstr >> keyword >> data[0] >> data[1];
-            std::array<MeshLib::Node*, 2> elem_nodes{};
-            for (std::size_t i = 0; i < 2; ++i)
-            {
-                auto const it = node_id_map.find(data[i]);
-                if (it == node_id_map.end() || it->second >= nodes.size())
-                {
-                    ERR("Error: Node ID ({:d}) out of range (0, {:d}).",
-                        data[i], nodes.back()->getID());
-                    return false;
-                }
-                elem_nodes[i] = nodes[it->second];
-            }
-            elems.push_back(new MeshLib::Line(elem_nodes, id++));
-            mat_ids.push_back(current_mat_id);
-        }
-        else
+        if (!line.starts_with(keyword))
         {
             in.seekg(pos);
-            return true;
+            return tuples;
         }
+        std::stringstream sstr(line);
+        std::string parsed_keyword;
+        sstr >> parsed_keyword;
+        std::array<std::size_t, N> data{};
+        for (auto& node_id : data)
+        {
+            if (!(sstr >> node_id))
+            {
+                ERR("Error: Could not read {:d} node IDs of {:s} line: {:s}", N,
+                    keyword, line);
+                return std::nullopt;
+            }
+        }
+        tuples.push_back(data);
         pos = in.tellg();
     }
     ERR("{:s}", eof_error);
-    return false;
+    return std::nullopt;
+}
+
+/// Creates elements from parsed node ID tuples. All elements are constructed
+/// first and appended to elems only if every element could be created, i.e.
+/// elems is left unchanged on error. The number of nodes per element is taken
+/// from the element type.
+template <typename ElementType>
+bool createElements(
+    std::vector<std::array<std::size_t, ElementType::n_all_nodes>> const&
+        element_data,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::vector<MeshLib::Element*>& elems,
+    std::map<std::size_t, std::size_t> const& node_id_map)
+{
+    std::size_t id = elems.size();
+    std::vector<std::unique_ptr<ElementType>> new_elems;
+    new_elems.reserve(element_data.size());
+    for (auto const& data : element_data)
+    {
+        std::array<MeshLib::Node*, ElementType::n_all_nodes> elem_nodes{};
+        for (auto&& [node_id, elem_node] : ranges::views::zip(data, elem_nodes))
+        {
+            auto const it = node_id_map.find(node_id);
+            if (it == node_id_map.end() || it->second >= nodes.size())
+            {
+                ERR("Error: Node ID ({:d}) out of range [0, {:d}).", node_id,
+                    nodes.size());
+                return false;
+            }
+            elem_node = nodes[it->second];
+        }
+        new_elems.push_back(std::make_unique<ElementType>(elem_nodes, id++));
+    }
+
+    elems.reserve(elems.size() + new_elems.size());
+    ranges::transform(new_elems, std::back_inserter(elems),
+                      [](auto& new_elem) { return new_elem.release(); });
+
+    return true;
+}
+
+/// Parses the node ID tuples of all lines starting with \c keyword and creates
+/// the corresponding elements. Returns the number of created elements, or
+/// nothing on error, in which case elems is left unchanged.
+template <typename ElementType>
+std::optional<std::size_t> parseAndCreateElements(
+    std::ifstream& in,
+    std::string_view const keyword,
+    std::vector<MeshLib::Node*> const& nodes,
+    std::vector<MeshLib::Element*>& elems,
+    std::map<std::size_t, std::size_t> const& node_id_map)
+{
+    auto const element_data =
+        parseNodeIdTuples<ElementType::n_all_nodes>(in, keyword);
+    if (!element_data)
+    {
+        return std::nullopt;
+    }
+    if (!createElements<ElementType>(*element_data, nodes, elems, node_id_map))
+    {
+        return std::nullopt;
+    }
+    return element_data->size();
+}
+
+/// Assigns a fresh material ID to the \c count elements of the Gocad section
+/// that has just been parsed.
+///
+/// All Gocad sections of a data set share one MaterialIDs vector. Each section
+/// gets a material ID one larger than the current maximum in that vector (or 0
+/// if it is still empty). The IDs already assigned to earlier sections are not
+/// modified.
+///
+/// Called after the elements have been appended, so on a missing MaterialIDs
+/// vector the element vector already holds the section's elements. That is not
+/// observable: the caller aborts the parsing of the whole data set, which
+/// discards all nodes and elements read so far.
+bool appendSectionMaterialIds(MeshLib::Properties& mesh_prop,
+                              std::size_t const count)
+{
+    auto* const mat_ids = mesh_prop.getPropertyVector<int>(mat_id_name);
+    if (mat_ids == nullptr)
+    {
+        ERR("GocadAsciiReader: Property vector '{:s}' not found.", mat_id_name);
+        return false;
+    }
+    mat_ids->resize(mat_ids->size() + count,
+                    MeshLib::nextUnusedMaterialId(*mat_ids));
+    return true;
 }
 
 /// Parses line information (nodes, segments, properties)
@@ -413,7 +535,9 @@ bool parseLine(std::ifstream& in,
     {
         return false;
     }
-    if (!parseLineSegments(in, nodes, elems, node_id_map, mesh_prop))
+    auto const n_elements = parseAndCreateElements<MeshLib::Line>(
+        in, "SEG", nodes, elems, node_id_map);
+    if (!n_elements || !appendSectionMaterialIds(mesh_prop, *n_elements))
     {
         return false;
     }
@@ -438,61 +562,6 @@ bool parseLine(std::ifstream& in,
     return false;
 }
 
-/// Parses the element data for the current mesh
-bool parseElements(std::ifstream& in,
-                   std::vector<MeshLib::Node*> const& nodes,
-                   std::vector<MeshLib::Element*>& elems,
-                   std::map<std::size_t, std::size_t> const& node_id_map,
-                   MeshLib::Properties& mesh_prop)
-{
-    MeshLib::PropertyVector<int>& mat_ids =
-        *mesh_prop.getPropertyVector<int>(mat_id_name);
-    int current_mat_id(0);
-    if (!mat_ids.empty())
-    {
-        current_mat_id = (*std::max_element(mat_ids.begin(), mat_ids.end()))++;
-    }
-    std::streampos pos = in.tellg();
-    std::size_t id(0);
-    std::string line;
-    while (std::getline(in, line))
-    {
-        if (line.empty() || isCommentLine(line))
-        {
-            continue;
-        }
-        if (line.substr(0, 4) == "TRGL")
-        {
-            std::stringstream sstr(line);
-            std::string keyword;
-            std::array<std::size_t, 3> data{};
-            sstr >> keyword >> data[0] >> data[1] >> data[2];
-            std::array<MeshLib::Node*, 3> elem_nodes{};
-            for (std::size_t i = 0; i < 3; ++i)
-            {
-                auto const it = node_id_map.find(data[i]);
-                if (it == node_id_map.end() || it->second >= nodes.size())
-                {
-                    ERR("Error: Node ID ({:d}) out of range (0, {:d}).",
-                        data[i], nodes.back()->getID());
-                    return false;
-                }
-                elem_nodes[i] = nodes[it->second];
-            }
-            elems.push_back(new MeshLib::Tri(elem_nodes, id++));
-            mat_ids.push_back(current_mat_id);
-        }
-        else
-        {
-            in.seekg(pos);
-            return true;
-        }
-        pos = in.tellg();
-    }
-    ERR("{:s}", eof_error);
-    return false;
-}
-
 /// Parses the surface information (nodes, triangles, properties)
 bool parseSurface(std::ifstream& in,
                   std::vector<MeshLib::Node*>& nodes,
@@ -504,7 +573,9 @@ bool parseSurface(std::ifstream& in,
     {
         return false;
     }
-    if (!parseElements(in, nodes, elems, node_id_map, mesh_prop))
+    auto const n_elements = parseAndCreateElements<MeshLib::Tri>(
+        in, "TRGL", nodes, elems, node_id_map);
+    if (!n_elements || !appendSectionMaterialIds(mesh_prop, *n_elements))
     {
         return false;
     }

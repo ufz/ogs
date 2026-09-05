@@ -22,10 +22,8 @@ static MeshLib::IntegrationPointMetaDataSingleField addIntegrationPointData(
     auto& field_data = *MeshLib::getOrCreateMeshProperty<double>(
         mesh, writer.name(), MeshLib::MeshItemType::IntegrationPoint,
         writer.numberOfComponents());
-    field_data.clear();
 
-    ranges::copy(ip_values | ranges::views::join,
-                 std::back_inserter(field_data));
+    field_data.assign(ip_values | ranges::views::join);
 
     return {writer.name(), writer.numberOfComponents(),
             writer.integrationOrder()};
@@ -37,13 +35,10 @@ static void addIntegrationPointMetaDataSingleField(
     MeshLib::Mesh& mesh, MeshLib::IntegrationPointMetaData const& ip_meta_data)
 {
     // Store the field data.
-    std::string const json_string = ip_meta_data.toJsonString();
     auto& dictionary = *MeshLib::getOrCreateMeshProperty<char>(
         mesh, "IntegrationPointMetaData",
         MeshLib::MeshItemType::IntegrationPoint, 1);
-    dictionary.clear();
-    std::copy(json_string.begin(), json_string.end(),
-              std::back_inserter(dictionary));
+    dictionary.assign(ip_meta_data.toJsonString());
 }
 
 namespace MeshLib

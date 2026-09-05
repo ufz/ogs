@@ -5,7 +5,9 @@
 
 #include <cassert>
 #include <iterator>
+#include <range/v3/algorithm/copy.hpp>
 #include <range/v3/range/concepts.hpp>
+#include <range/v3/range/primitives.hpp>
 #include <range/v3/view/common.hpp>
 #include <string>
 #ifdef _MSC_VER
@@ -175,11 +177,6 @@ public:
 #endif
     }
 
-    constexpr void push_back(const PROP_VAL_TYPE& value)
-    {
-        data_.push_back(value);
-    }
-
     constexpr void clear() { data_.clear(); }
     constexpr bool empty() const { return data_.empty(); }
 
@@ -218,4 +215,32 @@ private:
 
 static_assert(ranges::contiguous_range<PropertyVector<double>>);
 static_assert(ranges::sized_range<PropertyVector<double>>);
+
+/// Enlarges \c property by \c count value-initialised values and returns an
+/// iterator to the first of them. PropertyVector has no push_back(), so
+/// appending value-by-value would resize() once per value.
+///
+/// The returned iterator points into the storage of \c property and is
+/// invalidated by every subsequent size change of \c property. Fill the
+/// \c count values before growing \c property again.
+template <typename T>
+constexpr auto extend(PropertyVector<T>& property, std::size_t const count)
+{
+    std::size_t const offset = property.size();
+    property.resize(offset + count);
+    return property.begin() + offset;
+}
+
+/// Appends the values of the range \c values to \c property with a single bulk
+/// write.
+///
+/// \c values must not alias \c property: appending grows \c property first,
+/// which may reallocate its storage and would leave \c values dangling.
+template <typename T, typename R>
+    requires ranges::sized_range<R> &&
+             std::convertible_to<ranges::range_value_t<R>, T>
+constexpr void appendValues(PropertyVector<T>& property, R&& values)
+{
+    ranges::copy(values, extend(property, ranges::size(values)));
+}
 }  // end namespace MeshLib

@@ -7,6 +7,8 @@
 #include <range/v3/algorithm/copy.hpp>
 #include <range/v3/algorithm/transform.hpp>
 #include <range/v3/range/conversion.hpp>
+#include <range/v3/view/filter.hpp>
+#include <range/v3/view/iota.hpp>
 #include <range/v3/view/transform.hpp>
 
 #include "BaseLib/Algorithm.h"
@@ -886,31 +888,63 @@ unsigned getNumberOfUniqueNodes(MeshLib::Element const* const element)
     return count;
 }
 
-template <typename T>
-void fillNodeProperty(MeshLib::PropertyVector<T>& new_prop,
-                      MeshLib::PropertyVector<T> const& old_prop,
-                      std::vector<size_t> const& node_ids)
+/// Ids of the nodes surviving the collapsing, i.e. of those mapped onto
+/// themselves, in increasing order.
+std::vector<std::size_t> getSurvivingNodeIds(
+    std::vector<std::size_t> const& node_ids)
 {
-    std::size_t const n_nodes = node_ids.size();
-    for (std::size_t i = 0; i < n_nodes; ++i)
-    {
-        if (node_ids[i] != i)
-        {
-            continue;
-        }
-        new_prop.push_back(old_prop[i]);
-    }
+    return ranges::views::iota(std::size_t{0}, node_ids.size()) |
+           ranges::views::filter([&node_ids](std::size_t const i)
+                                 { return node_ids[i] == i; }) |
+           ranges::to<std::vector>;
 }
 
+/// Copies the scalar property \c name of value type T and item type
+/// \c item_type, if such a property exists, to \c new_properties. The new
+/// property holds one value per entry of \c source_ids, gathered from the old
+/// property at that id. Returns false if no such property exists.
 template <typename T>
-void fillElemProperty(MeshLib::PropertyVector<T>& new_prop,
-                      MeshLib::PropertyVector<T> const& old_prop,
-                      std::vector<size_t> const& elem_ids)
+bool copyProperty(MeshLib::Properties const& props,
+                  MeshLib::Properties& new_properties,
+                  std::string const& name,
+                  MeshLib::MeshItemType const item_type,
+                  std::vector<std::size_t> const& source_ids)
 {
-    assert(new_prop.size() == old_prop.size());
-    assert(new_prop.size() == elem_ids.size());
-    ranges::transform(elem_ids, new_prop.begin(),
-                      [&](std::size_t const i) { return old_prop[i]; });
+    if (!props.existsPropertyVector<T>(name, item_type, 1))
+    {
+        return false;
+    }
+    auto const& old_prop = *props.getPropertyVector<T>(name, item_type, 1);
+    auto* const new_prop = new_properties.createNewPropertyVector<T>(
+        name, item_type, source_ids.size(), 1);
+    if (new_prop == nullptr)
+    {
+        // MeshLib::Properties keys its property vectors by name alone, and
+        // each name of the source mesh is inserted here at most once, so this
+        // is a broken invariant rather than malformed input.
+        OGS_FATAL(
+            "Could not create the property vector '{:s}' in the revised mesh.",
+            name);
+    }
+    ranges::transform(source_ids, new_prop->begin(),
+                      [&old_prop](std::size_t const i) { return old_prop[i]; });
+    return true;
+}
+
+/// Copies the scalar property \c name of item type \c item_type, trying the
+/// supported value types in turn. Returns false if no property of that name and
+/// item type exists in any of them.
+template <typename... Ts>
+bool copyPropertyOfAnyValueType(MeshLib::Properties const& props,
+                                MeshLib::Properties& new_properties,
+                                std::string const& name,
+                                MeshLib::MeshItemType const item_type,
+                                std::vector<std::size_t> const& source_ids)
+{
+    // The || fold stops at the first value type that exists.
+    return (
+        copyProperty<Ts>(props, new_properties, name, item_type, source_ids) ||
+        ...);
 }
 
 /// Copies all scalar arrays according to the restructured Node- and
@@ -922,70 +956,19 @@ MeshLib::Properties copyProperties(MeshLib::Properties const& props,
 {
     auto const prop_names = props.getPropertyVectorNames();
     MeshLib::Properties new_properties;
+    auto const surviving_node_ids = getSurvivingNodeIds(node_ids);
 
-    for (auto name : prop_names)
+    for (auto const& name : prop_names)
     {
-        if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Node,
-                                            1))
+        if (!copyPropertyOfAnyValueType<int, float, double>(
+                props, new_properties, name, MeshLib::MeshItemType::Node,
+                surviving_node_ids) &&
+            !copyPropertyOfAnyValueType<int, float, double>(
+                props, new_properties, name, MeshLib::MeshItemType::Cell,
+                elem_ids))
         {
-            auto const* p = props.getPropertyVector<int>(
-                name, MeshLib::MeshItemType::Node, 1);
-            auto new_node_vec = new_properties.createNewPropertyVector<int>(
-                name, MeshLib::MeshItemType::Node, 1);
-            fillNodeProperty(*new_node_vec, *p, node_ids);
-            continue;
+            WARN("PropertyVector {:s} not being converted.", name);
         }
-        if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Node,
-                                              1))
-        {
-            auto const* p = props.getPropertyVector<float>(
-                name, MeshLib::MeshItemType::Node, 1);
-            auto new_node_vec = new_properties.createNewPropertyVector<float>(
-                name, MeshLib::MeshItemType::Node, 1);
-            fillNodeProperty(*new_node_vec, *p, node_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<double>(name,
-                                               MeshLib::MeshItemType::Node, 1))
-        {
-            auto const* p = props.getPropertyVector<double>(
-                name, MeshLib::MeshItemType::Node, 1);
-            auto new_node_vec = new_properties.createNewPropertyVector<double>(
-                name, MeshLib::MeshItemType::Node, 1);
-            fillNodeProperty(*new_node_vec, *p, node_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<int>(name, MeshLib::MeshItemType::Cell,
-                                            1))
-        {
-            auto const* p = props.getPropertyVector<int>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            auto new_cell_vec = new_properties.createNewPropertyVector<int>(
-                name, MeshLib::MeshItemType::Cell, p->size(), 1);
-            fillElemProperty(*new_cell_vec, *p, elem_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<float>(name, MeshLib::MeshItemType::Cell,
-                                              1))
-        {
-            auto const* p = props.getPropertyVector<float>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            auto new_cell_vec = new_properties.createNewPropertyVector<float>(
-                name, MeshLib::MeshItemType::Cell, p->size(), 1);
-            fillElemProperty(*new_cell_vec, *p, elem_ids);
-            continue;
-        }
-        if (props.existsPropertyVector<double>(name,
-                                               MeshLib::MeshItemType::Cell, 1))
-        {
-            auto const* p = props.getPropertyVector<double>(
-                name, MeshLib::MeshItemType::Cell, 1);
-            auto new_cell_vec = new_properties.createNewPropertyVector<double>(
-                name, MeshLib::MeshItemType::Cell, p->size(), 1);
-            fillElemProperty(*new_cell_vec, *p, elem_ids);
-            continue;
-        }
-        WARN("PropertyVector {:s} not being converted.", name);
     }
     return new_properties;
 }

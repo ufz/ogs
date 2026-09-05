@@ -3,7 +3,6 @@
 
 #include <tclap/CmdLine.h>
 
-#include <iterator>
 #include <limits>
 #include <memory>
 #include <string>
@@ -22,6 +21,7 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
 #include "MeshLib/Utils/DuplicateMeshComponents.h"
+#include "MeshLib/Utils/nextUnusedMaterialId.h"
 
 std::vector<std::size_t> getNodes(
     GeoLib::Point const& pnt, std::vector<MeshLib::Node*> const& nodes,
@@ -198,13 +198,20 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    auto const& elems = mesh->getElements();
+    // Created before any nodes and elements are allocated such that a failure
+    // here cannot leak them.
     MeshLib::Properties props;
-    auto new_mat_ids = props.createNewPropertyVector<int>(
+    auto* const new_mat_id_property_vec = props.createNewPropertyVector<int>(
         "MaterialIDs", MeshLib::MeshItemType::Cell);
-    std::copy(mat_ids->cbegin(), mat_ids->cend(),
-              std::back_inserter(*new_mat_ids));
-    int const max_id = *std::max_element(mat_ids->begin(), mat_ids->end());
+    if (new_mat_id_property_vec == nullptr)
+    {
+        ERR("Could not create property vector 'MaterialIDs'.");
+        return EXIT_FAILURE;
+    }
+
+    auto const& elems = mesh->getElements();
+    std::vector<int> new_mat_ids(mat_ids->begin(), mat_ids->end());
+    int const first_new_mat_id = MeshLib::nextUnusedMaterialId(*mat_ids);
     std::vector<MeshLib::Node*> new_nodes = MeshLib::copyNodeVector(nodes);
     std::size_t const n_points = points.size();
     std::vector<MeshLib::Element*> new_elems =
@@ -224,9 +231,10 @@ int main(int argc, char* argv[])
             new_elems.push_back(new MeshLib::Line(
                 {new_nodes[line_nodes[j]], new_nodes[line_nodes[j + 1]]},
                 elems.size()));
-            new_mat_ids->push_back(max_id + i + 1);
+            new_mat_ids.push_back(first_new_mat_id + static_cast<int>(i));
         }
     }
+    new_mat_id_property_vec->assign(new_mat_ids);
 
     MeshLib::Mesh const result("result", new_nodes, new_elems,
                                true /* compute_element_neighbors */, props);
