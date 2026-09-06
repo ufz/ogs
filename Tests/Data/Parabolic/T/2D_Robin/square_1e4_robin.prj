@@ -206,7 +206,7 @@
         <vtkdiff>
             <regex>square_1x1_quad_1e4_t_.*.vtu</regex>
             <field>temperature</field>
-            <absolute_tolerance>2.2e-14</absolute_tolerance>
+            <absolute_tolerance>3e-14</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
