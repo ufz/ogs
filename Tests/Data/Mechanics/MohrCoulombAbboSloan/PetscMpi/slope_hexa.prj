@@ -71,6 +71,7 @@
                     <each_steps>200</each_steps>
                 </pair>
             </timesteps>
+            <fixed_output_times>2.5</fixed_output_times>
             <variables>
                 <variable>displacement</variable>
                 <variable>sigma</variable>
@@ -287,10 +288,23 @@
         </linear_solver>
     </linear_solvers>
     <test_definition>
+        <!-- Before the slope collapses the result is reproducible and is
+             compared tightly. -->
+        <vtkdiff>
+            <file>slope_t_2_500000.vtu</file>
+            <field>displacement</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <!-- The end result is in the collapse regime, where it is not
+             time-step-size convergent: a single additional time step
+             repetition, e.g. caused by a linear solver break-down, changes
+             the displacement significantly. The loose tolerance keeps this
+             a smoke check only. -->
         <vtkdiff>
             <file>slope_t_5_000000.vtu</file>
             <field>displacement</field>
-            <absolute_tolerance>1e-2</absolute_tolerance>
+            <absolute_tolerance>1</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>
