@@ -196,7 +196,12 @@ def ogs_ortho(
             xpath="./linear_solvers/linear_solver/petsc/parameters",
             occurrence=1,
         )
-    model.replace_text(Path("./shear.gml").resolve(), xpath="./geometry")
+    if not MPI:
+        # In the MPI case the boundary meshes are created by
+        # constructMeshesFromGeometry and partmesh beforehand and are listed in
+        # the <meshes> section. Adding the geometry would create boundary meshes
+        # of the same names a second time.
+        model.replace_text(Path("./shear.gml").resolve(), xpath="./geometry")
     model.write_input()
     # run ogs
     t0 = time.time()

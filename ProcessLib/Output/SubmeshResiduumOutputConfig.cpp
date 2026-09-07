@@ -3,9 +3,11 @@
 
 #include "SubmeshResiduumOutputConfig.h"
 
-#include <numeric>
-#include <unordered_set>
+#include <spdlog/fmt/ranges.h>
 
+#include <numeric>
+
+#include "BaseLib/Algorithm.h"
 #include "CreateOutput.h"
 #include "CreateOutputConfig.h"
 
@@ -41,14 +43,6 @@ filterMeshesForResiduumOutput(
     }
 
     return meshes_filtered;
-}
-
-bool areElementsUnique(std::vector<std::string> const& strings)
-{
-    std::unordered_set<std::string_view> const strings_set(strings.begin(),
-                                                           strings.end());
-
-    return strings_set.size() == strings.size();
 }
 
 void checkBulkIDMappingsPresent(MeshLib::Mesh const& mesh)
@@ -212,9 +206,14 @@ SubmeshResiduumOutputConfig createSubmeshResiduumOutputConfig(
             "You did not specify any meshes for submesh residuum output.");
     }
 
-    if (!areElementsUnique(oc.mesh_names_for_output))
+    if (auto const duplicates =
+            BaseLib::getDuplicates(oc.mesh_names_for_output);
+        !duplicates.empty())
     {
-        OGS_FATAL("The mesh names for submesh residuum output are not unique.");
+        OGS_FATAL(
+            "The mesh names for submesh residuum output are not unique. "
+            "Duplicate names: {:s}.",
+            fmt::join(duplicates, ", "));
     }
 
     auto const meshes_filtered =

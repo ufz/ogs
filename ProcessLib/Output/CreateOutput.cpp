@@ -3,10 +3,13 @@
 
 #include "CreateOutput.h"
 
+#include <spdlog/fmt/ranges.h>
+
 #include <memory>
 #include <range/v3/algorithm/find.hpp>
 #include <tuple>
 
+#include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/cpp23.h"
@@ -34,7 +37,8 @@ int convertVtkDataMode(std::string_view const& data_mode)
     return static_cast<int>(std::distance(begin(data_mode_lookup_table), res));
 }
 
-bool areOutputNamesUnique(std::vector<ProcessLib::Output> const& outputs)
+std::vector<std::string> getDuplicateOutputNames(
+    std::vector<ProcessLib::Output> const& outputs)
 {
     std::vector<std::string> output_names;
     for (auto const& output : outputs)
@@ -43,9 +47,7 @@ bool areOutputNamesUnique(std::vector<ProcessLib::Output> const& outputs)
         output_names.insert(output_names.end(), output_mesh_names.begin(),
                             output_mesh_names.end());
     }
-    std::sort(output_names.begin(), output_names.end());
-    auto const last = std::unique(output_names.begin(), output_names.end());
-    return last == output_names.end();
+    return BaseLib::getDuplicates(output_names);
 }
 }  // namespace
 
@@ -122,7 +124,8 @@ std::vector<Output> createOutputs(
         outputs.push_back(
             createOutput(std::move(oc), output_directory, meshes));
     }
-    if (areOutputNamesUnique(outputs))
+    auto const duplicates = getDuplicateOutputNames(outputs);
+    if (duplicates.empty())
     {
         return outputs;
     }
@@ -130,6 +133,7 @@ std::vector<Output> createOutputs(
     OGS_FATAL(
         "Output configuration paths are not unique. This will lead to "
         "overwritten results or invalid / corrupted data within the "
-        "files.");
+        "files. Duplicate paths: {:s}.",
+        fmt::join(duplicates, ", "));
 }
 }  // namespace ProcessLib
