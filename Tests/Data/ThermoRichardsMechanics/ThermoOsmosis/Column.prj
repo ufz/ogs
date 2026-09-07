@@ -242,11 +242,6 @@
             <value>0.2</value>
         </parameter>
         <parameter>
-            <name>T0</name>
-            <type>Constant</type>
-            <value>300</value>
-        </parameter>
-        <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0</values>
