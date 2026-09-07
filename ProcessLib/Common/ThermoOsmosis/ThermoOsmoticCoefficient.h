@@ -5,7 +5,6 @@
 
 #include "BaseLib/Error.h"
 #include "MaterialLib/MPL/Medium.h"
-#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "ParameterLib/SpatialPosition.h"
 
@@ -18,14 +17,16 @@ namespace ProcessLib
 /// \c thermal_osmosis_coefficient medium property
 /// (\f$[k_T] = m^2/(K \cdot s)\f$), or indirectly via the
 /// \c thermal_osmosis_permeability medium property, in which case
-/// \f$k_T = \epsilon_T k / \mu\f$ with the thermo-osmotic permeability
+/// \f$k_T = \epsilon_T k / \mu\f$ with the scalar thermo-osmotic permeability
 /// \f$\epsilon_T\f$ (\f$[\epsilon_T] = Pa/K\f$), which converts a temperature
 /// gradient into the equivalent pore pressure gradient driving the
 /// thermo-osmotic flux, the intrinsic permeability
 /// \f$k\f$ (\f$[k] = m^2\f$), and the liquid's dynamic viscosity
 /// \f$\mu\f$ (\f$[\mu] = Pa \cdot s\f$).
-/// Defining both properties at the same time is an error. If neither is
-/// defined, the zero tensor is returned (no thermo-osmosis).
+/// If neither is defined, the zero tensor is returned (no thermo-osmosis).
+/// That the two properties are not defined at the same time, and that neither
+/// is left on the solid phase, is checked once at process creation by
+/// checkThermoOsmosisProperties() and not re-checked here.
 ///
 /// \f$k\f$ and \f$\mu\f$ are passed in rather than read from the medium: the
 /// callers have already evaluated them for the Darcy term, and the caller's
@@ -36,11 +37,9 @@ namespace ProcessLib
 /// properties themselves, which are read with that array: in
 /// ThermoRichardsMechanics they must not depend on primary variables.
 ///
-/// \note The product below is formed as \f$\epsilon_T k\f$. That order is
-/// only exercised for diagonal \f$\epsilon_T\f$ and \f$k\f$, for which the
-/// two tensors commute and the order does not matter. For non-diagonal
-/// tensors the order matters, is not covered by any test, and may need to be
-/// swapped if it turns out not to be the physically intended composition.
+/// \note \f$\epsilon_T\f$ is a scalar, so \f$k_T\f$ inherits the anisotropy of
+/// \f$k\f$ alone and the composition order does not arise. A tensor-valued
+/// \c thermal_osmosis_permeability is rejected by the property's value access.
 ///
 /// @tparam GlobalDim spatial dimension of the returned tensor
 /// @param medium the medium the thermo-osmosis properties are read from
@@ -62,36 +61,8 @@ Eigen::Matrix<double, GlobalDim, GlobalDim> getThermoOsmoticCoefficient(
     Eigen::Matrix<double, GlobalDim, GlobalDim> const& intrinsic_permeability,
     double const liquid_dynamic_viscosity)
 {
-    auto const solid_phase =
-        getOptionalPhase(medium, MaterialPropertyLib::PhaseName::Solid);
-    if (solid_phase &&
-        solid_phase->hasProperty(
-            MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient))
-    {
-        OGS_FATAL(
-            "thermal_osmosis_coefficient is defined on the solid phase of "
-            "{:s}, but is now read from the medium. Move the property from "
-            "the solid phase to the medium, or use "
-            "scripts/dev/move_thermal_osmosis.py to migrate the project "
-            "file.",
-            medium.description());
-    }
-
-    bool const has_thermal_osmosis_permeability = medium.hasProperty(
-        MaterialPropertyLib::PropertyType::thermal_osmosis_permeability);
-
-    bool const has_thermal_osmosis_coefficient = medium.hasProperty(
-        MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient);
-
-    if (has_thermal_osmosis_permeability && has_thermal_osmosis_coefficient)
-    {
-        OGS_FATAL(
-            "Thermo-osmosis permeability and coefficient cannot be defined at "
-            "the same time in {:s}.",
-            medium.description());
-    }
-
-    if (has_thermal_osmosis_permeability)
+    if (medium.hasProperty(
+            MaterialPropertyLib::PropertyType::thermal_osmosis_permeability))
     {
         if (liquid_dynamic_viscosity <= 0.)
         {
@@ -101,15 +72,15 @@ Eigen::Matrix<double, GlobalDim, GlobalDim> getThermoOsmoticCoefficient(
                 liquid_dynamic_viscosity, medium.description());
         }
 
-        auto const epsilon_T = MaterialPropertyLib::formEigenTensor<GlobalDim>(
-            medium
-                .property(MaterialPropertyLib::PropertyType::
-                              thermal_osmosis_permeability)
-                .value(variable_array, pos, t, dt));
+        auto const epsilon_T = medium
+                                   .property(MaterialPropertyLib::PropertyType::
+                                                 thermal_osmosis_permeability)
+                                   .value<double>(variable_array, pos, t, dt);
         return epsilon_T * intrinsic_permeability / liquid_dynamic_viscosity;
     }
 
-    if (has_thermal_osmosis_coefficient)
+    if (medium.hasProperty(
+            MaterialPropertyLib::PropertyType::thermal_osmosis_coefficient))
     {
         return MaterialPropertyLib::formEigenTensor<GlobalDim>(
             medium

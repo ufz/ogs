@@ -18,6 +18,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
+#include "ProcessLib/Common/ThermoOsmosis/CheckThermoOsmosisProperties.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "ThermoRichardsMechanicsProcess.h"
@@ -50,6 +51,8 @@ void checkMPLProperties(
             m.second->phase(MaterialPropertyLib::PhaseName::Solid),
             required_solid_properties);
     }
+
+    checkThermoOsmosisProperties(media);
 }
 
 void checkProcessVariableComponents(ProcessVariable const& variable,

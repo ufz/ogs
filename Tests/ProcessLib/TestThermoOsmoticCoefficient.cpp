@@ -1,13 +1,17 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
+#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <sstream>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
 #include "MaterialLib/MPL/VariableType.h"
 #include "ParameterLib/SpatialPosition.h"
+#include "ProcessLib/Common/ThermoOsmosis/CheckThermoOsmosisProperties.h"
 #include "ProcessLib/Common/ThermoOsmosis/ThermoOsmoticCoefficient.h"
 #include "Tests/MaterialLib/TestMPL.h"
 
@@ -31,7 +35,11 @@ struct MediumSpec
     std::string solid_phase_properties;
 };
 
-std::string thermoOsmoticProperty(std::string const& name, double const value)
+/// A Constant property with the given components, which are read as a scalar
+/// for a single component and as a row-major tensor otherwise, following
+/// MaterialPropertyLib::fromVector().
+std::string constantProperty(std::string const& name,
+                             std::vector<double> const& components)
 {
     std::stringstream p;
     p << "    <property>\n"
@@ -39,11 +47,27 @@ std::string thermoOsmoticProperty(std::string const& name, double const value)
       << name
       << "</name>\n"
          "      <type>Constant</type>\n"
-         "      <value>"
-      << value << " 0 0 " << value
-      << "</value>\n"
+         "      <value>";
+    for (auto const component : components)
+    {
+        p << component << " ";
+    }
+    p << "</value>\n"
          "    </property>\n";
     return p.str();
+}
+
+/// thermal_osmosis_permeability is a scalar property.
+std::string permeabilityProperty(double const epsilon_T)
+{
+    return constantProperty("thermal_osmosis_permeability", {epsilon_T});
+}
+
+/// thermal_osmosis_coefficient is a tensor property; the isotropic tensor with
+/// the given diagonal entry.
+std::string coefficientProperty(double const k_T)
+{
+    return constantProperty("thermal_osmosis_coefficient", {k_T, 0., 0., k_T});
 }
 
 std::string makeMedium(MediumSpec const& spec)
@@ -109,10 +133,13 @@ void expectIsotropicTensor(double const expected_diagonal_entry,
 }
 
 /// A medium the coefficient cannot be evaluated for, and the reason it is
-/// rejected. The name is used as the gtest parameter name.
+/// rejected. The name is used as the gtest parameter name;
+/// expected_message_fragment identifies which of the helper's fatal errors is
+/// expected, so that a case cannot pass on an unrelated failure.
 struct RejectedMedium
 {
     std::string name;
+    std::string expected_message_fragment;
     MediumSpec spec;
     double viscosity = mu_liquid_Pa_s;
 };
@@ -140,8 +167,7 @@ TEST(ProcessLibThermoOsmoticCoefficient, NoPropertyYieldsZeroTensor)
 TEST(ProcessLibThermoOsmoticCoefficient, CoefficientIsPassedThrough)
 {
     auto const result =
-        evaluate({.medium_properties = thermoOsmoticProperty(
-                      "thermal_osmosis_coefficient", k_T_m2_per_K_s),
+        evaluate({.medium_properties = coefficientProperty(k_T_m2_per_K_s),
                   .solid_phase_properties = ""},
                  isotropicTensor(2. * k_intrinsic_m2), 2. * mu_liquid_Pa_s);
 
@@ -156,12 +182,57 @@ TEST(ProcessLibThermoOsmoticCoefficient, CoefficientIsPassedThrough)
 TEST(ProcessLibThermoOsmoticCoefficient, PermeabilityIsConvertedToCoefficient)
 {
     auto const result =
-        evaluate({.medium_properties = thermoOsmoticProperty(
-                      "thermal_osmosis_permeability", epsilon_T_Pa_per_K),
+        evaluate({.medium_properties = permeabilityProperty(epsilon_T_Pa_per_K),
                   .solid_phase_properties = ""},
                  isotropicTensor(k_intrinsic_m2), mu_liquid_Pa_s);
 
     expectIsotropicTensor(k_T_m2_per_K_s, result);
+}
+
+// epsilon_T is a scalar, so k_T is k scaled by epsilon_T / mu and inherits k's
+// anisotropy, including its off-diagonal entries. With
+// epsilon_T / mu = 5400 / 1e-3 = 5.4e6 the expected entries are k's, scaled:
+//   k_T = 5.4e6 * [[5e-17, 0], [2e-17, 5e-17]]
+//       = [[2.7e-10, 0], [1.08e-10, 2.7e-10]]
+TEST(ProcessLibThermoOsmoticCoefficient, ScalarPermeabilityScalesAnisotropicK)
+{
+    Eigen::Matrix<double, 2, 2> k;
+    k << k_intrinsic_m2, 0., 2e-17, k_intrinsic_m2;
+
+    auto const result =
+        evaluate({.medium_properties = permeabilityProperty(epsilon_T_Pa_per_K),
+                  .solid_phase_properties = ""},
+                 k, mu_liquid_Pa_s);
+
+    EXPECT_NEAR(2.7e-10, result(0, 0), 1e-24);
+    EXPECT_EQ(0., result(0, 1));
+    EXPECT_NEAR(1.08e-10, result(1, 0), 1e-24);
+    EXPECT_NEAR(2.7e-10, result(1, 1), 1e-24);
+}
+
+// A tensor-valued thermal_osmosis_permeability is not a valid parametrisation:
+// epsilon_T is a scalar, and the value access rejects the tensor rather than
+// taking a component of it.
+TEST(ProcessLibThermoOsmoticCoefficient, TensorPermeabilityIsRejected)
+{
+    MediumSpec const spec{.medium_properties = constantProperty(
+                              "thermal_osmosis_permeability",
+                              {epsilon_T_Pa_per_K, 0., 0., epsilon_T_Pa_per_K}),
+                          .solid_phase_properties = ""};
+
+    try
+    {
+        evaluate(spec, isotropicTensor(k_intrinsic_m2), mu_liquid_Pa_s);
+        FAIL() << "expected a fatal error about the requested type";
+    }
+    catch (std::runtime_error const& e)
+    {
+        EXPECT_THAT(
+            e.what(),
+            ::testing::HasSubstr(
+                "'thermal_osmosis_permeability' defined for medium 0 is not "
+                "of the requested type 'double' but a 2x2-matrix"));
+    }
 }
 
 class ProcessLibThermoOsmoticCoefficientRejects
@@ -171,43 +242,114 @@ class ProcessLibThermoOsmoticCoefficientRejects
 
 TEST_P(ProcessLibThermoOsmoticCoefficientRejects, Throws)
 {
-    EXPECT_ANY_THROW(evaluate(GetParam().spec,
-                              isotropicTensor(k_intrinsic_m2),
-                              GetParam().viscosity));
+    auto const& rejected_medium = GetParam();
+    try
+    {
+        evaluate(rejected_medium.spec, isotropicTensor(k_intrinsic_m2),
+                 rejected_medium.viscosity);
+        FAIL() << "expected a fatal error mentioning \""
+               << rejected_medium.expected_message_fragment << '"';
+    }
+    catch (std::runtime_error const& e)
+    {
+        EXPECT_THAT(
+            e.what(),
+            ::testing::HasSubstr(rejected_medium.expected_message_fragment));
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(
     ProcessLibThermoOsmoticCoefficient,
     ProcessLibThermoOsmoticCoefficientRejects,
     ::testing::Values(
+        // A zero viscosity makes the conversion singular.
+        RejectedMedium{
+            "PermeabilityWithZeroViscosity",
+            "viscosity must be > 0",
+            {.medium_properties = permeabilityProperty(epsilon_T_Pa_per_K),
+             .solid_phase_properties = ""},
+            0.},
+        // A negative viscosity flips the sign of the coefficient.
+        RejectedMedium{
+            "PermeabilityWithNegativeViscosity",
+            "viscosity must be > 0",
+            {.medium_properties = permeabilityProperty(epsilon_T_Pa_per_K),
+             .solid_phase_properties = ""},
+            -mu_liquid_Pa_s}),
+    [](::testing::TestParamInfo<RejectedMedium> const& info)
+    { return info.param.name; });
+
+// The parametrisation itself is checked once at process creation, by
+// checkThermoOsmosisProperties(), not on every coefficient evaluation.
+class ProcessLibCheckThermoOsmosisPropertiesRejects
+    : public ::testing::TestWithParam<RejectedMedium>
+{
+};
+
+TEST_P(ProcessLibCheckThermoOsmosisPropertiesRejects, Throws)
+{
+    auto const& rejected_medium = GetParam();
+    auto const medium =
+        Tests::createTestMaterial(makeMedium(rejected_medium.spec), 2);
+    try
+    {
+        ProcessLib::checkThermoOsmosisProperties(*medium);
+        FAIL() << "expected a fatal error mentioning \""
+               << rejected_medium.expected_message_fragment << '"';
+    }
+    catch (std::runtime_error const& e)
+    {
+        EXPECT_THAT(
+            e.what(),
+            ::testing::HasSubstr(rejected_medium.expected_message_fragment));
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    ProcessLibCheckThermoOsmosisProperties,
+    ProcessLibCheckThermoOsmosisPropertiesRejects,
+    ::testing::Values(
         // Defining both parametrisations at the same time is ambiguous.
         RejectedMedium{
             "BothPropertiesDefined",
-            {.medium_properties =
-                 thermoOsmoticProperty("thermal_osmosis_coefficient",
-                                       k_T_m2_per_K_s) +
-                 thermoOsmoticProperty("thermal_osmosis_permeability",
-                                       epsilon_T_Pa_per_K),
+            "cannot be defined at the same time",
+            {.medium_properties = coefficientProperty(k_T_m2_per_K_s) +
+                                  permeabilityProperty(epsilon_T_Pa_per_K),
              .solid_phase_properties = ""}},
-        // A zero viscosity makes the conversion singular.
-        RejectedMedium{"PermeabilityWithZeroViscosity",
-                       {.medium_properties = thermoOsmoticProperty(
-                            "thermal_osmosis_permeability", epsilon_T_Pa_per_K),
-                        .solid_phase_properties = ""},
-                       0.},
-        // A negative viscosity flips the sign of the coefficient.
-        RejectedMedium{"PermeabilityWithNegativeViscosity",
-                       {.medium_properties = thermoOsmoticProperty(
-                            "thermal_osmosis_permeability", epsilon_T_Pa_per_K),
-                        .solid_phase_properties = ""},
-                       -mu_liquid_Pa_s},
-        // A leftover solid-phase thermal_osmosis_coefficient (the
-        // pre-migration location of the property) must not be silently
-        // ignored; it is now read from the medium, so this is rejected with a
-        // migration hint instead of degrading to a silent zero.
-        RejectedMedium{"LeftoverSolidPhaseCoefficient",
+        // A leftover solid-phase property (thermal_osmosis_coefficient's
+        // pre-migration location) must not be silently ignored; both
+        // properties are read from the medium, so either one on the solid
+        // phase is rejected with a migration hint instead of degrading to a
+        // silent zero.
+        RejectedMedium{
+            "LeftoverSolidPhaseCoefficient",
+            "thermal_osmosis_coefficient is defined on the solid "
+            "phase",
+            {.medium_properties = "",
+             .solid_phase_properties = coefficientProperty(k_T_m2_per_K_s)}},
+        RejectedMedium{"SolidPhasePermeability",
+                       "thermal_osmosis_permeability is defined on the solid "
+                       "phase",
                        {.medium_properties = "",
-                        .solid_phase_properties = thermoOsmoticProperty(
-                            "thermal_osmosis_coefficient", k_T_m2_per_K_s)}}),
+                        .solid_phase_properties =
+                            permeabilityProperty(epsilon_T_Pa_per_K)}}),
     [](::testing::TestParamInfo<RejectedMedium> const& info)
     { return info.param.name; });
+
+// A medium the coefficient can be evaluated for passes the check. Both
+// parametrisations, and a medium without any thermo-osmosis property, are
+// accepted.
+TEST(ProcessLibCheckThermoOsmosisProperties, AcceptsValidParametrisations)
+{
+    for (auto const& spec :
+         {MediumSpec{.medium_properties = "", .solid_phase_properties = ""},
+          MediumSpec{.medium_properties = coefficientProperty(k_T_m2_per_K_s),
+                     .solid_phase_properties = ""},
+          MediumSpec{
+              .medium_properties = permeabilityProperty(epsilon_T_Pa_per_K),
+              .solid_phase_properties = ""}})
+    {
+        auto const medium = Tests::createTestMaterial(makeMedium(spec), 2);
+        EXPECT_NO_THROW(ProcessLib::checkThermoOsmosisProperties(*medium));
+    }
+}
