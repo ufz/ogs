@@ -18,7 +18,9 @@
 # )
 # ~~~
 #
-# cmake-lint: disable=C0103,R0915,R0912
+# cmake-lint: disable=C0103,C0111,R0915,R0912
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/test/TestProperties.cmake)
+
 function(NotebookTest)
 
     if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING OR NOT OGS_USE_PIP)
@@ -52,21 +54,22 @@ function(NotebookTest)
     endif()
 
     set(NotebookTest_SOURCE_DIR "${Data_SOURCE_DIR}/${NotebookTest_DIR}")
-    if(NOT DEFINED NotebookTest_RUNTIME)
-        set(NotebookTest_RUNTIME 1)
-    elseif(NotebookTest_RUNTIME GREATER 750)
-        # Set a timeout on jobs larger than the default ctest timeout of 1500
-        # (s). The allowed runtime is twice as long as the given RUNTIME
-        # parameter.
-        math(EXPR timeout "${NotebookTest_RUNTIME} * 2")
-        set(timeout TIMEOUT ${timeout})
+    # Notebooks use a threshold ten times larger than ordinary tests.
+    math(EXPR _notebook_large_runtime "10 * ${ogs.ctest.large_runtime}")
+    ogs_resolve_test_runtime(
+        "${NotebookTest_RUNTIME}"
+        "${_notebook_large_runtime}"
+        "${OGS_CTEST_MAX_RUNTIME}"
+        NotebookTest_RUNTIME
+        _timeout
+        _is_large
+        _skip
+    )
+    if(_timeout)
+        set(timeout TIMEOUT ${_timeout})
     endif()
-
-    if(DEFINED OGS_CTEST_MAX_RUNTIME)
-        # Skip tests that would require too long to execute.
-        if(${NotebookTest_RUNTIME} GREATER ${OGS_CTEST_MAX_RUNTIME})
-            return()
-        endif()
+    if(_skip)
+        return()
     endif()
 
     if(EXISTS ${CMAKE_CURRENT_LIST_DIR}/ProcessLib)
@@ -79,8 +82,7 @@ function(NotebookTest)
         list(APPEND labels default)
     endif()
     # Notebooks are allowed to run longer than usual benchmarks
-    math(EXPR _notebook_large_runtime "10 * ${ogs.ctest.large_runtime}")
-    if(${NotebookTest_RUNTIME} LESS_EQUAL ${_notebook_large_runtime})
+    if(NOT _is_large)
         list(APPEND labels small)
     else()
         list(APPEND labels large)

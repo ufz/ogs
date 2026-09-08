@@ -1,4 +1,6 @@
-# cmake-lint: disable=C0103,R0912,R0915
+# cmake-lint: disable=C0103,C0111,R0912,R0915
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/test/TestProperties.cmake)
+
 function(OgsTest)
     if(NOT OGS_BUILD_CLI OR NOT OGS_BUILD_TESTING)
         return()
@@ -22,22 +24,22 @@ function(OgsTest)
         )
     endif()
 
-    if(NOT DEFINED OgsTest_RUNTIME)
-        set(OgsTest_RUNTIME 1)
-    elseif(OgsTest_RUNTIME GREATER 750)
-        # Set a timeout on jobs larger than the default ctest timeout of 1500
-        # (s). The allowed runtime is twice as long as the given RUNTIME
-        # parameter.
-        math(EXPR timeout "${OgsTest_RUNTIME} * 2")
-        set(timeout TIMEOUT ${timeout})
+    ogs_resolve_test_runtime(
+        "${OgsTest_RUNTIME}"
+        "${ogs.ctest.large_runtime}"
+        "${OGS_CTEST_MAX_RUNTIME}"
+        OgsTest_RUNTIME
+        _timeout
+        _is_large
+        _skip
+    )
+    if(_timeout)
+        set(timeout TIMEOUT ${_timeout})
     endif()
-
-    if(DEFINED OGS_CTEST_MAX_RUNTIME)
-        if(${OgsTest_RUNTIME} GREATER ${OGS_CTEST_MAX_RUNTIME})
-            return()
-        endif()
+    if(_skip)
+        return()
     endif()
-    if(${OgsTest_RUNTIME} GREATER ${ogs.ctest.large_runtime})
+    if(_is_large)
         string(APPEND OgsTest_NAME_WE "-LARGE")
     endif()
 
@@ -134,7 +136,9 @@ function(OgsTest)
 
     if(_has_omp_variant)
         _ogs_add_test(${TEST_NAME}-omp)
-        _set_omp_test_properties()
+        ogs_set_omp_test_properties(
+            "${TEST_NAME}-omp" "${_processors}" "${labels}"
+        )
     endif()
 endfunction()
 
@@ -200,5 +204,3 @@ macro(_ogs_add_test TEST_NAME)
                    ${timeout}
     )
 endmacro()
-
-# macro(_set_omp_test_properties) defined in AddTest.cmake
