@@ -94,6 +94,15 @@ function(add_autogen_include target)
     endif()
 endfunction()
 
+# Applies warning options shared by OGS libraries and executables.
+function(ogs_apply_common_target_settings target)
+    target_compile_options(
+        ${target}
+        PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall -Wextra
+                -Wunreachable-code> $<$<CXX_COMPILER_ID:MSVC>:/W3>
+    )
+endfunction()
+
 # Replacement for add_library() for ogs libraries
 function(ogs_add_library targetName)
     set(options STATIC SHARED GENERATE_EXPORT_HEADER)
@@ -137,11 +146,7 @@ function(ogs_add_library targetName)
         )
     endif()
 
-    target_compile_options(
-        ${targetName}
-        PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall -Wextra
-                -Wunreachable-code> $<$<CXX_COMPILER_ID:MSVC>:/W3>
-    )
+    ogs_apply_common_target_settings(${targetName})
 
     if(BUILD_SHARED_LIBS AND NOT "${type}" STREQUAL "STATIC")
         install(TARGETS ${targetName}
@@ -223,11 +228,7 @@ function(ogs_add_executable targetName)
 
     add_executable(${targetName} ${files})
 
-    target_compile_options(
-        ${targetName}
-        PRIVATE $<$<CXX_COMPILER_ID:Clang,AppleClang,GNU>:-Wall -Wextra
-                -Wunreachable-code> $<$<CXX_COMPILER_ID:MSVC>:/W3>
-    )
+    ogs_apply_common_target_settings(${targetName})
 
     # Add project root to include directories for cross-library includes
     target_include_directories(${targetName} PRIVATE ${PROJECT_SOURCE_DIR})

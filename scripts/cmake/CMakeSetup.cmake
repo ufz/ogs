@@ -3,9 +3,15 @@
 if("${PROJECT_SOURCE_DIR}" STREQUAL "${PROJECT_BINARY_DIR}")
     message(
         FATAL_ERROR
-            "In-source builds are not allowed!\n"
-            "Make sure to remove CMakeCache.txt and CMakeFiles/ "
-            "from the source directory!"
+            "In-source builds are not allowed.\n"
+            "Please create a separate build directory, e.g.:\n"
+            "  cmake -S . -B build\n"
+            "  cmake --build build\n"
+            "or use presets:\n"
+            "  cmake --preset release\n"
+            "  cmake --build --preset release\n"
+            "If this is an accidental in-source configure, remove "
+            "CMakeCache.txt and CMakeFiles/ from the source directory."
     )
 endif()
 

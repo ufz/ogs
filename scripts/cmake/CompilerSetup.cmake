@@ -21,6 +21,29 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL
                                            "Intel"
 )
 
+    # Exclude Eigen, system headers, and CPM dependencies from code coverage.
+    function(_ogs_add_coverage_exclusions)
+        if(NOT OGS_COVERAGE)
+            return()
+        endif()
+
+        set(coverage_excludes
+            $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=/usr/include/.*>
+            $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=.*/_deps/.*>
+        )
+        if(CPM_SOURCE_CACHE)
+            string(REPLACE "/" "\\/" cpm_cache_regex "${CPM_SOURCE_CACHE}")
+            list(
+                APPEND
+                coverage_excludes
+                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=${cpm_cache_regex}/.*>
+            )
+        endif()
+        add_compile_options(${coverage_excludes})
+    endfunction()
+
+    _ogs_add_coverage_exclusions()
+
     # Profiling
     if(OGS_PROFILE)
         if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -73,23 +96,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL
                 $<$<COMPILE_LANGUAGE:CXX>:-Wmaybe-uninitialized>
             )
         endif()
-        # Exclude Eigen, system headers, and CPM dependencies from code coverage
-        if(OGS_COVERAGE)
-            set(_coverage_excludes
-                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=/usr/include/.*>
-                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=.*/_deps/.*>
-            )
-            # Exclude CPM_SOURCE_CACHE if set
-            if(CPM_SOURCE_CACHE)
-                string(REPLACE "/" "\\/" _cpm_cache_regex "${CPM_SOURCE_CACHE}")
-                list(
-                    APPEND
-                    _coverage_excludes
-                    $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=${_cpm_cache_regex}/.*>
-                )
-            endif()
-            add_compile_options(${_coverage_excludes})
-        endif()
     endif()
 
     if(COMPILER_IS_CLANG)
@@ -112,23 +118,6 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL
                     is required! Found version ${CMAKE_CXX_COMPILER_VERSION}"
                 )
             endif()
-        endif()
-        # Exclude Eigen, system headers, and CPM dependencies from code coverage
-        if(OGS_COVERAGE)
-            set(_coverage_excludes
-                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=/usr/include/.*>
-                $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=.*/_deps/.*>
-            )
-            # Exclude CPM_SOURCE_CACHE if set
-            if(CPM_SOURCE_CACHE)
-                string(REPLACE "/" "\\/" _cpm_cache_regex "${CPM_SOURCE_CACHE}")
-                list(
-                    APPEND
-                    _coverage_excludes
-                    $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=${_cpm_cache_regex}/.*>
-                )
-            endif()
-            add_compile_options(${_coverage_excludes})
         endif()
     endif()
 
