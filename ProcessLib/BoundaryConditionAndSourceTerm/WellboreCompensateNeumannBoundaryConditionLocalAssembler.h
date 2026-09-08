@@ -3,7 +3,10 @@
 
 #pragma once
 
-#include <Eigen/LU>
+#include <spdlog/fmt/fmt.h>
+
+#include <algorithm>
+#include <cmath>
 #include <limits>
 
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
@@ -12,6 +15,7 @@
 #include "MaterialLib/MPL/Utils/DriftFluxModel.h"
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
+#include "NumLib/Exceptions.h"
 #include "NumLib/Fem/Interpolation.h"
 #include "NumLib/IndexValueVector.h"
 #include "ParameterLib/MeshNodeParameter.h"
@@ -147,9 +151,9 @@ public:
                         MaterialPropertyLib::PropertyType::saturation_enthalpy)
                     .template value<double>(vars, pos, 0, 0);
 
-            double const dryness =
-                std::max(0., (enthalpy_int_pt - h_sat_liq_w) /
-                                 (h_sat_vap_w - h_sat_liq_w));
+            double const dryness = std::clamp(
+                (enthalpy_int_pt - h_sat_liq_w) / (h_sat_vap_w - h_sat_liq_w),
+                0., 1.);
 
             double const T_int_pt =
                 (dryness == 0)
@@ -173,12 +177,38 @@ public:
             double const C_0 =
                 MaterialPropertyLib::driftFluxProfileParameter(dryness);
 
+            // drift flux velocity
             double const u_gu = MaterialPropertyLib::driftFluxVelocity(
                 dryness, T_int_pt, vapour_water_density, liquid_water_density);
 
-            double const alpha = MaterialPropertyLib::computeVapourVoidFraction(
-                dryness, vapour_water_density, liquid_water_density,
-                velocity_int_pt, C_0, u_gu);
+            MaterialPropertyLib::DriftFluxState const drift_flux_state{
+                .dryness = dryness,
+                .vapour_water_density = vapour_water_density,
+                .liquid_water_density = liquid_water_density,
+                .v_mix = velocity_int_pt,
+                .C_0 = C_0,
+                .u_gu = u_gu};
+
+            // solving void fraction of vapour: Rouhani-Axelsson
+            auto const alpha_solution =
+                MaterialPropertyLib::computeVapourVoidFraction(
+                    drift_flux_state);
+
+            if (!alpha_solution)
+            {
+                throw NumLib::AssemblyException(fmt::format(
+                    "The drift-flux closure of the WellboreCompensateNeumann "
+                    "boundary condition has no admissible vapour void fraction "
+                    "in element {:d}, integration point {:d}: pressure {:g}, "
+                    "mixture velocity {:g}, specific enthalpy {:g}, "
+                    "temperature {:g}, {}",
+                    _element.getID(), ip, pressure_int_pt, velocity_int_pt,
+                    enthalpy_int_pt, T_int_pt,
+                    MaterialPropertyLib::voidFractionClosureDiagnostics(
+                        drift_flux_state)));
+            }
+
+            double const alpha = *alpha_solution;
 
             if (alpha == 0)
             {
@@ -192,8 +222,7 @@ public:
                                        liquid_water_density * (1 - alpha);
 
             double const gamma = MaterialPropertyLib::mixtureSlipParameter(
-                alpha, vapour_water_density, liquid_water_density,
-                velocity_int_pt, C_0, u_gu);
+                alpha, drift_flux_state);
 
             double const neumann_ip_values =
                 _data.coefficients.pressure * mix_density * velocity_int_pt +
