@@ -103,6 +103,64 @@ function(ogs_apply_common_target_settings target)
     )
 endfunction()
 
+# Adds a process library following the standard ProcessLib conventions.
+function(ogs_add_process target)
+    set(options STATIC GENERATE_EXPORT_HEADER NO_PCH)
+    set(multiValueArgs DIRECTORIES PUBLIC_LIBRARIES PRIVATE_LIBRARIES)
+    cmake_parse_arguments(
+        ogs_process "${options}" "" "${multiValueArgs}" ${ARGN}
+    )
+
+    if(ogs_process_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "ogs_add_process: unexpected arguments: "
+                            "${ogs_process_UNPARSED_ARGUMENTS}"
+        )
+    endif()
+
+    if(NOT ogs_process_DIRECTORIES)
+        set(ogs_process_DIRECTORIES .)
+    endif()
+
+    append_source_and_header_files(
+        _sources _headers _private_headers DIRECTORIES
+        ${ogs_process_DIRECTORIES}
+    )
+
+    set(_library_options)
+    if(ogs_process_STATIC)
+        list(APPEND _library_options STATIC)
+    endif()
+    if(ogs_process_GENERATE_EXPORT_HEADER)
+        list(APPEND _library_options GENERATE_EXPORT_HEADER)
+    endif()
+    ogs_add_library(
+        ${target} ${_library_options} ${_sources} PUBLIC_HEADERS ${_headers}
+    )
+
+    target_link_libraries(
+        ${target} PUBLIC ProcessLib ${ogs_process_PUBLIC_LIBRARIES}
+        PRIVATE ParameterLib ${ogs_process_PRIVATE_LIBRARIES}
+    )
+
+    if(NOT ogs_process_NO_PCH)
+        target_precompile_headers(
+            ${target}
+            PRIVATE
+            [["BaseLib/Error.h"]]
+            [["BaseLib/ConfigTree.h"]]
+            [["BaseLib/Logging.h"]]
+            [["ProcessLib/Process.h"]]
+            [["MaterialLib/MPL/Medium.h"]]
+            [["MaterialLib/MPL/Property.h"]]
+            <Eigen/Core>
+        )
+    endif()
+
+    if(OGS_BUILD_TESTING)
+        include("${CMAKE_CURRENT_SOURCE_DIR}/Tests.cmake")
+    endif()
+endfunction()
+
 # Replacement for add_library() for ogs libraries
 function(ogs_add_library targetName)
     set(options STATIC SHARED GENERATE_EXPORT_HEADER)
