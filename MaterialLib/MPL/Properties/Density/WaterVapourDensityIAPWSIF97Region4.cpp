@@ -20,18 +20,8 @@ PropertyDataType WaterVapourDensityIAPWSIF97Region4::value(
 {
     double const p = variable_array.liquid_phase_pressure;
 
-    /// According to the IAPWS-IF97:
-    /// http://www.iapws.org/relguide/IF97-Rev.pdf,
-    /// the vapor-liquid saturation line only covers
-    /// the pressure range between 611.213 Pa and 22.064 MPa.
-    /// Thus, for the vapour saturation density calculated from
-    /// the saturation temperature, it has the same pressure boundaries.
-    if ((p < 611.213) || (p > 22.064e6))
-    {
-        WARN(
-            "Pressure is out of the range for the water vapour saturation "
-            "density.");
-    }
+    IAPWSIF97Region4::checkPressureInRange(
+        p, "the water vapour saturation density");
 
     double const T_s = IAPWSIF97Region4::waterSaturationTemperature(p);
 

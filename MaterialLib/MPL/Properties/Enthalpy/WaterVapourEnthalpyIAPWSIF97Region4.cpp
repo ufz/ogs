@@ -19,18 +19,8 @@ PropertyDataType WaterVapourEnthalpyIAPWSIF97Region4::value(
 {
     double const p = variable_array.liquid_phase_pressure;
 
-    /// According to the IAPWS-IF97:
-    /// http://www.iapws.org/relguide/IF97-Rev.pdf,
-    /// the vapor-liquid saturation line only covers
-    /// the pressure range between 611.213 Pa and 22.064 MPa.
-    /// Thus, for the vapour saturation enthalpy calculated from
-    /// the saturation temperature, it has the same pressure boundaries.
-    if ((p < 611.213) || (p > 22.064e6))
-    {
-        WARN(
-            "Pressure is out of the range for the water vapour saturation "
-            "enthalpy.");
-    }
+    IAPWSIF97Region4::checkPressureInRange(
+        p, "the water vapour saturation enthalpy");
 
     static constexpr double ref_T_ = 540;   ///< reference temperature in K.
     static constexpr double ref_p_ = 1.e6;  ///< reference pressure in Pa.
