@@ -5,7 +5,6 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#include <algorithm>
 #include <cmath>
 #include <limits>
 
@@ -13,6 +12,7 @@
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Utils/DriftFluxModel.h"
+#include "MaterialLib/MPL/Utils/SteamDryness.h"
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Exceptions.h"
@@ -151,9 +151,8 @@ public:
                         MaterialPropertyLib::PropertyType::saturation_enthalpy)
                     .template value<double>(vars, pos, 0, 0);
 
-            double const dryness = std::clamp(
-                (enthalpy_int_pt - h_sat_liq_w) / (h_sat_vap_w - h_sat_liq_w),
-                0., 1.);
+            double const dryness = MaterialPropertyLib::steamDryness(
+                enthalpy_int_pt, h_sat_liq_w, h_sat_vap_w);
 
             double const T_int_pt =
                 (dryness == 0)
@@ -191,9 +190,9 @@ public:
                 throw NumLib::AssemblyException(fmt::format(
                     "The drift-flux closure of the WellboreCompensateNeumann "
                     "boundary condition has no admissible vapour void fraction "
-                    "in element {:d}, integration point {:d}: pressure {:g}, "
-                    "mixture velocity {:g}, specific enthalpy {:g}, "
-                    "temperature {:g}, {}",
+                    "in element {:d}, integration point {:d}: pressure {:g} "
+                    "Pa, mixture velocity {:g} m/s, specific enthalpy {:g} "
+                    "J/kg, temperature {:g} K, {}",
                     _element.getID(), ip, pressure_int_pt, velocity_int_pt,
                     enthalpy_int_pt, T_int_pt,
                     MaterialPropertyLib::voidFractionClosureDiagnostics(

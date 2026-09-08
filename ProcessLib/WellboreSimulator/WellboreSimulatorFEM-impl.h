@@ -6,12 +6,12 @@
 #include <spdlog/fmt/fmt.h>
 
 #include <Eigen/Dense>
-#include <algorithm>
 #include <cmath>
 #include <vector>
 
 #include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/DriftFluxModel.h"
+#include "MaterialLib/MPL/Utils/SteamDryness.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Exceptions.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -174,8 +174,8 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
                     MaterialPropertyLib::PropertyType::saturation_enthalpy)
                 .template value<double>(vars, pos, t, dt);
 
-        double const dryness = std::clamp(
-            (h_int_pt - h_sat_liq_w) / (h_sat_vap_w - h_sat_liq_w), 0., 1.);
+        double const dryness = MaterialPropertyLib::steamDryness(
+            h_int_pt, h_sat_liq_w, h_sat_vap_w);
         steam_mass_frac = dryness;
 
         double const T_int_pt =
@@ -212,8 +212,9 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
             throw NumLib::AssemblyException(fmt::format(
                 "The drift-flux closure of the WellboreSimulator process has "
                 "no admissible vapour void fraction in element {:d}, "
-                "integration point {:d}: pressure {:g}, mixture velocity "
-                "{:g}, specific enthalpy {:g}, temperature {:g}, {}",
+                "integration point {:d}: pressure {:g} Pa, mixture velocity "
+                "{:g} m/s, specific enthalpy {:g} J/kg, temperature {:g} K, "
+                "{}",
                 _element.getID(), ip, p_int_pt, v_int_pt, h_int_pt, T_int_pt,
                 MaterialPropertyLib::voidFractionClosureDiagnostics(
                     drift_flux_state)));
