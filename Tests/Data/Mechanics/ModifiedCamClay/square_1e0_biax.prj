@@ -145,16 +145,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>epsMax</name>
-            <type>Constant</type>
-            <value>-0.0005</value>
-        </parameter>
-        <parameter>
-            <name>dirichletLinearPos</name>
-            <type>Function</type>
-            <expression> 0.05*t</expression>
-        </parameter>
-        <parameter>
             <name>dirichletLinearNeg</name>
             <type>Function</type>
             <expression>-0.05*t</expression>

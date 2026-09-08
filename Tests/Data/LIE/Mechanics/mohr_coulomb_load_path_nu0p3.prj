@@ -176,11 +176,6 @@
     </parameters>
     <curves>
         <curve>
-            <name>timeRamp_displacement_x</name>
-            <coords>0 1 2    4     10  </coords>
-            <values>0 0 1e-5 -1e-5 -1e-5</values>
-        </curve>
-        <curve>
             <name>timeRamp_displacement_y</name>
             <coords>0 1      10  </coords>
             <values>0 -1e-6 -1e-6</values>

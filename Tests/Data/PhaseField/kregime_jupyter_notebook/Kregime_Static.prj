@@ -146,11 +146,6 @@
             <value>0.02</value>
         </parameter>
         <parameter>
-            <name>H</name>
-            <type>Constant</type>
-            <value>0.0</value>
-        </parameter>
-        <parameter>
             <name>rho_sr</name>
             <type>Constant</type>
             <value>0.0</value>
@@ -175,29 +170,8 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>M</name>
-            <type>Constant</type>
-            <value>0.0</value>
-        </parameter>
-        <parameter>
-            <name>Dirichlet_load</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>Dirichlet_top_y</name>
-            <type>CurveScaled</type>
-            <curve>Dirichlet_top_time</curve>
-            <parameter>Dirichlet_load</parameter>
-        </parameter>
     </parameters>
     <curves>
-        <curve>
-            <name>Dirichlet_top_time</name>
-            <coords>0 1</coords>
-            <values>0 1.0</values>
-        </curve>
     </curves>
     <process_variables>
         <process_variable>

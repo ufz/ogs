@@ -240,11 +240,6 @@
             <seed>20210422</seed>
         </parameter>
         <parameter>
-            <name>permeability0</name>
-            <type>Constant</type>
-            <value>1.0e-17</value>
-        </parameter>
-        <parameter>
             <name>E</name>
             <type>Constant</type>
             <value>2.5e09</value>

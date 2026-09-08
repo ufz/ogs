@@ -345,16 +345,6 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>load_top</name>
-            <type>Constant</type>
-            <value>0.0</value>
-        </parameter>
-        <parameter>
-            <name>load_bottom</name>
-            <type>Constant</type>
-            <value>1e5</value>
-        </parameter>
     </parameters>
     <process_variables>
         <process_variable>

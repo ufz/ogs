@@ -132,11 +132,6 @@
             <values>0</values>
         </parameter>
         <parameter>
-            <name>InitialPressureZero</name>
-            <type>Constant</type>
-            <values>0</values>
-        </parameter>
-        <parameter>
             <name>InitialPressureField</name>
             <type>Function</type>
             <expression>-1000*9.81*y</expression>
@@ -160,11 +155,6 @@
             <name>NormalStressProfile</name> <!--total stress!-->
             <type>Function</type>
             <expression>0.4 / (1-0.4) * ( (0.2-1.0)*1000 + (1.0-0.2)*3000 ) * 9.81*y + 1000 * 9.81*y</expression>
-        </parameter>
-        <parameter>
-            <name>InitialEffectiveStressZero</name>
-            <type>Constant</type>
-            <values>0 0 0 0</values>
         </parameter>
         <parameter>
             <name>InitialEffectiveStressField</name> <!--effective stress!-->

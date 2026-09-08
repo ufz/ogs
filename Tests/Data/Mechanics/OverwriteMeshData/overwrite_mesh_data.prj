@@ -145,11 +145,6 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>neumann_force</name>
-            <type>Constant</type>
-            <values>0.01</values>
-        </parameter>
          <parameter>
             <name>temp_inner1</name>
             <type>Constant</type>

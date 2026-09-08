@@ -329,11 +329,6 @@
             <value>-0.1</value>
         </parameter>
         <parameter>
-            <name>maximum_displacement</name>
-            <type>Constant</type>
-            <value>-0.1</value>
-        </parameter>
-        <parameter>
             <name>pressureRamp</name>
             <type>CurveScaled</type>
             <curve>pressure</curve>
@@ -344,12 +339,6 @@
             <type>CurveScaled</type>
             <curve>temperature</curve>
             <parameter>temperature0</parameter>
-        </parameter>
-        <parameter>
-            <name>displacementRamp</name>
-            <type>CurveScaled</type>
-            <curve>displacement</curve>
-            <parameter>maximum_displacement</parameter>
         </parameter>
         <parameter>
             <name>temperature0</name>
@@ -367,11 +356,6 @@
             <name>temperature</name>
             <coords>0 1 2 3 4</coords>
             <values>1 1.2 1.2 1.2 1.2</values>
-        </curve>
-        <curve>
-            <name>displacement</name>
-            <coords>0 1 2 3 4</coords>
-            <values>0 1 1 1 1</values>
         </curve>
         <curve>
             <name>pressure</name>

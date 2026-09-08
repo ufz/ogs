@@ -188,11 +188,6 @@
             <type>Constant</type>
             <values>1.239e-7 0 0 1.239e-7</values>
         </parameter>
-        <parameter>
-            <name>kappa2</name>
-            <type>Constant</type>
-            <values>1e-3 0 0 1e-3</values>
-        </parameter>
     </parameters>
     <process_variables>
         <process_variable>

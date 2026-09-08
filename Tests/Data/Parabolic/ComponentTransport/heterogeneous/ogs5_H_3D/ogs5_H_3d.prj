@@ -143,11 +143,6 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>p0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
         <!-- <parameter>
             <name>p_Dirichlet_left</name>
             <type>Constant</type>

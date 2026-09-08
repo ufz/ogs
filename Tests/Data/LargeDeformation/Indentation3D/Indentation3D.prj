@@ -107,11 +107,6 @@
             <value>0.</value>
         </parameter>
         <parameter>
-            <name>Dirichlet_bottom</name>
-            <type>Constant</type>
-            <value>0.</value>
-        </parameter>
-        <parameter>
             <name>load</name>
             <type>Constant</type>
             <value>-40e6</value>

@@ -151,11 +151,6 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>phi</name>
-            <type>Constant</type>
-            <value>0.38</value>
-        </parameter>
-        <parameter>
             <name>p0</name>
             <type>Constant</type>
             <value>-5000</value>

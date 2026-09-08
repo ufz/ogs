@@ -94,11 +94,6 @@
             <expression>x^2 * sin(2*pi*y) * t</expression>
         </parameter>
         <parameter>
-            <name>zero</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>alpha</name>
             <type>Constant</type>
             <value>2</value>

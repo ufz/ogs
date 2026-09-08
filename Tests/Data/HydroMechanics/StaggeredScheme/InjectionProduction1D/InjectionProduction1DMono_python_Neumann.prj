@@ -176,21 +176,6 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/injectionproduction/
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>overburden</name>
-            <type>Constant</type>
-            <value>-2.125e6</value>
-        </parameter>
-        <parameter>
-            <name>source_term_production</name>
-            <type>Constant</type>
-            <value>-1.16e-4</value>
-        </parameter>
-        <parameter>
-            <name>source_term_injection</name>
-            <type>Constant</type>
-            <value>1.16e-4</value>
-        </parameter>
     </parameters>
     <process_variables>
         <process_variable>

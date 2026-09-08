@@ -210,12 +210,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>expansivity_tensor</name>
-            <type>Constant</type>
-            <values>2.0e-4 0 0 0 0 0 0 0 0</values>
-            <use_local_coordinate_system>true</use_local_coordinate_system>
-        </parameter>
-        <parameter>
             <name>expansivity_vector</name>
             <type>Constant</type>
             <values>2e-4 0 0</values>

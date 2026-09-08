@@ -310,22 +310,10 @@
             <value>-0.1</value>
         </parameter>
         <parameter>
-            <name>T_bc</name>
-            <type>CurveScaled</type>
-            <curve>timeRamp</curve>
-            <parameter>T_ic</parameter>
-        </parameter>
-        <parameter>
             <name>compression</name>
             <type>CurveScaled</type>
             <curve>timeRamp</curve>
             <parameter>displ_y</parameter>
-        </parameter>
-        <parameter>
-            <name>pGR_bc</name>
-            <type>CurveScaled</type>
-            <curve>timeRamp</curve>
-            <parameter>pGR_ic</parameter>
         </parameter>
     </parameters>
     <curves>

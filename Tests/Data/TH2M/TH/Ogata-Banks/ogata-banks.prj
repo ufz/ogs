@@ -295,18 +295,8 @@
             <type>Constant</type>
             <value>330</value>
         </parameter>
-        <parameter>
-            <name>neumann_correction</name>
-            <type>Function</type>
-            <expression>-1000*4000*300*1.5e-9</expression>
-        </parameter>
     </parameters>
     <curves>
-        <curve>
-            <name>timeRamp</name>
-            <coords>0 10 1e99</coords>
-            <values>0 1  1</values>
-        </curve>
     </curves>
     <!-- ## Displacement equation ##############################################-->
     <process_variables>

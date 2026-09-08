@@ -280,11 +280,6 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>p_Dirichlet_left_HC</name>
-            <type>Constant</type>
-            <value>0.9722</value>
-        </parameter>
-        <parameter>
             <name>p_Dirichlet_left_HT</name>
             <type>Constant</type>
             <value>972222</value>

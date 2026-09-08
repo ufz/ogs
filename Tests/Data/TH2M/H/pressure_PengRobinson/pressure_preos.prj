@@ -290,23 +290,6 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>displ_y</name>
-            <type>Constant</type>
-            <value>-0.99</value>
-        </parameter>
-        <parameter>
-            <name>T_bc</name>
-            <type>CurveScaled</type>
-            <curve>timeRamp</curve>
-            <parameter>T_ic</parameter>
-        </parameter>
-        <parameter>
-            <name>compression</name>
-            <type>CurveScaled</type>
-            <curve>timeRamp</curve>
-            <parameter>displ_y</parameter>
-        </parameter>
     </parameters>
     <curves>
         <curve>

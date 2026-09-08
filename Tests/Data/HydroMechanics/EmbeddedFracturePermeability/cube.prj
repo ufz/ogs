@@ -165,11 +165,6 @@
             <value>1e-4</value>
         </parameter>
         <parameter>
-            <name>zero</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>pi_over_4</name>
             <type>Constant</type>
             <value>0.78539816339744831</value>

@@ -116,30 +116,6 @@
             <value>1.01325e5</value>
         </parameter>
         <parameter>
-            <name>p_in_x</name>
-            <mesh>sphere_in</mesh>
-            <type>Function</type>
-            <expression>x*1e3/0.175</expression>
-        </parameter>
-        <parameter>
-            <name>p_in_y</name>
-            <mesh>sphere_in</mesh>
-            <type>Function</type>
-            <expression>y*1e3/0.175</expression>
-        </parameter>
-        <parameter>
-            <name>p_out_x</name>
-            <mesh>sphere_out</mesh>
-            <type>Function</type>
-            <expression>-x*1.01325e5/0.225</expression>
-        </parameter>
-        <parameter>
-            <name>p_out_y</name>
-            <mesh>sphere_out</mesh>
-            <type>Function</type>
-            <expression>-y*1.01325e5/0.225</expression>
-        </parameter>
-        <parameter>
             <name>zero</name>
             <type>Constant</type>
             <value>0</value>

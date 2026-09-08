@@ -635,11 +635,6 @@
     </parameters>
     <curves>
         <curve>
-            <name>timeRamp</name>
-            <coords>0 2999.9 3000 3500</coords>
-            <values>0 0.0 1.0 1.0</values>
-        </curve>
-        <curve>
             <name>PEE1_SURFACE_CURVE</name>
             <coords>0 500</coords>
             <values>7730000.0 7730000.0 </values>
@@ -1393,12 +1388,6 @@
         <nonlinear_solver>
             <name>petsc_snes</name>
             <type>PETScSNES</type>
-            <max_iter>50</max_iter>
-            <linear_solver>linear_solver_d</linear_solver>
-        </nonlinear_solver>
-        <nonlinear_solver>
-            <name>basic_newton_d</name>
-            <type>Newton</type>
             <max_iter>50</max_iter>
             <linear_solver>linear_solver_d</linear_solver>
         </nonlinear_solver>

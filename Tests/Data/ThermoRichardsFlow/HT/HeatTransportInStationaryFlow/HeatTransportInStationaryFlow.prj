@@ -159,16 +159,6 @@
     <parameters>
         <!-- Mechanics -->
         <parameter>
-            <name>E</name>
-            <type>Constant</type>
-            <value>1e10</value>
-        </parameter>
-        <parameter>
-            <name>nu</name>
-            <type>Constant</type>
-            <value>.3</value>
-        </parameter>
-        <parameter>
             <name>T0</name>
             <type>Constant</type>
             <value>0.0</value>
@@ -192,16 +182,6 @@
             <name>T_left</name>
             <type>Constant</type>
             <value>1.</value>
-        </parameter>
-        <parameter>
-            <name>displacement0</name>
-            <type>Constant</type>
-            <values>0 0</values>
-        </parameter>
-        <parameter>
-            <name>u0</name>
-            <type>Constant</type>
-            <values>0</values>
         </parameter>
     </parameters>
     <process_variables>

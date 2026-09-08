@@ -128,22 +128,7 @@
         </parameter>
         <!-- Initial and boundary values -->
         <parameter>
-            <name>AmbientPressure</name>
-            <type>Constant</type>
-            <values>0</values>
-        </parameter>
-        <parameter>
-            <name>InitialPressureZero</name>
-            <type>Constant</type>
-            <values>0</values>
-        </parameter>
-        <parameter>
             <name>InitialPressureField</name>
-            <type>Function</type>
-            <expression>-1000*9.81*y</expression>
-        </parameter>
-        <parameter>
-            <name>PressureProfile</name>
             <type>Function</type>
             <expression>-1000*9.81*y</expression>
         </parameter>
@@ -151,16 +136,6 @@
             <name>InitialDisplacementZero</name>
             <type>Constant</type>
             <values>0 0</values>
-        </parameter>
-        <parameter>
-            <name>ZeroDisplacement</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>InitialEffectiveStressZero</name>
-            <type>Constant</type>
-            <values>0 0 0 0</values>
         </parameter>
         <parameter>
             <name>InitialEffectiveStressField</name> <!--effective stress!-->

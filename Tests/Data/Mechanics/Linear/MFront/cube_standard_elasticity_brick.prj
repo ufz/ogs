@@ -99,42 +99,12 @@
             <value>.3</value>
         </parameter>
         <parameter>
-            <name>Cohesion</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>FrictionAngle</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>DilatancyAngle</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>TransitionAngle</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>TensionCutOffParameter</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0 0</values>
         </parameter>
         <parameter>
             <name>dirichlet0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>dirichlet1</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>

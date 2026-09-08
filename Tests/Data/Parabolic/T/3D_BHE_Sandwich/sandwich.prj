@@ -178,11 +178,6 @@
             <value>293.15</value>
         </parameter>
         <parameter>
-            <name>T_soil_imposed</name>
-            <type>Constant</type>
-            <value>273.15</value>
-        </parameter>
-        <parameter>
             <name>T0_BHE</name>
             <type>Constant</type>
             <values>293.15 293.15 293.15 293.15</values>

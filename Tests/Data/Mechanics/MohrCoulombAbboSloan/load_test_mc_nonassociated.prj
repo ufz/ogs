@@ -151,17 +151,7 @@
             <values>0 0</values>
         </parameter>
         <parameter>
-            <name>Dirichlet_left</name>
-            <type>Constant</type>
-            <value>0.</value>
-        </parameter>
-        <parameter>
             <name>Dirichlet_bottom</name>
-            <type>Constant</type>
-            <value>0.</value>
-        </parameter>
-        <parameter>
-            <name>Dirichlet_right</name>
             <type>Constant</type>
             <value>0.</value>
         </parameter>

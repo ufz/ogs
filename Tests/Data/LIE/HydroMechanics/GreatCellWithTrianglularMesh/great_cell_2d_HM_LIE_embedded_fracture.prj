@@ -362,11 +362,6 @@
         </parameter>
         <!-- Fracture properties -->
         <parameter>
-            <name>f_thickness</name>
-            <type>Constant</type>
-            <value>1.0</value>
-        </parameter>
-        <parameter>
             <name>aperture0</name>
             <type>Constant</type>
             <value>1e-5</value>
@@ -402,11 +397,6 @@
             <values>0.0 -2e6</values>
         </parameter>
         <!-- initial values -->
-        <parameter>
-            <name>p0</name>
-            <type>Constant</type>
-            <value>2.0e6</value>
-        </parameter>
         <!-- BC -->
         <parameter>
             <name>p_down_stream</name>

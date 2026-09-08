@@ -349,19 +349,9 @@
             <field_name>displacement</field_name>
         </parameter>
         <parameter>
-            <name>displacement0</name>
-            <type>Constant</type>
-            <values>0 0</values>
-        </parameter>
-        <parameter>
             <name>zero</name>
             <type>Constant</type>
             <value>0</value>
-        </parameter>
-        <parameter>
-            <name>one</name>
-            <type>Constant</type>
-            <value>1.0</value>
         </parameter>
         <parameter>
             <name>pressure_bc</name>

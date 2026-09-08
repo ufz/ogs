@@ -167,11 +167,6 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>lambda_fluid</name>
-            <type>Constant</type>
-            <value>0.65</value>
-        </parameter>
-        <parameter>
             <name>T0</name>
             <type>Constant</type>
             <value>0</value>

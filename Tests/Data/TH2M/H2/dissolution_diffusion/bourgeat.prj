@@ -344,14 +344,6 @@
             <type>Constant</type>
             <value>.3</value>
         </parameter>
-        <parameter>
-            <name>sigma0</name>
-            <type>Function</type>
-            <expression>101235</expression>
-            <expression>101235</expression>
-            <expression>0</expression>
-            <expression>0</expression>
-        </parameter>
         <!-- Model parameters -->
         <parameter>
             <name>displacement0</name>
@@ -364,16 +356,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>sigma_xx</name>
-            <type>Constant</type>
-            <value>-100000.</value>
-        </parameter>
-        <parameter>
-            <name>sigma_yy</name>
-            <type>Constant</type>
-            <value>-100000.</value>
-        </parameter>
-        <parameter>
             <name>temperature_ic</name>
             <type>Constant</type>
             <value>300</value>
@@ -382,12 +364,6 @@
             <name>gas_pressure_ic</name>
             <type>Constant</type>
             <value>100000</value>
-        </parameter>
-        <parameter>
-            <name>gas_pressure_bc</name>
-            <type>CurveScaled</type>
-            <curve>timeRamp</curve>
-            <parameter>gas_pressure_ic</parameter>
         </parameter>
         <parameter>
             <name>capillary_pressure_ic</name>

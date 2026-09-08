@@ -126,11 +126,6 @@
             <values>1e5</values>
         </parameter>
         <parameter>
-            <name>zero</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>flux</name>
             <type>Constant</type>
             <value>1e-3</value>

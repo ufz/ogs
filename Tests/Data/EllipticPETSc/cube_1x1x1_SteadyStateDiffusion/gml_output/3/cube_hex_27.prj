@@ -90,11 +90,6 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>K</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>p0</name>
             <type>Constant</type>
             <value>0</value>

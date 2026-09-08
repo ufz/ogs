@@ -124,11 +124,6 @@
             <values>0 0</values>
         </parameter>
         <parameter>
-            <name>Dirichlet_left</name>
-            <type>Constant</type>
-            <value>0.</value>
-        </parameter>
-        <parameter>
             <name>Zero</name>
             <type>Constant</type>
             <value>0.</value>
