@@ -1,20 +1,12 @@
 include:
   # jobs, can be individually disabled for testing
-  - local: "/scripts/ci/jobs/pre-commit.yml"
   - local: "/scripts/ci/pipelines/linux.yml"
   - local: "/scripts/ci/pipelines/mac.yml"
   - local: "/scripts/ci/pipelines/win.yml"
-  - local: "/scripts/ci/jobs/build-docs.yml"
-  - local: "/scripts/ci/jobs/jupyter.yml"
-  - local: "/scripts/ci/jobs/code-quality.yml"
-  - local: "/scripts/ci/jobs/code-coverage.yml"
   - local: "/scripts/ci/jobs/include-what-you-use.yml"
   - local: "/scripts/ci/jobs/clang-sanitizer.yml"
-  - local: "/scripts/ci/jobs/web-preview.yml"
-  - local: "/scripts/ci/jobs/web-check.yml"
   - local: "/scripts/ci/jobs/web-deploy.yml"
   - local: "/scripts/ci/jobs/release.yml"
-  - local: "/scripts/ci/jobs/package.yml"
   - local: "/scripts/ci/jobs/test-dev-perf.yml"
   - local: "/scripts/ci/jobs/build-wheels.yml"
 

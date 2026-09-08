@@ -7,6 +7,7 @@ pre commit:
     SKIP: git-diff-check
     PRE_COMMIT_VERSION: 4.6.2
   script:
+    - python scripts/ci/check-configuration.py
     - uvx pre-commit==${PRE_COMMIT_VERSION} install
     - uvx pre-commit==${PRE_COMMIT_VERSION} run --from-ref ${CI_MERGE_REQUEST_DIFF_BASE_SHA} --to-ref HEAD
     - uvx pre-commit==${PRE_COMMIT_VERSION} run --hook-stage manual clang-format
