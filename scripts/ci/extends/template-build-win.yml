@@ -3,7 +3,9 @@
   tags: [windows]
   needs: [meta]
   script:
-    - $build_directory_full = "..\build\" + $env:CMAKE_PRESET
+    - $build_directory_prefix = if ($env:CMAKE_PRESET_BUILD_DIR_PREFIX) { $env:CMAKE_PRESET_BUILD_DIR_PREFIX } else { "" }
+    - $env:CMAKE_PRESET_BUILD_DIR_PREFIX = $build_directory_prefix
+    - $build_directory_full = "..\build\" + $build_directory_prefix + $env:CMAKE_PRESET
     - $artifacts_dir = "build\" + $env:CMAKE_PRESET + "-" + $env:CI_JOB_NAME_SLUG + "-" + $env:CI_JOB_ID
     - $log_file = $build_directory_full + "\make.txt"
     - (rm -r -fo $build_directory_full)
@@ -11,11 +13,11 @@
     - mkdir build # We are inside the OGS source directory, now. This "build" dir will be, too.
     # Create symlink https://stackoverflow.com/a/34905638/80480
     - cmd /c mklink /D $artifacts_dir $env:CI_PROJECT_DIR\$build_directory_full
-    - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS"
+    - $cmake_cmd = "cmake --preset=$env:CMAKE_PRESET -B `"$build_directory_full`" --log-level=VERBOSE -Wno-dev $env:CMAKE_ARGS"
     - $cmake_cmd
     - |
       $ctest_group = "Experimental"
-      if($env:CI_COMMIT_BRANCH -eq "master") { $ctest_group = "master" }
+      if($env:CI_COMMIT_BRANCH -eq $env:CI_DEFAULT_BRANCH) { $ctest_group = "master" }
 
       $ctest_condition = $false
       if ($null -eq $env:CI_MERGE_REQUEST_LABELS) { $ctest_condition = $true }
@@ -27,6 +29,8 @@
         echo "######################## $(Get-Date) ########################"
         $env:CTEST_BINARY_DIRECTORY = $build_directory_full
         $env:CTEST_GROUP = $ctest_group
+        if ($env:CI_PIPELINE_SOURCE -eq "pipeline") { $env:CTEST_SUBMIT = "false" }
+        else { $env:CTEST_SUBMIT = "true" }
         $env:CTEST_DASHBOARD_PHASE = "configure"
         ctest -S scripts/ci/ctest-dashboard.cmake -VV | Tee-Object -FilePath $log_file
         if ($LASTEXITCODE -ne 0) {
@@ -44,7 +48,7 @@
 
       # Activate .venv
       Invoke-Expression $build_directory_full\.envrc.ps1
-      $cmakeArgs = @("--build", "--preset=$env:CMAKE_PRESET")
+      $cmakeArgs = @("--build", $build_directory_full)
       if ($env:BUILD_PACKAGE -eq "true") { $cmakeArgs += @("--target", "package") }
       if ($env:CMAKE_PRESET -match "msvc") { $cmakeArgs += @("--", "/m") }
 
@@ -66,31 +70,30 @@
 
       echo "######################## $(Get-Date) ########################"
       if($env:BUILD_TESTS -eq "true") {
-        cmake --build --preset=$env:CMAKE_PRESET --target tests
+        cmake --build $build_directory_full --target tests
         if ($LASTEXITCODE -ne 0) {
           exit $LASTEXITCODE
         }
       }
       if(($env:BUILD_CTEST -eq "true") -And ($ctest_condition -eq $true))
       {
-        $ctest_arguments = @()
-
-        if ($env:CTEST_ARGS -And ($env:CTEST_ARGS.Trim() -ne "")) {
-            # Split CTEST_ARGS into separate args (assuming space-delimited)
-            $ctest_arguments += $env:CTEST_ARGS.Trim('"').Split(" ")
-        }
-
-        if ($env:BUILD_CTEST_LARGE -ne "true") {
-            $ctest_arguments += "-LE"
-            $ctest_arguments += "large"
-        }
-
         echo "######################## $(Get-Date) ########################"
-        ctest --preset=$env:CMAKE_PRESET --no-tests=error $ctest_arguments --output-junit Tests/ctest.xml -M Experimental --group $ctest_group --test-dir $build_directory_full -T Test
-        $ctestExitCode = $LASTEXITCODE
-        ctest --test-dir $build_directory_full -T submit; $null
-        if ($ctestExitCode -ne 0) {
-         exit $ctestExitCode
+        if (-Not $env:CTEST_PRESET) {
+          if ($env:BUILD_CTEST_LARGE -eq "true") { $env:CTEST_PRESET = "$($env:CMAKE_PRESET)-large" }
+          else { $env:CTEST_PRESET = $env:CMAKE_PRESET }
+        }
+        $env:CTEST_BINARY_DIRECTORY = $build_directory_full
+        $env:CTEST_GROUP = $ctest_group
+        $env:CTEST_DASHBOARD_PHASE = "test"
+        if ($env:CI_PIPELINE_SOURCE -eq "pipeline") { $env:CTEST_SUBMIT = "false" }
+        else { $env:CTEST_SUBMIT = "true" }
+        if (-Not $env:CTEST_TIMEOUT) {
+          if ($env:BUILD_CTEST_LARGE -eq "true") { $env:CTEST_TIMEOUT = "90" }
+          else { $env:CTEST_TIMEOUT = "60" }
+        }
+        ctest -S scripts/ci/ctest-dashboard.cmake -VV
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
         }
       }
       echo "######################## $(Get-Date) ########################"

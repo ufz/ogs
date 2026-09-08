@@ -27,7 +27,7 @@ if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "configure")
     endif()
 
     set(CTEST_CONFIGURE_COMMAND
-        "\"${CMAKE_COMMAND}\" -E chdir \"${CTEST_SOURCE_DIRECTORY}\" \"${CMAKE_COMMAND}\" --preset=$ENV{CMAKE_PRESET} --log-level=VERBOSE -Wno-dev"
+        "\"${CMAKE_COMMAND}\" -E chdir \"${CTEST_SOURCE_DIRECTORY}\" \"${CMAKE_COMMAND}\" --preset=$ENV{CMAKE_PRESET} -B \"${CTEST_BINARY_DIRECTORY}\" --log-level=VERBOSE -Wno-dev"
     )
     if(NOT "$ENV{CMAKE_ARGS}" STREQUAL "")
         string(APPEND CTEST_CONFIGURE_COMMAND " $ENV{CMAKE_ARGS}")
@@ -38,7 +38,11 @@ if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "configure")
         BUILD "${CTEST_BINARY_DIRECTORY}" SOURCE "${CTEST_SOURCE_DIRECTORY}"
         RETURN_VALUE _configure_result
     )
-    ctest_submit(PARTS Configure RETURN_VALUE _submit_result)
+    if(NOT "$ENV{CTEST_SUBMIT}" STREQUAL "false")
+        ctest_submit(PARTS Configure RETURN_VALUE _submit_result)
+    else()
+        set(_submit_result 0)
+    endif()
     if(_configure_result)
         message(
             FATAL_ERROR
@@ -54,10 +58,79 @@ if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "configure")
     return()
 endif()
 
+if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "test")
+    if(DEFINED ENV{CTEST_GROUP} AND NOT "$ENV{CTEST_GROUP}" STREQUAL "")
+        set(_ctest_group "$ENV{CTEST_GROUP}")
+    else()
+        set(_ctest_group Experimental)
+    endif()
+
+    if(EXISTS "${CTEST_BINARY_DIRECTORY}/Testing/TAG")
+        ctest_start(APPEND)
+    else()
+        ctest_start(Experimental GROUP "${_ctest_group}")
+    endif()
+    set(_ctest_test_command
+        ${CMAKE_CTEST_COMMAND} --test-dir "${CTEST_BINARY_DIRECTORY}" -M
+        Experimental --group "${_ctest_group}" --no-tests=error -T Test
+        --output-junit Tests/ctest.xml
+    )
+    if(NOT "$ENV{CTEST_ARGS}" STREQUAL "")
+        separate_arguments(_ctest_args NATIVE_COMMAND "$ENV{CTEST_ARGS}")
+        list(APPEND _ctest_test_command ${_ctest_args})
+    elseif(NOT "$ENV{CTEST_PRESET}" STREQUAL "")
+        list(APPEND _ctest_test_command --preset "$ENV{CTEST_PRESET}")
+    endif()
+    if(NOT "$ENV{CTEST_EXTRA_ARGS}" STREQUAL "")
+        separate_arguments(
+            _ctest_extra_args NATIVE_COMMAND "$ENV{CTEST_EXTRA_ARGS}"
+        )
+        list(APPEND _ctest_test_command ${_ctest_extra_args})
+    endif()
+    if(NOT "$ENV{BUILD_CTEST_LARGE}" STREQUAL "true")
+        list(APPEND _ctest_test_command -LE large)
+    endif()
+    if("$ENV{CI_MERGE_REQUEST_LABELS}" MATCHES ".*web[ ]only.*")
+        list(APPEND _ctest_test_command -R nb-)
+    endif()
+    set(_test_timeout)
+    if(NOT "$ENV{CTEST_TIMEOUT}" STREQUAL "")
+        math(EXPR _test_timeout "$ENV{CTEST_TIMEOUT} * 60")
+    endif()
+
+    if(_test_timeout)
+        execute_process(
+            COMMAND ${_ctest_test_command}
+            WORKING_DIRECTORY "${CTEST_SOURCE_DIRECTORY}"
+            TIMEOUT ${_test_timeout}
+            RESULT_VARIABLE _test_result
+        )
+    else()
+        execute_process(
+            COMMAND ${_ctest_test_command}
+            WORKING_DIRECTORY "${CTEST_SOURCE_DIRECTORY}"
+            RESULT_VARIABLE _test_result
+        )
+    endif()
+    if(_test_result)
+        message(FATAL_ERROR "CTest test failed with exit code ${_test_result}.")
+    endif()
+    if(NOT "$ENV{CTEST_SUBMIT}" STREQUAL "false")
+        ctest_submit(PARTS Test RETURN_VALUE _submit_result)
+        if(_submit_result)
+            message(
+                FATAL_ERROR
+                    "Submitting CTest test results failed with exit code ${_submit_result}."
+            )
+        endif()
+    endif()
+    return()
+endif()
+
 if(NOT "$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "build")
     message(
         FATAL_ERROR
-            "CTEST_DASHBOARD_PHASE must be set to 'configure' or 'build'."
+            "CTEST_DASHBOARD_PHASE must be set to 'configure', 'build', or 'test'."
     )
 endif()
 
@@ -72,7 +145,7 @@ endif()
 set(_build_command_without_target
     ${_build_command_prefix} "${CMAKE_COMMAND}" -E chdir
     "${CTEST_SOURCE_DIRECTORY}" "${CMAKE_COMMAND}" --build
-    "--preset=$ENV{CMAKE_PRESET}"
+    "${CTEST_BINARY_DIRECTORY}"
 )
 
 set(CTEST_BUILD_COMMAND "$ENV{BUILD_CMD_PREFIX}")
@@ -82,7 +155,7 @@ endif()
 string(
     APPEND
     CTEST_BUILD_COMMAND
-    "\"${CMAKE_COMMAND}\" -E chdir \"${CTEST_SOURCE_DIRECTORY}\" \"${CMAKE_COMMAND}\" --build --preset=$ENV{CMAKE_PRESET}"
+    "\"${CMAKE_COMMAND}\" -E chdir \"${CTEST_SOURCE_DIRECTORY}\" \"${CMAKE_COMMAND}\" --build \"${CTEST_BINARY_DIRECTORY}\""
 )
 if("$ENV{BUILD_PACKAGE}" STREQUAL "true")
     string(APPEND CTEST_BUILD_COMMAND " --target package")
@@ -112,7 +185,11 @@ if(DEFINED ENV{ADDITIONAL_TARGETS_PRE} AND NOT "$ENV{ADDITIONAL_TARGETS_PRE}"
 endif()
 
 ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE _build_result)
-ctest_submit(PARTS Build RETURN_VALUE _submit_result)
+if(NOT "$ENV{CTEST_SUBMIT}" STREQUAL "false")
+    ctest_submit(PARTS Build RETURN_VALUE _submit_result)
+else()
+    set(_submit_result 0)
+endif()
 if(_build_result)
     message(FATAL_ERROR "CTest build failed with exit code ${_build_result}.")
 endif()
