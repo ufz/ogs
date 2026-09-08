@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
+    <!-- C*/P* parameters are used via VariableDependentNeumann *_name tags (C* by the commented-out BC) -->
+    <!-- ogs-inspect-disable-file OGS011 -->
     <meshes>
         <mesh>vdbc_input.vtu</mesh>
         <mesh>vdbc_input_rightBoundary.vtu</mesh>

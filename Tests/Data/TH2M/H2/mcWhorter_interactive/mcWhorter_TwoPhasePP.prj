@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
+    <!-- Template: the mcwt geometry is added by mcWhorter_interactive.py -->
+    <!-- ogs-inspect-disable-file OGS000, OGS001 -->
     <mesh>mesh_line.vtu</mesh>
     <parameters>
         <parameter>

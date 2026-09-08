@@ -216,6 +216,8 @@
             <max_iter>100</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
+        <!-- alternative to basic_picard, see commented-out selection in the process -->
+        <!-- ogs-inspect-disable OGS011 -->
         <nonlinear_solver>
             <name>basic_newton</name>
             <type>Newton</type>

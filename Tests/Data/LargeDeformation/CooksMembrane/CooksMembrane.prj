@@ -111,6 +111,8 @@
             <!-- F = 100/16 N/mm -->
             <value>6250e3</value>
         </parameter>
+        <!-- FRamp is used by the CooksMembraneLDRefinedMesh*.xml patches and CooksMembraneFbar.py -->
+        <!-- ogs-inspect-disable OGS011 -->
         <parameter>
             <name>FRamp</name>
             <type>CurveScaled</type>
