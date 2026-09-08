@@ -534,6 +534,31 @@ TEST(MaterialLibDriftFluxModel, DriftAlignmentIsIdempotent)
     }
 }
 
+// The slip momentum term of the mixture is built from the same bracket
+// (C_0 - 1) v + u_gu that the closure solves with, so with the aligned drift
+// flux velocity it is mirror symmetric in the mixture velocity, just as the
+// void fraction is. With a raw drift flux velocity it would instead vanish at
+// the finite backflow velocity v = -u_gu / (C_0 - 1).
+TEST(MaterialLibDriftFluxModel, SlipBracketMirrorsUnderFlowReversal)
+{
+    using namespace MaterialPropertyLib;
+
+    double const u_gu = 0.21;
+    double const dryness = 0.3;
+    double const C_0 = driftFluxProfileParameter(dryness);
+
+    auto const slipBracket = [&](double const v)
+    { return (C_0 - 1) * v + alignedDriftFluxVelocity(u_gu, v); };
+
+    for (double v_mix : {1e-3, 0.1, 1.33, 25.})
+    {
+        EXPECT_DOUBLE_EQ(slipBracket(v_mix), -slipBracket(-v_mix))
+            << "v = " << v_mix;
+    }
+
+    EXPECT_NE(0., slipBracket(-u_gu / (C_0 - 1)));
+}
+
 // The void fraction is continuous at flow reversal, where it vanishes
 // proportionally to the magnitude of the mixture velocity.
 TEST(MaterialLibDriftFluxModel, ContinuousAtFlowReversal)
@@ -884,5 +909,35 @@ TEST(MaterialLibDriftFluxModel, MixtureSlipVanishesLinearlyAtFullVoidFraction)
                 << "dryness = " << dryness;
         }
         previous_slope = slope;
+    }
+}
+
+// The state factory is the single place the closure's inputs are composed, so
+// what it returns has to be the state the local assemblers built by hand
+// before: the profile parameter of the dryness, and the drift flux velocity
+// aligned with the mixture flow rather than the raw one.
+TEST(MaterialLibDriftFluxModel, StateFactoryComposesTheClosureInputs)
+{
+    using namespace MaterialPropertyLib;
+
+    double const dryness = 0.3;
+    double const temperature = 453.03;
+
+    for (double v_mix : {-25., -1.33, 0., 1.33, 25.})
+    {
+        DriftFluxState const state =
+            driftFluxState(dryness, temperature, rho_v, rho_l, v_mix);
+
+        EXPECT_EQ(dryness, state.dryness) << "v = " << v_mix;
+        EXPECT_EQ(rho_v, state.vapour_water_density) << "v = " << v_mix;
+        EXPECT_EQ(rho_l, state.liquid_water_density) << "v = " << v_mix;
+        EXPECT_EQ(v_mix, state.v_mix) << "v = " << v_mix;
+        EXPECT_EQ(driftFluxProfileParameter(dryness), state.C_0)
+            << "v = " << v_mix;
+        EXPECT_EQ(
+            alignedDriftFluxVelocity(
+                driftFluxVelocity(dryness, temperature, rho_v, rho_l), v_mix),
+            state.u_gu)
+            << "v = " << v_mix;
     }
 }

@@ -121,6 +121,22 @@ double driftFluxVelocity(double const dryness, double const temperature,
            std::pow(liquid_water_density, 0.5);
 }
 
+DriftFluxState driftFluxState(double const dryness, double const temperature,
+                              double const vapour_water_density,
+                              double const liquid_water_density,
+                              double const v_mix)
+{
+    return {.dryness = dryness,
+            .vapour_water_density = vapour_water_density,
+            .liquid_water_density = liquid_water_density,
+            .v_mix = v_mix,
+            .C_0 = driftFluxProfileParameter(dryness),
+            .u_gu = alignedDriftFluxVelocity(
+                driftFluxVelocity(dryness, temperature, vapour_water_density,
+                                  liquid_water_density),
+                v_mix)};
+}
+
 std::optional<double> computeVapourVoidFraction(DriftFluxState const& state)
 {
     auto const& [dryness, vapour_water_density, liquid_water_density, v_mix,

@@ -103,7 +103,34 @@ double driftFluxVelocity(double const dryness, double const temperature,
 /// derived for co-current flow and has no admissible solution for backflow
 /// with a drift velocity that is fixed in the gravity frame, see
 /// computeVapourVoidFraction() for the reasoning.
+///
+/// Every use of the drift flux velocity next to a void fraction obtained from
+/// that closure, in particular the slip momentum term of the mixture, has to
+/// use the same aligned value: the void fraction is even in the mixture
+/// velocity, so a raw drift flux velocity leaves the slip term inconsistent
+/// with it and lets the term vanish at the finite backflow velocity
+/// \f$v = -u_{gu} / (C_0 - 1)\f$.
 double alignedDriftFluxVelocity(double const u_gu, double const v_mix);
+
+/// State of the drift-flux closure for a two-phase water mixture, assembled
+/// from the quantities a local assembler has at an integration point. The
+/// profile parameter and the drift flux velocity are not independent inputs:
+/// they follow from the same dryness, temperature and phase densities through
+/// driftFluxProfileParameter() and driftFluxVelocity(), and the drift has to
+/// be the one aligned with the mixture flow, see alignedDriftFluxVelocity().
+/// Composing them here keeps every caller on the same closure.
+///
+/// \param dryness                the vapour mass fraction, dimensionless.
+/// \param temperature            in K.
+/// \param vapour_water_density   in kg/m^3.
+/// \param liquid_water_density   in kg/m^3.
+/// \param v_mix                  the mixture velocity in m/s.
+/// \return The state, with its profile parameter and its aligned drift flux
+/// velocity.
+DriftFluxState driftFluxState(double const dryness, double const temperature,
+                              double const vapour_water_density,
+                              double const liquid_water_density,
+                              double const v_mix);
 
 /// Vapour void fraction of the Rouhani-Axelsson drift-flux closure, see
 /// Rouhani, Z., and E. Axelsson. "Calculation of volume void fraction in a

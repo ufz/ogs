@@ -195,21 +195,13 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
         // fraction in a subcooled and quality region." International
         // Journal of Heat and Mass Transfer 17 (1970): 383-393.
 
-        // profile parameter of drift flux
-        double const C_0 =
-            MaterialPropertyLib::driftFluxProfileParameter(dryness);
-
-        // drift flux velocity
-        double const u_gu = MaterialPropertyLib::driftFluxVelocity(
-            dryness, T_int_pt, vapour_water_density, liquid_water_density);
-
-        MaterialPropertyLib::DriftFluxState const drift_flux_state{
-            .dryness = dryness,
-            .vapour_water_density = vapour_water_density,
-            .liquid_water_density = liquid_water_density,
-            .v_mix = v_int_pt,
-            .C_0 = C_0,
-            .u_gu = u_gu};
+        // The drift is aligned with the mixture flow so that the closure below
+        // and the slip momentum term further down are consistent, see
+        // MaterialPropertyLib::alignedDriftFluxVelocity().
+        MaterialPropertyLib::DriftFluxState const drift_flux_state =
+            MaterialPropertyLib::driftFluxState(dryness, T_int_pt,
+                                                vapour_water_density,
+                                                liquid_water_density, v_int_pt);
 
         // solving void fraction of vapour: Rouhani-Axelsson
         auto const alpha_solution =
