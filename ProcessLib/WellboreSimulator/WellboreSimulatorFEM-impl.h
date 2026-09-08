@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "MaterialLib/MPL/Phase.h"
+#include "MaterialLib/MPL/Utils/DriftFluxModel.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
 #include "NumLib/Fem/FiniteElement/TemplateIsoparametric.h"
@@ -192,76 +193,15 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
         // Journal of Heat and Mass Transfer 17 (1970): 383-393.
 
         // profile parameter of drift flux
-        double C_0 = 1 + 0.12 * (1 - dryness);
+        double const C_0 =
+            MaterialPropertyLib::driftFluxProfileParameter(dryness);
 
-        // For the surface tension calculation, see
-        // Cooper, J. R., and R. B. Dooley. "IAPWS release on surface
-        // tension of ordinary water substance." International Association
-        // for the Properties of Water and Steam (1994).
-        double const sigma_gl = 0.2358 *
-                                std::pow((1 - T_int_pt / 647.096), 1.256) *
-                                (1 - 0.625 * (1 - T_int_pt / 647.096));
-        // drift flux velocity
-        double const u_gu =
-            1.18 * (1 - dryness) *
-            std::pow((9.81) * sigma_gl *
-                         (liquid_water_density - vapour_water_density),
-                     0.25) /
-            std::pow(liquid_water_density, 0.5);
+        double const u_gu = MaterialPropertyLib::driftFluxVelocity(
+            dryness, T_int_pt, vapour_water_density, liquid_water_density);
 
-        // solving void fraction of vapor: Rouhani-Axelsson
-        double alpha = 0;
-        if (dryness != 0)
-        {
-            // Local Newton solver
-            using LocalJacobianMatrix =
-                Eigen::Matrix<double, 1, 1, Eigen::RowMajor>;
-            using LocalResidualVector = Eigen::Matrix<double, 1, 1>;
-            using LocalUnknownVector = Eigen::Matrix<double, 1, 1>;
-            LocalJacobianMatrix J_loc;
-
-            Eigen::PartialPivLU<LocalJacobianMatrix> linear_solver(1);
-
-            auto const update_residual = [&](LocalResidualVector& residual)
-            {
-                calculateResidual(alpha, vapour_water_density,
-                                  liquid_water_density, v_int_pt, dryness, C_0,
-                                  u_gu, residual);
-            };
-
-            auto const update_jacobian = [&](LocalJacobianMatrix& jacobian)
-            {
-                calculateJacobian(
-                    alpha, vapour_water_density, liquid_water_density, v_int_pt,
-                    dryness, C_0, u_gu,
-                    jacobian);  // for solution dependent Jacobians
-            };
-
-            auto const update_solution =
-                [&](LocalUnknownVector const& increment)
-            {
-                // increment solution vectors
-                alpha += increment[0];
-            };
-
-            const int maximum_iterations(20);
-            const double residuum_tolerance(1.e-10);
-            const double increment_tolerance(0);
-
-            auto newton_solver = NumLib::NewtonRaphson(
-                linear_solver, update_jacobian, update_residual,
-                update_solution,
-                {maximum_iterations, residuum_tolerance, increment_tolerance});
-
-            auto const success_iterations = newton_solver.solve(J_loc);
-
-            if (!success_iterations)
-            {
-                WARN(
-                    "Attention! Steam void fraction has not been correctly "
-                    "calculated!");
-            }
-        }
+        double const alpha = MaterialPropertyLib::computeVapourVoidFraction(
+            dryness, vapour_water_density, liquid_water_density, v_int_pt, C_0,
+            u_gu);
 
         vapor_volume_frac = alpha;
 
@@ -297,17 +237,9 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
                                liquid_water_density * pi * r_i * r_i *
                                (1 - alpha);
 
-        // Slip parameter between two phases,
-        // see Akbar, Somaieh, N. Fathianpour, and Rafid Al Khoury. "A finite
-        // element model for high enthalpy two-phase flow in geothermal
-        // wellbores." Renewable Energy 94 (2016): 223-236.
-        double const gamma =
-            alpha * liquid_water_density * vapour_water_density * mix_density /
-            (1 - alpha) /
-            std::pow((alpha * C_0 * vapour_water_density +
-                      (1 - alpha * C_0) * liquid_water_density),
-                     2) *
-            std::pow((C_0 - 1) * v_int_pt + u_gu, 2);
+        double const gamma = MaterialPropertyLib::mixtureSlipParameter(
+            alpha, vapour_water_density, liquid_water_density, v_int_pt, C_0,
+            u_gu);
 
         double const miu =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)

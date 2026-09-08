@@ -9,11 +9,11 @@
 #include "GenericNaturalBoundaryConditionLocalAssembler.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/DriftFluxModel.h"
 #include "MeshLib/PropertyVector.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Fem/Interpolation.h"
 #include "NumLib/IndexValueVector.h"
-#include "NumLib/NewtonRaphson.h"
 #include "ParameterLib/MeshNodeParameter.h"
 
 namespace ProcessLib
@@ -170,95 +170,15 @@ public:
             // Journal of Heat and Mass Transfer 17 (1970): 383-393.
 
             // Profile parameter of drift flux
-            double const C_0 = 1 + 0.12 * (1 - dryness);
+            double const C_0 =
+                MaterialPropertyLib::driftFluxProfileParameter(dryness);
 
-            // For the surface tension calculation, see
-            // Cooper, J. R., and R. B. Dooley. "IAPWS release on surface
-            // tension of ordinary water substance." International Association
-            // for the Properties of Water and Steam (1994).
-            double const sigma_gl = 0.2358 *
-                                    std::pow((1 - T_int_pt / 647.096), 1.256) *
-                                    (1 - 0.625 * (1 - T_int_pt / 647.096));
-            // drift flux velocity
-            double const u_gu =
-                1.18 * (1 - dryness) *
-                std::pow((9.81) * sigma_gl *
-                             (liquid_water_density - vapour_water_density),
-                         0.25) /
-                std::pow(liquid_water_density, 0.5);
+            double const u_gu = MaterialPropertyLib::driftFluxVelocity(
+                dryness, T_int_pt, vapour_water_density, liquid_water_density);
 
-            // solving void fraction of vapour using local Newton
-            // iteration.
-            double alpha = 0;
-            if (dryness != 0)
-            {
-                // Local Newton solver
-                using LocalJacobianMatrix =
-                    Eigen::Matrix<double, 1, 1, Eigen::RowMajor>;
-                using LocalResidualVector = Eigen::Matrix<double, 1, 1>;
-                using LocalUnknownVector = Eigen::Matrix<double, 1, 1>;
-                LocalJacobianMatrix J_loc;
-
-                Eigen::PartialPivLU<LocalJacobianMatrix> linear_solver(1);
-
-                auto const update_residual = [&](LocalResidualVector& residual)
-                {
-                    residual(0) = dryness * liquid_water_density *
-                                      (alpha * vapour_water_density +
-                                       (1 - alpha) * liquid_water_density) *
-                                      velocity_int_pt -
-                                  alpha * C_0 * dryness * liquid_water_density *
-                                      (alpha * vapour_water_density +
-                                       (1 - alpha) * liquid_water_density) *
-                                      velocity_int_pt -
-                                  alpha * C_0 * (1 - dryness) *
-                                      vapour_water_density *
-                                      (alpha * vapour_water_density +
-                                       (1 - alpha) * liquid_water_density) *
-                                      velocity_int_pt -
-                                  alpha * vapour_water_density *
-                                      liquid_water_density * u_gu;
-                };
-
-                auto const update_jacobian = [&](LocalJacobianMatrix& jacobian)
-                {
-                    jacobian(0) =
-                        dryness * liquid_water_density * velocity_int_pt *
-                            (vapour_water_density - liquid_water_density) -
-                        (C_0 * dryness * liquid_water_density +
-                         C_0 * (1 - dryness) * vapour_water_density) *
-                            (2 * alpha * vapour_water_density +
-                             (1 - 2 * alpha) * liquid_water_density) *
-                            velocity_int_pt -
-                        vapour_water_density * liquid_water_density * u_gu;
-                };
-
-                auto const update_solution =
-                    [&](LocalUnknownVector const& increment)
-                {
-                    // increment solution vectors
-                    alpha += increment[0];
-                };
-
-                const int maximum_iterations(20);
-                const double residuum_tolerance(1.e-10);
-                const double increment_tolerance(0);
-
-                auto newton_solver = NumLib::NewtonRaphson(
-                    linear_solver, update_jacobian, update_residual,
-                    update_solution,
-                    {maximum_iterations, residuum_tolerance,
-                     increment_tolerance});
-
-                auto const success_iterations = newton_solver.solve(J_loc);
-
-                if (!success_iterations)
-                {
-                    WARN(
-                        "Attention! Steam void fraction has not been correctly "
-                        "calculated!");
-                }
-            }
+            double const alpha = MaterialPropertyLib::computeVapourVoidFraction(
+                dryness, vapour_water_density, liquid_water_density,
+                velocity_int_pt, C_0, u_gu);
 
             if (alpha == 0)
             {
@@ -271,14 +191,9 @@ public:
             double const mix_density = vapour_water_density * alpha +
                                        liquid_water_density * (1 - alpha);
 
-            // slip parameter between two phases
-            double const gamma =
-                alpha * liquid_water_density * vapour_water_density *
-                mix_density / (1 - alpha) /
-                std::pow((alpha * C_0 * vapour_water_density +
-                          (1 - alpha * C_0) * liquid_water_density),
-                         2) *
-                std::pow((C_0 - 1) * velocity_int_pt + u_gu, 2);
+            double const gamma = MaterialPropertyLib::mixtureSlipParameter(
+                alpha, vapour_water_density, liquid_water_density,
+                velocity_int_pt, C_0, u_gu);
 
             double const neumann_ip_values =
                 _data.coefficients.pressure * mix_density * velocity_int_pt +
