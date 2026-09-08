@@ -41,6 +41,7 @@ set(_mfront_behaviours
     StandardElasticityBrick
     StandardElasticityBrickOrtho
     ThermoPoroElasticity
+    ThermoPoroElasticitySwelling
     WeakPlaneModel
     WeakPlaneModel_nonIter
 )
