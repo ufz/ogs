@@ -8,7 +8,4 @@ build mac petsc:
   allow_failure: true
   variables:
     BUILD_CTEST_LARGE_ON_MASTER: "true"
-    CMAKE_PRESET: release-petsc
-    CMAKE_ARGS: >-
-      -DOGS_USE_PIP=ON
-      -DOGS_USE_MFRONT=ON
+    CMAKE_PRESET: release-petsc-all
