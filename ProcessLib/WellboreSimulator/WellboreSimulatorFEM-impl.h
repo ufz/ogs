@@ -7,11 +7,14 @@
 
 #include <Eigen/Dense>
 #include <cmath>
+#include <optional>
 #include <vector>
 
 #include "MaterialLib/MPL/Phase.h"
+#include "MaterialLib/MPL/Properties/WaterStateIAPWSIF97Region1.h"
 #include "MaterialLib/MPL/Utils/DriftFluxModel.h"
 #include "MaterialLib/MPL/Utils/SteamDryness.h"
+#include "MaterialLib/PhysicalConstant.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/Exceptions.h"
 #include "NumLib/Extrapolation/ExtrapolatableElement.h"
@@ -154,83 +157,126 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
         vars.liquid_phase_pressure = p_int_pt;
         vars.enthalpy = h_int_pt;
 
-        double liquid_water_density =
-            liquid_phase
-                .property(MaterialPropertyLib::PropertyType::saturation_density)
-                .template value<double>(vars, pos, t, dt);
-        double const vapour_water_density =
-            gas_phase
-                .property(MaterialPropertyLib::PropertyType::saturation_density)
-                .template value<double>(vars, pos, t, dt);
+        // Above the critical pressure the region 4 saturation line ends, so
+        // there is no two-phase state to describe and the saturation
+        // properties are not evaluated at all: they would be extrapolated,
+        // and the closure they feed has no admissible void fraction there.
+        // Such a section is compressed liquid, which the region 1 properties
+        // of the liquid phase describe, and it is solved as one. Below the
+        // lower bound of the saturation line there is no such fall-back - the
+        // water is vapour, which this process has no properties for - so the
+        // range check of the saturation properties aborts the assembly as
+        // before.
+        double dryness = 0.;
+        double T_int_pt = 0.;
+        double liquid_water_density = 0.;
+        double vapour_water_density = 0.;
+        double alpha = 0.;
+        std::optional<MaterialPropertyLib::DriftFluxState> drift_flux_state;
 
-        double const h_sat_liq_w =
-            liquid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::saturation_enthalpy)
-                .template value<double>(vars, pos, t, dt);
-        double const h_sat_vap_w =
-            gas_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::saturation_enthalpy)
-                .template value<double>(vars, pos, t, dt);
-
-        double const dryness = MaterialPropertyLib::steamDryness(
-            h_int_pt, h_sat_liq_w, h_sat_vap_w);
-        steam_mass_frac = dryness;
-
-        double const T_int_pt =
-            (dryness == 0)
-                ? liquid_phase
-                      .property(MaterialPropertyLib::PropertyType::temperature)
-                      .template value<double>(vars, pos, t, dt)
-                : gas_phase
-                      .property(MaterialPropertyLib::PropertyType::
-                                    saturation_temperature)
-                      .template value<double>(vars, pos, t, dt);
-        temperature = T_int_pt;
-        vars.temperature = T_int_pt;
-
-        // For the calculation of the void fraction of vapour,
-        // see Rohuani, Z., and E. Axelsson. "Calculation of volume void
-        // fraction in a subcooled and quality region." International
-        // Journal of Heat and Mass Transfer 17 (1970): 383-393.
-
-        // The drift is aligned with the mixture flow so that the closure below
-        // and the slip momentum term further down are consistent, see
-        // MaterialPropertyLib::alignedDriftFluxVelocity().
-        MaterialPropertyLib::DriftFluxState const drift_flux_state =
-            MaterialPropertyLib::driftFluxState(dryness, T_int_pt,
-                                                vapour_water_density,
-                                                liquid_water_density, v_int_pt);
-
-        // solving void fraction of vapour: Rouhani-Axelsson
-        auto const alpha_solution =
-            MaterialPropertyLib::computeVapourVoidFraction(drift_flux_state);
-
-        if (!alpha_solution)
+        if (p_int_pt >
+            MaterialLib::PhysicalConstant::CriticalPoint::PressureWater)
         {
-            throw NumLib::AssemblyException(fmt::format(
-                "The drift-flux closure of the WellboreSimulator process has "
-                "no admissible vapour void fraction in element {:d}, "
-                "integration point {:d}: pressure {:g} Pa, mixture velocity "
-                "{:g} m/s, specific enthalpy {:g} J/kg, temperature {:g} K, "
-                "{}",
-                _element.getID(), ip, p_int_pt, v_int_pt, h_int_pt, T_int_pt,
-                MaterialPropertyLib::voidFractionClosureDiagnostics(
-                    drift_flux_state)));
-        }
+            T_int_pt =
+                liquid_phase
+                    .property(MaterialPropertyLib::PropertyType::temperature)
+                    .template value<double>(vars, pos, t, dt);
+            vars.temperature = T_int_pt;
 
-        double const alpha = *alpha_solution;
+            MaterialPropertyLib::IAPWSIF97Region1::checkStateInRange(
+                p_int_pt, T_int_pt,
+                "the compressed liquid state of the WellboreSimulator "
+                "process");
 
-        vapor_volume_frac = alpha;
-
-        if (alpha == 0)
-        {
             liquid_water_density =
                 liquid_phase
                     .property(MaterialPropertyLib::PropertyType::density)
                     .template value<double>(vars, pos, t, dt);
         }
+        else
+        {
+            liquid_water_density =
+                liquid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::saturation_density)
+                    .template value<double>(vars, pos, t, dt);
+            vapour_water_density =
+                gas_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::saturation_density)
+                    .template value<double>(vars, pos, t, dt);
+
+            double const h_sat_liq_w =
+                liquid_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::saturation_enthalpy)
+                    .template value<double>(vars, pos, t, dt);
+            double const h_sat_vap_w =
+                gas_phase
+                    .property(
+                        MaterialPropertyLib::PropertyType::saturation_enthalpy)
+                    .template value<double>(vars, pos, t, dt);
+
+            dryness = MaterialPropertyLib::steamDryness(h_int_pt, h_sat_liq_w,
+                                                        h_sat_vap_w);
+
+            T_int_pt =
+                (dryness == 0)
+                    ? liquid_phase
+                          .property(
+                              MaterialPropertyLib::PropertyType::temperature)
+                          .template value<double>(vars, pos, t, dt)
+                    : gas_phase
+                          .property(MaterialPropertyLib::PropertyType::
+                                        saturation_temperature)
+                          .template value<double>(vars, pos, t, dt);
+            vars.temperature = T_int_pt;
+
+            // For the calculation of the void fraction of vapour,
+            // see Rohuani, Z., and E. Axelsson. "Calculation of volume void
+            // fraction in a subcooled and quality region." International
+            // Journal of Heat and Mass Transfer 17 (1970): 383-393.
+
+            // The drift is aligned with the mixture flow so that the closure
+            // below and the slip momentum term further down are consistent,
+            // see MaterialPropertyLib::alignedDriftFluxVelocity().
+            drift_flux_state = MaterialPropertyLib::driftFluxState(
+                dryness, T_int_pt, vapour_water_density, liquid_water_density,
+                v_int_pt);
+
+            // solving void fraction of vapour: Rouhani-Axelsson
+            auto const alpha_solution =
+                MaterialPropertyLib::computeVapourVoidFraction(
+                    *drift_flux_state);
+
+            if (!alpha_solution)
+            {
+                throw NumLib::AssemblyException(fmt::format(
+                    "The drift-flux closure of the WellboreSimulator process "
+                    "has no admissible vapour void fraction in element {:d}, "
+                    "integration point {:d}: pressure {:g} Pa, mixture "
+                    "velocity {:g} m/s, specific enthalpy {:g} J/kg, "
+                    "temperature {:g} K, {}",
+                    _element.getID(), ip, p_int_pt, v_int_pt, h_int_pt,
+                    T_int_pt,
+                    MaterialPropertyLib::voidFractionClosureDiagnostics(
+                        *drift_flux_state)));
+            }
+
+            alpha = *alpha_solution;
+
+            if (alpha == 0)
+            {
+                liquid_water_density =
+                    liquid_phase
+                        .property(MaterialPropertyLib::PropertyType::density)
+                        .template value<double>(vars, pos, t, dt);
+            }
+        }
+
+        steam_mass_frac = dryness;
+        temperature = T_int_pt;
+        vapor_volume_frac = alpha;
 
         mix_density =
             vapour_water_density * alpha + liquid_water_density * (1 - alpha);
@@ -257,8 +303,10 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
                                liquid_water_density * pi * r_i * r_i *
                                (1 - alpha);
 
-        double const gamma =
-            MaterialPropertyLib::mixtureSlipParameter(alpha, drift_flux_state);
+        double const gamma = drift_flux_state
+                                 ? MaterialPropertyLib::mixtureSlipParameter(
+                                       alpha, *drift_flux_state)
+                                 : 0.;
 
         double const miu =
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
