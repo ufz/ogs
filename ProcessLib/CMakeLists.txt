@@ -20,7 +20,9 @@ foreach(process ${_enabled_processes})
     target_link_libraries(Processes INTERFACE ${process})
     set_target_properties(${process} PROPERTIES JOB_POOL_COMPILE heavy_tasks)
 endforeach()
-include(Tests.cmake)
+if(OGS_BUILD_TESTING)
+    include(Tests.cmake)
+endif()
 
 append_source_and_header_files(
     _sources
