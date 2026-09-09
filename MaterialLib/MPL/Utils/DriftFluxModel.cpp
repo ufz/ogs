@@ -117,8 +117,8 @@ double driftFluxVelocity(double const dryness, double const temperature,
         gravity * sigma_gl * (liquid_water_density - vapour_water_density);
     double const drift_buoyancy = buoyancy < 0 ? 0. : buoyancy;
 
-    return 1.18 * (1 - dryness) * std::pow(drift_buoyancy, 0.25) /
-           std::pow(liquid_water_density, 0.5);
+    return 1.18 * (1 - dryness) * std::sqrt(std::sqrt(drift_buoyancy)) /
+           std::sqrt(liquid_water_density);
 }
 
 DriftFluxState driftFluxState(double const dryness, double const temperature,

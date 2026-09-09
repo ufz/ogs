@@ -345,8 +345,8 @@ void WellboreSimulatorFEM<ShapeFunction, GlobalDim>::assemble(
             double beta;
             if (t_d < 2.8)
             {
-                beta = std::pow((pi * t_d), -0.5) + 0.5 -
-                       0.25 * std::pow((t_d / pi), 0.5) + 0.125 * t_d;
+                beta = 1 / std::sqrt(pi * t_d) + 0.5 -
+                       0.25 * std::sqrt(t_d / pi) + 0.125 * t_d;
             }
             else
             {
