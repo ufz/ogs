@@ -77,7 +77,7 @@
         if [[ ! -z "$ADDITIONAL_TARGETS_PRE" ]] && [ "$build_with_ctest" = false ]; then
 
           echo "########################" + `date` + "########################"
-          $BUILD_CMD_PREFIX cmake --build "$build_dir_full" --target ${ADDITIONAL_TARGETS_PRE} > >(tee -a $log_file)
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_PRE} > >(tee -a $log_file)
 
         fi
 
@@ -87,11 +87,11 @@
 
         if [ "$build_with_ctest" = false ]; then
           echo "########################" + `date` + "########################"
-          $BUILD_CMD_PREFIX cmake --build "$build_dir_full" ${build_package} > >(tee -a $log_file)
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET ${build_package} > >(tee -a $log_file)
         fi
 
         echo "########################" + `date` + "########################"
-        if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build "$build_dir_full" --target tests ; fi
+        if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target tests ; fi
 
         if [ "$BUILD_CTEST" = true ]; then
           ctest_timeout=60
@@ -136,14 +136,14 @@
         if [[ ! -z "$ADDITIONAL_TARGETS_POST" ]]; then
 
           echo "########################" + `date` + "########################"
-          $BUILD_CMD_PREFIX cmake --build "$build_dir_full" --target ${ADDITIONAL_TARGETS_POST} > >(tee -a $log_file)
+          $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${ADDITIONAL_TARGETS_POST} > >(tee -a $log_file)
 
         fi
 
       else
 
         echo "########################" + `date` + "########################"
-        $BUILD_CMD_PREFIX cmake --build "$build_dir_full" --target ${TARGETS} > >(tee $log_file)
+        $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target ${TARGETS} > >(tee $log_file)
 
       fi
       echo "########################" + `date` + "########################"

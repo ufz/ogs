@@ -48,7 +48,7 @@
 
       # Activate .venv
       Invoke-Expression $build_directory_full\.envrc.ps1
-      $cmakeArgs = @("--build", $build_directory_full)
+      $cmakeArgs = @("--build", "--preset=$env:CMAKE_PRESET")
       if ($env:BUILD_PACKAGE -eq "true") { $cmakeArgs += @("--target", "package") }
       if ($env:CMAKE_PRESET -match "msvc") { $cmakeArgs += @("--", "/m") }
 
@@ -70,7 +70,7 @@
 
       echo "######################## $(Get-Date) ########################"
       if($env:BUILD_TESTS -eq "true") {
-        cmake --build $build_directory_full --target tests
+        cmake --build --preset=$env:CMAKE_PRESET --target tests
         if ($LASTEXITCODE -ne 0) {
           exit $LASTEXITCODE
         }

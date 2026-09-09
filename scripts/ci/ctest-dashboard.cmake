@@ -145,7 +145,7 @@ endif()
 set(_build_command_without_target
     ${_build_command_prefix} "${CMAKE_COMMAND}" -E chdir
     "${CTEST_SOURCE_DIRECTORY}" "${CMAKE_COMMAND}" --build
-    "${CTEST_BINARY_DIRECTORY}"
+    "--preset=$ENV{CMAKE_PRESET}"
 )
 
 set(CTEST_BUILD_COMMAND "$ENV{BUILD_CMD_PREFIX}")
@@ -155,7 +155,7 @@ endif()
 string(
     APPEND
     CTEST_BUILD_COMMAND
-    "\"${CMAKE_COMMAND}\" -E chdir \"${CTEST_SOURCE_DIRECTORY}\" \"${CMAKE_COMMAND}\" --build \"${CTEST_BINARY_DIRECTORY}\""
+    "\"${CMAKE_COMMAND}\" -E chdir \"${CTEST_SOURCE_DIRECTORY}\" \"${CMAKE_COMMAND}\" --build --preset=$ENV{CMAKE_PRESET}"
 )
 if("$ENV{BUILD_PACKAGE}" STREQUAL "true")
     string(APPEND CTEST_BUILD_COMMAND " --target package")
