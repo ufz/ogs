@@ -1,6 +1,6 @@
 # because of ogs.minimum_version variables:
 #
-# cmake-lint: disable=C0103
+# cmake-lint: disable=C0103,W0106
 
 # Build dependencies via ExternalProject_Add() at configure time in
 # ${PROJECT_BINARY_DIR}/_ext or in $CPM_SOURCE_CACHE/_ext
@@ -477,9 +477,21 @@ foreach(option_index ${ogs.libraries.vtk.options})
 endforeach()
 list(REMOVE_DUPLICATES VTK_OPTIONS)
 
-# Setting static libs for easier packaging.
-list(APPEND VTK_OPTIONS "-DBUILD_SHARED_LIBS=OFF"
-     "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+# Setting static libs for easier packaging. Needs PIC because the static libs
+# also get linked into the ogs.OGSSimulator/OGSMesh/mpl Python extension
+# modules, which are shared objects. Also needs default (non-hidden) symbol
+# visibility: with hidden visibility some libstdc++ vague-linkage template
+# instantiations (e.g. used by vtkLogger) end up as undefined hidden symbols,
+# which ld refuses to link into a shared object
+# ("... can not be used when making a shared object").
+list(
+    APPEND
+    VTK_OPTIONS
+    "-DBUILD_SHARED_LIBS=OFF"
+    "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
+    "-DCMAKE_CXX_VISIBILITY_PRESET=default"
+    "-DCMAKE_VISIBILITY_INLINES_HIDDEN=OFF"
+    "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
 )
 if(APPLE)
     list(APPEND VTK_OPTIONS
@@ -548,6 +560,25 @@ if(NOT VTK_FOUND)
         https://gitlab.kitware.com/bilke/vtk/-/commit/70b16fda87f82520fa29b48c6a62bafa405d8ee2.patch
         ${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-mac.patch
     )
+    file(
+        WRITE ${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-visibility.patch
+        "diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8952207077..d9c067bb89 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -130,4 +130,8 @@ option(BUILD_SHARED_LIBS \"Build VTK with shared libraries.\" ON)
+ set(VTK_BUILD_SHARED_LIBS \${BUILD_SHARED_LIBS})
+-set(CMAKE_CXX_VISIBILITY_PRESET \"hidden\")
+-set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
++if (NOT DEFINED CMAKE_CXX_VISIBILITY_PRESET)
++  set(CMAKE_CXX_VISIBILITY_PRESET \"hidden\")
++endif ()
++if (NOT DEFINED CMAKE_VISIBILITY_INLINES_HIDDEN)
++  set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
++endif ()
+ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
+"
+    )
     if("${OGS_EXTERNAL_DEPENDENCIES_CACHE}" STREQUAL "")
         set(_vtk_patch PATCH_COMMAND git apply)
         if(APPLE)
@@ -556,9 +587,24 @@ if(NOT VTK_FOUND)
                  "${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-mac.patch"
             )
             message(STATUS "Applying VTK Mac patch")
-        endif()
-        if(LINUX OR WIN32)
-            # No patches on Linux and Win
+        elseif(LINUX)
+            # VTK's CMakeLists.txt unconditionally forces hidden symbol
+            # visibility, ignoring any -DCMAKE_CXX_VISIBILITY_PRESET passed in
+            # via VTK_OPTIONS. With the static VTK libs linked into the
+            # ogs.OGSSimulator/OGSMesh/mpl Python extension modules (shared
+            # objects), that hidden visibility can turn some libstdc++
+            # vague-linkage template instantiations (used by vtkLogger) into
+            # undefined hidden symbols, which ld refuses to link into a shared
+            # object ("... can not be used when making a shared object"). This
+            # patch makes VTK respect an already-set
+            # CMAKE_CXX_VISIBILITY_PRESET/CMAKE_VISIBILITY_INLINES_HIDDEN
+            # instead of overriding it.
+            list(APPEND _vtk_patch
+                 "${PROJECT_SOURCE_DIR}/scripts/cmake/vtk-visibility.patch"
+            )
+            message(STATUS "Applying VTK visibility patch")
+        elseif(WIN32)
+            # No patches on Win
             unset(_vtk_patch)
         endif()
     endif()
