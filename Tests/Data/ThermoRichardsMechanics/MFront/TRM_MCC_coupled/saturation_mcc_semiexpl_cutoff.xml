@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="saturation_mcc_semiexpl_coupled_power_law.prj">
+    <replace sel="/*/parameters/parameter[name='initial_stress']/values/text()">-5000000 -5000000 -5000000 0</replace>
+    <replace sel="/*/processes/process/subtype/text()">Stress_StrainTemperature</replace>
+    <replace sel="/*/processes/process/constitutive_relation/behaviour/text()">ModCamClay_semiExpl</replace>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='ThermalExpansion']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='BiotCoefficient']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='BishopsModelType']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='BishopsModelValue']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='ResidualLiquidSaturation']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='ResidualGasSaturation']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='BubblePressure']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='VanGenuchtenExponent_m']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='SwellingPressures[0]']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='SwellingPressures[1]']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='SwellingPressures[2]']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='Exponents[0]']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='Exponents[1]']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='Exponents[2]']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='LowerSaturationLimit']"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties/material_property[@name='UpperSaturationLimit']"/>
+    <remove sel="/*/parameters/parameter[name='p_b']"/>
+    <remove sel="/*/parameters/parameter[name='m_S']"/>
+    <remove sel="/*/parameters/parameter[name='S_L_res']"/>
+    <remove sel="/*/parameters/parameter[name='S_G_res']"/>
+    <remove sel="/*/parameters/parameter[name='bishops_model_type']"/>
+    <remove sel="/*/parameters/parameter[name='bishops_model_value']"/>
+    <remove sel="/*/parameters/parameter[name='max_swelling_pressure_x']"/>
+    <remove sel="/*/parameters/parameter[name='max_swelling_pressure_y']"/>
+    <remove sel="/*/parameters/parameter[name='max_swelling_pressure_z']"/>
+    <remove sel="/*/parameters/parameter[name='swelling_exponent_x']"/>
+    <remove sel="/*/parameters/parameter[name='swelling_exponent_y']"/>
+    <remove sel="/*/parameters/parameter[name='swelling_exponent_z']"/>
+    <remove sel="/*/parameters/parameter[name='lower_saturation_limit']"/>
+    <remove sel="/*/parameters/parameter[name='upper_saturation_limit']"/>
+    <remove sel="/*/processes/process/secondary_variables/secondary_variable[@internal_name='sigma_total']"/>
+    <add sel="/*/processes/process/secondary_variables">
+        <secondary_variable internal_name="sigma" output_name="sigma"/>
+    </add>
+    <remove sel="/*/media/medium/properties/property[name='bishops_effective_stress']"/>
+    <add sel="/*/media/medium/properties">
+        <property>
+            <name>bishops_effective_stress</name>
+            <type>BishopsSaturationCutoff</type>
+            <cutoff_value>0.9</cutoff_value>
+        </property>
+    </add>
+    <replace sel="/*/time_loop/output/prefix/text()">saturation_mcc_cutoff</replace>
+    <replace msel="/*/test_definition/vtkdiff/regex/text()">saturation_mcc_cutoff_.*[.]vtu</replace>
+</OpenGeoSysProjectDiff>

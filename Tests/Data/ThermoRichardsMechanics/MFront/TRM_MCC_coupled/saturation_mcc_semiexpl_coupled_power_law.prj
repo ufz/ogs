@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProject>
+    <mesh axially_symmetric="true">../../../RichardsMechanics/square_1x1_quad_1e0.vtu</mesh>
+    <geometry>../../MultiMaterialEhlers/square_1x1.gml</geometry>
+    <processes>
+        <process>
+            <name>TRM</name>
+            <type>THERMO_RICHARDS_MECHANICS</type>
+            <subtype>StressSaturation_StrainPressureTemperature</subtype>
+            <integration_order>2</integration_order>
+            <constitutive_relation>
+                <type>MFront</type>
+                <behaviour>ModCamClay_semiExpl_coupled</behaviour>
+                <material_properties>
+                    <material_property name="PoissonRatio" parameter="nu"/>
+                    <material_property name="CriticalStateLineSlope" parameter="M"/>
+                    <material_property name="SwellingLineSlope" parameter="ka"/>
+                    <material_property name="VirginConsolidationLineSlope" parameter="la"/>
+                    <material_property name="CharacteristicPreConsolidationPressure" parameter="pc0"/>
+                    <material_property name="InitialVolumeRatio" parameter="v0"/>
+                    <material_property name="ThermalExpansion" parameter="alpha"/>
+                    <material_property name="BiotCoefficient" parameter="alpha_B"/>
+                    <material_property name="BishopsModelType" parameter="bishops_model_type"/>
+                    <material_property name="BishopsModelValue" parameter="bishops_model_value"/>
+                    <material_property name="ResidualLiquidSaturation" parameter="S_L_res"/>
+                    <material_property name="ResidualGasSaturation" parameter="S_G_res"/>
+                    <material_property name="BubblePressure" parameter="p_b"/>
+                    <material_property name="VanGenuchtenExponent_m" parameter="m_S"/>
+                    <material_property name="SwellingPressures[0]" parameter="max_swelling_pressure_x"/>
+                    <material_property name="SwellingPressures[1]" parameter="max_swelling_pressure_y"/>
+                    <material_property name="SwellingPressures[2]" parameter="max_swelling_pressure_z"/>
+                    <material_property name="Exponents[0]" parameter="swelling_exponent_x"/>
+                    <material_property name="Exponents[1]" parameter="swelling_exponent_y"/>
+                    <material_property name="Exponents[2]" parameter="swelling_exponent_z"/>
+                    <material_property name="LowerSaturationLimit" parameter="lower_saturation_limit"/>
+                    <material_property name="UpperSaturationLimit" parameter="upper_saturation_limit"/>
+                </material_properties>
+                <initial_values>
+                    <state_variable name="PreConsolidationPressure" parameter="pc0"/>
+                    <state_variable name="VolumeRatio" parameter="v0"/>
+                </initial_values>
+            </constitutive_relation>
+            <process_variables>
+                <temperature>temperature</temperature>
+                <pressure>pressure</pressure>
+                <displacement>displacement</displacement>
+            </process_variables>
+            <secondary_variables>
+                <secondary_variable internal_name="EquivalentPlasticStrain" output_name="EquivalentPlasticStrain"/>
+                <secondary_variable internal_name="PreConsolidationPressure" output_name="PreConsolidationPressure"/>
+                <secondary_variable internal_name="PlasticVolumetricStrain" output_name="PlasticVolumetricStrain"/>
+                <secondary_variable internal_name="VolumeRatio" output_name="VolumeRatio"/>
+                <secondary_variable internal_name="ElasticStrain" output_name="ElasticStrain"/>
+                <secondary_variable internal_name="swelling_stress" output_name="swelling_stress"/>
+                <secondary_variable internal_name="epsilon" output_name="epsilon"/>
+                <secondary_variable internal_name="velocity" output_name="velocity"/>
+                <secondary_variable internal_name="saturation" output_name="saturation"/>
+                <secondary_variable internal_name="sigma_total" output_name="sigma_total"/>
+            </secondary_variables>
+            <specific_body_force>0 0</specific_body_force>
+            <initial_stress type="total">initial_stress</initial_stress>
+            <mass_lumping>false</mass_lumping>
+        </process>
+    </processes>
+    <media>
+        <medium>
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>4280.0</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>0.6</value>
+                        </property>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Function</type>
+                            <value>
+                                <expression>1e3</expression>
+                            </value>
+                            <dvalue>
+                                <variable_name>temperature</variable_name>
+                                <expression>-1e-5*1e3</expression>
+                            </dvalue>
+                            <dvalue>
+                                <variable_name>liquid_phase_pressure</variable_name>
+                                <expression>0</expression>
+                            </dvalue>
+                        </property>
+                    </properties>
+                </phase>
+                <phase>
+                    <type>Solid</type>
+                    <properties>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>2780.0</value>
+                        </property>
+                        <property>
+                            <name>thermal_conductivity</name>
+                            <type>Constant</type>
+                            <value>1.838</value>
+                        </property>
+                        <property>
+                            <name>specific_heat_capacity</name>
+                            <type>Constant</type>
+                            <value>917.654</value>
+                        </property>
+                        <property>
+                            <name>thermal_expansivity</name>
+                            <type>Parameter</type>
+                            <parameter_name>alpha</parameter_name>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>biot_coefficient</name>
+                    <type>Parameter</type>
+                    <parameter_name>alpha_B</parameter_name>
+                </property>
+                <property>
+                    <name>permeability</name>
+                    <type>Parameter</type>
+                    <parameter_name>intrinsic_permeability</parameter_name>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Parameter</type>
+                    <parameter_name>phi</parameter_name>
+                </property>
+                <property>
+                    <name>relative_permeability</name>
+                    <type>RelativePermeabilityVanGenuchten</type>
+                    <residual_liquid_saturation>0.05</residual_liquid_saturation>
+                    <residual_gas_saturation>0.05</residual_gas_saturation>
+                    <exponent>0.4014347581153</exponent>
+                    <minimum_relative_permeability_liquid>1e-15</minimum_relative_permeability_liquid>
+                </property>
+                <property>
+                    <name>thermal_conductivity</name>
+                    <type>EffectiveThermalConductivityPorosityMixing</type>
+                </property>
+                <!-- The saturation and bishops_effective_stress properties are
+                     used by the host-coupled runs. With the coupled behaviour
+                     their values must match the MFront parameters p_b, m_S,
+                     S_L_res, S_G_res, bishops_model_type and
+                     bishops_model_value, which the host-only patches drop. -->
+                <property>
+                    <name>saturation</name>
+                    <type>SaturationVanGenuchten</type>
+                    <p_b>4000000.0</p_b>
+                    <exponent>0.4014347581153</exponent>
+                    <residual_liquid_saturation>0.05</residual_liquid_saturation>
+                    <residual_gas_saturation>0.05</residual_gas_saturation>
+                </property>
+                <property>
+                    <name>bishops_effective_stress</name>
+                    <type>BishopsPowerLaw</type>
+                    <exponent>0.8</exponent>
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <processes>
+            <process ref="TRM">
+                <nonlinear_solver>basic_newton</nonlinear_solver>
+                <convergence_criterion>
+                    <type>PerComponentDeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <reltols>1e-6 1e-6 1e-6 1e-6</reltols>
+                    <abstols>1e-6 1e-3 1e-8 1e-8</abstols>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0.0</t_initial>
+                    <t_end>8640000.0</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>100</repeat>
+                            <delta_t>86400.0</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>saturation_mcc_power_law</prefix>
+            <suffix>_{:time}</suffix>
+            <variables>
+            </variables>
+            <output_iteration_results>false</output_iteration_results>
+            <fixed_output_times>0 259200 345600 864000 1728000 2592000 3456000 4320000 5184000 6048000 6912000 7776000 8640000</fixed_output_times>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>p_b</name>
+            <type>Constant</type>
+            <value>4000000.0</value>
+        </parameter>
+        <parameter>
+            <name>m_S</name>
+            <type>Constant</type>
+            <value>0.4014347581153</value>
+        </parameter>
+        <parameter>
+            <name>S_L_res</name>
+            <type>Constant</type>
+            <value>0.05</value>
+        </parameter>
+        <parameter>
+            <name>S_G_res</name>
+            <type>Constant</type>
+            <value>0.05</value>
+        </parameter>
+        <parameter>
+            <name>alpha</name>
+            <type>Constant</type>
+            <value>1e-05</value>
+        </parameter>
+        <parameter>
+            <name>alpha_B</name>
+            <type>Constant</type>
+            <value>0.8</value>
+        </parameter>
+        <parameter>
+            <name>intrinsic_permeability</name>
+            <type>Constant</type>
+            <value>1e-21</value>
+        </parameter>
+        <parameter>
+            <name>bishops_model_type</name>
+            <!-- 0: power law, 1: cutoff. Enforced by the
+                 "Invalid BishopsModelType" tfel::raise validation in
+                 ModCamClay_semiExpl_coupled.mfront, which also requires
+                 bishops_model_value to be a positive exponent for the power
+                 law and a cutoff saturation in [0, 1] for the cutoff type. -->
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>bishops_model_value</name>
+            <type>Constant</type>
+            <value>0.8</value>
+        </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <value>0.3</value>
+        </parameter>
+        <parameter>
+            <name>M</name>
+            <type>Constant</type>
+            <value>1.2</value>
+        </parameter>
+        <parameter>
+            <name>la</name>
+            <type>Constant</type>
+            <value>0.077</value>
+        </parameter>
+        <parameter>
+            <name>ka</name>
+            <type>Constant</type>
+            <value>0.0066</value>
+        </parameter>
+        <parameter>
+            <name>pc0</name>
+            <type>Constant</type>
+            <value>6250000.0</value>
+        </parameter>
+        <parameter>
+            <name>v0</name>
+            <type>Constant</type>
+            <value>1.6666666666666667</value>
+        </parameter>
+        <parameter>
+            <name>phi</name>
+            <type>Constant</type>
+            <value>0.4</value>
+        </parameter>
+        <parameter>
+            <name>displacement0</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>dirichlet0</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>disp_value</name>
+            <type>Constant</type>
+            <value>-0.02</value>
+        </parameter>
+        <parameter>
+            <name>axial_displacement</name>
+            <type>CurveScaled</type>
+            <curve>ax_disp_curve</curve>
+            <parameter>disp_value</parameter>
+        </parameter>
+        <parameter>
+            <name>pressure_ic</name>
+            <type>Constant</type>
+            <value>-10000000.0</value>
+        </parameter>
+        <parameter>
+            <name>temperature_ic</name>
+            <type>Constant</type>
+            <value>293.15</value>
+        </parameter>
+        <parameter>
+            <name>temperature_bc</name>
+            <type>CurveScaled</type>
+            <curve>temperature_curve</curve>
+            <parameter>loading_value</parameter>
+        </parameter>
+        <parameter>
+            <name>initial_stress</name>
+            <type>Constant</type>
+            <values>-405206.58 -405206.58 -405206.58 0.0</values>
+        </parameter>
+        <parameter>
+            <name>loading_value</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>pressure_ramp</name>
+            <type>CurveScaled</type>
+            <curve>pressure_ramp_curve</curve>
+            <parameter>pressure_ic</parameter>
+        </parameter>
+        <parameter>
+            <name>max_swelling_pressure_x</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>max_swelling_pressure_y</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>max_swelling_pressure_z</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>swelling_exponent_x</name>
+            <type>Constant</type>
+            <value>1.2</value>
+        </parameter>
+        <parameter>
+            <name>swelling_exponent_y</name>
+            <type>Constant</type>
+            <value>1</value>
+        </parameter>
+        <parameter>
+            <name>swelling_exponent_z</name>
+            <type>Constant</type>
+            <value>0.8</value>
+        </parameter>
+        <parameter>
+            <name>lower_saturation_limit</name>
+            <type>Constant</type>
+            <value>0.55</value>
+        </parameter>
+        <parameter>
+            <name>upper_saturation_limit</name>
+            <type>Constant</type>
+            <value>0.9</value>
+        </parameter>
+    </parameters>
+    <curves>
+        <curve>
+            <name>pressure_ramp_curve</name>
+            <coords>0 6912000 8640000</coords>
+            <values>1 -0.02 -0.02</values>
+        </curve>
+        <curve>
+            <name>temperature_curve</name>
+            <coords>0.0 8640000.0</coords>
+            <values>293.15 353.15</values>
+        </curve>
+        <curve>
+            <name>ax_disp_curve</name>
+            <coords>0.0 8640000.0</coords>
+            <values>0 1</values>
+        </curve>
+    </curves>
+    <process_variables>
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>displacement0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>left</geometry>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>top</geometry>
+                    <component>1</component>
+                    <type>Dirichlet</type>
+                    <parameter>axial_displacement</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>bottom</geometry>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <geometrical_set>square_1x1_geometry</geometrical_set>
+                    <geometry>right</geometry>
+                    <component>0</component>
+                    <type>Dirichlet</type>
+                    <parameter>dirichlet0</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>pressure_ic</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e0</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>pressure_ramp</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+        <process_variable>
+            <name>temperature</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>temperature_ic</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>square_1x1_quad_1e0</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>temperature_bc</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_newton</name>
+            <type>Newton</type>
+            <max_iter>30</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+            </eigen>
+            <petsc>
+                <parameters>-ksp_type tfqmr
+                    -pc_type jacobi
+                    -ksp_rtol 1.e-10 -ksp_atol 1.e-7
+                    -ksp_max_it 4000
+                </parameters>
+            </petsc>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>displacement</field>
+            <absolute_tolerance>1e-14</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>pressure</field>
+            <absolute_tolerance>1e-6</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>temperature</field>
+            <absolute_tolerance>1e-10</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>saturation</field>
+            <absolute_tolerance>1e-13</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>NodalForces</field>
+            <absolute_tolerance>1e-3</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>PreConsolidationPressure</field>
+            <absolute_tolerance>5e-5</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>EquivalentPlasticStrain</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>PlasticVolumetricStrain</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>ElasticStrain</field>
+            <absolute_tolerance>1e-12</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <regex>saturation_mcc_power_law_.*[.]vtu</regex>
+            <field>VolumeRatio</field>
+            <absolute_tolerance>1e-13</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
