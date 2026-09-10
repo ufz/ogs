@@ -8,7 +8,9 @@ function(OgsTest)
 
     set(options DISABLED NO_OMP_VARIANT NO_TEST_DEFINITION)
     set(oneValueArgs PROJECTFILE RUNTIME NAME_SUFFIX)
-    set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES EXECUTABLE_ARGS)
+    set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES EXECUTABLE_ARGS
+                       FEATURES
+    )
     cmake_parse_arguments(
         OgsTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -112,6 +114,19 @@ function(OgsTest)
     else()
         list(APPEND labels large)
     endif()
+
+    list(APPEND labels ${OgsTest_FEATURES})
+    foreach(feature IN LISTS OgsTest_FEATURES)
+        if(feature STREQUAL "petsc-mumps")
+            # https://gitlab.opengeosys.org/ogs/ogs/-/commit/ff2e3b1024a777a230efb3646890e30ee74004c6
+            set(OgsTest_NO_OMP_VARIANT TRUE)
+            if(NOT (OGS_USE_PETSC AND OGS_PETSC_HAVE_MUMPS))
+                set(OgsTest_DISABLED TRUE)
+            endif()
+        else()
+            message(FATAL_ERROR "Unknown OgsTest feature '${feature}'.")
+        endif()
+    endforeach()
 
     set(_has_omp_variant FALSE)
     list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;"
