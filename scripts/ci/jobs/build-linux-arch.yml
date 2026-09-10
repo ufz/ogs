@@ -39,7 +39,7 @@
   - when: on_success
 
 .common-linux-arch-before-script: &common-linux-arch-before-script
-  - source /opt/intel/oneapi/setvars.sh
+  - '[[ -f /opt/intel/oneapi/setvars.sh ]] && source /opt/intel/oneapi/setvars.sh'
 
 # ============================================================
 # Serial, separate job for python coverage necessary
