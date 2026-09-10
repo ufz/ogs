@@ -504,7 +504,7 @@
     <chemical_system chemical_solver="Phreeqc">
         <mesh>RadionuclideSorption_ReactiveDomain</mesh>
         <linear_solver>general_linear_solver</linear_solver>
-        <database>PSINA_12_07_110615_DAV_s_hzdr.dat</database>
+        <database>../SharedDatabase/PSINA_12_07_110615_DAV_s_hzdr.dat</database>
         <solution>
             <temperature>14</temperature>
             <pressure>1</pressure>

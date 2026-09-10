@@ -1,5 +1,5 @@
 # This database has been updated with surface complexation of U(VI) in several mineral phases. The 
-# data is available from the HDRZ RES3T data repository on https://www.hzdr.de/db/RES3T.queryData
+# data is available from the HZDR RES3T data repository on https://www.hzdr.de/db/RES3T.queryData
 #
 # The reactions and log K values are marked with a tag pointing to a reference, which can be 
 # consulted in the aforementioned website. 
@@ -2772,6 +2772,7 @@ SURFACE_MASTER_SPECIES
 	Hem			HemOH	# Hematite
 	Gibb		GibbOH	# Gibbsite
 	Kao			KaoOH	# Kaolinite	
+
 SURFACE_SPECIES
 # log K values are normalized to reference site density 2.31 sites/nm�
 
@@ -2853,15 +2854,17 @@ GibbOH + UO2+2  =  GibbOUO2+ + H+	# KD10
 	log_K	-0.17 
 	
 # 	Kaolinite	
-KaoOH  =  KaoOH
-	log_K  0.0
+KaoOH = KaoOH
+	log_K 0.0
 
-KaoOH + H+  =  KaoOH2+
-	log_K  8.33
+KaoOH + UO2+2  =  KaoOUO2+ + H+  # JHLCH99
+	log_K 	-2.09
 	
-KaoOH  =  KaoO- + H+
-	log_K   -9.73	
-
-KaoOH + UO2+2  =  KaoOHUO2+2  
-	log_K  9.20
+KaoOH + UO2+2 + H2O  =  KaoOUO2(OH) + 2.000H+ # JHLCH99
+	log_K	-7.55 
+	
+KaoOH + UO2+2 + CO3-2  =  KaoOUO2CO3- + H+ # JHLCH99
+	log_K	 9.71 
+	
+	
 END
