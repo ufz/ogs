@@ -42,6 +42,12 @@ struct VoidFractionQuadratic
 /// Profile parameter \f$C_0\f$ of the Rouhani-Axelsson drift-flux closure,
 /// the flow-weighted ratio of the cross-sectional averages that accounts for
 /// the non-uniform void and velocity profiles over the well cross-section.
+///
+/// \note Like driftFluxVelocity(), the correlation is derived for vertical
+/// flow and carries no inclination correction. In an inclined well the phases
+/// segregate towards the high side of the cross-section, which changes the
+/// void profile the parameter stands for.
+///
 /// \param dryness  the vapour mass fraction, dimensionless.
 /// \return The profile parameter, dimensionless.
 double driftFluxProfileParameter(double const dryness);
@@ -88,6 +94,21 @@ std::string voidFractionClosureDiagnostics(DriftFluxState const& state);
 /// exponents of the two correlations is NaN, which would travel into the void
 /// fraction closure. Newton iterates do reach that range, so both are capped
 /// rather than assumed positive.
+///
+/// \note The correlation is Harmathy's terminal rise velocity of a bubble in
+/// a quiescent liquid and is derived for vertical flow. It carries no
+/// inclination correction: the drift is the same for a vertical and for an
+/// inclined well, although the buoyancy driving it acts along the vertical and
+/// only its component \f$g \cos\theta\f$ along the well axis, with the
+/// inclination \f$\theta\f$ measured from the vertical, drives an axial drift.
+/// The value returned here is therefore an overestimate for an inclined well
+/// and stays at its full vertical value for a horizontal one, where the axial
+/// drift should vanish. A caller that projects its body force onto the well
+/// axis, as ProcessLib::WellboreSimulator does, is inconsistent with this
+/// closure unless the well is vertical. Correlations with an inclination
+/// correction exist, for instance Hasan, A. R., and C. S. Kabir. "A study of
+/// multiphase flow behavior in vertical wells." SPE Production Engineering 3
+/// (1988): 263-272, but would need the inclination as a further argument.
 ///
 /// \param dryness                the vapour mass fraction, dimensionless.
 /// \param temperature            in K.
