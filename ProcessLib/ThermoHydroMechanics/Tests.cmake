@@ -79,6 +79,12 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     # ThermoHydroMechanics; thermo_osmosis and thermo_filtration effects, linear poroelastic, column consolidation
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/ThermoOsmosis/Column.prj RUNTIME 9)
     OgsTest(
+        PROJECTFILE ThermoHydroMechanics/Linear/ThermoOsmosis/Column.prj
+        PATCH_FILES Column_with_eT.xml
+        NAME_SUFFIX with_eT
+        RUNTIME 9
+    )
+    OgsTest(
         PROJECTFILE
             ThermoHydroMechanics/Linear/TH_ClassicalTransportExample/classical_transport_example.prj
         RUNTIME 1

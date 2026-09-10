@@ -91,4 +91,10 @@ endif()
 # ThermoRichardsFlow; thermo_osmosis and thermo_filtration effects, linear poroelastic, column consolidation
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsFlow/ThermoOsmosis/Column.prj RUNTIME 6)
+    OgsTest(
+        PROJECTFILE ThermoRichardsFlow/ThermoOsmosis/Column.prj
+        PATCH_FILES Column_with_eT.xml
+        NAME_SUFFIX with_eT
+        RUNTIME 6
+    )
 endif()
