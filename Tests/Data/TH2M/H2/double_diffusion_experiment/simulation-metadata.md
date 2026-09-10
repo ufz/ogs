@@ -17,7 +17,7 @@ funded by the Horizon 2020 Euratom programme under grant agreement No. 847593
 ## Scientific reference
 
 Pitz, M., et al. (2024). *On Multi-Component Gas Migration in Single-Phase
-Systems*. Rock Mechanics and Rock Engineering, 57, 4251--4263.
+Systems*. Rock Mechanics and Rock Engineering, 57, 4251--4264.
 <https://doi.org/10.1007/s00603-024-03838-1>
 
 ## Experiment

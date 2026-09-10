@@ -1,7 +1,7 @@
 +++
 title = 'OpenWorkFlow'
 abbreviation = 'OWF'
-headline = 'Synthesis platform for the german site selection'
+headline = 'Synthesis platform for the German site selection'
 
 links = [
   ['OpenWorkFlow project page', 'https://www.openworkflow.de/'],
