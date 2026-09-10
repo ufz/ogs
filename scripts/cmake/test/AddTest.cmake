@@ -137,8 +137,7 @@ function(AddTest)
 
     # check requirements, disable if not met
 
-    # When testing the installed wheel assume executable is in PATH
-    # from venv.
+    # When testing the installed wheel assume executable is in PATH from venv.
     if(NOT TARGET ${AddTest_EXECUTABLE} AND NOT OGS_BUILD_WHEEL)
         return()
     endif()
@@ -230,8 +229,8 @@ function(AddTest)
     if(TARGET ${AddTest_EXECUTABLE} AND NOT OGS_BUILD_WHEEL)
         set(AddTest_EXECUTABLE_PARSED $<TARGET_FILE:${AddTest_EXECUTABLE}>)
     else()
-        # When testing the installed wheel assume executable is in PATH
-        # from venv.
+        # When testing the installed wheel assume executable is in PATH from
+        # venv.
         set(AddTest_EXECUTABLE_PARSED ${AddTest_EXECUTABLE})
     endif()
 
@@ -277,12 +276,15 @@ function(AddTest)
     endif()
 
     set(_has_omp_variant FALSE)
-    list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
+    list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;"
+         match_parallel_asm_processes
+    )
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
-    if(NOT AddTest_NO_OMP_VARIANT
-        AND ";${labels};" MATCHES ";${match_parallel_asm_processes};"
-        AND NOT ";${labels};" MATCHES ";NO_PARALLEL_ASSEMBLY;")
+    if(NOT AddTest_NO_OMP_VARIANT AND ";${labels};" MATCHES
+                                      ";${match_parallel_asm_processes};"
+       AND NOT ";${labels};" MATCHES ";NO_PARALLEL_ASSEMBLY;"
+    )
         set(_has_omp_variant TRUE)
     endif()
 
@@ -355,8 +357,8 @@ macro(_add_test TEST_NAME)
             "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
             "-DLOG_FILE_BASENAME=${TEST_NAME}.txt"
             "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
-            "-DUV_RUN_ARGS=${_uv_run_args}"
-            -P ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
+            "-DUV_RUN_ARGS=${_uv_run_args}" -P
+            ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
     )
 
     if(DEFINED AddTest_DEPENDS)
@@ -377,23 +379,25 @@ macro(_add_test TEST_NAME)
 
     set_tests_properties(
         ${TEST_NAME}
-        PROPERTIES ${AddTest_PROPERTIES}
-                   COST
-                   ${AddTest_RUNTIME}
-                   DISABLED
-                   ${AddTest_DISABLED}
-                   LABELS
-                   "${labels}"
-                   PROCESSORS
-                   ${_processors}
-                   ${timeout}
-                   ENVIRONMENT
-                   "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}"
+        PROPERTIES
+            ${AddTest_PROPERTIES}
+            COST
+            ${AddTest_RUNTIME}
+            DISABLED
+            ${AddTest_DISABLED}
+            LABELS
+            "${labels}"
+            PROCESSORS
+            ${_processors}
+            ${timeout}
+            ENVIRONMENT
+            "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}"
     )
 endmacro()
 
-set(OGS_CTEST_OMP_THREADS 4 CACHE STRING
-    "Number of threads used by OpenMP ctest variants.")
+set(OGS_CTEST_OMP_THREADS 4
+    CACHE STRING "Number of threads used by OpenMP ctest variants."
+)
 
 # Sets number of threads, adds label 'omp'
 macro(_set_omp_test_properties)
@@ -406,9 +410,7 @@ macro(_set_omp_test_properties)
         ${TEST_NAME}-omp
         PROPERTIES ENVIRONMENT
                    "OGS_ASM_THREADS=${OGS_CTEST_OMP_THREADS};${_environment}"
-                   PROCESSORS
-                   ${_overall_processors}
-                   LABELS "${labels};omp"
+                   PROCESSORS ${_overall_processors} LABELS "${labels};omp"
     )
 endmacro()
 
@@ -529,15 +531,12 @@ Use six arguments version of AddTest with absolute and relative tolerances"
         endif()
         if(${AddTest_ABSTOL} OR ${AddTest_RELTOL})
             message(
-                FATAL_ERROR
-                    "ABSTOL or RELTOL arguments must not be present."
+                FATAL_ERROR "ABSTOL or RELTOL arguments must not be present."
             )
         endif()
         math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
         foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 8)
-            list(GET AddTest_DIFF_DATA "${DiffDataIndex}"
-                 REFERENCE_VTK_FILE
-            )
+            list(GET AddTest_DIFF_DATA "${DiffDataIndex}" REFERENCE_VTK_FILE)
             math(EXPR DiffDataAuxIndex "${DiffDataIndex}+1")
             list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" VTK_FILE)
             math(EXPR DiffDataAuxIndex "${DiffDataIndex}+2")
