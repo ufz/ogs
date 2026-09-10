@@ -1,0 +1,549 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
+@DSL ImplicitGenericBehaviour;
+@Behaviour ModCamClay_semiExpl_coupled;
+@Author Aqeel Afzal Chaudhry, Christian Silbermann, Eric Simo, Miguel Mánica, Thomas Helfer, Thomas Nagel;
+@Date 30/08/2026;
+@Description {
+A small-strain, coupled thermo-hydro-mechanical modified Cam-Clay
+behaviour. Its mechanical part follows the geometrically linearised form
+of the model described by Callari (1998). It extends the semi-explicit OGS
+MFront implementation with van Genuchten retention, selectable Bishop
+effective-stress weighting, thermal expansion, and directional
+saturation-dependent swelling along the global coordinate axes. The
+volume ratio is updated explicitly at the end of each time step, while the
+pressure-dependent elastic moduli remain constant within a step.
+Analytical tangent blocks are provided for strain, temperature, and liquid
+pressure.
+}
+
+@Theta 1.0;                      // Time integration scheme.
+@Epsilon 1e-14;                  // Local integration tolerance.
+@MaximumNumberOfIterations 100;  // Maximum local Newton iterations.
+@ModellingHypotheses{".+"};      // Support all stress and strain states.
+@Algorithm NewtonRaphson;
+
+// Gradients and state variables
+@Gradient StrainStensor εᵗᵒ;
+εᵗᵒ.setGlossaryName("Strain");
+
+// Total stress at the behaviour interface; effective stress during local integration.
+@ThermodynamicForce StressStensor σ;
+σ.setGlossaryName("Stress");
+
+@Gradient real pᴸᴿ;
+pᴸᴿ.setEntryName("LiquidPressure");
+
+@ThermodynamicForce real Sᴸ;
+Sᴸ.setEntryName("Saturation");
+
+@AuxiliaryStateVariable StressStensor σˢʷ;
+σˢʷ.setEntryName("swelling_stress");
+
+@StateVariable StrainStensor εᵉˡ;
+εᵉˡ.setGlossaryName("ElasticStrain");
+
+@StateVariable real Λₚ;
+Λₚ.setGlossaryName("EquivalentPlasticStrain");
+
+@IntegrationVariable strain rpc;
+
+@AuxiliaryStateVariable stress pc;
+pc.setEntryName("PreConsolidationPressure");
+
+@AuxiliaryStateVariable real εᵛₚₗ;
+εᵛₚₗ.setEntryName("PlasticVolumetricStrain");
+
+@AuxiliaryStateVariable real vʳ;
+@PhysicalBounds vʳ in [1:*[;
+vʳ.setEntryName("VolumeRatio");
+
+@MaterialProperty real ν;
+ν.setGlossaryName("PoissonRatio");
+
+@MaterialProperty real M;
+M.setEntryName("CriticalStateLineSlope");
+
+@MaterialProperty real ka;
+ka.setEntryName("SwellingLineSlope");
+
+@MaterialProperty real la;
+la.setEntryName("VirginConsolidationLineSlope");
+
+@MaterialProperty stress pc_char;
+pc_char.setEntryName("CharacteristicPreConsolidationPressure");
+
+@MaterialProperty real vʳ⁰;
+vʳ⁰.setEntryName("InitialVolumeRatio");
+
+@MaterialProperty real α;
+α.setGlossaryName("ThermalExpansion");
+@MaterialProperty real αᵇ;
+αᵇ.setEntryName("BiotCoefficient");
+// Van Genuchten retention: residual saturations and exponent m are
+// dimensionless, the bubble pressure is given in Pa.
+@MaterialProperty real Sᴸʳ;
+Sᴸʳ.setEntryName("ResidualLiquidSaturation");
+@MaterialProperty real Sᴳʳ;
+Sᴳʳ.setEntryName("ResidualGasSaturation");
+@MaterialProperty real pᵇ;
+pᵇ.setEntryName("BubblePressure");
+@MaterialProperty real mⱽᴳ;
+mⱽᴳ.setEntryName("VanGenuchtenExponent_m");
+
+// Bishop model: BishopsModelType 0 selects the power law χ = Sᴸ^v with
+// exponent v = BishopsModelValue > 0; 1 selects the cutoff χ = 1 for
+// Sᴸ >= v and 0 otherwise, with cutoff saturation v in [0, 1].
+@MaterialProperty real bishop_type;
+bishop_type.setEntryName("BishopsModelType");
+
+@MaterialProperty real bishop_value;
+bishop_value.setEntryName("BishopsModelValue");
+
+// Saturation-dependent swelling properties. Index i of SwellingPressures
+// [Pa] and Exponents [-] acts on the global normal stress component i:
+// xx, yy, zz (rr, zz, θθ if axisymmetric). The saturation limits are
+// dimensionless.
+@MaterialProperty real pˢʷ[3];
+pˢʷ.setEntryName("SwellingPressures");
+@MaterialProperty real expˢʷ[3];
+expˢʷ.setEntryName("Exponents");
+@MaterialProperty real Sᴸₗ;
+Sᴸₗ.setEntryName("LowerSaturationLimit");
+@MaterialProperty real Sᴸₕ;
+Sᴸₕ.setEntryName("UpperSaturationLimit");
+
+// Local variables.
+@LocalVariable StressStensor Δσˢʷ;
+@LocalVariable StressStensor ∂σˢʷ∕∂Sᴸ;
+@LocalVariable StressStensor σ₀ᵉᶠᶠ;
+@LocalVariable StrainStensor Δεᵗʰ;
+@LocalVariable StressStensor Δσᵗʰ;
+@LocalVariable StiffnessTensor ∂σ∕∂εᵉˡ;
+@LocalVariable StiffnessTensor ∂εᵉˡ∕∂σ;
+@LocalVariable bool withinElasticRange;
+@LocalVariable real K;
+@LocalVariable real χ;
+@LocalVariable real ∂χ∕∂Sᴸ;
+@LocalVariable real ∂Sᴸ∕∂pᶜᵃᵖ;
+@LocalVariable real M²;
+@LocalVariable real young;
+@LocalVariable real rpc_min;
+
+@TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ, ∂σ∕∂ΔT, ∂σ∕∂Δpᴸᴿ, ∂Sᴸ∕∂Δpᴸᴿ};
+
+@InitializeLocalVariables
+{
+    const auto is_finite = [](const auto& value) {
+        return tfel::math::ieee754::isfinite(value);
+    };
+    const auto value_as_string = [](const auto& value) {
+        return tfel::material::BoundsCheckBase::convert_to_string(value);
+    };
+
+    if (!is_finite(ν) || ν <= -1.0 || ν >= 0.5)
+    {
+        tfel::raise("Invalid PoissonRatio: expected -1 < nu < 0.5; got " +
+                    value_as_string(ν));
+    }
+    if (!is_finite(M) || M <= 0.0)
+    {
+        tfel::raise("Invalid CriticalStateLineSlope: expected M > 0; got " +
+                    value_as_string(M));
+    }
+    if (!is_finite(ka) || ka <= 0.0)
+    {
+        tfel::raise("Invalid SwellingLineSlope: expected ka > 0; got " +
+                    value_as_string(ka));
+    }
+    if (!is_finite(la) || la <= ka)
+    {
+        tfel::raise(
+            "Invalid VirginConsolidationLineSlope: expected la > ka; got la=" +
+            value_as_string(la) + ", ka=" + value_as_string(ka));
+    }
+    if (!is_finite(pc_char) || pc_char <= 0.0)
+    {
+        tfel::raise(
+            "Invalid CharacteristicPreConsolidationPressure: expected "
+            "pc_char > 0; got " +
+            value_as_string(pc_char));
+    }
+    if (!is_finite(vʳ⁰) || vʳ⁰ < 1.0)
+    {
+        tfel::raise("Invalid InitialVolumeRatio: expected v0 >= 1; got " +
+                    value_as_string(vʳ⁰));
+    }
+    if (!is_finite(α))
+    {
+        tfel::raise("Invalid ThermalExpansion: expected a finite value; got " +
+                    value_as_string(α));
+    }
+    if (!is_finite(αᵇ) || αᵇ < 0.0 || αᵇ > 1.0)
+    {
+        tfel::raise(
+            "Invalid BiotCoefficient: expected 0 <= alpha_B <= 1; got " +
+            value_as_string(αᵇ));
+    }
+    if (!is_finite(Sᴸʳ) || !is_finite(Sᴳʳ) || Sᴸʳ < 0.0 || Sᴳʳ < 0.0 ||
+        Sᴸʳ + Sᴳʳ >= 1.0)
+    {
+        tfel::raise(
+            "Invalid residual saturations: expected S_L_res >= 0, "
+            "S_G_res >= 0, and S_L_res + S_G_res < 1; got S_L_res=" +
+            value_as_string(Sᴸʳ) + ", S_G_res=" + value_as_string(Sᴳʳ));
+    }
+    if (!is_finite(pᵇ) || pᵇ <= 0.0)
+    {
+        tfel::raise("Invalid BubblePressure: expected p_b > 0; got " +
+                    value_as_string(pᵇ));
+    }
+    if (!is_finite(mⱽᴳ) || mⱽᴳ <= 0.0 || mⱽᴳ >= 1.0)
+    {
+        tfel::raise(
+            "Invalid VanGenuchtenExponent_m: expected 0 < m < 1; got " +
+            value_as_string(mⱽᴳ));
+    }
+    if (!is_finite(bishop_type) ||
+        (bishop_type != 0.0 && bishop_type != 1.0))
+    {
+        tfel::raise(
+            "Invalid BishopsModelType: expected 0 (power law) or 1 (cutoff); "
+            "got " +
+            value_as_string(bishop_type));
+    }
+    if (bishop_type == 0.0)
+    {
+        if (!is_finite(bishop_value) || bishop_value <= 0.0)
+        {
+            tfel::raise(
+                "Invalid BishopsModelValue: expected a positive exponent; "
+                "got " +
+                value_as_string(bishop_value));
+        }
+    }
+    else
+    {
+        if (!is_finite(bishop_value) || bishop_value < 0.0 ||
+            bishop_value > 1.0)
+        {
+            tfel::raise(
+                "Invalid BishopsModelValue: expected a cutoff in [0, 1]; got " +
+                value_as_string(bishop_value));
+        }
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        if (!is_finite(pˢʷ[i]))
+        {
+            tfel::raise("Invalid SwellingPressures[" + value_as_string(i) +
+                        "]: expected a finite value; got " +
+                        value_as_string(pˢʷ[i]));
+        }
+        if (!is_finite(expˢʷ[i]) || expˢʷ[i] <= 0.0)
+        {
+            tfel::raise("Invalid Exponents[" + value_as_string(i) +
+                        "]: expected a positive swelling exponent; got " +
+                        value_as_string(expˢʷ[i]));
+        }
+    }
+    if (!is_finite(Sᴸₗ) || !is_finite(Sᴸₕ) || Sᴸₗ < 0.0 || Sᴸₕ > 1.0 ||
+        Sᴸₗ >= Sᴸₕ)
+    {
+        tfel::raise(
+            "Invalid swelling saturation limits: expected "
+            "0 <= S_L_low < S_L_high <= 1; got S_L_low=" +
+            value_as_string(Sᴸₗ) + ", S_L_high=" + value_as_string(Sᴸₕ));
+    }
+
+    // Van Genuchten retention. The reduced saturation Sₑ and its capillary
+    // pressure derivative are written once here; the value is scaled to Sᴸ
+    // by S_unclamped, the derivative by the ΔSᴸ factor at its assignment
+    // below. The derivative is stored because @TangentOperator is a
+    // separate method and cannot see these lambdas.
+    // Van Genuchten exponent transform, named once so the value and
+    // derivative chains below cannot diverge.
+    const auto one_minus_mⱽᴳ = 1.0 - mⱽᴳ;
+    const auto nᵛᴳ = 1.0 / one_minus_mⱽᴳ;
+    // Capillary pressure over bubble pressure, and the reduced-saturation
+    // base pow(pᶜᵃᵖ∕pᵇ, nᵛᴳ) + 1, shared by the value and derivative
+    // lambdas below.
+    const auto pᶜᵃᵖ∕pᵇ = [&](const auto pᶜᵃᵖ) {
+        return std::max(pᶜᵃᵖ, 0.0) / pᵇ;
+    };
+    const auto Sₑ_base = [&](const auto pᶜᵃᵖ) {
+        return std::pow(pᶜᵃᵖ∕pᵇ(pᶜᵃᵖ), nᵛᴳ) + 1.0;
+    };
+    const auto Sₑ = [&](const auto pᶜᵃᵖ) {
+        return std::pow(Sₑ_base(pᶜᵃᵖ), -mⱽᴳ);
+    };
+    const auto ∂Sₑ∕∂pᶜᵃᵖ = [&](const auto pᶜᵃᵖ) {
+        return -mⱽᴳ / (pᵇ ⋅ one_minus_mⱽᴳ) ⋅
+               std::pow(Sₑ_base(pᶜᵃᵖ), -mⱽᴳ - 1) ⋅
+               std::pow(pᶜᵃᵖ∕pᵇ(pᶜᵃᵖ), nᵛᴳ - 1.0);
+    };
+    // Upper bound and span of the clamped liquid saturation.
+    const auto Sᴸᵐᵃˣ = 1.0 - Sᴳʳ;
+    const auto ΔSᴸ = Sᴸᵐᵃˣ - Sᴸʳ;
+    const auto S_unclamped = [&](const auto pᶜᵃᵖ) {
+        return Sₑ(pᶜᵃᵖ) ⋅ ΔSᴸ + Sᴸʳ;
+    };
+    // Previous saturation.
+    const double S₀ = S_unclamped(-(pᴸᴿ));
+    const double Sᴸ₀ = std::clamp(S₀, Sᴸʳ, Sᴸᵐᵃˣ);
+    // Current saturation at the end-of-step capillary pressure.
+    const auto pᶜᵃᵖ_end = -(pᴸᴿ + Δpᴸᴿ);
+    const double S = S_unclamped(pᶜᵃᵖ_end);
+    Sᴸ = std::clamp(S, Sᴸʳ, Sᴸᵐᵃˣ);
+    // Retention derivative at the end-of-step capillary pressure; zero when
+    // Sᴸ lies on a clamp bound.
+    ∂Sᴸ∕∂pᶜᵃᵖ = ΔSᴸ ⋅ (Sᴸ < Sᴸᵐᵃˣ && Sᴸ > Sᴸʳ
+                            ? ∂Sₑ∕∂pᶜᵃᵖ(pᶜᵃᵖ_end)
+                            : 0.0);
+
+    // Bishop power law or saturation cutoff.
+    auto χ₀ = 0.0;
+    if (bishop_type == 0.0)
+    {
+        χ = std::pow(Sᴸ, bishop_value);
+        ∂χ∕∂Sᴸ = 0.0;
+        // NaN-safe admission: a NaN Sᴸ (from a diverging global Newton
+        // iterate) fails both tests and keeps the zero tangent instead of
+        // reaching std::pow below. At Sᴸ == 0 with bishop_value < 1 the true
+        // derivative is unbounded and 0 is kept as a documented choice.
+        if (Sᴸ > 0.0 || (Sᴸ == 0.0 && bishop_value >= 1.0))
+        {
+            ∂χ∕∂Sᴸ = bishop_value ⋅ std::pow(Sᴸ, bishop_value - 1.0);
+        }
+        χ₀ = std::pow(Sᴸ₀, bishop_value);
+    }
+    else
+    {
+        const double S_cut = bishop_value;
+        if (Sᴸ < S_cut)
+        {
+            χ = 0.0;
+        }
+        else
+        {
+            χ = 1.0;
+        }
+        ∂χ∕∂Sᴸ = 0.0;
+        χ₀ = Sᴸ₀ < S_cut ? 0.0 : 1.0;
+    }
+
+    // Swelling stress increment from the exact potential difference.
+    const auto zero_stress = StressStensor(stress(0));
+    Δσˢʷ = zero_stress;
+    ∂σˢʷ∕∂Sᴸ = zero_stress;
+    // Normalised swelling saturation, swelling potential and its derivative
+    // for the saturation x and the directional exponent m.
+    const auto ΔSˢʷ = Sᴸₕ - Sᴸₗ;
+    const auto Sˢʷ = [&](const auto x) { return (x - Sᴸₗ) / ΔSˢʷ; };
+    const auto Φˢʷ = [&](const auto x, const auto m) {
+        if (x <= Sᴸₗ)
+        {
+            return 0.0;
+        }
+        if (x >= Sᴸₕ)
+        {
+            return 1.0;
+        }
+        return std::pow(Sˢʷ(x), m);
+    };
+    const auto ∂Φˢʷ∕∂Sᴸ = [&](const auto x, const auto m) {
+        // Strict bounds are deliberate: a NaN Sᴸ fails both tests and keeps
+        // the swelling tangent zero instead of reaching std::pow below.
+        if (x > Sᴸₗ && x < Sᴸₕ)
+        {
+            return m / ΔSˢʷ ⋅ std::pow(Sˢʷ(x), m - 1);
+        }
+        return 0.0;
+    };
+    for (int i = 0; i < 3; ++i)
+    {
+        const auto φˢʷ = Φˢʷ(Sᴸ, expˢʷ[i]);
+        const auto φˢʷ₀ = Φˢʷ(Sᴸ₀, expˢʷ[i]);
+        Δσˢʷ[i] = pˢʷ[i] ⋅ (φˢʷ - φˢʷ₀);
+        ∂σˢʷ∕∂Sᴸ[i] = pˢʷ[i] ⋅ ∂Φˢʷ∕∂Sᴸ(Sᴸ, expˢʷ[i]);
+    }
+
+    M² = M ⋅ M;
+
+    // Recover the previous effective stress from the previous total stress.
+    σ₀ᵉᶠᶠ = σ + αᵇ ⋅ χ₀ ⋅ pᴸᴿ ⋅ I₂;
+
+    // Elastic stiffness, held constant within the time step.
+    // Assume the pre-consolidation pressure never drops below pc_min =
+    // 0.5e-8 ⋅ pc_char (lower limit for a minimal pre-consolidation pressure,
+    // as in ModCamClay_semiExpl).
+    const auto pc_min = 0.5e-8 ⋅ pc_char;
+    const auto p = -trace(σ₀ᵉᶠᶠ) / 3;
+    K = vʳ⁰ / ka ⋅ max(p, pc_char);
+    young = 3.0 ⋅ K ⋅ (1.0 - 2 ⋅ ν);
+    rpc = pc / young;
+    rpc_min = pc_min / young;
+
+    ∂σ∕∂εᵉˡ = young / (1.0 + ν) ⋅ Stensor4::K() + K ⋅ Stensor4::IxI();
+    ∂εᵉˡ∕∂σ = invert(∂σ∕∂εᵉˡ);
+
+    // Thermal strain and stress increments of the step, named once for the
+    // stress updates and the auxiliary-state update below.
+    Δεᵗʰ = α ⋅ ΔT ⋅ I₂;
+    Δσᵗʰ = 3 ⋅ K ⋅ Δεᵗʰ;
+
+    // Elastic trial stress.
+    const auto σᵉˡ = σ₀ᵉᶠᶠ + ∂σ∕∂εᵉˡ ⋅ Δεᵗᵒ - Δσᵗʰ - Δσˢʷ;
+
+    // Elastic estimators.
+    const auto sᵉˡ = deviator(σᵉˡ);
+    const auto qᵉˡ = sqrt(1.5 ⋅ sᵉˡ | sᵉˡ);
+    const auto pᵉˡ = -trace(σᵉˡ) / 3;
+
+    const auto fᵉˡ = qᵉˡ ⋅ qᵉˡ + M² ⋅ pᵉˡ ⋅ (pᵉˡ - pc);
+    withinElasticRange = fᵉˡ < 0;
+}
+
+@ComputeThermodynamicForces
+{
+    σ = σ₀ᵉᶠᶠ + θ ⋅ ∂σ∕∂εᵉˡ ⋅ Δεᵉˡ - Δσᵗʰ - Δσˢʷ;
+}
+
+@Integrator
+{
+    constexpr const auto Pr4 = Stensor4::K();
+    const auto the = vʳ⁰ / (la - ka);
+    // Elastic range.
+    if (withinElasticRange)
+    {
+        fεᵉˡ -= Δεᵗᵒ;
+        return true;
+    }
+    // Plastic range.
+    // Regularise the plastic flow direction: its norm (below) is floored at
+    // epsr ⋅ young where the yield-surface gradient nearly vanishes, i.e.
+    // q ≈ 0 together with 2 ⋅ p ≈ pc_new (epsr = 1e-12).
+    const auto epsr = strain(1e-12);
+    // Invariants of the current effective stress.
+    const auto s = deviator(σ);
+    const auto q = sqrt(1.5 ⋅ s | s);
+    const auto p = -trace(σ) / 3;
+    // rpc holds the old reduced preconsolidation pressure.
+    const auto rpc_new = rpc + θ ⋅ Δrpc;
+    const auto pc_new = rpc_new ⋅ young;
+    // Direction of plastic flow.
+    const auto f = q ⋅ q + M² ⋅ p ⋅ (p - pc_new);
+    const auto ∂f∕∂p = M² ⋅ (2 ⋅ p - pc_new);
+    const auto ∂f∕∂σ = eval(3 ⋅ s - ∂f∕∂p ⋅ I₂ / 3);
+    auto norm = sqrt(6 ⋅ q ⋅ q + ∂f∕∂p ⋅ ∂f∕∂p / 3);
+    norm = max(norm, epsr ⋅ young);
+    const auto n = ∂f∕∂σ / norm;
+    const auto ntr = -∂f∕∂p / norm;
+    // Plastic strain and its volumetric part.
+    const auto Δεᵖˡ = eval(ΔΛₚ ⋅ n);
+    const auto Δεᵖˡᵛ = trace(Δεᵖˡ);
+
+    const auto fchar = pc_char ⋅ young;
+
+    const auto ∂frpc∕∂Δεᵖˡᵛ = the ⋅ (rpc_new - rpc_min);
+
+    // Residuals.
+    fεᵉˡ = Δεᵉˡ + Δεᵖˡ - Δεᵗᵒ;
+    fΛₚ = f / fchar;
+    frpc = Δrpc + Δεᵖˡᵛ ⋅ ∂frpc∕∂Δεᵖˡᵛ;
+
+    // Auxiliary derivatives.
+    // Pressure–pressure block of the yield-surface Hessian ∂²f∕∂σ∂σ:
+    // ∂²f∕∂p² = 2 ⋅ M² through the two I₂∕3 projections. Named once for
+    // both auxiliary derivatives below.
+    const auto ∂²fₚₚ = 2 ⋅ M² / 9;
+    const auto ∂norm∕∂σ = (9 ⋅ s - ∂²fₚₚ ⋅ ∂f∕∂p ⋅ I₂) / norm;
+    const auto ∂n∕∂Δεᵉˡ = (3 ⋅ Pr4 + ∂²fₚₚ ⋅ (I₂ ⊗ I₂) - (n ⊗ ∂norm∕∂σ)) / norm ⋅ ∂σ∕∂εᵉˡ ⋅ θ;
+    const auto ∂n∕∂Δrpc = (I₂ + ∂f∕∂p ⋅ n / norm) ⋅ M² / (3 ⋅ norm) ⋅ θ ⋅ young;
+
+    // Analytical local Jacobian; all other blocks are zero.
+    ∂fεᵉˡ∕∂Δεᵉˡ += ΔΛₚ ⋅ ∂n∕∂Δεᵉˡ;
+    ∂fεᵉˡ∕∂ΔΛₚ = n;
+    ∂fεᵉˡ∕∂Δrpc = ΔΛₚ ⋅ ∂n∕∂Δrpc;
+
+    // Row scaling of the plastic-residual derivatives.
+    const auto θ∕fchar = θ / fchar;
+    ∂fΛₚ∕∂Δεᵉˡ = (∂f∕∂σ | ∂σ∕∂εᵉˡ) ⋅ θ∕fchar;
+    // The yield function has no direct dependence on the plastic multiplier.
+    ∂fΛₚ∕∂ΔΛₚ = strain(0);
+    ∂fΛₚ∕∂Δrpc = -M² ⋅ p ⋅ θ∕fchar ⋅ young;
+
+    // Hardening slope weighted by the plastic-multiplier increment, shared
+    // by the two shape-derivative rows below.
+    const auto ∂frpcₐ = ∂frpc∕∂Δεᵖˡᵛ ⋅ ΔΛₚ;
+    ∂frpc∕∂ΔΛₚ = ∂frpc∕∂Δεᵖˡᵛ ⋅ ntr;
+    ∂frpc∕∂Δεᵉˡ = ∂frpcₐ ⋅ (I₂ | ∂n∕∂Δεᵉˡ);
+    ∂frpc∕∂Δrpc = 1 + Δεᵖˡᵛ ⋅ the ⋅ θ + ∂frpcₐ ⋅ trace(∂n∕∂Δrpc);
+}
+
+@ComputeFinalThermodynamicForces
+{
+    // MFront evaluates the gradient pᴸᴿ at the end of the step
+    // (pᴸᴿ + Δpᴸᴿ) in this block, so Δpᴸᴿ must not be added here.
+    σ = σ₀ᵉᶠᶠ + ∂σ∕∂εᵉˡ ⋅ Δεᵉˡ - Δσᵗʰ - αᵇ ⋅ χ ⋅ pᴸᴿ ⋅ I₂ - Δσˢʷ;
+}
+
+// Semi-explicit update, valid for small volume-ratio changes within a step.
+@UpdateAuxiliaryStateVariables
+{
+    σˢʷ -= Δσˢʷ;
+    pc += Δrpc ⋅ young;
+    εᵛₚₗ += trace(Δεᵗᵒ - Δεᵉˡ);
+    vʳ += vʳ⁰ ⋅ (trace(Δεᵗᵒ - Δεᵗʰ) - trace(Δσˢʷ) / (3 ⋅ K));
+    εᵉˡ -= Δεᵗʰ + ∂εᵉˡ∕∂σ ⋅ Δσˢʷ;
+}
+
+@AdditionalConvergenceChecks
+{
+    if (converged)
+    {
+        if (!withinElasticRange)
+        {
+            if (ΔΛₚ < 0)
+            {
+                converged = false;
+                withinElasticRange = true;
+            }
+        }
+    }
+}
+
+// Tangent blocks requested by the OGS coupled TRM interface.
+@TangentOperator
+{
+    // Retention derivative at the end-of-step capillary pressure, computed in
+    // @InitializeLocalVariables together with Sᴸ.
+    ∂Sᴸ∕∂Δpᴸᴿ = -∂Sᴸ∕∂pᶜᵃᵖ;
+
+    Stensor4 Je;
+    if ((smt == ELASTIC) || (smt == SECANTOPERATOR))
+    {
+        Je = I₄;
+    }
+    else if (smt == CONSISTENTTANGENTOPERATOR)
+    {
+        getPartialJacobianInvert(Je);
+    }
+    else
+    {
+        return false;
+    }
+
+    const auto C_ep = ∂σ∕∂εᵉˡ ⋅ Je;
+    ∂σ∕∂Δεᵗᵒ = C_ep;
+    ∂σ∕∂ΔT = C_ep ⋅ (-α ⋅ I₂);
+
+    // Passing the swelling stress as an equivalent elastic strain through
+    // C_ep includes the plastic response.
+    const auto ∂σˢʷ∕∂pᶜᵃᵖ =
+        ∂σˢʷ∕∂Sᴸ ⋅ ∂Sᴸ∕∂pᶜᵃᵖ;
+    ∂σ∕∂Δpᴸᴿ =
+        C_ep ⋅ (∂εᵉˡ∕∂σ ⋅ ∂σˢʷ∕∂pᶜᵃᵖ) -
+        αᵇ ⋅ (χ - (pᴸᴿ + Δpᴸᴿ) ⋅ ∂χ∕∂Sᴸ ⋅ ∂Sᴸ∕∂pᶜᵃᵖ) ⋅ I₂;
+}
