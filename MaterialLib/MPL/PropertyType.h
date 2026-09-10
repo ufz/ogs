@@ -98,6 +98,12 @@ enum PropertyType : int
     thermal_expansivity_contribution,
     thermal_longitudinal_dispersivity,
     thermal_osmosis_coefficient,
+    /// Scalar thermo-osmotic permeability \f$\epsilon_T\f$ in Pa/K, the
+    /// pore pressure gradient equivalent to a unit temperature gradient. It
+    /// parametrises the thermo-osmotic coefficient as \f$k_T = \epsilon_T k /
+    /// \mu\f$, see ProcessLib::getThermoOsmoticCoefficient(); use it instead
+    /// of, not next to, thermal_osmosis_coefficient.
+    thermal_osmosis_permeability,
     thermal_transversal_dispersivity,
     tortuosity,
     transport_porosity,
@@ -173,6 +179,7 @@ static const std::array<std::string, PropertyType::number_of_properties>
                              "thermal_expansivity_contribution",
                              "thermal_longitudinal_dispersivity",
                              "thermal_osmosis_coefficient",
+                             "thermal_osmosis_permeability",
                              "thermal_transversal_dispersivity",
                              "tortuosity",
                              "transport_porosity",

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff>
+  <!-- Remove thermal_osmosis_coefficient property -->
+  <remove sel="/*/media/medium[1]/properties/property[name='thermal_osmosis_coefficient']"></remove>
+
+  <!-- Add thermal_osmosis_permeability property to the medium -->
+  <add sel="/*/media/medium/properties">
+    <property>
+      <name>thermal_osmosis_permeability</name>
+      <type>Constant</type>
+      <value>5400</value>
+    </property>
+  </add>
+
+</OpenGeoSysProjectDiff>
