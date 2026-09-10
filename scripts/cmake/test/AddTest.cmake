@@ -23,6 +23,7 @@
 #   LABELS <labelA;labelB;...> # optional, defaults to "default"
 #   WORKING_DIRECTORY # optional, specify the working directory of the test
 #   DISABLED # optional, disables the test
+#   NO_OMP_VARIANT # optional, do not generate an OpenMP variant
 #   PROPERTIES <test properties> # optional
 # )
 # ~~~
@@ -56,7 +57,7 @@
 function(AddTest)
 
     # parse arguments
-    set(options DISABLED)
+    set(options DISABLED NO_OMP_VARIANT)
     set(oneValueArgs
         EXECUTABLE
         PATH
@@ -279,8 +280,8 @@ function(AddTest)
     list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
-    if(";${labels};" MATCHES ";${match_parallel_asm_processes};"
-        AND NOT "${labels}" MATCHES petsc-mumps
+    if(NOT AddTest_NO_OMP_VARIANT
+        AND ";${labels};" MATCHES ";${match_parallel_asm_processes};"
         AND NOT ";${labels};" MATCHES ";NO_PARALLEL_ASSEMBLY;")
         set(_has_omp_variant TRUE)
     endif()

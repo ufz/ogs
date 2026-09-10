@@ -4,7 +4,7 @@ function(OgsTest)
         return()
     endif()
 
-    set(options DISABLED NO_TEST_DEFINITION)
+    set(options DISABLED NO_OMP_VARIANT NO_TEST_DEFINITION)
     set(oneValueArgs PROJECTFILE RUNTIME NAME_SUFFIX)
     set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES EXECUTABLE_ARGS)
     cmake_parse_arguments(
@@ -113,7 +113,9 @@ function(OgsTest)
     list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
-    if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+    if(NOT OgsTest_NO_OMP_VARIANT
+       AND ";${labels};" MATCHES ";${match_parallel_asm_processes};"
+    )
         set(_has_omp_variant TRUE)
     endif()
 
