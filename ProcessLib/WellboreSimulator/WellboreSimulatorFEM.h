@@ -15,7 +15,6 @@
 #include "NumLib/Fem/InitShapeMatrices.h"
 #include "NumLib/Fem/Integration/GenericIntegrationMethod.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
-#include "NumLib/NewtonRaphson.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Utils/SetOrGetIntegrationPointData.h"
 #include "WellboreSimulatorLocalAssemblerInterface.h"
@@ -126,46 +125,6 @@ public:
                   std::vector<double>& local_M_data,
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
-
-    static int const jacobian_residual_size = 1;
-    using ResidualVector = Eigen::Matrix<double, jacobian_residual_size, 1>;
-    using JacobianMatrix =
-        Eigen::Matrix<double, jacobian_residual_size, jacobian_residual_size,
-                      Eigen::RowMajor>;
-    using UnknownVector = Eigen::Matrix<double, jacobian_residual_size, 1>;
-
-    void calculateResidual(double const alpha, double const vapor_water_density,
-                           double const liquid_water_density,
-                           double const v_mix, double const dryness,
-                           double const C_0, double const u_gu,
-                           ResidualVector& res)
-    {
-        double const rho_mix =
-            alpha * vapor_water_density + (1 - alpha) * liquid_water_density;
-
-        res(0) =
-            dryness * liquid_water_density * rho_mix * v_mix -
-            alpha * C_0 * dryness * liquid_water_density * rho_mix * v_mix -
-            alpha * C_0 * (1 - dryness) * vapor_water_density * rho_mix *
-                v_mix -
-            alpha * vapor_water_density * liquid_water_density * u_gu;
-    }
-
-    void calculateJacobian(double const alpha, double const vapor_water_density,
-                           double const liquid_water_density,
-                           double const v_mix, double const dryness,
-                           double const C_0, double const u_gu,
-                           JacobianMatrix& Jac)
-    {
-        Jac(0) = dryness * liquid_water_density * v_mix *
-                     (vapor_water_density - liquid_water_density) -
-                 (C_0 * dryness * liquid_water_density +
-                  C_0 * (1 - dryness) * vapor_water_density) *
-                     (2 * alpha * vapor_water_density +
-                      (1 - 2 * alpha) * liquid_water_density) *
-                     v_mix -
-                 vapor_water_density * liquid_water_density * u_gu;
-    }
 
     Eigen::Map<const Eigen::RowVectorXd> getShapeMatrix(
         const unsigned integration_point) const override

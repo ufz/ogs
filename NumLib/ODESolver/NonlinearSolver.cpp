@@ -182,7 +182,23 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        sys.assemble(x_new, x_prev, process_id);
+        bool mpi_rank_assembly_ok = true;
+        try
+        {
+            sys.assemble(x_new, x_prev, process_id);
+        }
+        catch (AssemblyException const& e)
+        {
+            ERR("Abort nonlinear iteration. Repeating timestep. Reason: {:s}",
+                e.what());
+            error_norms_met = false;
+            iteration = _maxiter;
+            mpi_rank_assembly_ok = false;
+        }
+        if (BaseLib::MPI::anyOf(!mpi_rank_assembly_ok))
+        {
+            break;
+        }
         sys.getA(A);
         sys.getRhs(*x_prev[process_id], rhs);
 

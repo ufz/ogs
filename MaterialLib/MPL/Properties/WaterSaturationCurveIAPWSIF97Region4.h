@@ -3,11 +3,53 @@
 
 #pragma once
 
+#include <spdlog/fmt/fmt.h>
+
 #include <array>
 #include <cmath>
+#include <string_view>
+
+#include "MaterialLib/PhysicalConstant.h"
+#include "NumLib/Exceptions.h"
 
 namespace MaterialPropertyLib::IAPWSIF97Region4
 {
+/// Lower bound of the pressure range of the region 4 saturation line, the
+/// saturation pressure at 273.15 K. It is fixed by the formulation itself,
+/// see http://www.iapws.org/relguide/IF97-Rev.pdf p.33, section 8.1, and is
+/// neither the triple point pressure of ordinary water nor to be updated to
+/// it. The upper bound of the range is the critical pressure.
+constexpr double minimum_saturation_pressure = 611.213;  ///< Pa
+
+/// Aborts the assembly if \c pressure lies outside the pressure range of the
+/// region 4 saturation line. Outside it the correlations below are
+/// extrapolated and no longer describe water, and they do not say so
+/// themselves: they return plausible looking values well outside the range,
+/// 998 kg/m^3 at half the lower bound and 618 kg/m^3 at twice the critical
+/// pressure, where no saturation state exists at all. Nothing downstream can
+/// catch what this check lets through.
+///
+/// The pressure is a solution iterate, so leaving the range is a diverging
+/// step rather than a broken input, and an AssemblyException lets the time
+/// stepper repeat the step with a smaller step size, as for every other
+/// inadmissible state the closure reports.
+/// \param pressure  the pressure to check, in Pa.
+/// \param quantity  the quantity being evaluated, named in the message.
+inline void checkPressureInRange(double const pressure,
+                                 std::string_view const quantity)
+{
+    constexpr double maximum_saturation_pressure =
+        MaterialLib::PhysicalConstant::CriticalPoint::PressureWater;
+
+    if ((pressure < minimum_saturation_pressure) ||
+        (pressure > maximum_saturation_pressure))
+    {
+        throw NumLib::AssemblyException(fmt::format(
+            "Pressure {:g} Pa is out of the range [{:g}, {:g}] Pa for {}.",
+            pressure, minimum_saturation_pressure, maximum_saturation_pressure,
+            quantity));
+    }
+}
 
 /// The saturation-temperature equation function in region 4, from
 /// "The International Association for the Properties of Water and Steam"

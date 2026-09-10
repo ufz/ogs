@@ -36,6 +36,35 @@ constexpr double BoltzmannConstant = 1.3806505e-23;  ///< J/K
 constexpr double PlanckConstant = 6.626068e-34;  ///< J s
 
 /**
+ * Critical point data of water.
+ *
+ * - Source: IAPWS R2-83(1992), "Release on the Values of Temperature, Pressure
+ *   and Density of Ordinary and Heavy Water Substances at their Respective
+ *   Critical Points".
+ *   http://www.iapws.org/relguide/CritPoint.pdf
+ */
+namespace CriticalPoint
+{
+/// Critical temperature of ordinary water substance H<sub>2</sub>O.
+/// Stated experimental uncertainty 0.1 K. The IAPWS-95 formulation adopts the
+/// same value as the fixed reducing parameter of \f$\tau = T_c/T\f$, i.e. it is
+/// not a quantity fitted by that formulation, see W. Wagner and A. Pruss, "The
+/// IAPWS Formulation 1995 for the Thermodynamic Properties of Ordinary Water
+/// Substance for General and Scientific Use", J. Phys. Chem. Ref. Data 31, 387
+/// (2002), https://doi.org/10.1063/1.1461829.
+constexpr double TemperatureWater = 647.096;  ///< K
+
+/// Critical pressure of ordinary water substance H<sub>2</sub>O.
+/// Stated experimental uncertainty 0.005 MPa. As for the critical
+/// temperature, IAPWS-IF97 adopts this value as the upper bound of its
+/// region 4 saturation line rather than reproducing it as a fitted quantity,
+/// see IAPWS R7-97(2012), "Revised Release on the IAPWS Industrial
+/// Formulation 1997 for the Thermodynamic Properties of Water and Steam",
+/// Sec. 8.1. http://www.iapws.org/relguide/IF97-Rev.pdf
+constexpr double PressureWater = 22.064e6;  ///< Pa
+}  // namespace CriticalPoint
+
+/**
  * Atomic masses of certain elements and molar masses of chemical compounds
  */
 namespace MolarMass

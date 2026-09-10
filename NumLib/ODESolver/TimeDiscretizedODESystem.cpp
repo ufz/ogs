@@ -224,12 +224,24 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     _K->setZero();
     _b->setZero();
 
-    _ode.preAssemble(t, dt, x_curr);
-    _ode.assemble(t, dt, x_new_timestep, x_prev, process_id, *_M, *_K, *_b);
+    auto const finalize_assembly = [&]
+    {
+        LinAlg::finalizeAssembly(*_M);
+        LinAlg::finalizeAssembly(*_K);
+        LinAlg::finalizeAssembly(*_b);
+    };
 
-    LinAlg::finalizeAssembly(*_M);
-    LinAlg::finalizeAssembly(*_K);
-    LinAlg::finalizeAssembly(*_b);
+    try
+    {
+        _ode.preAssemble(t, dt, x_curr);
+        _ode.assemble(t, dt, x_new_timestep, x_prev, process_id, *_M, *_K, *_b);
+    }
+    catch (AssemblyException const&)
+    {
+        finalize_assembly();
+        throw;
+    }
+    finalize_assembly();
 }
 
 void TimeDiscretizedODESystem<
