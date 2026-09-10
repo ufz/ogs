@@ -85,16 +85,6 @@
                     <type>Solid</type>
                     <components>
                         <component>
-                            <name>Calcite</name>
-                            <properties>
-                                <property>
-                                    <name>molality</name>
-                                    <type>Constant</type>
-                                    <value>10</value>
-                                </property>
-                            </properties>
-                        </component>
-                        <component>
                             <name>Decay_UO2</name>
                             <properties>
                                 <property>
@@ -325,11 +315,6 @@
             <name>p0</name>
             <type>Constant</type>
             <value>1e5</value>
-        </parameter>
-        <parameter>
-            <name>c0_default</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
         <parameter>
             <name>cI(0)</name>
