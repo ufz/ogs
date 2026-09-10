@@ -24,12 +24,17 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/LiakopoulosHM/liakopoulos_restart.xml RUNTIME 1)
 endif()
 
+set(_petsc_mumps_test_options NO_OMP_VARIANT LABELS "petsc-mumps")
+if(OGS_USE_PETSC AND NOT OGS_PETSC_HAVE_MUMPS)
+    list(APPEND _petsc_mumps_test_options DISABLED)
+endif()
+
 if(OGS_USE_PETSC)
     OgsTest(
         PROJECTFILE ThermoRichardsMechanics/LiakopoulosPETSc/liakopoulos_mixElem_mumps.prj
         WRAPPER mpirun -np 2
         RUNTIME 2
-        LABELS "petsc-mumps"
+        ${_petsc_mumps_test_options}
         NAME_SUFFIX LiakopoulosMixedElementsPETSc
     )
 endif()
@@ -61,7 +66,7 @@ if(OGS_USE_MPI)
         PROJECTFILE
             ThermoRichardsMechanics/Simple3DThermoMechanicsFromTM/cube_1e3.prj
         WRAPPER mpirun -np 3
-        RUNTIME 40 LABELS "petsc-mumps"
+        RUNTIME 40 ${_petsc_mumps_test_options}
     )
     OgsTest(
         PROJECTFILE
@@ -75,19 +80,19 @@ if(OGS_USE_MPI)
         NAME_SUFFIX non_submesh_r_output
         WRAPPER mpirun -np 3
         RUNTIME 5
-        LABELS "petsc-mumps"
+        ${_petsc_mumps_test_options}
     )
     OgsTest(
         PROJECTFILE
             ThermoRichardsMechanics/PointHeatSource/point_heat_source_2D_gml.prj
         WRAPPER mpirun -np 3
-        RUNTIME 5 LABELS "petsc-mumps"
+        RUNTIME 5 ${_petsc_mumps_test_options}
     )
     OgsTest(
         PROJECTFILE
             ThermoRichardsMechanics/TaskCDECOVALEX2023/Decovalex-0_mpi.xml
         WRAPPER mpirun -np 3
-        RUNTIME 10 LABELS "petsc-mumps"
+        RUNTIME 10 ${_petsc_mumps_test_options}
     )
 endif()
 # ThermoRichardsMechanics; thermo_osmosis and thermo_filtration effects, linear poroelastic, column consolidation

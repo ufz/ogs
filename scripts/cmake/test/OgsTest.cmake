@@ -4,7 +4,7 @@ function(OgsTest)
         return()
     endif()
 
-    set(options DISABLED NO_TEST_DEFINITION)
+    set(options DISABLED NO_OMP_VARIANT NO_TEST_DEFINITION)
     set(oneValueArgs PROJECTFILE RUNTIME NAME_SUFFIX)
     set(multiValueArgs WRAPPER PROPERTIES LABELS PATCH_FILES EXECUTABLE_ARGS)
     cmake_parse_arguments(
@@ -79,7 +79,9 @@ function(OgsTest)
         string(SHA1 _patches_hash "${OgsTest_PATCH_FILES}")
         string(SUBSTRING "${_patches_hash}" 0 4 _short_patches_hash)
         set(TEST_NAME "${TEST_NAME}_${_short_patches_hash}")
-        message(DEBUG "Test name is already defined. New test name: ${TEST_NAME}")
+        message(DEBUG
+                "Test name is already defined. New test name: ${TEST_NAME}"
+        )
     endif()
 
     if(OgsTest_NO_TEST_DEFINITION)
@@ -110,10 +112,14 @@ function(OgsTest)
     endif()
 
     set(_has_omp_variant FALSE)
-    list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;" match_parallel_asm_processes)
+    list(JOIN OGS_OPENMP_PARALLEL_ASM_PROCESSES ";|;"
+         match_parallel_asm_processes
+    )
     # OpenMP tests for specific processes only. TODO (CL) Once all processes can
     # be assembled OpenMP parallel, the condition should be removed.
-    if(";${labels};" MATCHES ";${match_parallel_asm_processes};")
+    if(NOT OgsTest_NO_OMP_VARIANT AND ";${labels};" MATCHES
+                                      ";${match_parallel_asm_processes};"
+    )
         set(_has_omp_variant TRUE)
     endif()
 
@@ -134,8 +140,8 @@ endfunction()
 
 # Adds a ctest and sets properties
 macro(_ogs_add_test TEST_NAME)
-    # TEST_NAME is unique, shortened hash added to the working directory of
-    # the test to prevent race conditions.
+    # TEST_NAME is unique, shortened hash added to the working directory of the
+    # test to prevent race conditions.
     set(_unique_string "${TEST_NAME}")
     string(SHA1 _unique_hash "${_unique_string}")
     string(SUBSTRING "${_unique_hash}" 0 8 _short_hash)
@@ -154,8 +160,8 @@ macro(_ogs_add_test TEST_NAME)
 
     set(_ogs_exe $<TARGET_FILE:ogs>)
     if(OGS_BUILD_WHEEL)
-        # When testing the installed wheel assume executable is in PATH
-        # from venv.
+        # When testing the installed wheel assume executable is in PATH from
+        # venv.
         set(_ogs_exe ogs)
     endif()
     set(_diff_tool_environment VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>)

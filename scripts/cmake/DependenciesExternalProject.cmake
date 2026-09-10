@@ -268,6 +268,29 @@ if(OGS_USE_PETSC)
     find_package(PkgConfig REQUIRED)
     pkg_search_module(PETSC REQUIRED IMPORTED_TARGET PETSc)
     target_compile_definitions(PkgConfig::PETSC INTERFACE USE_PETSC)
+
+    include(CheckCXXSourceCompiles)
+    unset(OGS_PETSC_HAVE_MUMPS CACHE)
+    set(_petsc_required_includes "${CMAKE_REQUIRED_INCLUDES}")
+    set(CMAKE_REQUIRED_INCLUDES "${PETSC_INCLUDE_DIRS}")
+    check_cxx_source_compiles(
+        "#include <petscconf.h>
+         #if !defined(PETSC_HAVE_MUMPS) || !PETSC_HAVE_MUMPS
+         #error PETSc was not built with MUMPS support.
+         #endif
+         int main() { return 0; }"
+        OGS_PETSC_HAVE_MUMPS
+    )
+    set(CMAKE_REQUIRED_INCLUDES "${_petsc_required_includes}")
+    unset(_petsc_required_includes)
+    if(OGS_PETSC_HAVE_MUMPS)
+        message(STATUS "PETSc was built with MUMPS support.")
+    else()
+        message(
+            STATUS
+                "PETSc was not built with MUMPS support. MUMPS-dependent ctests will be skipped."
+        )
+    endif()
 endif()
 
 if(OGS_USE_LIS)
