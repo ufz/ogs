@@ -1,28 +1,9 @@
-.ci_images_changes: &ci_images_changes
-  changes:
-    - scripts/ci/jobs/ci_images.yml
-    - scripts/docker/Dockerfile.web
-
 meta:
   stage: preparation
-  tags: [shell, docker]
+  tags: [shell]
   needs: []
   variables:
     GIT_DEPTH: 1000
-    CONTAINER_REGISTRY: ${CI_REGISTRY}/ogs/ogs
-    CONTAINER_TAG: latest
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      <<: *ci_images_changes
-      variables:
-        BUILD_CONTAINER: "true"
-    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
-      <<: *ci_images_changes
-      variables:
-        BUILD_CONTAINER: "true"
-        CONTAINER_TAG: ${CI_COMMIT_REF_SLUG}
-        CONTAINER_REGISTRY: ${CI_REGISTRY}/${CI_PROJECT_PATH}
-    - when: always
   script:
     - echo "OGS_VERSION=${CI_COMMIT_TAG:-$(git describe --tags --long --dirty --always)}" >> build.env
     - echo "OGS_LAST_TAG=${CI_COMMIT_TAG:-$(git describe --abbrev=0)}" >> build.env
