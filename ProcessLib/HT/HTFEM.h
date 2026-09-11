@@ -4,6 +4,7 @@
 #pragma once
 
 #include <Eigen/Core>
+#include <optional>
 #include <vector>
 
 #include "HTLocalAssemblerInterface.h"
@@ -50,13 +51,44 @@ namespace HT
 ///        \c thermal_expansivity. Passed in rather than queried here so that
 ///        the callers can hoist the property lookup out of their integration
 ///        point loop.
+/// \param specific_storage Specific storage \f$S_s\f$ of the solid phase at
+///        the current integration point. Not used in the returned value; it is
+///        passed in only so that the requirement \f$\alpha_B=1 \Rightarrow
+///        S_s=0\f$ can be checked against the evaluated values, which is the
+///        only place where it can be checked for properties that depend on the
+///        primary variables. The function is fatal if the requirement is
+///        violated. Passed in rather than evaluated here to avoid evaluating
+///        the storage property twice per integration point, since the callers
+///        already need its value.
 double evalEffectiveThermalExpansivity(
     double const t, double const dt, ParameterLib::SpatialPosition const& pos,
     MaterialPropertyLib::VariableArray const& vars,
     MaterialPropertyLib::Medium const& medium,
     MaterialPropertyLib::Phase const& liquid_phase,
     MaterialPropertyLib::Phase const& solid_phase,
-    bool const has_solid_thermal_expansivity);
+    bool const has_solid_thermal_expansivity, double const specific_storage);
+
+/// Checks the requirement \f$\alpha_B=1 \Rightarrow S_s=0\f$ on the evaluated
+/// Biot coefficient of \c medium and the evaluated specific storage of
+/// \c solid_phase at the position \c pos, and ends the run with \c OGS_FATAL
+/// if it is violated.
+///
+/// Both properties are evaluated with \c vars, \c t and \c dt, i.e. with the
+/// state the caller has set. At initialisation time the caller passes an empty
+/// \c vars and \f$t=dt=0\f$ -- the literal zero, not the initial time of the
+/// time loop, which may differ. Properties that depend on neither the primary
+/// variables nor the time are therefore fully checked there. Properties that do
+/// depend on the primary variables evaluate to NaN instead; a Biot coefficient
+/// of NaN compares unequal to one and a specific storage of NaN is excluded
+/// explicitly, so the check passes in both cases. A property depending on the
+/// time is checked at \f$t=0\f$ only, which is a state the simulation need not
+/// pass through at all. Those cases are covered by the check on the evaluated
+/// values in evalEffectiveThermalExpansivity().
+void checkBiotStorageRelation(double const t, double const dt,
+                              ParameterLib::SpatialPosition const& pos,
+                              MaterialPropertyLib::VariableArray const& vars,
+                              MaterialPropertyLib::Medium const& medium,
+                              MaterialPropertyLib::Phase const& solid_phase);
 
 template <typename ShapeFunction, int GlobalDim>
 class HTFEM : public HTLocalAssemblerInterface
@@ -111,6 +143,44 @@ public:
                 _integration_method.getWeightedPoint(ip).getWeight() *
                     shape_matrices[ip].integralMeasure *
                     shape_matrices[ip].detJ * aperture_size);
+        }
+    }
+
+    void initializeConcrete() override
+    {
+        auto const& medium =
+            *_process_data.media_map.getMedium(_element.getID());
+        auto const& solid_phase =
+            medium.phase(MaterialPropertyLib::PhaseName::Solid);
+
+        // The Biot coefficient is read only together with the solid thermal
+        // expansivity, see evalEffectiveThermalExpansivity().
+        if (!solid_phase.hasProperty(
+                MaterialPropertyLib::PropertyType::thermal_expansivity))
+        {
+            return;
+        }
+
+        MaterialPropertyLib::VariableArray vars;
+        vars.liquid_saturation = 1.0;
+
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .template NsHigherOrder<typename ShapeFunction::MeshElement>();
+
+        unsigned const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        for (unsigned ip = 0; ip < n_integration_points; ip++)
+        {
+            ParameterLib::SpatialPosition const pos{
+                std::nullopt, _element.getID(),
+                MathLib::Point3d(
+                    NumLib::interpolateCoordinates<ShapeFunction,
+                                                   ShapeMatricesType>(_element,
+                                                                      Ns[ip]))};
+
+            checkBiotStorageRelation(0.0 /* t */, 0.0 /* dt */, pos, vars,
+                                     medium, solid_phase);
         }
     }
 
@@ -354,5 +424,6 @@ protected:
     static const int temperature_index = 0;
     static const int temperature_size = ShapeFunction::NPOINTS;
 };
+
 }  // namespace HT
 }  // namespace ProcessLib

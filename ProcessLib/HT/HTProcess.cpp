@@ -8,6 +8,7 @@
 #include "MonolithicHTFEM.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
+#include "NumLib/NumericsConfig.h"
 #include "ProcessLib/CoupledSolutionsForStaggeredScheme.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
@@ -64,6 +65,9 @@ void HTProcess::initializeConcreteProcess(
             _local_assemblers, NumLib::IntegrationOrder{integration_order},
             mesh.isAxiallySymmetric(), _process_data);
     }
+
+    GlobalExecutor::executeMemberOnDereferenced(
+        &HTLocalAssemblerInterface::initialize, _local_assemblers, dof_table);
 
     _secondary_variables.addSecondaryVariable(
         "darcy_velocity",

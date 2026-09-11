@@ -239,7 +239,7 @@ public:
                 double const eff_thermal_expansivity =
                     evalEffectiveThermalExpansivity(
                         t, dt, pos, vars, medium, liquid_phase, solid_phase,
-                        has_solid_thermal_expansivity);
+                        has_solid_thermal_expansivity, specific_storage);
                 MpT.noalias() -=
                     (scaling_factor * w * eff_thermal_expansivity) * NtN;
             }

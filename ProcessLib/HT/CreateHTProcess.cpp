@@ -47,6 +47,10 @@ void checkThermalExpansivitySetting(
                     "in the material configuration.",
                     medium->description());
             }
+
+            // The requirement alpha_B = 1 => S_s = 0 is checked on the
+            // evaluated values in checkBiotStorageRelation() and
+            // evalEffectiveThermalExpansivity().
         }
     }
 }

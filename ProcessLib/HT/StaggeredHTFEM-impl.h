@@ -154,9 +154,9 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         // Add the thermal expansion term
         {
             double const eff_thermal_expansivity =
-                evalEffectiveThermalExpansivity(t, dt, pos, vars, medium,
-                                                liquid_phase, solid_phase,
-                                                has_solid_thermal_expansivity);
+                evalEffectiveThermalExpansivity(
+                    t, dt, pos, vars, medium, liquid_phase, solid_phase,
+                    has_solid_thermal_expansivity, specific_storage);
 
             double const Tdot_int_pt = (T_int_pt - local_T_prev.dot(N)) / dt;
             local_b.noalias() +=
