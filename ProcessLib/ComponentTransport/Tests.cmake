@@ -157,8 +157,8 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt_linear/1d_decay_chain_GIA.xml RUNTIME 3)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/DecayChain/GlobalImplicitApproach/varying_dt_linear_compute_only_on_dt_change/1d_decay_chain_GIA.xml RUNTIME 4)
 
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SolidPhasePositionTest/1d_vertical_test.prj RUNTIME 1)
-    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/SolidPhasePositionTest/medium_position_test.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CoordinatesDependentVariableTest/1d_test_for_solid_phase_component.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/ComponentTransport/ReactiveTransport/CoordinatesDependentVariableTest/1d_test_for_medium_parameter.xml RUNTIME 1)
 
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/ThermalDiffusion/TemperatureField_transport.prj RUNTIME 15)
 endif()

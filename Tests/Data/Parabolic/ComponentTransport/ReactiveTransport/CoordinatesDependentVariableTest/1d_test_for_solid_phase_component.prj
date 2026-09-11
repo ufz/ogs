@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
     <meshes>
-        <mesh>1d_vertical_test_mid_fine_ReactionDomain.vtu</mesh>
-        <mesh>1d_vertical_test_bc_top.vtu</mesh>
-        <mesh>1d_vertical_test_bc_bot.vtu</mesh>
+        <mesh>1d_test_mid_fine_ReactionDomain.vtu</mesh>
+        <mesh>1d_test_bc_top.vtu</mesh>
+        <mesh>1d_test_bc_bot.vtu</mesh>
     </meshes>
     <processes>
         <process>
@@ -228,7 +228,7 @@
         </processes>
         <output>
             <type>VTK</type>
-            <prefix>1d_vertical_test</prefix>
+            <prefix>1d_test_for_solid_phase_component</prefix>
             <suffix>_ts_{:timestep}_t_{:.3gtime}</suffix>
             <timesteps>
                 <pair>
@@ -242,7 +242,7 @@
         </output>
     </time_loop>
     <chemical_system chemical_solver="Phreeqc">
-        <mesh>1d_vertical_test_mid_fine_ReactionDomain</mesh>
+        <mesh>1d_test_mid_fine_ReactionDomain</mesh>
         <linear_solver>general_linear_solver</linear_solver>
         <database>../SharedDatabase/PSINA_12_07_110615_DAV_s_hzdr.dat</database>
         <solution>
@@ -348,12 +348,12 @@
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>1d_vertical_test_bc_top</mesh>
+                    <mesh>1d_test_bc_top</mesh>
                     <type>Dirichlet</type>
                     <parameter>p0</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>1d_vertical_test_bc_bot</mesh>
+                    <mesh>1d_test_bc_bot</mesh>
                     <type>Dirichlet</type>
                     <parameter>p0</parameter>
                 </boundary_condition>
@@ -366,12 +366,12 @@
             <initial_condition>cI(0)</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>1d_vertical_test_bc_top</mesh>
+                    <mesh>1d_test_bc_top</mesh>
                     <type>Dirichlet</type>
                     <parameter>cI(0)</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>1d_vertical_test_bc_bot</mesh>
+                    <mesh>1d_test_bc_bot</mesh>
                     <type>Dirichlet</type>
                     <parameter>cI(0)</parameter>
                 </boundary_condition>
@@ -384,12 +384,12 @@
             <initial_condition>c0_H</initial_condition>
             <boundary_conditions>
                 <boundary_condition>
-                    <mesh>1d_vertical_test_bc_top</mesh>
+                    <mesh>1d_test_bc_top</mesh>
                     <type>Dirichlet</type>
                     <parameter>c0_H</parameter>
                 </boundary_condition>
                 <boundary_condition>
-                    <mesh>1d_vertical_test_bc_top</mesh>
+                    <mesh>1d_test_bc_top</mesh>
                     <type>Dirichlet</type>
                     <parameter>c0_H</parameter>
                 </boundary_condition>
@@ -421,43 +421,43 @@
     </linear_solvers>
     <test_definition>
         <vtkdiff>
-            <file>1d_vertical_test_ts_0_t_0.vtu</file>
+            <file>1d_test_for_solid_phase_component_ts_0_t_0.vtu</file>
             <field>I</field>
             <absolute_tolerance>9e-25</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>1d_vertical_test_ts_0_t_0.vtu</file>
+            <file>1d_test_for_solid_phase_component_ts_0_t_0.vtu</file>
             <field>H</field>
             <absolute_tolerance>2e-22</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>1d_vertical_test_ts_0_t_0.vtu</file>
+            <file>1d_test_for_solid_phase_component_ts_0_t_0.vtu</file>
             <field>pressure</field>
             <absolute_tolerance>2e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>1d_vertical_test_ts_1_t_5e+11.vtu</file>
+            <file>1d_test_for_solid_phase_component_ts_1_t_5e+11.vtu</file>
             <field>Decay_UO2</field>
             <absolute_tolerance>2e-17</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>1d_vertical_test_ts_1_t_5e+11.vtu</file>
+            <file>1d_test_for_solid_phase_component_ts_1_t_5e+11.vtu</file>
             <field>I</field>
             <absolute_tolerance>9e-25</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>1d_vertical_test_ts_1_t_5e+11.vtu</file>
+            <file>1d_test_for_solid_phase_component_ts_1_t_5e+11.vtu</file>
             <field>H</field>
             <absolute_tolerance>2e-22</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
-            <file>1d_vertical_test_ts_1_t_5e+11.vtu</file>
+            <file>1d_test_for_solid_phase_component_ts_1_t_5e+11.vtu</file>
             <field>pressure</field>
             <absolute_tolerance>2e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
