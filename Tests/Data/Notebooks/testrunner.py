@@ -14,6 +14,7 @@ import jupytext
 import nbformat
 import papermill
 import toml
+from binder import sparse_path_query, sparse_paths_for_notebook
 from nbclient.exceptions import DeadKernelError
 from nbconvert import HTMLExporter
 from nbconvert.preprocessors import CellExecutionError
@@ -122,7 +123,12 @@ def check_and_modify_frontmatter():
     if "CI_MERGE_REQUEST_SOURCE_PROJECT_URL" in os.environ:
         repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
         branch = os.environ["CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]
-    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/{petsc_prefix}{binder_tag}?urlpath=git-pull%3Frepo={repo}%26urlpath=lab/tree/ogs/{notebook_file_path_relative}%26branch={branch}%26depth=1"
+
+    notebook_url_path = f"lab/tree/ogs/{notebook_file_path_relative}"
+    sparse_paths = sparse_paths_for_notebook(
+        notebook_file_path_relative, args.binder_additional_path
+    )
+    binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/{petsc_prefix}{binder_tag}?urlpath=git-pull%3Frepo={repo}%26urlpath={notebook_url_path}%26branch={branch}%26depth=1{sparse_path_query(sparse_paths)}"
     metadata = (
         "notebook = true\n"
         f'notebook_source_url = "{repo}/-/blob/{branch}/{notebook_file_path_relative}"\n'
@@ -140,6 +146,12 @@ def check_and_modify_frontmatter():
 parser = argparse.ArgumentParser(description="Jupyter notebook testrunner.")
 parser.add_argument("notebooks", metavar="N", nargs="+", help="Notebooks to test.")
 parser.add_argument("--out", default="./", help="Output directory.")
+parser.add_argument(
+    "--binder-additional-path",
+    action="append",
+    default=[],
+    help="Additional repository-relative path for the Binder sparse checkout.",
+)
 parser.add_argument(
     "--hugo", action="store_true", help="Convert successful notebooks to web site."
 )
@@ -164,6 +176,7 @@ for notebook_file in args.notebooks:
     notebook_file_path_relative = notebook_file_path.absolute().relative_to(
         ogs_source_path
     )
+    notebook_directory = notebook_file_path_relative.parent
 
     notebook_basename = notebook_file_path.parent.resolve() / notebook_file_path.stem
     _relpath = os.path.relpath(notebook_basename, start=os.environ["OGS_DATA_DIR"])

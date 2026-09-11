@@ -63,5 +63,9 @@ endif()
 if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCellWithBBar/great_cell_LIE.py RUNTIME 60)
     NotebookTest(NOTEBOOKFILE LIE/Mechanics/GreatCelljupyterNotebook/GreatCellM.py RUNTIME 280)
-    NotebookTest(NOTEBOOKFILE LIE/HydroMechanics/GreatCelljupyterNotebook/GreatCellHM.py RUNTIME 851)
+    NotebookTest(
+        NOTEBOOKFILE LIE/HydroMechanics/GreatCelljupyterNotebook/GreatCellHM.py
+        RUNTIME 851
+        BINDER_ADDITIONAL_PATHS LIE/Mechanics/GreatCelljupyterNotebook
+    )
 endif()

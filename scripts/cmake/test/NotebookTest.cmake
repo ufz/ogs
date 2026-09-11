@@ -27,7 +27,9 @@ function(NotebookTest)
 
     set(options DISABLED SKIP_WEB)
     set(oneValueArgs NOTEBOOKFILE RUNTIME)
-    set(multiValueArgs PROPERTIES LABELS PYTHON_PACKAGES)
+    set(multiValueArgs PROPERTIES LABELS PYTHON_PACKAGES
+                       BINDER_ADDITIONAL_PATHS
+    )
     cmake_parse_arguments(
         NotebookTest "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN}
     )
@@ -100,25 +102,34 @@ function(NotebookTest)
         endforeach()
     endif()
 
-    set(_exe_args run ${_uv_run_args} python Notebooks/testrunner.py --out ${Data_BINARY_DIR})
+    set(_exe_args run ${_uv_run_args} python Notebooks/testrunner.py --out
+                  ${Data_BINARY_DIR}
+    )
     if(NOT NotebookTest_SKIP_WEB)
         list(APPEND _exe_args --hugo)
         if(DEFINED ENV{CI})
             list(APPEND _exe_args --hugo-out ${PROJECT_BINARY_DIR}/web)
         endif()
     endif()
+    foreach(_path IN LISTS NotebookTest_BINDER_ADDITIONAL_PATHS)
+        # NotebookTest paths are relative to Tests/Data; Binder paths are
+        # relative to the repository root.
+        list(APPEND _exe_args --binder-additional-path Tests/Data/${_path})
+    endforeach()
     list(APPEND _exe_args ${NotebookTest_SOURCE_DIR}/${NotebookTest_NAME})
 
     isTestCommandExpectedToSucceed(${TEST_NAME} ${NotebookTest_PROPERTIES})
-    message(DEBUG "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}")
+    message(
+        DEBUG
+        "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
+    )
 
     add_test(
         NAME ${TEST_NAME}
         COMMAND
             ${CMAKE_COMMAND} ${CMAKE_COMMAND}
             # TODO: only works if notebook is in a leaf directory
-            -DEXECUTABLE=${UV_TOOL_PATH}
-            "-DEXECUTABLE_ARGS=${_exe_args}"
+            -DEXECUTABLE=${UV_TOOL_PATH} "-DEXECUTABLE_ARGS=${_exe_args}"
             -DWORKING_DIRECTORY=${Data_SOURCE_DIR}
             "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
             "-DLOG_FILE_BASENAME=${NotebookTest_NAME_WE}.txt"
@@ -129,12 +140,16 @@ function(NotebookTest)
     set_tests_properties(
         ${TEST_NAME}
         PROPERTIES
-        COST ${NotebookTest_RUNTIME}
-        ENVIRONMENT
-        "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};OGS_COVERAGE_PYTHON=${OGS_COVERAGE_PYTHON};OGS_USE_PETSC=${OGS_USE_PETSC};MPLCONFIGDIR=${NotebookTest_BINARY_DIR}/.mpl-${NotebookTest_NAME_WE}"
-        ENVIRONMENT_MODIFICATION PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
-        LABELS "${labels}"
-        SKIP_REGULAR_EXPRESSION "ZMQError: Address already in use"
+            COST
+            ${NotebookTest_RUNTIME}
+            ENVIRONMENT
+            "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};OGS_COVERAGE_PYTHON=${OGS_COVERAGE_PYTHON};OGS_USE_PETSC=${OGS_USE_PETSC};MPLCONFIGDIR=${NotebookTest_BINARY_DIR}/.mpl-${NotebookTest_NAME_WE}"
+            ENVIRONMENT_MODIFICATION
+            PATH=path_list_prepend:$<TARGET_FILE_DIR:ogs>
+            LABELS
+            "${labels}"
+            SKIP_REGULAR_EXPRESSION
+            "ZMQError: Address already in use"
     )
 
     if(NotebookTest_DISABLED)
