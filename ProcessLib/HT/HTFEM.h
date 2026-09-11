@@ -23,6 +23,41 @@ namespace ProcessLib
 {
 namespace HT
 {
+/// Computes the effective thermal expansivity
+/// \f$3(\alpha_B-\phi)\alpha_T^s
+///   - \phi\frac{\partial \varrho_f}{\partial T}/\varrho_f\f$
+/// used in the thermal expansion term of the pressure equation.
+///
+/// The fluid contribution
+/// \f$-\phi\frac{\partial \varrho_f}{\partial T}/\varrho_f\f$ is always
+/// present. The solid contribution
+/// \f$3(\alpha_B-\phi)\alpha_T^s\f$ is added only if
+/// \c has_solid_thermal_expansivity is \c true.
+///
+/// \param t     Current time.
+/// \param dt    Time increment.
+/// \param pos   Spatial position of the current integration point.
+/// \param vars  Variable array of the current integration point. Its
+///              \c density and \c porosity members must already be set, since
+///              they are read instead of being evaluated here.
+/// \param medium       Medium, provides the Biot coefficient
+///                     \f$\alpha_B\f$.
+/// \param liquid_phase Liquid phase, provides
+///                     \f$\frac{\partial \varrho_f}{\partial T}\f$.
+/// \param solid_phase  Solid phase, provides the linear solid thermal
+///                     expansivity \f$\alpha_T^s\f$.
+/// \param has_solid_thermal_expansivity Whether the solid phase defines
+///        \c thermal_expansivity. Passed in rather than queried here so that
+///        the callers can hoist the property lookup out of their integration
+///        point loop.
+double evalEffectiveThermalExpansivity(
+    double const t, double const dt, ParameterLib::SpatialPosition const& pos,
+    MaterialPropertyLib::VariableArray const& vars,
+    MaterialPropertyLib::Medium const& medium,
+    MaterialPropertyLib::Phase const& liquid_phase,
+    MaterialPropertyLib::Phase const& solid_phase,
+    bool const has_solid_thermal_expansivity);
+
 template <typename ShapeFunction, int GlobalDim>
 class HTFEM : public HTLocalAssemblerInterface
 {
@@ -319,6 +354,5 @@ protected:
     static const int temperature_index = 0;
     static const int temperature_size = ShapeFunction::NPOINTS;
 };
-
 }  // namespace HT
 }  // namespace ProcessLib

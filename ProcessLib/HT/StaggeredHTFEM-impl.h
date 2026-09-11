@@ -62,7 +62,7 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         medium.phase(MaterialPropertyLib::PhaseName::AqueousLiquid);
     auto const& solid_phase =
         medium.phase(MaterialPropertyLib::PhaseName::Solid);
-    bool const has_thermal_expansivity = solid_phase.hasProperty(
+    bool const has_solid_thermal_expansivity = solid_phase.hasProperty(
         MaterialPropertyLib::PropertyType::thermal_expansivity);
 
     auto const& b =
@@ -104,6 +104,8 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
         auto const porosity =
             medium.property(MaterialPropertyLib::PropertyType::porosity)
                 .template value<double>(vars, pos, t, dt);
+        vars.porosity = porosity;
+
         auto const fluid_density =
             liquid_phase.property(MaterialPropertyLib::PropertyType::density)
                 .template value<double>(vars, pos, t, dt);
@@ -120,17 +122,9 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
             liquid_phase.property(MaterialPropertyLib::PropertyType::viscosity)
                 .template value<double>(vars, pos, t, dt);
 
-        // \todo the argument to getValue() has to be changed for non
-        // constant storage model
         auto const specific_storage =
             solid_phase.property(MaterialPropertyLib::PropertyType::storage)
                 .template value<double>(vars, pos, t, dt);
-#ifndef NDEBUG
-        if (has_thermal_expansivity)
-        {
-            assert(std::fabs(specific_storage) > 0.0);
-        }
-#endif
 
         auto const intrinsic_permeability =
             MaterialPropertyLib::formEigenTensor<GlobalDim>(
@@ -157,36 +151,17 @@ void StaggeredHTFEM<ShapeFunction, GlobalDim>::assembleHydraulicEquation(
                                  dNdx.transpose() * K_over_mu * b;
         }
 
-        if (!has_thermal_expansivity)
-        {
-            continue;
-        }
-
         // Add the thermal expansion term
         {
-            auto const linear_solid_thermal_expansivity =
-                solid_phase
-                    .property(
-                        MaterialPropertyLib::PropertyType::thermal_expansivity)
-                    .template value<double>(vars, pos, t, dt);
-            const double dfluid_density_dT =
-                liquid_phase
-                    .property(MaterialPropertyLib::PropertyType::density)
-                    .template dValue<double>(
-                        vars, MaterialPropertyLib::Variable::temperature, pos,
-                        t, dt);
+            double const eff_thermal_expansivity =
+                evalEffectiveThermalExpansivity(t, dt, pos, vars, medium,
+                                                liquid_phase, solid_phase,
+                                                has_solid_thermal_expansivity);
+
             double const Tdot_int_pt = (T_int_pt - local_T_prev.dot(N)) / dt;
-            auto const biot_constant =
-                medium
-                    .property(
-                        MaterialPropertyLib::PropertyType::biot_coefficient)
-                    .template value<double>(vars, pos, t, dt);
-            const double eff_thermal_expansion =
-                3.0 * (biot_constant - porosity) *
-                    linear_solid_thermal_expansivity -
-                porosity * dfluid_density_dT / fluid_density;
             local_b.noalias() +=
-                (scaling_factor * eff_thermal_expansion * Tdot_int_pt * w) * N;
+                (scaling_factor * eff_thermal_expansivity * Tdot_int_pt * w) *
+                N;
         }
     }
 }

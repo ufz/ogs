@@ -103,7 +103,7 @@ public:
         auto const& solid_phase =
             medium.phase(MaterialPropertyLib::PhaseName::Solid);
 
-        bool const has_thermal_expansivity = solid_phase.hasProperty(
+        bool const has_solid_thermal_expansivity = solid_phase.hasProperty(
             MaterialPropertyLib::PropertyType::thermal_expansivity);
 
         auto const& b =
@@ -146,17 +146,9 @@ public:
             vars.liquid_phase_pressure = p_int_pt;
 
             vars.liquid_saturation = 1.0;
-            // \todo the argument to getValue() has to be changed for non
-            // constant storage model
             auto const specific_storage =
                 solid_phase.property(MaterialPropertyLib::PropertyType::storage)
                     .template value<double>(vars, pos, t, dt);
-#ifndef NDEBUG
-            if (has_thermal_expansivity)
-            {
-                assert(std::fabs(specific_storage) > 0.0);
-            }
-#endif
 
             auto const porosity =
                 medium.property(MaterialPropertyLib::PropertyType::porosity)
@@ -242,37 +234,14 @@ public:
                       K_over_mu * b;
             }
 
-            if (!has_thermal_expansivity)
-            {
-                continue;
-            }
-
             // Add the thermal expansion term
             {
-                auto const linear_solid_thermal_expansivity =
-                    solid_phase
-                        .property(MaterialPropertyLib::PropertyType::
-                                      thermal_expansivity)
-                        .template value<double>(vars, pos, t, dt);
-                double const dfluid_density_dT =
-                    liquid_phase
-                        .property(MaterialPropertyLib::PropertyType::density)
-                        .template dValue<double>(
-                            vars, MaterialPropertyLib::Variable::temperature,
-                            pos, t, dt);
-                auto const biot_constant =
-                    medium
-                        .property(
-                            MaterialPropertyLib::PropertyType::biot_coefficient)
-                        .template value<double>(vars, pos, t, dt);
-
-                double const eff_thermal_expansion =
-                    3.0 * (biot_constant - porosity) *
-                        linear_solid_thermal_expansivity -
-                    porosity * dfluid_density_dT / fluid_density;
-
+                double const eff_thermal_expansivity =
+                    evalEffectiveThermalExpansivity(
+                        t, dt, pos, vars, medium, liquid_phase, solid_phase,
+                        has_solid_thermal_expansivity);
                 MpT.noalias() -=
-                    (scaling_factor * w * eff_thermal_expansion) * NtN;
+                    (scaling_factor * w * eff_thermal_expansivity) * NtN;
             }
         }
 
