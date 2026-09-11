@@ -41,7 +41,7 @@ constexpr double PlanckConstant = 6.626068e-34;  ///< J s
  * - Source: IAPWS R2-83(1992), "Release on the Values of Temperature, Pressure
  *   and Density of Ordinary and Heavy Water Substances at their Respective
  *   Critical Points".
- *   http://www.iapws.org/relguide/CritPoint.pdf
+ *   https://iapws.org/technical-guidance/release/crits
  */
 namespace CriticalPoint
 {
