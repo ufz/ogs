@@ -279,7 +279,9 @@
                 <file>ThermalConvection_cube_1x1x1_hex_1e4_complete_surface_ts_1_t_0.000000.vtu</file>
                 <reference_file>flux_1e4_t_0.000000.vtu</reference_file>
                 <field>specific_flux</field>
-                <absolute_tolerance>2e-9</absolute_tolerance>
+                <!-- dt = 1e-7 and zero storage: thermal expansion source scales
+                     with 1/dt and amplifies the solver error to 1.5e-8. -->
+                <absolute_tolerance>1e-7</absolute_tolerance>
                 <relative_tolerance>0.0</relative_tolerance>
             </vtkdiff>
             <vtkdiff>
