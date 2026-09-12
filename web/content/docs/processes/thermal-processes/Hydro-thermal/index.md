@@ -13,11 +13,10 @@ Both subprocesses are governed by coupled parabolic partial differential equatio
 ### Key features
 
 - Monolithic and staggered coupling schemes.
-- Fluid compressibility and optional solid thermal expansion coupling.
+- Fluid compressibility and optional solid thermal expansion coupling via the Biot coefficient.
 - Hydrodynamic thermal dispersion (longitudinal and transversal dispersivities).
 - Numerical stabilisation for advection-dominated problems.
 - Fracture flow support via aperture size parameter.
-- Optional solid thermal expansion with Biot constant.
 - Surface flux calculation.
 
 ### Physical variables
@@ -28,6 +27,9 @@ Both subprocesses are governed by coupled parabolic partial differential equatio
 ## Theoretical background
 
 Both the flow and heat transport processes are derived from integral conservation laws.
+At the moment there is no coupling by source or sink terms, i.e., the coupling is
+ implemented only through density changes due to temperature changes in the buoyancy
+ term of the groundwater flow. The coupling scheme is referred to as the Boussinesq approximation.
 
 ### Mass balance equation
 
@@ -50,24 +52,25 @@ $$
 \begin{align*}
 \left(\phi  \frac{\partial \varrho_f}{\partial p}  + S_s {\varrho_f}\right) \frac{\partial p}{\partial t}
 &-\overbrace{\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)\varrho_f\frac{\partial T}{\partial t}}^{\text{Thermal expansion}} \\
-&+ \nabla \cdot ({\varrho_f} \mathbf{q}) = Q_H
-\end{align*},
+&+ \nabla \cdot ({\varrho_f} \mathbf{q}) = Q_H,
+\end{align*}
 $$
 
-where $S_s$ is the solid compressibility, $\alpha_B$ is the Biot coefficient, $\alpha_T^s$ is the linear solid thermal expansivity, and $T$ is the temperature.
+where $S_s$ is the specific storage of the solid phase, $\alpha_B$ is the Biot coefficient, $\alpha_T^s$ is the linear solid thermal expansivity, and $T$ is the temperature.
 
-The value of $S_s$ can be computed as $(1 - \phi) / K_s$, where $K_s$ is the intrinsic bulk modulus of the solid phase.
+The value of $S_s$ can be computed as $(\alpha_B - \phi)(1-\alpha_B) / K$, where $K$ is the drained bulk modulus. Equivalently, $S_s = (\alpha_B - \phi) / K_s$ with $K_s = K / (1 - \alpha_B)$ the intrinsic bulk modulus of the solid phase.
 
-In certain scenarios, such as far-field simulations, the fluid density is often assumed constant. Consequently, the volume balance equation can be derived by scaling the mass balance equation by the constant fluid density:
+In certain scenarios, such as far-field simulations, the fluid density is often assumed constant. Consequently, the volume balance equation can be derived by dividing the mass balance equation by the constant fluid density:
 $$
 \begin{align*}
-\left(\phi \frac{1}{\varrho_f} \frac{\partial }{\partial p}  + S_s {\varrho_f}\right) \frac{\partial p}{\partial t}
+\left(\frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p}  + S_s \right) \frac{\partial p}{\partial t}
 &-\overbrace{\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)\frac{\partial T}{\partial t}}^{\text{Thermal expansion}} \\
-&+ \nabla \cdot ( \mathbf{q}) = Q_H/{\varrho_f}
-\end{align*},
+&+ \nabla \cdot ( \mathbf{q}) = Q_H/{\varrho_f},
+\end{align*}
 $$
 
-**Note:** In OGS, the thermal expansion term is optional.
+**Note:** In OGS, the fluid part of the thermal expansion term is always
+present; its solid part $3(\alpha_B-\phi)\alpha_T^s$ is optional.
 
 ### Heat transport equation
 
@@ -78,7 +81,7 @@ $$
 where:
 
 | Symbol | Definition |
-|---|---|
+| --- | --- |
 | $c_p = \varrho_f \phi c_f + \varrho_s (1 - \phi) c_s$ | Volumetric heat capacity of the mixture |
 | $\boldsymbol{\lambda} = \boldsymbol{\lambda}^{\mathrm{cond}} + \boldsymbol{\lambda}^{\mathrm{disp}}$ | Hydrodynamic thermo-dispersion tensor |
 | $\boldsymbol{\lambda}^{\mathrm{cond}}$ | Effective thermal conductivity (from the medium's `thermal_conductivity` MPL property, e.g. `EffectiveThermalConductivityPorosityMixing`) |
@@ -95,25 +98,27 @@ $$
 \begin{align*}
 \int_{\Omega}  \left(\phi  \frac{\partial \varrho_f}{\partial p}  + S_s {\varrho_f}\right) \frac{\partial p}{\partial t} v \mathrm{d}\Omega
 &-\int_{\Omega}\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)\varrho_f\frac{\partial T}{\partial t}v \mathrm{d}\Omega \\
-&- \int_{\Omega} {\varrho_f} \nabla v \cdot  \mathbf{q} \mathrm{d}\Omega+ \int_{\Gamma} {\varrho_f} \mathbf{q}\cdot\mathbf{n}v \partial\Omega = \int_{\Omega}Q_H v \mathrm{d}\Omega
-\end{align*},
+&- \int_{\Omega} {\varrho_f} \nabla v \cdot  \mathbf{q} \mathrm{d}\Omega+ \int_{\Gamma} {\varrho_f} \mathbf{q}\cdot\mathbf{n}v \mathrm{d}\Gamma = \int_{\Omega}Q_H v \mathrm{d}\Omega,
+\end{align*}
 $$
 for the mass balance, and
 $$
 \begin{align*}
-\int_{\Omega}  \left(\phi \frac{1}{\varrho_f} \frac{\partial }{\partial p}  + S_s {\varrho_f}\right) \frac{\partial p}{\partial t} v \mathrm{d}\Omega
+\int_{\Omega}  \left(\frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p}  + S_s \right) \frac{\partial p}{\partial t} v \mathrm{d}\Omega
 &-\int_{\Omega}\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)\frac{\partial T}{\partial t}v \mathrm{d}\Omega \\
-&- \int_{\Omega}  \nabla v \cdot  \mathbf{q} \mathrm{d}\Omega+ \int_{\Gamma}  \mathbf{q}\cdot\mathbf{n}v \partial\Omega = \int_{\Omega}Q_H v/\varrho_f \mathrm{d}\Omega
-\end{align*},
+&- \int_{\Omega}  \nabla v \cdot  \mathbf{q} \mathrm{d}\Omega+ \int_{\Gamma}  \mathbf{q}\cdot\mathbf{n}v \mathrm{d}\Gamma = \int_{\Omega}Q_H v/\varrho_f \mathrm{d}\Omega,
+\end{align*}
 $$
 for the volume balance, where $\mathbf{n}$ is the outward unit normal to the domain boundary $\Gamma$.
+
+**Note:** The term $\frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p}$ represents the fluid compressibility contribution to the storage coefficient.
 
 For the temperature field, the weak form is:
 $$
 \begin{align*}
 \int_{\Omega}  c_p \frac{\partial T}{\partial t}v \mathrm{d}\Omega + &
 \int_{\Omega}  \boldsymbol{\lambda} \nabla T \cdot \nabla  v\mathrm{d}\Omega
-+\int_{\Gamma} \boldsymbol{\lambda} \nabla T \cdot \mathbf{n} v\partial\Omega \\
++\int_{\Gamma} \boldsymbol{\lambda} \nabla T \cdot \mathbf{n} v \mathrm{d}\Gamma \\
 +& \int_{\Omega}  \varrho_f c_f \langle \mathbf{q}, \nabla T \rangle v\mathrm{d}\Omega = \int_{\Omega}  Q_T v\mathrm{d}\Omega.
 \end{align*}
 $$
@@ -127,14 +132,14 @@ Both equations are discretized into the standard form $\mathbf{M} \dot{\mathbf{u
 For the mass balance equation, the resulting discretized matrices and vectors are:
 $$
 \mathbf{M}^p_{ij} = \int_{\Omega}  \varrho_f\left( \frac{\phi}{\varrho_f} \frac{\partial \varrho_f}{\partial p} + S_s \right) N_i N_j \, \mathrm{d}\Omega, \qquad
-\mathbf{K}^p_{ij} = \int_{\Omega} \varrho_f\nabla N_i^T \frac{\boldsymbol{\kappa}}{\mu} \nabla N_j \, \mathrm{d}\Omega
+\mathbf{K}^p_{ij} = \int_{\Omega} \varrho_f\nabla N_i^T \frac{\boldsymbol{\kappa}}{\mu} \nabla N_j \, \mathrm{d}\Omega,
 $$
 
 $$
-\mathbf{f}^p_i = \int_{\Omega} \varrho_f^2 \nabla N_i^T \frac{\boldsymbol{\kappa} }{\mu} \mathbf{g} \, \mathrm{d}\Omega + \int_{\Omega}  Q_H \, N_i \, \mathrm{d}\Omega + \int_{\Gamma} \varrho_f \mathbf{q}\cdot\mathbf{n}N_i \partial\Omega
+\mathbf{f}^p_i = \int_{\Omega} \varrho_f^2 \nabla N_i^T \frac{\boldsymbol{\kappa} }{\mu} \mathbf{g} \, \mathrm{d}\Omega + \int_{\Omega}  Q_H \, N_i \, \mathrm{d}\Omega + \int_{\Gamma} \varrho_f \mathbf{q}\cdot\mathbf{n}N_i \mathrm{d}\Gamma.
 $$
 
-In OGS, the thermal expansion term is optional. When configured, it is added to the right hand vector for the staggered scheme as
+In OGS, the thermal expansion term is always assembled; only its solid part $3(\alpha_B - \phi)\alpha_T^s$ is optional and drops out when the solid thermal expansivity is undefined. It is added to the right hand vector for the staggered scheme as
 
 $$
 \mathbf{f}^p_{\mathrm{therm},i} = \int_{\Omega} \varrho_f \left[ 3(\alpha_B - \phi)\alpha_T^s - \frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T} \right] \dot{T} \, N_i \, d\Omega,
@@ -145,29 +150,26 @@ $$
 \mathbf{M}^{pT}_{ij} = -\int_{\Omega}\varrho_f \left[ 3(\alpha_B - \phi)\alpha_T^s - \frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T} \right] N_i  N_j \, \mathrm{d}\Omega.
 $$
 
-The corresponding terms for the volume balance equation are obtained by scaling all the above integrals by the fluid density.
+The corresponding terms for the volume balance equation are obtained by dividing all the above integrals by the fluid density.
 
 #### Temperature equation
 
 $$
-\mathbf{M}^T_{ij} = \int_{\Omega} N_i \, c_p \, N_j \, d\Omega
+\mathbf{M}^T_{ij} = \int_{\Omega} N_i \, c_p \, N_j \, d\Omega,
 $$
 
 $$
-\mathbf{K}^T_{ij} =
-\begin{cases}
-\int_{\Omega} \nabla N_i^T \boldsymbol{\lambda} \nabla N_j \, d\Omega + \int_{\Omega} N_i \, \varrho_f c_f \, \mathbf{q}^T \nabla N_j \, d\Omega, \quad\text{for the monolithic scheme}\\
-\int_{\Omega} \nabla N_i^T \boldsymbol{\lambda} \nabla N_j \, d\Omega, \quad\text{for the staggered scheme}
-\end{cases}
+\mathbf{K}^T_{ij} = \int_{\Omega} \nabla N_i^T \boldsymbol{\lambda} \nabla N_j \, d\Omega + \int_{\Omega} N_i \, \varrho_f c_f \, \mathbf{q}^T \nabla N_j \, d\Omega.
 $$
+
+The advection term is part of $\mathbf{K}^T$ in both schemes; they differ only in
+where the Darcy velocity $\mathbf{q}$ comes from, namely from the pressure
+solution of the same equation system in the monolithic scheme and from the
+previous solution of the pressure equation in the staggered scheme.
 
 The right hand side vector is given by
 $$
-\mathbf{f}^T_{i} =
-\begin{cases}
-\int_{\Omega} Q_T \, N_i \, d\Omega, \quad\text{for the monolithic scheme}\\
-\int_{\Omega} Q_T \, N_i \, d\Omega -  \int_{\Omega}  \varrho_f c_f \langle \mathbf{q}, \nabla T \rangle \, N_i \, d\Omega, \quad\text{for the staggered scheme}
-\end{cases}
+\mathbf{f}^T_{i} = \int_{\Omega} Q_T \, N_i \, d\Omega.
 $$
 
 ## Definition in the project file
@@ -206,14 +208,16 @@ Similar to other hydraulics-related processes, HT supports an optional `<equatio
 </process>
 ```
 
-By default, the value is `volume`. If the project file uses a nonlinear fluid density model without specifying this tag, OGS will issue a fatal error prompting the user to add the tag. In such cases, the input values for Neumann boundary conditions and source/sink terms must be adjusted accordingly, for example:
+By default, the value is `volume`. The volume balance requires the liquid phase `density` property to be of type `Constant`; with any other property type, for instance `Linear`, `Function` or `WaterDensityIAPWSIF97Region1`, OGS issues a fatal error prompting the user to add the tag. In such cases, the input values for Neumann boundary conditions and source/sink terms must be adjusted accordingly, for example:
 
 - Neumann condition: from volume rate per area (SI unit: $\text{m}\cdot\text{s}^{-1}$) to mass rate per area (SI unit: $\text{kg}\cdot\text{m}^{-2}\text{s}^{-1}$).
 - source/sink: from volume rate (SI unit: $\text{m}^{3}\text{s}^{-1}$) to mass rate (SI unit: $\text{kg}\cdot\text{s}^{-1}$).
 
+The choice of the balance equation type is orthogonal to the material property combinations listed in *Material property restrictions* below: the mass balance scales $\mathbf{M}^p$, $\mathbf{K}^p$, $\mathbf{f}^p$ and the thermal expansion term by $\varrho_f$ uniformly, and it does not change which combination applies.
+
 ### Thermal expansion in the mass/volume balance equation
 
-The computation of the thermal expansion term is enabled only if the linear solid thermal expansivity (property name: `thermal_expansivity`) and the Biot's coefficient (property name: `biot_coefficient`) are defined in the input project file. If linear solid thermal expansivity is anisotropic, the average of its components can be used.  
+The fluid part of the thermal expansion term, $-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}$, is always computed. The solid part, $3(\alpha_B - \phi)\alpha_T^s$, is added only if the linear solid thermal expansivity (property name: `thermal_expansivity`) and the Biot's coefficient (property name: `biot_coefficient`) are defined in the input project file. If linear solid thermal expansivity is anisotropic, the average of its components can be used.  
 
 ### Staggered scheme
 
@@ -238,18 +242,73 @@ The HT process requires properties for the porous medium, the liquid phase, and 
 ### Medium properties
 
 | Property name | Units | SI | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `permeability` | [L$^2$] | [m$^2$] | Intrinsic permeability tensor |
 | `porosity` | [-] | [-] | Porous medium porosity |
 | `thermal_conductivity` | [M$\cdot$L/(T$^3\cdot\Theta$)] | [W/(m$\cdot$K)] | Effective thermal conductivity of the medium |
 | `thermal_longitudinal_dispersivity` | [L] | [m] | Longitudinal thermo-dispersivity $\alpha_L$ |
 | `thermal_transversal_dispersivity` | [L] | [m] | Transversal thermo-dispersivity $\alpha_T$ |
-| `biot_coefficient` | - | - |Only for the thermal expansion computation |
+| `biot_coefficient` | - | - | Only for the thermal expansion computation |
+
+### Material property restrictions for Biot's coefficient, porosity, storage, and thermal expansivity combinations
+
+The Biot coefficient and the solid thermal expansivity are optional material parameters used to account for the solid phase contribution to thermal expansion. Once these parameters are set in the project file, they are associated with the specific storage of the solid phase $S_s$, which is input via `storage`, and the effective thermal expansivity $\beta_{\mathrm{eff}}=\left(3(\alpha_B-\phi)\alpha_T^s-\frac{\phi}{\varrho_f}\frac{\partial \varrho_f}{\partial T}\right)$. This can be treated as a parameter combination when both the Biot coefficient and the solid thermal expansivity are defined. The rules are:
+
+1. $\alpha_B$ is read only when $\alpha_T^s$ is defined. Therefore:
+   - $\alpha_T^s$ defined, $\alpha_B$ undefined → fatal error (undefined property).
+   - $\alpha_B$ defined, $\alpha_T^s$ undefined → $\alpha_B$ is silently ignored (never read).
+2. The specific storage $S_s$ given by the solid-phase `storage` property is always read.
+3. The combination $\alpha_B = 1$ and $S_s \neq 0$ leads to a fatal error because
+   $S_s=(\alpha_B-\phi)(1-\alpha_B)/K$. The guard is only reached when
+   $\alpha_T^s$ is defined, since that is when $\alpha_B$ is read at all. The
+   evaluated values are compared once per element, at its integration points,
+   during the initialisation of the local assemblers, at $t=0$ and
+   $\Delta t=0$. That is the literal time zero, not the initial time of the
+   time loop, which may be a different value. This covers every property that depends on
+   neither the primary variables nor the time, whatever its type. A property
+   depending on the time is compared at $t=0$ only, which the simulation need
+   not pass through at all, so a violation occurring at any later time is not
+   caught here. A property that does depend on the primary variables evaluates
+   to NaN at that point and is not rejected: a Biot coefficient of NaN makes the
+   comparison $\alpha_B = 1$ false, and a specific storage of NaN is excluded
+   explicitly. Both cases are decided by the same comparison, which is
+   repeated at every integration point during the assembly, where the
+   properties have values. With $\alpha_T^s$ undefined the combination is
+   accepted silently, because $\alpha_B$ is then never read.
+
+The ranges of these four parameters are listed in the following table:
+
+| Quantity | Physical range | Code guard? |
+| --- | --- | --- |
+| Porosity $\phi$ | $(0,1)$ | none |
+| Biot $\alpha_B$ | $[\phi,\,1]$ | only $\alpha_B=1 \Rightarrow S_s=0$, and only when $\alpha_T^s$ is defined |
+| Specific storage of the solid phase $S_s$ | $\geq 0$ | none |
+| Solid thermal expansivity $\alpha_T^s$ | $\geq 0$ | none |
+
+This means that if these parameters are left unchecked and fall outside the stated ranges, only the combination $\alpha_B=1,\,S_s\neq0$ is detected, and only when $\alpha_T^s$ is defined.
+
+The relation $S_s=(\alpha_B-\phi)(1-\alpha_B)/K$ also constrains the reverse
+direction: $S_s=0$ with $\alpha_B<1$ implies $\alpha_B=\phi$ or $K=\infty$.
+That combination is not guarded, so row 4 below runs without a warning even
+though only $\alpha_B=1$ makes $S_s=0$ consistent with that relation. Row 1
+carries no such inconsistency, since $\alpha_B$ is undefined there and never
+read; its risk is the vanishing storage term alone.
+
+The following table summarises the behaviour of the different combinations of the four parameters (Legend: **✓ defined**, **✗ undefined**):
+
+| # | $\alpha_T^s$ | $\alpha_B$ | $\alpha_B$ value | $S_s$ | $\beta_\mathrm{eff}$ | Storage $\mathbf{M}^p$ | Outcome |
+| --- | :---: | :---: | --- | --- | --- | --- | --- |
+| 1 | ✗ | ✗ | — | $0$ | fluid only: $-\phi\,\frac{\partial \varrho_f}{\partial T}/\varrho_f$ | fluid compressibility only | Runs. **Risk:** if $\varrho_f$ depends on $T$ only (no $p$) and $S_s=0$, the storage term vanishes, which is physically inconsistent and may lead to numerical instability. |
+| 2 | ✗ | ✗ | — | $>0$ | fluid only | fluid compressibility $+\,S_s$ | Valid. Solid thermal expansion ignored. |
+| 3 | ✗ | ✓ | any | any | fluid only | fluid compressibility $+\,S_s$ | Runs. $\alpha_B$ is **silently ignored** (never read since $\alpha_T^s$ is unset). |
+| 4 | ✓ | ✓ | $[\phi,1)$ | $0$ | fluid $+\ 3(\alpha_B-\phi)\alpha_T^s$ | fluid compressibility only | Runs, unguarded. Storage is carried entirely by fluid compressibility, but $S_s=0$ with $\alpha_B<1$ is only consistent for $\alpha_B=\phi$ or $K=\infty$. Carries the same **Risk** as row 1. |
+| 5 | ✓ | ✓ | $[\phi,1)$ | $>0$ | fluid $+\ 3(\alpha_B-\phi)\alpha_T^s$ | fluid compressibility $+\,S_s$ | Valid. General poroelastic-consistent case. |
+| 6 | ✓ | ✓ | $=1$ | $0$ | fluid $+\ 3(1-\phi)\alpha_T^s$ | fluid compressibility only | Valid. Incompressible solid grains ($\alpha_B=1 \Rightarrow S_s=0$). Carries the same **Risk** as row 1: with a temperature-only $\varrho_f$ the storage term vanishes identically. |
 
 ### Liquid phase properties
 
 | Property name | Units | SI | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `density` | [M/L$^3$] | [kg/m$^3$] | Fluid mass density $\large^{\star}$ |
 | `viscosity` | [M/(L$\cdot$T)] | [Pa$\cdot$s] | Dynamic fluid viscosity $\large^{\star}$ |
 | `specific_heat_capacity` | [L$^2$/(T$^2\cdot\Theta$)] | [J/(kg$\cdot$K)] | Specific heat capacity of the fluid |
@@ -260,12 +319,12 @@ The HT process requires properties for the porous medium, the liquid phase, and 
 ### Solid phase properties
 
 | Property name | Units | SI | Notes |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `density` | [M/L$^3$] | [kg/m$^3$] | Solid mass density |
 | `specific_heat_capacity` | [L$^2$/(T$^2\cdot\Theta$)] | [J/(kg$\cdot$K)] | Specific heat capacity of the solid |
 | `thermal_conductivity` | [M$\cdot$L/(T$^3\cdot\Theta$)] | [W/(m$\cdot$K)] | Thermal conductivity of the solid |
 | `storage` | [L$\cdot$T$^2$/M] | [1/Pa] | Storage coefficient |
-| `thermal_expansivity` | [1/T] | [1/K] | Only  the thermal expansion computation |
+| `thermal_expansivity` | [1/T] | [1/K] | Only for the thermal expansion computation |
 
 ## Features
 

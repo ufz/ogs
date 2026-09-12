@@ -36,19 +36,25 @@ void checkThermalExpansivitySetting(
             MaterialPropertyLib::PropertyType::thermal_expansivity);
         if (has_thermal_expansivity)
         {
-            bool const has_biot_constant = medium->hasProperty(
+            bool const has_biot_coefficient = medium->hasProperty(
                 MaterialPropertyLib::PropertyType::biot_coefficient);
-            if (!has_biot_constant)
+            if (!has_biot_coefficient)
             {
                 OGS_FATAL(
-                    "Since the solid phase has thermal expansivity, it must "
-                    "also have the Biot constant. Please add the property "
-                    "'biot_coefficient' to the `properties` in the material "
-                    "configuration.");
+                    "Thermal expansivity is defined in the solid phase of "
+                    "{:s}, which requires the Biot coefficient. Add the "
+                    "'biot_coefficient' property to that medium's properties "
+                    "in the material configuration.",
+                    medium->description());
             }
+
+            // The requirement alpha_B = 1 => S_s = 0 is checked on the
+            // evaluated values in checkBiotStorageRelation() and
+            // evalEffectiveThermalExpansivity().
         }
     }
 }
+
 void checkMPLProperties(
     MeshLib::Mesh const& mesh,
     MaterialPropertyLib::MaterialSpatialDistributionMap const& media_map)

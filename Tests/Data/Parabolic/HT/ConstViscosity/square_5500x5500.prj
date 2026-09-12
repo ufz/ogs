@@ -43,6 +43,11 @@
                                 <slope>-4.3e-4</slope>
                                 <reference_condition>20</reference_condition>
                             </independent_variable>
+                            <independent_variable>
+                                <variable_name>liquid_phase_pressure</variable_name>
+                                <slope>0.5e-9</slope>
+                                <reference_condition>4e6</reference_condition>
+                            </independent_variable>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -244,16 +249,6 @@
         </output>
     </time_loop>
     <parameters>
-        <parameter>
-            <name>alpha_l</name>
-            <type>Constant</type>
-            <value>0.0</value>
-        </parameter>
-        <parameter>
-            <name>alpha_t</name>
-            <type>Constant</type>
-            <value>0.0</value>
-        </parameter>
         <parameter>
             <name>T0</name>
             <type>MeshNode</type>
