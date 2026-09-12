@@ -464,6 +464,10 @@
             <name>basic_picard</name>
             <type>Picard</type>
             <max_iter>50</max_iter>
+            <!-- optional subtree; omit for plain Picard -->
+            <anderson>
+                <depth>3</depth>
+            </anderson>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>

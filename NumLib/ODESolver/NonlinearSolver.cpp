@@ -3,6 +3,7 @@
 
 #include "NonlinearSolver.h"
 
+#include "AndersonAcceleration.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/Logging.h"
 #include "BaseLib/MPI.h"
@@ -140,13 +141,16 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     namespace LinAlg = MathLib::LinAlg;
     auto& sys = *_equation_system;
 
-    if (_damping != 1.0 && sys.isLinear())
+    if ((_damping != 1.0 ||
+         _anderson_depth >= AndersonAcceleration::min_mixing_depth) &&
+        sys.isLinear())
     {
         OGS_FATAL(
-            "Damping (under-relaxation) is not compatible with a linear "
-            "equation system: a single Picard step already yields the exact "
-            "solution, so the damped iterate would be accepted as converged "
-            "but wrong. Remove the 'damping' parameter for linear problems.");
+            "Damping (under-relaxation) and Anderson acceleration are not "
+            "compatible with a linear equation system: a single Picard step "
+            "already yields the exact solution, so the mixed/damped iterate "
+            "would be accepted as converged but wrong. Remove the 'damping' "
+            "parameter and the 'anderson' subtree for linear problems.");
     }
 
     auto& A = NumLib::GlobalMatrixProvider::provider.getMatrix(_A_id);
@@ -160,6 +164,13 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
     bool error_norms_met = false;
 
     _convergence_criterion->preFirstIteration();
+
+    // Anderson acceleration of the damped Picard step. Inert for
+    // _anderson_depth below 2 (plain Picard). With beta = _damping = 1 the
+    // stored step reduces to the plain residual g(x) - x; for beta < 1 every
+    // stored step is scaled by beta, which leaves the mixing weights unchanged
+    // (beta cancels).
+    AndersonAcceleration anderson(_anderson_depth);
 
     int iteration = 1;
     for (; iteration <= _maxiter; ++iteration, _convergence_criterion->reset())
@@ -260,18 +271,21 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         if (iteration_succeeded)
         {
-            // Notation (see NonlinearSolver<Picard> class doc):
-            //   x_k      = x[process_id]  (iterate entering this step)
-            //   g(x_k)   = x_new_process  (raw Picard output, this linear
-            //   solve)
-            // Under-relaxation with damping beta (active when beta != 1):
-            //   x_{k+1} = x_k + beta*(g(x_k) - x_k)
-            //           = (1-beta)*x_k + beta*g(x_k)
+            //   x_old         = x[process_id]   (iterate entering this step)
+            //   x_new_process                   (raw Picard output g(x_old))
+            // beta relaxation (always active when damping != 1):
+            //   x_new = x_old + beta*(g(x_old) - x_old)
+            //         = (1-beta)*x_old + beta*g(x_old)
             if (_damping != 1.0)
             {
                 LinAlg::scale(x_new_process, _damping);
                 LinAlg::axpy(x_new_process, 1.0 - _damping, *x[process_id]);
             }
+            // Anderson acceleration additionally mixes the last damped steps
+            //   f_i = beta*(g(x_i) - x_i) (the difference x_new - x_old after
+            //   the beta relaxation above); inert when anderson_depth < 2, in
+            //   which case only the beta relaxation applies.
+            anderson.accelerate(*x[process_id], x_new_process);
 
             if (postIterationCallback)
             {
@@ -300,6 +314,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                     LinAlg::copy(
                         *x[process_id],
                         x_new_process);  // throw the iteration result away
+                    anderson.dropLastStep();
                     continue;
             }
         }

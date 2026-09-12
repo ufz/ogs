@@ -3,6 +3,29 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/HT/ConstViscosity/square_5500x5500.prj
             RUNTIME 27
     )
+    # Demonstrates Picard damping and Anderson acceleration on a coupled HT
+    # problem: a nonlinear Robin BC on temperature (same destabilizing
+    # mechanism as Parabolic/T/PicardDamping) settles into an exact period-2
+    # limit cycle without damping, so plain Picard never converges.
+    OgsTest(
+        PROJECTFILE Parabolic/HT/PicardDamping/undamped.prj
+        RUNTIME 3
+        PROPERTIES WILL_FAIL true
+    )
+    OgsTest(PROJECTFILE Parabolic/HT/PicardDamping/damped.xml RUNTIME 1)
+    # Anderson acceleration alone falls into the same period-2 cycle as
+    # undamped Picard and fails too - no depth-limited history-based mixing
+    # can escape an exact period-2 orbit (see Parabolic/T/PicardDamping's
+    # anderson_acceleration.xml, which fails for the identical reason).
+    OgsTest(
+        PROJECTFILE Parabolic/HT/PicardDamping/anderson_acceleration.xml
+        RUNTIME 2
+        PROPERTIES WILL_FAIL true
+    )
+    OgsTest(
+        PROJECTFILE Parabolic/HT/PicardDamping/anderson_acceleration_damped.xml
+        RUNTIME 1
+    )
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/IsothermalFluidFlow.prj)
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/PressureDiffusionTemperatureDiffusion.prj)
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/IsothermalFluidFlowWithGravity.prj)
