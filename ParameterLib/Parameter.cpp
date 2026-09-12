@@ -5,6 +5,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
+#include "BaseLib/Logging.h"
 #include "ConstantParameter.h"
 #include "CurveScaledParameter.h"
 #include "FunctionParameter.h"
@@ -80,9 +81,17 @@ std::unique_ptr<ParameterBase> createParameter(
         INFO("RasterParameter: {:s}", name);
         return createRasterParameter(name, config, named_rasters);
     }
-    if (type == "TimeDependentHeterogeneousParameter")
+    if (type == "TimeDependentHeterogeneous" ||
+        type == "TimeDependentHeterogeneousParameter")
     {
-        INFO("TimeDependentHeterogeneousParameter: {:s}", name);
+        if (type == "TimeDependentHeterogeneousParameter")
+        {
+            WARN(
+                "Parameter type 'TimeDependentHeterogeneousParameter' is "
+                "deprecated. Use 'TimeDependentHeterogeneous' instead. "
+                "The old type name will be removed in a future release.");
+        }
+        INFO("TimeDependentHeterogeneous: {:s}", name);
         return createTimeDependentHeterogeneousParameter(name, config);
     }
 

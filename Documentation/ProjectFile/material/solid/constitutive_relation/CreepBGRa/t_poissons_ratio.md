@@ -1,0 +1,1 @@
+../LinearElasticIsotropic/t_poissons_ratio.md
