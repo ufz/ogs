@@ -13,17 +13,17 @@ image = ""
 
 In real world examples the boundary conditions or source terms can vary over time
 and can be heterogeneous in space. This behaviour can be modelled using the
-TimeDependentHeterogeneousParameter for boundary conditions or source terms.
+`TimeDependentHeterogeneous` parameter for boundary conditions or source terms.
 
 ## Specification in OGS project file
 
 In the parameter specification section of the project file it is possible to add
-a parameter type with the type `TimedependentHeterogeneousParameter`.
+a parameter type with the type `TimeDependentHeterogeneous`.
 
 ```xml
 <parameter>
     <name>ParameterForSourceTerm</name>
-    <type>TimeDependentHeterogeneousParameter</type>
+    <type>TimeDependentHeterogeneous</type>
     <time_series>
         <pair>
             <time>0</time>

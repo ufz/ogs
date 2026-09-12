@@ -107,7 +107,16 @@ std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(
     std::string const& name, BaseLib::ConfigTree const& config)
 {
     //! \ogs_file_param{prj__parameters__parameter__type}
-    config.checkConfigParameter("type", "TimeDependentHeterogeneousParameter");
+    auto const type = config.getConfigParameter<std::string>("type");
+    if (type != "TimeDependentHeterogeneous" &&
+        type != "TimeDependentHeterogeneousParameter")
+    {
+        OGS_FATAL(
+            "Expected the parameter type 'TimeDependentHeterogeneous' (or its "
+            "deprecated spelling 'TimeDependentHeterogeneousParameter'), but "
+            "got '{:s}'.",
+            type);
+    }
     auto const time_series_config =
         //! \ogs_file_param{prj__parameters__parameter__TimeDependentHeterogeneous__time_series}
         config.getConfigSubtree("time_series");
@@ -135,10 +144,10 @@ std::unique_ptr<ParameterBase> createTimeDependentHeterogeneousParameter(
 
     if (!std::is_sorted(
             time_series.begin(), time_series.end(),
-            [](TimeDependentHeterogeneousParameter::PairTimeParameterName const&
-                   p0,
-               TimeDependentHeterogeneousParameter::PairTimeParameterName const&
-                   p1) { return p0.first < p1.first; }))
+            [](TimeDependentHeterogeneousParameter::PairTimeParameterName const
+                   & p0,
+               TimeDependentHeterogeneousParameter::PairTimeParameterName const
+                   & p1) { return p0.first < p1.first; }))
     {
         OGS_FATAL(
             "The points in time in the time series '{:s}' aren't in ascending "

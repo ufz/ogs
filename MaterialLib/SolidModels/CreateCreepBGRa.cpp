@@ -29,6 +29,8 @@ createCreepBGRa(
 
     // Read elastic data first.
     const bool skip_type_checking = true;
+    //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__youngs_modulus}
+    //! \ogs_file_param_special{material__solid__constitutive_relation__CreepBGRa__poissons_ratio}
     auto elastic_data =
         MaterialLib::Solids::createLinearElasticIsotropic<DisplacementDim>(
             parameters, config, skip_type_checking);

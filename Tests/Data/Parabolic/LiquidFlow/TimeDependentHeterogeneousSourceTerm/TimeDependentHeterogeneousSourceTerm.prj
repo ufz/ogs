@@ -182,7 +182,7 @@
         </parameter>
         <parameter>
             <name>TimeDependentDirichlet_left</name>
-            <type>TimeDependentHeterogeneousParameter</type>
+            <type>TimeDependentHeterogeneous</type>
             <time_series>
                 <pair>
                     <time>0</time>
@@ -204,7 +204,7 @@
         </parameter>
         <parameter>
             <name>TimeDependentDirichlet_right</name>
-            <type>TimeDependentHeterogeneousParameter</type>
+            <type>TimeDependentHeterogeneous</type>
             <time_series>
                 <pair>
                     <time>0</time>
@@ -236,7 +236,7 @@
         </parameter>
         <parameter>
             <name>TimeDependentSourceTerm</name>
-            <type>TimeDependentHeterogeneousParameter</type>
+            <type>TimeDependentHeterogeneous</type>
             <time_series>
                 <pair>
                     <time>0</time>
