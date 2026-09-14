@@ -9,15 +9,9 @@
 #include <typeinfo>
 
 #include "BaseLib/Logging.h"
+#include "CreateTestLinearSolver.h"
 #include "InfoLib/TestInfo.h"
 #include "MathLib/LinAlg/LinAlg.h"
-#if defined(USE_LIS)
-#include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
-#elif defined(USE_PETSC)
-#include "MathLib/LinAlg/PETSc/LinearSolverOptionsParser.h"
-#else
-#include "MathLib/LinAlg/Eigen/LinearSolverOptionsParser.h"
-#endif
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/ODESolver/ConvergenceCriterionDeltaX.h"
 #include "NumLib/ODESolver/FixedDampingStrategy.h"
@@ -27,34 +21,6 @@
 
 namespace TestODEInt
 {
-#if defined(USE_PETSC)
-std::unique_ptr<GlobalLinearSolver> createLinearSolver()
-{
-    std::string const petsc_options =
-        "-ksp_type bcgs -pc_type sor -ksp_rtol 1e-24 -ksp_max_it 100 "
-        "-ksp_initial_guess_nonzero false";
-    return std::make_unique<GlobalLinearSolver>("", petsc_options);
-}
-#elif defined(USE_LIS)
-std::unique_ptr<GlobalLinearSolver> createLinearSolver()
-{
-    auto const solver_options =
-        MathLib::LinearSolverOptionsParser<GlobalLinearSolver>{}
-            .parseNameAndOptions("", nullptr);
-    return std::make_unique<GlobalLinearSolver>(std::get<0>(solver_options),
-                                                std::get<1>(solver_options));
-}
-#else
-std::unique_ptr<GlobalLinearSolver> createLinearSolver()
-{
-    auto const solver_options =
-        MathLib::LinearSolverOptionsParser<GlobalLinearSolver>{}
-            .parseNameAndOptions("", nullptr);
-    return std::make_unique<GlobalLinearSolver>(std::get<0>(solver_options),
-                                                std::get<1>(solver_options));
-}
-#endif
-
 struct Solution
 {
     std::vector<double> ts;
