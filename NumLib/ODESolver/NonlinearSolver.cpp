@@ -203,7 +203,6 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             ERR("Abort nonlinear iteration. Repeating timestep. Reason: {:s}",
                 e.what());
             error_norms_met = false;
-            iteration = _maxiter;
             mpi_rank_assembly_ok = false;
         }
         if (BaseLib::MPI::anyOf(!mpi_rank_assembly_ok))
@@ -475,7 +474,6 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
             ERR("Abort nonlinear iteration. Repeating timestep. Reason: {:s}",
                 e.what());
             error_norms_met = false;
-            iteration = _maxiter;
             mpi_rank_assembly_ok = false;
         }
         if (BaseLib::MPI::anyOf(!mpi_rank_assembly_ok))
