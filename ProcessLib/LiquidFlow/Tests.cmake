@@ -209,6 +209,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/PrimaryVariableConstraintDirichletBC/cuboid_1x1x1_hex_1000_Dirichlet_Dirichlet_3.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/SimpleSynthetics/FunctionParameterTest.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/BlockingConductingFracture/block_conduct_frac.prj)
+    NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/Selke2D/selke2ddirichlet.py RUNTIME 52)
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/BlockingConductingFracture/BlockingConductingFracture.py RUNTIME 9)
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/roughFracture/roughFracture_benchmark.py RUNTIME 600)
     # inclined mesh
