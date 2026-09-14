@@ -4,8 +4,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Set compiler helper variables
-if((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID
-                                                  MATCHES "IntelLLVM")
+if((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES
+                                               "IntelLLVM")
 )
     set(COMPILER_IS_CLANG TRUE)
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
@@ -17,7 +17,9 @@ if(APPLE AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
 endif()
 
 # GNU-like compiler
-if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL
+                                           "Intel"
+)
 
     # Profiling
     if(OGS_PROFILE)
@@ -30,9 +32,8 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel
         set(PROFILE_FLAGS -fno-omit-frame-pointer -O2 -DNDEBUG)
         # clang compiler does not know the following flags
         if(NOT COMPILER_IS_CLANG)
-            list(APPEND PROFILE_FLAGS
-                -fno-inline-functions-called-once
-                -fno-optimize-sibling-calls
+            list(APPEND PROFILE_FLAGS -fno-inline-functions-called-once
+                 -fno-optimize-sibling-calls
             )
         endif()
         add_compile_options(${PROFILE_FLAGS})
@@ -81,7 +82,9 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel
             # Exclude CPM_SOURCE_CACHE if set
             if(CPM_SOURCE_CACHE)
                 string(REPLACE "/" "\\/" _cpm_cache_regex "${CPM_SOURCE_CACHE}")
-                list(APPEND _coverage_excludes
+                list(
+                    APPEND
+                    _coverage_excludes
                     $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=${_cpm_cache_regex}/.*>
                 )
             endif()
@@ -119,7 +122,9 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel
             # Exclude CPM_SOURCE_CACHE if set
             if(CPM_SOURCE_CACHE)
                 string(REPLACE "/" "\\/" _cpm_cache_regex "${CPM_SOURCE_CACHE}")
-                list(APPEND _coverage_excludes
+                list(
+                    APPEND
+                    _coverage_excludes
                     $<$<COMPILE_LANGUAGE:CXX>:-fprofile-exclude-files=${_cpm_cache_regex}/.*>
                 )
             endif()
@@ -150,13 +155,15 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel
                 if(linker STREQUAL "lld" AND _linker_version MATCHES "LLD")
                     set(OGS_LINKER lld CACHE STRING "" FORCE)
                     break()
-                elseif(linker STREQUAL "gold"
-                       AND _linker_version MATCHES "GNU gold"
-                       AND NOT OGS_BUILD_WHEEL)
+                elseif(linker STREQUAL "gold" AND _linker_version MATCHES
+                                                  "GNU gold"
+                       AND NOT OGS_BUILD_WHEEL
+                )
                     set(OGS_LINKER gold CACHE STRING "" FORCE)
                     break()
-                elseif(linker STREQUAL "mold"
-                       AND _linker_version MATCHES "mold")
+                elseif(linker STREQUAL "mold" AND _linker_version MATCHES
+                                                  "mold"
+                )
                     set(OGS_LINKER mold CACHE STRING "" FORCE)
                     break()
                 endif()
@@ -177,7 +184,8 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL "Intel
 endif()
 
 if(MSVC)
-    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.msvc.compiler}
+    if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS
+       ${ogs.minimum_version.msvc.compiler}
     )
         message(
             FATAL_ERROR

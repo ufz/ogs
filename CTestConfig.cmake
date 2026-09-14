@@ -5,8 +5,7 @@ set(CTEST_SUBMIT_URL
 )
 set(CTEST_SUBMIT_INACTIVITY_TIMEOUT 30)
 if(DEFINED ENV{CI_JOB_NAME})
-    # Bug in CDash: Remove ":", see
-    # https://github.com/Kitware/CDash/issues/1292
+    # Bug in CDash: Remove ":", see https://github.com/Kitware/CDash/issues/1292
     string(REPLACE ":" "" _build_name "$ENV{CI_JOB_NAME}")
     set(BUILDNAME ${_build_name})
 endif()

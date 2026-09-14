@@ -32,9 +32,13 @@ function(BuildExternalProject_set_build_dir target argn_string)
             if(DEFINED MSVC_TOOLSET_VERSION)
                 set(_compiler_args "${MSVC_TOOLSET_VERSION}")
             else()
-                set(_compiler_args "${CMAKE_CXX_COMPILER_ID}${CMAKE_CXX_COMPILER_VERSION}")
+                set(_compiler_args
+                    "${CMAKE_CXX_COMPILER_ID}${CMAKE_CXX_COMPILER_VERSION}"
+                )
             endif()
-            string(REPLACE "${PROJECT_SOURCE_DIR}" "" argn_string "${argn_string}")
+            string(REPLACE "${PROJECT_SOURCE_DIR}" "" argn_string
+                           "${argn_string}"
+            )
             string(
                 SHA256
                     _hash
@@ -144,13 +148,15 @@ function(BuildExternalProject_configure build_dir)
 
     if(NOT "${CMAKE_GENERATOR_PLATFORM}" STREQUAL "")
         set(CMAKE_GENERATOR_PLATFORM_ARG -A ${CMAKE_GENERATOR_PLATFORM})
-        message(STATUS
-            "Using CMake generator platform: ${CMAKE_GENERATOR_PLATFORM}")
+        message(
+            STATUS "Using CMake generator platform: ${CMAKE_GENERATOR_PLATFORM}"
+        )
     endif()
 
     execute_process(
-        COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" ${CMAKE_GENERATOR_PLATFORM_ARG} .
-        RESULT_VARIABLE result WORKING_DIRECTORY ${build_dir}
+        COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}"
+                ${CMAKE_GENERATOR_PLATFORM_ARG} . RESULT_VARIABLE result
+        WORKING_DIRECTORY ${build_dir}
     )
 
     if(result)
@@ -165,8 +171,9 @@ function(BuildExternalProject_build build_dir)
         set(VS_PARALLEL_ARG -- /m)
     endif()
     execute_process(
-        COMMAND ${CMAKE_COMMAND} --build . --config ${CMAKE_BUILD_TYPE} ${VS_PARALLEL_ARG}
-        RESULT_VARIABLE result WORKING_DIRECTORY ${build_dir}
+        COMMAND ${CMAKE_COMMAND} --build . --config ${CMAKE_BUILD_TYPE}
+                ${VS_PARALLEL_ARG} RESULT_VARIABLE result
+        WORKING_DIRECTORY ${build_dir}
     )
 
     if(result)

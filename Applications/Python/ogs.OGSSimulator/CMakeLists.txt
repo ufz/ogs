@@ -9,7 +9,7 @@ ogs_remove_lld_linker_option(OGSSimulator)
 
 target_link_libraries(
     OGSSimulator PRIVATE ApplicationsLib BaseLib CMakeInfoLib GitInfoLib tclap
-                      _python_mesh
+                         _python_mesh
 )
 target_include_directories(OGSSimulator PRIVATE ../../CLI ${PROJECT_SOURCE_DIR})
 

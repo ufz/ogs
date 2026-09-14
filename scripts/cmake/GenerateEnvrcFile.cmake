@@ -6,7 +6,9 @@ if(WIN32)
         "$Env:OGS_USE_PATH = \"1\""
     )
     if(OGS_USE_PIP)
-        list(APPEND _envrc_content
+        list(
+            APPEND
+            _envrc_content
             "$Env:UV_PROJECT = \"${PROJECT_SOURCE_DIR}/Tests/Data\""
             "$Env:UV_PROJECT_ENVIRONMENT = \"${PROJECT_BINARY_DIR}/.venv\""
             "$Env:UV_FROZEN = \"1\""
@@ -14,7 +16,9 @@ if(WIN32)
         )
     endif()
     if(OGS_USE_MKL)
-        list(APPEND _envrc_content
+        list(
+            APPEND
+            _envrc_content
             "$Env:PATH += \"\;C:/Program Files (x86)/Intel/oneAPI/compiler/latest/bin\""
             "$Env:PATH += \"\;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/bin\""
             "Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\compiler\\latest\\env\\vars.bat\""
@@ -29,7 +33,9 @@ else()
         "export PYTHONPATH=\"${PROJECT_BINARY_DIR}/site-packages:$PYTHONPATH\""
     )
     if(OGS_USE_PIP)
-        list(APPEND _envrc_content
+        list(
+            APPEND
+            _envrc_content
             "export UV_PROJECT=\"${PROJECT_SOURCE_DIR}/Tests/Data\""
             "export UV_PROJECT_ENVIRONMENT=\"${PROJECT_BINARY_DIR}/.venv\""
             "export UV_FROZEN=1"
@@ -42,4 +48,6 @@ else()
     endif()
 endif()
 string(JOIN "\n" _envrc_content_text ${_envrc_content})
-file(CONFIGURE OUTPUT .envrc${_envrc_file_ending} CONTENT "${_envrc_content_text}")
+file(CONFIGURE OUTPUT .envrc${_envrc_file_ending} CONTENT
+     "${_envrc_content_text}"
+)

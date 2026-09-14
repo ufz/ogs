@@ -43,7 +43,9 @@ if(OGS_BUILD_GUI)
     if(LINUX)
         list(APPEND QT_MODULES X11Extras)
     endif()
-    find_package(Qt5 ${ogs.minimum_version.qt} COMPONENTS ${QT_MODULES} REQUIRED)
+    find_package(
+        Qt5 ${ogs.minimum_version.qt} COMPONENTS ${QT_MODULES} REQUIRED
+    )
     list(APPEND CMAKE_INSTALL_RPATH ${Qt5_DIR}/../..)
     list(APPEND CMAKE_BUILD_RPATH ${Qt5_DIR}/../..)
 endif()
@@ -89,7 +91,8 @@ if(OGS_USE_MKL)
         if(WIN32)
             set(_source_msg
                 "  Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\compiler\\latest\\env\\vars.bat\""
-                "  Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\env\\vars.bat\"")
+                "  Invoke-BatchFile \"C:\\Program Files (x86)\\Intel\\oneAPI\\mkl\\latest\\env\\vars.bat\""
+            )
         else()
             set(_source_msg "  source /opt/intel/oneapi/setvars.sh")
         endif()
@@ -129,7 +132,10 @@ if(OGS_USE_MKL)
         # https://gitlab.opengeosys.org/ogs/inf/guix-ogs/-/issues/1
         add_library(MKL INTERFACE)
         foreach(lib mkl_intel_${MKL_INTERFACE} mkl_sequential mkl_core)
-            find_library(${lib}_path ${lib} REQUIRED PATHS ${MKLROOT}/lib NO_DEFAULT_PATH)
+            find_library(
+                ${lib}_path ${lib} REQUIRED PATHS ${MKLROOT}/lib
+                NO_DEFAULT_PATH
+            )
             target_link_libraries(MKL INTERFACE ${${lib}_path})
         endforeach()
         target_include_directories(MKL INTERFACE ${MKLROOT}/include)

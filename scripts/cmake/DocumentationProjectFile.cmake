@@ -23,7 +23,7 @@ function(documentationProjectFilePutIntoPlace dir)
              ${DOCUMENTATION_PROJECTFILE_INPUTDIR}/${dir_name}/*
         )
 
-        if (param_files)
+        if(param_files)
             set(postfix "# Child parameters, attributes and cases\n\n")
         else()
             set(postfix "")
@@ -87,7 +87,7 @@ function(documentationProjectFilePutIntoPlace dir)
             endif()
         endforeach()
 
-        if (subpagelist)
+        if(subpagelist)
             list(SORT subpagelist)
             foreach(subpage ${subpagelist})
                 set(postfix "${postfix} - \\subpage ${subpage}\n")
