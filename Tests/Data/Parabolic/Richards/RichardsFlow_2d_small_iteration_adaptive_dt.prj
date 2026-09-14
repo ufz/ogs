@@ -94,7 +94,7 @@
                     <t_end> 1600 </t_end>
                     <initial_dt> 0.1 </initial_dt>
                     <minimum_dt> 0.01 </minimum_dt>
-                    <maximum_dt> 2 </maximum_dt>
+                    <maximum_dt> 0.3 </maximum_dt>
                     <number_iterations> 3 4 5 6 8 10 </number_iterations>
                     <multiplier> 1.25 1.2 1.1 0.9 0.5 0.1 </multiplier>
                 </time_stepping>
@@ -105,8 +105,8 @@
             <prefix>2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt</prefix>
             <timesteps>
                 <pair>
-                    <repeat>10000000</repeat>
-                    <each_steps>1</each_steps>
+                    <repeat>1</repeat>
+                    <each_steps>10000000</each_steps>
                 </pair>
             </timesteps>
             <fixed_output_times> 50.0 100.0 500.</fixed_output_times>
@@ -198,13 +198,13 @@
             <file>2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu</file>
             <field>pressure</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
-            <relative_tolerance>1e-5</relative_tolerance>
+            <relative_tolerance>1e-9</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>2D_RichardsFlow_h_us_quad_small_iteration_adaptive_dt_t_1600.000000.vtu</file>
             <field>saturation</field>
             <absolute_tolerance>1e-8</absolute_tolerance>
-            <relative_tolerance>1e-5</relative_tolerance>
+            <relative_tolerance>1e-9</relative_tolerance>
         </vtkdiff>
     </test_definition>
 </OpenGeoSysProject>
