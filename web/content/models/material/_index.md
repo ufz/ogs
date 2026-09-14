@@ -1,6 +1,7 @@
 +++
 title = 'Materials'
 abbreviation= 'MAT'
+headline = 'Constitutive models for porous and fractured media.'
 links = [
   ['Hoek-Brown yield criterion', 'https://www.opengeosys.org/docs/benchmarks/small-deformations/hoekbrownyieldcriterion/'],
   # ['TODO: Mohr-Coulomb', '#'],

@@ -24,6 +24,8 @@ hero:
       url: releases
     - text: Read the docs
       url: docs
+    - text: Explore the Model-Hub
+      url: docs/hub
 
 stats:
   - value: BSD-3-Clause

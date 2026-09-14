@@ -1,5 +1,4 @@
 +++
-affiliation = 'University of Chicago'
 title = 'OGSTools'
 headline = 'Benchmarking workfklows'
 links = [

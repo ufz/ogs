@@ -52,6 +52,7 @@ Dirichlet
 Dockerfile
 dolomitisation
 Dominik
+DONUT
 Doxygen
 Dupuit
 Ehlers
@@ -181,6 +182,7 @@ Péclet
 PETSc
 PHREEQC
 Pinheiro
+Pitz
 Postma
 Prandtl
 Prho
