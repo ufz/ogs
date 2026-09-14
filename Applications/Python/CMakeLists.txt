@@ -22,13 +22,15 @@ add_subdirectory(ogs.OGSMesh)
 add_subdirectory(ogs.mpl)
 if(OGS_BUILD_WHEEL)
     add_subdirectory(ogs.callbacks)
-    set_target_properties(callbacks PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE)
+    set_target_properties(
+        callbacks PROPERTIES INTERPROCEDURAL_OPTIMIZATION TRUE
+    )
 endif()
 
 set_target_properties(
-    OGSSimulator OGSMesh mpl PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY ${_py_build_location}
-        INTERPROCEDURAL_OPTIMIZATION TRUE
+    OGSSimulator OGSMesh mpl
+    PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_py_build_location}
+               INTERPROCEDURAL_OPTIMIZATION TRUE
 )
 file(
     COPY ogs/.
@@ -42,42 +44,52 @@ file(
 if(OGS_USE_PIP)
     # Fails with libGitInfoLib.so: undefined symbol: __asan_report_load8
     if(NOT ENABLE_ASAN)
-        if (OGS_USE_MPI)
+        if(OGS_USE_MPI)
             set(OGS_PYTEST_ARGS "-m;not ogs_needs_serial_build")
         endif()
         if(OGS_COVERAGE_PYTHON)
-            set(_pytest_coverage_args "--cov=ogs;--cov-branch;--cov-report;xml:${PROJECT_BINARY_DIR}/coverage/pytest-coverage.xml")
+            set(_pytest_coverage_args
+                "--cov=ogs;--cov-branch;--cov-report;xml:${PROJECT_BINARY_DIR}/coverage/pytest-coverage.xml"
+            )
             file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/coverage)
         endif()
         add_test(
             NAME pytest
             COMMAND
                 ${CMAKE_COMMAND} -DEXECUTABLE=${UV_TOOL_PATH}
-                # Quoted because passed as list see https://stackoverflow.com/a/33248574/80480
+                # Quoted because passed as list see
+                # https://stackoverflow.com/a/33248574/80480
                 "-DEXECUTABLE_ARGS=run;pytest;${_pytest_coverage_args};-ra;${OGS_PYTEST_ARGS};-c;${PROJECT_SOURCE_DIR}/pyproject.toml"
                 -DBINARY_PATH=${_binary_path}
                 -DWORKING_DIRECTORY=${PROJECT_SOURCE_DIR}
                 "-DLOG_ROOT=${PROJECT_BINARY_DIR}/logs"
                 "-DLOG_FILE_BASENAME=pytest.txt"
                 "-DTEST_COMMAND_IS_EXPECTED_TO_SUCCEED=TRUE"
-                "-DOGS_CI_ALWAYS_SAVE_LOG_FILE_TO_ARTIFACTS=TRUE"
-                -P
+                "-DOGS_CI_ALWAYS_SAVE_LOG_FILE_TO_ARTIFACTS=TRUE" -P
                 ${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTestWrapper.cmake
         )
-        set_tests_properties(pytest PROPERTIES
-            LABELS "default;python"
-            COST 40
-            ENVIRONMENT
-                "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};COVERAGE_FILE=${PROJECT_BINARY_DIR}/coverage/.pytest-coverage")
+        set_tests_properties(
+            pytest
+            PROPERTIES
+                LABELS
+                "default;python"
+                COST
+                40
+                ENVIRONMENT
+                "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT};COVERAGE_FILE=${PROJECT_BINARY_DIR}/coverage/.pytest-coverage"
+        )
 
         if(OGS_COVERAGE_PYTHON)
             add_custom_target(
                 process_coverage_python
                 WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/coverage
-                COMMENT "Generating HTML coverage report in ${PROJECT_BINARY_DIR}/coverage/python-html/coverage.html"
+                COMMENT
+                    "Generating HTML coverage report in ${PROJECT_BINARY_DIR}/coverage/python-html/coverage.html"
                 COMMAND ${UV_TOOL_PATH} run coverage combine
-                COMMAND ${UV_TOOL_PATH} run coverage xml -o notebook-coverage.xml
-                COMMAND ${PROJECT_SOURCE_DIR}/scripts/ci/helper/fix_coverage.sh ${PROJECT_SOURCE_DIR}
+                COMMAND ${UV_TOOL_PATH} run coverage xml -o
+                        notebook-coverage.xml
+                COMMAND ${PROJECT_SOURCE_DIR}/scripts/ci/helper/fix_coverage.sh
+                        ${PROJECT_SOURCE_DIR}
             )
         endif()
 

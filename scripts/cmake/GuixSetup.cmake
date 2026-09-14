@@ -9,7 +9,9 @@ foreach(path_entry IN LISTS PATH_LIST)
     endif()
 endforeach()
 
-if(NOT DEFINED ENV{GUIX_ENVIRONMENT} AND NOT DEFINED ENV{NIX_BUILD_TOP} AND NOT DEFINED MATCHED_GUIX_PATH)
+if(NOT DEFINED ENV{GUIX_ENVIRONMENT} AND NOT DEFINED ENV{NIX_BUILD_TOP}
+   AND NOT DEFINED MATCHED_GUIX_PATH
+)
     return()
 endif()
 
@@ -18,8 +20,9 @@ if(DEFINED ENV{GUIX_ENVIRONMENT})
 endif()
 if(DEFINED ENV{NIX_BUILD_TOP})
     message(STATUS "Guix build detected: $ENV{NIX_BUILD_TOP}")
-    string(REGEX MATCH "^/gnu/store/([a-z0-9]+)-(.+)-([0-9]+\\.[0-9]+\\.[0-9]+)$" _guix_version_match
-                 "${CMAKE_INSTALL_PREFIX}"
+    string(REGEX MATCH
+                 "^/gnu/store/([a-z0-9]+)-(.+)-([0-9]+\\.[0-9]+\\.[0-9]+)$"
+                 _guix_version_match "${CMAKE_INSTALL_PREFIX}"
     )
     if("${OGS_VERSION}" STREQUAL "NO_VERSION")
         set(OGS_VERSION "${CMAKE_MATCH_3}-guix-${CMAKE_MATCH_1}")

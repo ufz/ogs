@@ -134,7 +134,9 @@ if(WIN32)
     set(_static STATIC)
 endif()
 
-ogs_add_library(QtDataView ${_static} ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders})
+ogs_add_library(
+    QtDataView ${_static} ${SOURCES} ${HEADERS} ${UIS} ${genUiHeaders}
+)
 target_include_directories(
     QtDataView PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}
 )

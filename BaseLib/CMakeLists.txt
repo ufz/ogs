@@ -25,17 +25,14 @@ ogs_add_library(
 )
 
 if(MSVC)
-    # Let the toolchain/Windows SDK resolve system libraries by name.
-    # Create IMPORTED library targets that represent the system libraries so LINK_LIBRARIES_ONLY_TARGETS is satisfied.
+    # Let the toolchain/Windows SDK resolve system libraries by name. Create
+    # IMPORTED library targets that represent the system libraries so
+    # LINK_LIBRARIES_ONLY_TARGETS is satisfied.
     add_library(winmm UNKNOWN IMPORTED)
-    set_target_properties(winmm PROPERTIES
-        IMPORTED_LOCATION "winmm.lib"
-    )
+    set_target_properties(winmm PROPERTIES IMPORTED_LOCATION "winmm.lib")
 
     add_library(dbghelp UNKNOWN IMPORTED)
-    set_target_properties(dbghelp PROPERTIES
-        IMPORTED_LOCATION "dbghelp.lib"
-    )
+    set_target_properties(dbghelp PROPERTIES IMPORTED_LOCATION "dbghelp.lib")
 endif()
 
 target_link_libraries(
@@ -46,7 +43,8 @@ target_link_libraries(
            spdlog::spdlog
            tclap
            $<$<BOOL:${MSVC}>:${WinMM_LIBRARY}> # needed for timeGetTime
-           $<$<BOOL:${MSVC}>:${DbgHelp_LIBRARY}> # needed for UnDecorateSymbolName
+           $<$<BOOL:${MSVC}>:${DbgHelp_LIBRARY}> # needed for
+                                                 # UnDecorateSymbolName
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::Xml>
            $<$<BOOL:${OGS_BUILD_GUI}>:Qt5::XmlPatterns>
            $<$<BOOL:${OGS_USE_PETSC}>:PkgConfig::PETSC>
@@ -55,8 +53,7 @@ target_link_libraries(
 )
 
 target_compile_definitions(
-    BaseLib
-    # Logging.cpp needs a redirection-safe stdout sink in wheel builds.
+    BaseLib # Logging.cpp needs a redirection-safe stdout sink in wheel builds.
     PRIVATE $<$<BOOL:${OGS_BUILD_WHEEL}>:OGS_BUILD_WHEEL>
 )
 

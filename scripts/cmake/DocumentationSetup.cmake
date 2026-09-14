@@ -107,7 +107,9 @@ configure_file(
 
 set(DOXYGEN_FULL_PATH_NAMES NO) # relative links
 set(DOXYGEN_HTML_HEADER ${PROJECT_SOURCE_DIR}/Documentation/doxygen-header.html)
-set(DOXYGEN_HTML_EXTRA_STYLESHEET ${PROJECT_SOURCE_DIR}/Documentation/doxygen-stylesheet.css)
+set(DOXYGEN_HTML_EXTRA_STYLESHEET
+    ${PROJECT_SOURCE_DIR}/Documentation/doxygen-stylesheet.css
+)
 
 doxygen_add_docs(doc ${PROJECT_SOURCE_DIR}/ ${PROJECT_BINARY_DIR}/DocAux/dox)
 
@@ -149,21 +151,28 @@ endif()
 # Add target to run FindFeatures.py script to generate feature matrix.
 if(Python_EXECUTABLE)
     # Create output directory
-    set(_featurematrix_bundle_dir ${PROJECT_BINARY_DIR}/web/content/docs/featurematrix/bundle)
+    set(_featurematrix_bundle_dir
+        ${PROJECT_BINARY_DIR}/web/content/docs/featurematrix/bundle
+    )
     file(MAKE_DIRECTORY ${_featurematrix_bundle_dir})
 
     add_custom_target(
         feature_matrix
-        COMMAND uv run ${PROJECT_SOURCE_DIR}/scripts/doc/FindFeatures.py
-            ${PROJECT_SOURCE_DIR}/Tests/Data
-            --json ${_featurematrix_bundle_dir}/features.json
-        COMMAND uv run ${PROJECT_SOURCE_DIR}/scripts/doc/CheckFeatureMatrix.py
+        COMMAND
+            uv run ${PROJECT_SOURCE_DIR}/scripts/doc/FindFeatures.py
+            ${PROJECT_SOURCE_DIR}/Tests/Data --json
             ${_featurematrix_bundle_dir}/features.json
-            --path_prj ${PROJECT_SOURCE_DIR}/Tests/Data
+        COMMAND
+            uv run ${PROJECT_SOURCE_DIR}/scripts/doc/CheckFeatureMatrix.py
+            ${_featurematrix_bundle_dir}/features.json --path_prj
+            ${PROJECT_SOURCE_DIR}/Tests/Data
         WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
-        COMMENT "Generating feature matrix in ${_featurematrix_bundle_dir}/features.json"
+        COMMENT
+            "Generating feature matrix in ${_featurematrix_bundle_dir}/features.json"
         VERBATIM
     )
 endif()
 
-file(COPY ${PROJECT_SOURCE_DIR}/scripts/doc/_redirects DESTINATION ${DOXYGEN_HTML_OUTPUT})
+file(COPY ${PROJECT_SOURCE_DIR}/scripts/doc/_redirects
+     DESTINATION ${DOXYGEN_HTML_OUTPUT}
+)

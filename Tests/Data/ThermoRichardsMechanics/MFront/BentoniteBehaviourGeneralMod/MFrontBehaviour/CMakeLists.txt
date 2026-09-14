@@ -1,6 +1,5 @@
 mfront_behaviours_check_library(
-    OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly
-    BentoniteBehaviour
+    OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly BentoniteBehaviour
 )
 
 # Disable warnings for generated OgsMFrontBehaviourForUnitTests
@@ -12,7 +11,8 @@ target_compile_options(
 
 # generalmod is imported third-party code (TRIAX, D. Masin); do not lint it.
 set_target_properties(
-    OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly PROPERTIES CXX_CLANG_TIDY ""
+    OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly PROPERTIES CXX_CLANG_TIDY
+                                                                  ""
 )
 
 target_include_directories(
@@ -20,5 +20,8 @@ target_include_directories(
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set_target_properties(OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly PROPERTIES EXCLUDE_FROM_ALL FALSE)
+set_target_properties(
+    OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly
+    PROPERTIES EXCLUDE_FROM_ALL FALSE
+)
 install(TARGETS OgsMFrontBehaviourBentoniteGeneralModForCTestsOnly)

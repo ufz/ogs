@@ -23,7 +23,6 @@ if(DEFINED ENV{VCToolsRedistDir})
     cmake_path(CONVERT $ENV{VCToolsRedistDir} TO_CMAKE_PATH_LIST _vc_redist_dir)
     set(_VC_REDIST_DIR ${_vc_redist_dir} CACHE INTERNAL "")
 endif()
-install(
-  FILES "${_VC_REDIST_DIR}/x64/Microsoft.VC143.CRT/msvcp140.dll"
-  DESTINATION ${CMAKE_INSTALL_BINDIR}
+install(FILES "${_VC_REDIST_DIR}/x64/Microsoft.VC143.CRT/msvcp140.dll"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
 )

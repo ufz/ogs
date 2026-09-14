@@ -13,7 +13,10 @@ list(SORT FILES_CREATED)
 
 # Check that only expected files are created.
 if(NOT FILES_CREATED STREQUAL EXPECTED_FILES_ABS)
-    message(WARNING "Expected only the following files with prefix ${FILE_PREFIX} to be created in the ${DIR_TO_CHECK} directory:")
+    message(
+        WARNING
+            "Expected only the following files with prefix ${FILE_PREFIX} to be created in the ${DIR_TO_CHECK} directory:"
+    )
     message(WARNING "${EXPECTED_FILES_ABS}")
     message(WARNING "but other files were created:")
     message(WARNING "${FILES_CREATED}")

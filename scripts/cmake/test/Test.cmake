@@ -69,7 +69,9 @@ NotebookTest(
 )
 
 set(OGS_CTEST_LABEL_EXCLUDE "" CACHE STRING "")
-string(REPLACE " " ";" _test_label_exclude_argument "${OGS_CTEST_LABEL_EXCLUDE}")
+string(REPLACE " " ";" _test_label_exclude_argument
+               "${OGS_CTEST_LABEL_EXCLUDE}"
+)
 
 set(_ctest_parameter -T Test --force-new-ctest-process)
 if(CMAKE_CONFIGURATION_TYPES)

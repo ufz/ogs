@@ -12,8 +12,8 @@ endif()
 message(STATUS "Generator: ${CMAKE_GENERATOR}")
 
 # Set additional CMake modules path
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/scripts/cmake"
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+                      "${PROJECT_SOURCE_DIR}/scripts/cmake"
 )
 
 list(

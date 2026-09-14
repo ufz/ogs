@@ -23,9 +23,11 @@ if(FastFloat_INCLUDE_DIR)
         )
         foreach(_fast_float_version_part MAJOR MINOR PATCH)
             string(
-                REGEX MATCH
-                      "#define FASTFLOAT_VERSION_${_fast_float_version_part} +([0-9]+)"
-                      _fast_float_version_match "${_fast_float_version_lines}"
+                REGEX
+                    MATCH
+                    "#define FASTFLOAT_VERSION_${_fast_float_version_part} +([0-9]+)"
+                    _fast_float_version_match
+                    "${_fast_float_version_lines}"
             )
             set(_fast_float_version_${_fast_float_version_part}
                 "${CMAKE_MATCH_1}"
@@ -38,9 +40,7 @@ if(FastFloat_INCLUDE_DIR)
 endif()
 
 find_package_handle_standard_args(
-    FastFloat
-    REQUIRED_VARS FastFloat_INCLUDE_DIR
-    VERSION_VAR FastFloat_VERSION
+    FastFloat REQUIRED_VARS FastFloat_INCLUDE_DIR VERSION_VAR FastFloat_VERSION
 )
 
 if(FastFloat_FOUND AND NOT TARGET FastFloat::fast_float)

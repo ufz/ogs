@@ -26,7 +26,6 @@ if(DEFINED ENV{NUM_THREADS})
 endif()
 
 add_custom_target(
-    cppcheck
-    COMMAND ${BASH_TOOL_PATH} cppcheck.sh
+    cppcheck COMMAND ${BASH_TOOL_PATH} cppcheck.sh
     WORKING_DIRECTORY ${PROJECT_BINARY_DIR}
 )

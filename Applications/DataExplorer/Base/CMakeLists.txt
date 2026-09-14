@@ -33,8 +33,8 @@ source_group("UI Files" REGULAR_EXPRESSION "\\w*\\.ui")
 source_group("Moc Files" REGULAR_EXPRESSION "moc_.*")
 
 if(WIN32)
-    # Otherwise: unresolved symbol TreeModel::staticMetaObject"
-    # in VtkVis and QtDataView
+    # Otherwise: unresolved symbol TreeModel::staticMetaObject" in VtkVis and
+    # QtDataView
     set(_static STATIC)
 endif()
 

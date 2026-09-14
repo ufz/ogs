@@ -2,8 +2,8 @@ if(OGS_BUILD_WHEEL)
     return()
 endif()
 
-# CMake function to handle pybind11 version-compatible linker flags
-# This prevents the linker from stripping the module initialization function
+# CMake function to handle pybind11 version-compatible linker flags This
+# prevents the linker from stripping the module initialization function
 function(dont_strip_pybind11_init_function target_name module_name)
     # Only apply when building static libraries to prevent symbol stripping
     if(BUILD_SHARED_LIBS)
@@ -32,21 +32,31 @@ function(dont_strip_pybind11_init_function target_name module_name)
     # Linker flags to prevent symbol stripping
     if(COMPILER_IS_GCC OR COMPILER_IS_CLANG)
         if(APPLE)
-            target_link_options(${target_name} PRIVATE
-                "LINKER:-u,_${pybind11_init_function}")
+            target_link_options(
+                ${target_name} PRIVATE "LINKER:-u,_${pybind11_init_function}"
+            )
         else()
-            target_link_options(${target_name} PRIVATE
-                "LINKER:--undefined=${pybind11_init_function}")
+            target_link_options(
+                ${target_name} PRIVATE
+                "LINKER:--undefined=${pybind11_init_function}"
+            )
         endif()
     elseif(MSVC)
-        target_link_options(${target_name} PRIVATE
-            "/INCLUDE:${pybind11_init_function}")
+        target_link_options(
+            ${target_name} PRIVATE "/INCLUDE:${pybind11_init_function}"
+        )
     else()
         # Fallback for unsupported compilers
-        message(WARNING "Unsupported compiler, manual linker configuration may be needed")
+        message(
+            WARNING
+                "Unsupported compiler, manual linker configuration may be needed"
+        )
     endif()
 
-    message(STATUS "Applied linker flags to prevent stripping of ${pybind11_init_function}")
+    message(
+        STATUS
+            "Applied linker flags to prevent stripping of ${pybind11_init_function}"
+    )
 endfunction()
 
 # Troubleshooting: If you get linker errors, such as   ogs.cpp:(.text+0xb4):
@@ -71,8 +81,8 @@ endfunction()
 # should be presented. The note is kept for the case that the automatic
 # detection does not work due to whatever reason.
 
-# TODO: Make this work in python interpreters,
-# see https://github.com/pybind/pybind11/discussions/5079
+# TODO: Make this work in python interpreters, see
+# https://github.com/pybind/pybind11/discussions/5079
 ogs_add_library(ogs_embedded_python ogs_embedded_python.cpp)
 
 # Performance warning from
@@ -88,8 +98,7 @@ target_link_libraries(
     PRIVATE ProcessLibBoundaryConditionAndSourceTermPythonModule
 )
 target_compile_definitions(
-    ogs_embedded_python
-    PUBLIC OGS_EMBED_PYTHON_INTERPRETER
+    ogs_embedded_python PUBLIC OGS_EMBED_PYTHON_INTERPRETER
 )
 
 dont_strip_pybind11_init_function(ogs_embedded_python "OpenGeoSys")
