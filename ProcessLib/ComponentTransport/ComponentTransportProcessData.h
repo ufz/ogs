@@ -93,6 +93,7 @@ struct ComponentTransportProcessData
 
     MeshLib::PropertyVector<double>* mesh_prop_velocity = nullptr;
     MeshLib::PropertyVector<double>* mesh_prop_porosity = nullptr;
+    MeshLib::PropertyVector<double>* mesh_prop_permeability = nullptr;
 };
 
 }  // namespace ComponentTransport

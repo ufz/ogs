@@ -271,6 +271,9 @@ public:
             NumLib::initShapeMatrices<ShapeFunction, ShapeMatricesType,
                                       GlobalDim>(element, is_axially_symmetric,
                                                  _integration_method);
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
         auto const& medium =
             *_process_data.media_map.getMedium(_element.getID());
         for (unsigned ip = 0; ip < n_integration_points; ip++)
@@ -279,8 +282,8 @@ public:
                 {}, _element.getID(),
                 MathLib::Point3d(
                     NumLib::interpolateCoordinates<ShapeFunction,
-                                                   ShapeMatricesType>(
-                        _element, shape_matrices[ip].N)));
+                                                   ShapeMatricesType>(_element,
+                                                                      Ns[ip])));
 
             _ip_data.emplace_back(
                 shape_matrices[ip].dNdx,
@@ -2084,6 +2087,57 @@ public:
             &(*_process_data.mesh_prop_velocity)[ele_id * GlobalDim],
             GlobalDim) =
             ele_velocity_mat.rowwise().sum() / n_integration_points;
+
+        ParameterLib::SpatialPosition pos;
+        pos.setElementID(ele_id);
+
+        MaterialPropertyLib::VariableArray vars;
+        auto const& medium = *_process_data.media_map.getMedium(ele_id);
+        auto const& Ns =
+            _process_data.shape_matrix_cache
+                .NsHigherOrder<typename ShapeFunction::MeshElement>();
+
+        double permeability_avg = 0.0;
+        for (unsigned ip = 0; ip < n_integration_points; ++ip)
+        {
+            auto const& ip_data = _ip_data[ip];
+            auto const& N = Ns[ip];
+
+            double C_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_C, N, C_int_pt);
+
+            double p_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_p, N, p_int_pt);
+
+            double T_int_pt = 0.0;
+            NumLib::shapeFunctionInterpolate(local_T, N, T_int_pt);
+
+            vars.concentration = C_int_pt;
+            vars.liquid_phase_pressure = p_int_pt;
+            vars.porosity = ip_data.porosity;
+            vars.temperature = T_int_pt;
+
+            pos.setCoordinates(MathLib::Point3d(
+                NumLib::interpolateCoordinates<ShapeFunction,
+                                               ShapeMatricesType>(_element,
+                                                                  N)));
+
+            // TODO (naumov) Temporary value not used by current material
+            // models. Need extension of secondary variables interface.
+            double const dt = std::numeric_limits<double>::quiet_NaN();
+            auto const permeability_tensor =
+                MaterialPropertyLib::formEigenTensor<GlobalDim>(
+                    medium[MaterialPropertyLib::PropertyType::permeability]
+                        .value(vars, pos, t, dt));
+            permeability_avg += permeability_tensor.trace() / GlobalDim;
+        }
+        (*_process_data.mesh_prop_permeability)[ele_id] =
+            permeability_avg / n_integration_points;
+
+        if (!_process_data.chemically_induced_porosity_change)
+        {
+            updateAveragePorosity(ele_id);
+        }
     }
 
     void computeReactionRelatedSecondaryVariable(
@@ -2105,11 +2159,7 @@ public:
                                                  medium, ip_data.porosity);
             }
 
-            (*_process_data.mesh_prop_porosity)[ele_id] =
-                std::accumulate(_ip_data.begin(), _ip_data.end(), 0.,
-                                [](double const s, auto const& ip)
-                                { return s + ip.porosity; }) /
-                n_integration_points;
+            updateAveragePorosity(ele_id);
         }
 
         std::vector<GlobalIndexType> chemical_system_indices;
@@ -2244,6 +2294,19 @@ public:
     }
 
 private:
+    /// Averages ip_data.porosity over the element's integration points and
+    /// writes it into the porosity_avg mesh output for ele_id.
+    void updateAveragePorosity(std::size_t const ele_id)
+    {
+        auto const n_integration_points =
+            _integration_method.getNumberOfPoints();
+        (*_process_data.mesh_prop_porosity)[ele_id] =
+            std::accumulate(_ip_data.begin(), _ip_data.end(), 0.,
+                            [](double const s, auto const& ip)
+                            { return s + ip.porosity; }) /
+            n_integration_points;
+    }
+
     MeshLib::Element const& _element;
     ComponentTransportProcessData const& _process_data;
 

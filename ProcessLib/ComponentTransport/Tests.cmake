@@ -239,6 +239,7 @@ if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     )
     NotebookTest(NOTEBOOKFILE Parabolic/ThermalTwoPhaseFlowPP/HeatPipe/heatpipe.py RUNTIME 10)
     NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ThermalDiffusion/ThermalDiffusion.py RUNTIME 33)
+    NotebookTest(NOTEBOOKFILE Parabolic/ComponentTransport/ReactiveTransport/Porositychange/Kozeny_Carman_NonChemical.py RUNTIME 30)
 
 endif()
 
