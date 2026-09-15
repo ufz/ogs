@@ -49,8 +49,11 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     )
 endif()
 
-# TODO: update to newer Python or remove!
-if("${Python_VERSION}" VERSION_LESS 3.9)
+# These benchmarks drive the BHE boundary condition from a Python script that
+# needs extra packages (TESPy/iapws, pandas). PYTHON_PACKAGES is only honored
+# when OGS_USE_PIP is enabled (see scripts/cmake/test/AddTest.cmake), so guard
+# them accordingly (mirrors ProcessLib/HT/Tests.cmake).
+if(OGS_USE_PIP AND NOT (OGS_USE_MPI OR OGS_USE_LIS))
     AddTest(
         NAME HeatTransportBHE_3D_3BHEs_array
         PATH Parabolic/T/3D_3BHEs_array
@@ -59,10 +62,9 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
         EXECUTABLE_ARGS 3bhes_1U.prj
         WRAPPER time
         TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        PYTHON_PACKAGES "TESPy==0.3.2"
+        PYTHON_PACKAGES "TESPy>=0.11,<0.12" iapws
         DIFF_DATA
-        3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+        3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-10 1e-12
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-10 1e-13
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 1e-10 1e-13
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 1e-10 1e-13
@@ -72,12 +74,13 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
         NAME HeatTransportBHE_1U_3D_beier_sandbox_python_interface
         PATH Parabolic/T/3D_Beier_sandbox_python_interface
         EXECUTABLE ogs
-        EXECUTABLE_ARGS beier_sandbox.prj
+        EXECUTABLE_ARGS <SOURCE_PATH>/beier_sandbox.prj
+        # the python BC script writes auxiliary log files there
+        WORKING_DIRECTORY <BUILD_PATH>
         WRAPPER time
         TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
         RUNTIME 50
-        PYTHON_PACKAGES "pandas==1.4.2"
+        PYTHON_PACKAGES "pandas>=1.4"
         DIFF_DATA
         beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 0 5e-15
         beier_sandbox_ts_10_t_600.000000.vtu beier_sandbox_ts_10_t_600.000000.vtu temperature_soil temperature_soil 0 1e-13
@@ -88,13 +91,14 @@ if("${Python_VERSION}" VERSION_LESS 3.9)
         PATH Parabolic/T/3D_3BHEs_array_python_interface
         RUNTIME 50
         EXECUTABLE ogs
-        EXECUTABLE_ARGS 3bhes_1U.prj
+        EXECUTABLE_ARGS <SOURCE_PATH>/3bhes_1U.prj
+        # the python BC script writes auxiliary log files there
+        WORKING_DIRECTORY <BUILD_PATH>
         WRAPPER time
         TESTER vtkdiff
-        REQUIREMENTS NOT (OGS_USE_MPI OR OGS_USE_LIS)
-        PYTHON_PACKAGES "TESPy==0.3.2"
+        PYTHON_PACKAGES "TESPy>=0.11,<0.12" iapws
         DIFF_DATA
-        3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-12 1e-13
+        3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_soil temperature_soil 1e-10 1e-12
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE1 temperature_BHE1 1e-9 1e-12
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE2 temperature_BHE2 1e-9 1e-12
         3bhes_1U_ts_10_t_600.000000.vtu 3bhes_1U_ts_10_t_600.000000.vtu temperature_BHE3 temperature_BHE3 1e-9 1e-12

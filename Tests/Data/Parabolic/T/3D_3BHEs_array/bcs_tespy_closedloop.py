@@ -1,12 +1,19 @@
 # SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 # SPDX-License-Identifier: BSD-3-Clause
 
+import os
 import sys
-from pathlib import Path
 
+# TESPy imports CoolProp at module level, which segfaults inside OGS's
+# embedded Python, so the workarounds have to be installed before TESPy is
+# imported anywhere. See bhe_tespy_compat.py for the details.
+import bhe_tespy_compat
 import numpy as np
 from pandas import read_csv
-from tespy.networks import load_network
+
+bhe_tespy_compat.install_workarounds()
+
+from tespy.networks import Network  # noqa: E402
 
 try:
     import ogs.callbacks as OpenGeoSys
@@ -25,9 +32,8 @@ rho_f = 992.92  # kg/m3
 switch_dyn_frate = "off"  # 'on','off'
 # switch of the function for manually specified dynamic thermal demand
 switch_dyn_demand = "on"  # 'on','off'
-if switch_dyn_demand == "on":
-    # give the consumer name defined by user in the network model
-    consumer_name = "consumer"
+# consumer component name in the network model
+consumer_name = "consumer"
 
 
 # network status setting
@@ -89,7 +95,13 @@ def dyn_frate(t):
 def create_dataframe():
     # return dataframe
     return read_csv(
-        "./pre/bhe_network.csv", delimiter=";", index_col=[0], dtype={"data_index": str}
+        "./pre/bhe_network.csv",
+        delimiter=";",
+        index_col=[0],
+        # flowrate is stored as an integer 0 in this benchmark's csv; without
+        # the explicit dtype pandas infers an int column and the float results
+        # written back in get_tespy_results() would be truncated.
+        dtype={"data_index": str, "flowrate": float},
     )
 
 
@@ -104,7 +116,7 @@ def get_tespy_results(t):
     if switch_dyn_demand == "on":
         # consumer thermal load:
         cur_month_demand = consumer_demand(t)
-        nw.components[consumer_name].set_attr(Q=cur_month_demand)
+        consumer.set_attr(Q=cur_month_demand)
     # T_out re parametrization:
     for i in range(n_BHE):
         localVars["outlet_BHE" + str(i + 1)].set_attr(
@@ -169,11 +181,16 @@ class BC(OpenGeoSys.BHENetwork):
 # initialize the tespy model of the bhe network
 # load path of network model:
 # loading the TESPy model
-project_dir = Path.cwd()
-print("Project dir is: ", project_dir)
-nw = load_network("./pre/tespy_nw_closedloop")
+if ogs_prj_directory != "":  # noqa: F821
+    os.chdir(ogs_prj_directory)  # noqa: F821
+
+nw = Network.from_json("./pre/tespy_nw_closedloop.json")
 # set if print the network iteration info
-nw.set_attr(iterinfo=False)
+nw.iterinfo = False
+
+# fails early and with a readable message if the label above was mistyped or
+# the component was renamed in pre/3bhes_closedloop.py
+consumer = bhe_tespy_compat.get_component(nw, consumer_name)
 
 # create bhe dataframe of the network system from bhe_network.csv
 df = create_dataframe()
@@ -184,7 +201,7 @@ n_BHE = np.size(df.iloc[:, 0])
 localVars = locals()
 data_index = df.index.tolist()
 for i in range(n_BHE):
-    for c in nw.conns.index:
+    for c in nw.conns["object"]:
         # bhe inlet and outlet conns
         if c.target.label == data_index[i]:  # inlet conns of bhe
             localVars["inlet_BHE" + str(i + 1)] = c
@@ -193,14 +210,8 @@ for i in range(n_BHE):
 
 # time depended flowrate
 if switch_dyn_frate == "on":
-    # import the name of inlet connection from the network csv file
-    inlet_name = read_csv(
-        "./pre/tespy_nw/connections.csv", delimiter=";", index_col=[0]
-    ).iloc[0, 0]
-    for c in nw.conns.index:
-        # bhe inflow conns
-        if c.source.label == inlet_name:  # inlet conns of bhe
-            localVars["inlet_name"] = c
+    # the connection leaving the network's CycleCloser, i.e. the network inlet
+    localVars["inlet_name"] = bhe_tespy_compat.find_network_inlet(nw)
 
 
 # instantiate BC objects referenced in OpenGeoSys
