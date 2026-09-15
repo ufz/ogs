@@ -79,6 +79,38 @@ bool solvePicard(GlobalLinearSolver& linear_solver, GlobalMatrix& A,
 #endif
 }  // namespace detail
 
+namespace
+{
+/*! Runs \c assemble and reconciles a NumLib::AssemblyException thrown by it
+ * across all MPI ranks.
+ *
+ * \return Whether the assembly succeeded on every rank.
+ *
+ * Do not remove the reconciliation across ranks: a rank that carried on while
+ * another one aborted would block in the collective calls of the subsequent
+ * linear solve and deadlock the simulation. The reconciliation itself is not
+ * covered by a test: the unit tests in
+ * Tests/NumLib/TestNonlinearSolverAssemblyException.cpp run on a single rank,
+ * and they are disabled in PETSc builds altogether (issue #1989).
+ */
+template <typename Assemble>
+bool assembledOnAllRanks(Assemble const& assemble)
+{
+    bool mpi_rank_assembly_ok = true;
+    try
+    {
+        assemble();
+    }
+    catch (AssemblyException const& e)
+    {
+        ERR("Abort nonlinear iteration. Repeating timestep. Reason: {:s}",
+            e.what());
+        mpi_rank_assembly_ok = false;
+    }
+    return !BaseLib::MPI::anyOf(!mpi_rank_assembly_ok);
+}
+}  // namespace
+
 void NonlinearSolver<NonlinearSolverTag::Picard>::
     calculateNonEquilibriumInitialResiduum(
         std::vector<GlobalVector*> const& x,
@@ -193,21 +225,10 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        bool mpi_rank_assembly_ok = true;
-        try
+        if (!assembledOnAllRanks([&]
+                                 { sys.assemble(x_new, x_prev, process_id); }))
         {
-            sys.assemble(x_new, x_prev, process_id);
-        }
-        catch (AssemblyException const& e)
-        {
-            ERR("Abort nonlinear iteration. Repeating timestep. Reason: {:s}",
-                e.what());
             error_norms_met = false;
-            iteration = _maxiter;
-            mpi_rank_assembly_ok = false;
-        }
-        if (BaseLib::MPI::anyOf(!mpi_rank_assembly_ok))
-        {
             break;
         }
         sys.getA(A);
@@ -465,21 +486,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        bool mpi_rank_assembly_ok = true;
-        try
+        if (!assembledOnAllRanks([&] { sys.assemble(x, x_prev, process_id); }))
         {
-            sys.assemble(x, x_prev, process_id);
-        }
-        catch (AssemblyException const& e)
-        {
-            ERR("Abort nonlinear iteration. Repeating timestep. Reason: {:s}",
-                e.what());
             error_norms_met = false;
-            iteration = _maxiter;
-            mpi_rank_assembly_ok = false;
-        }
-        if (BaseLib::MPI::anyOf(!mpi_rank_assembly_ok))
-        {
             break;
         }
         sys.getResidual(*x[process_id], *x_prev[process_id], res);

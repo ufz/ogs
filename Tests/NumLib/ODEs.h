@@ -50,9 +50,9 @@ inline GlobalMatrix computeJacobianFromMK(double const dt,
 }
 
 // ODE 1 //////////////////////////////////////////////////////////
-class ODE1 final : public NumLib::ODESystem<
-                       NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
-                       NumLib::NonlinearSolverTag::Newton>
+class ODE1 : public NumLib::ODESystem<
+                 NumLib::ODESystemTag::FirstOrderImplicitQuasilinear,
+                 NumLib::NonlinearSolverTag::Newton>
 {
 public:
     void preAssemble(const double /*t*/, double const /*dt*/,
@@ -135,9 +135,9 @@ public:
     static const double t_end;
 };
 
-const double ODETraits<ODE1>::t0 = 0.0;
+inline const double ODETraits<ODE1>::t0 = 0.0;
 
-const double ODETraits<ODE1>::t_end = 2. * std::numbers::pi;
+inline const double ODETraits<ODE1>::t_end = 2. * std::numbers::pi;
 // ODE 1 end //////////////////////////////////////////////////////
 
 // ODE 2 //////////////////////////////////////////////////////////
@@ -227,9 +227,9 @@ public:
     static const double t_end;
 };
 
-const double ODETraits<ODE2>::t0 = 1.0;
+inline const double ODETraits<ODE2>::t0 = 1.0;
 
-const double ODETraits<ODE2>::t_end = 2.0;
+inline const double ODETraits<ODE2>::t_end = 2.0;
 // ODE 2 end //////////////////////////////////////////////////////
 
 // ODE 3 //////////////////////////////////////////////////////////
@@ -360,7 +360,7 @@ public:
     static const double t_end;
 };
 
-const double ODETraits<ODE3>::t0 = 0.0;
+inline const double ODETraits<ODE3>::t0 = 0.0;
 
-const double ODETraits<ODE3>::t_end = std::numbers::pi / 2.;
+inline const double ODETraits<ODE3>::t_end = std::numbers::pi / 2.;
 // ODE 3 end //////////////////////////////////////////////////////
