@@ -235,8 +235,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
     time_disc.nextTimestep(t, delta_t);
 
     auto const post_iteration_callback =
-        [&](int const iteration, bool const converged,
-            std::vector<GlobalVector*> const& x)
+        [&](int const iteration, std::vector<GlobalVector*> const& x)
     {
         // Note: We don't call the postNonLinearSolver(), preOutput(),
         // computeSecondaryVariable() and postTimestep() hooks here. This might
@@ -244,8 +243,7 @@ NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
         for (auto const& output : outputs)
         {
             output.doOutputNonlinearIteration(process, process_id, timestep,
-                                              NumLib::Time(t), iteration,
-                                              converged, x);
+                                              NumLib::Time(t), iteration, x);
         }
     };
 

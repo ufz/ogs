@@ -75,10 +75,12 @@ public:
 
     //! Writes output for the given \c process.
     //! To be used for debug output after an iteration of the nonlinear solver.
+    //! The written solution is by definition not converged, i.e. the file names
+    //! carry the \c _not_converged infix if the \c {:converged} keyword is used
+    //! in the output prefix or suffix.
     void doOutputNonlinearIteration(Process const& process,
                                     const int process_id, int const timestep,
                                     const NumLib::Time& t, const int iteration,
-                                    bool const converged,
                                     std::vector<GlobalVector*> const& xs) const;
 
     //! Tells if output will be written at the specified timestep/time.

@@ -369,7 +369,7 @@ void Output::doOutputLastTimestep(Process const& process,
 
 void Output::doOutputNonlinearIteration(
     Process const& process, const int process_id, int const timestep,
-    const NumLib::Time& t, int const iteration, bool const converged,
+    const NumLib::Time& t, int const iteration,
     std::vector<GlobalVector*> const& xs) const
 {
     if (!_output_nonlinear_iteration_results)
@@ -392,6 +392,9 @@ void Output::doOutputNonlinearIteration(
         return;
     }
 
+    // An intermediate solution of the nonlinear solver is written here, which
+    // is not converged by definition.
+    bool const converged = false;
     std::string const output_file_name = _output_format->constructFilename(
         process.getMesh().getName(), timestep, t(), iteration, converged);
 
