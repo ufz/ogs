@@ -18,7 +18,7 @@
 # date = "2026-07-01"
 # author = "Erik Nixdorf, Niklas Ritter"
 # web_subsection = "liquid-flow"
-# weight = 173.1
+# weight = 173
 # +++
 
 # %% [markdown]
@@ -268,7 +268,6 @@ fig_difference_mpm.axes[0].set_title(
     fontsize=24,
     loc="center",
 )
-
 
 # %% [markdown]
 # We can also show the changes in hydraulic head over the entire time at our previously chosen point P.

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff>
+    <add sel="/*/meshes">
+        <mesh>Selke_Basin_PL_Upstream.vtu</mesh>
+        <mesh>Selke_Basin_PG_recharge.vtu</mesh>
+    </add>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>q_recharge</name>
+            <type>MeshElement</type>
+            <mesh>Selke_Basin_PG_recharge</mesh>
+            <field_name>recharge</field_name>
+        </parameter>
+        <parameter>
+            <name>q_upstream</name>
+            <type>Constant</type>
+            <value>2e-07</value>
+        </parameter>
+    </add>
+    <add sel="/*/process_variables/process_variable/boundary_conditions">
+        <boundary_condition>
+            <type>Neumann</type>
+            <mesh>Selke_Basin_PL_Upstream</mesh>
+            <parameter>q_upstream</parameter>
+        </boundary_condition>
+    </add>
+    <add sel="/*/process_variables/process_variable">
+        <source_terms>
+            <source_term>
+                <type>Volumetric</type>
+                <mesh>Selke_Basin_PG_recharge</mesh>
+                <parameter>q_recharge</parameter>
+            </source_term>
+        </source_terms>
+    </add>
+</OpenGeoSysProjectDiff>
