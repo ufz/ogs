@@ -26,6 +26,7 @@ endif()
 
 if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/HeatingHomogeneousDomain/heating_homogenous_vol.py RUNTIME 20)
+    NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/MontTerriDeepBorehole/MontTerriDeepBorehole.py RUNTIME 20)
 endif()
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/Square_sealed_homogeneous/square_1e0.prj)
@@ -107,5 +108,4 @@ endif()
 
 if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/TotalInitialStress/total_initial_stress_HM.prj RUNTIME 1)
-    NotebookTest(NOTEBOOKFILE ThermoHydroMechanics/mont_terri_deep_borehole/mont_terri_deep_borehole.py RUNTIME 1)
 endif()
