@@ -28,6 +28,9 @@ dev-all = [
   "ogstools",
 ]
 
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true } }]
+
 [tool.uv.sources]
 gmsh = { index = "gmsh-nox", marker = "platform_system == 'Linux'" }
 
