@@ -32,7 +32,7 @@ Limited support by the developer team is available via [email][support-mail], a 
 [ogs]: https://www.opengeosys.org
 [documentation]: https://www.opengeosys.org/docs/
 [docs-master]: https://doxygen.opengeosys.org/
-[docs-release]: https://doxygen.opengeosys.org/6.5.8
+[docs-release]: https://doxygen.opengeosys.org/6.5.9
 [license-source]: https://github.com/ufz/ogs/blob/master/LICENSE.txt
 [support-mail]: mailto:gitlab+ogs-ogs-120-issue-@opengeosys.org
 [matrix]: https://matrix.to/#/#ogs:helmholtz.cloud

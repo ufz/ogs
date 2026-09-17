@@ -298,6 +298,15 @@ authors:
       orcid: "https://orcid.org/0000-0003-3763-0797"
       affiliation: >-
           Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Niklas
+      family-names: Ritter
+      affiliation: >-
+          Helmholtz Centre for Environmental Research -- UFZ
+    - given-names: Joan
+      family-names: Larrahondo
+      orcid: "https://orcid.org/0000-0002-3681-3383"
+      affiliation: >-
+          Pontificia Universidad Javeriana
 identifiers:
     - type: doi
       value: 10.5281/zenodo.18468476

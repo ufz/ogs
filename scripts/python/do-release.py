@@ -59,6 +59,7 @@ def main():
         check=True,
         cwd=source_path / "web",
     )
+    print("Check Windows and Python versions in generated .md-file!")
 
     path = Path(source_path / "Documentation" / "mainpage.dox.in")
     text = path.read_text()
