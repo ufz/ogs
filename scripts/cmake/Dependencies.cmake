@@ -106,18 +106,11 @@ if(_build_chemistry_lib)
         add_library(IPhreeqc INTERFACE IMPORTED)
         target_link_libraries(IPhreeqc INTERFACE ${IPhreeqc_LIBRARY})
     else()
-        # IPhreeqc 3.5.0 never empties SelectedOutputLinesMap, so every
-        # RunString() leaks one selected-output table. Fixed upstream in 3.7.6.
-        set(_iphreeqc_patch_args
-            PATCHES
-            ${PROJECT_SOURCE_DIR}/scripts/cmake/iphreeqc-selected-output-lines-leak.patch
-        )
         CPMAddPackage(
             NAME iphreeqc
             GITHUB_REPOSITORY ufz/iphreeqc
-            GIT_TAG 3.5.0-1
+            GIT_TAG 3.5.0-4
             OPTIONS "CMAKE_POLICY_VERSION_MINIMUM 3.10" SYSTEM TRUE
-                    ${_iphreeqc_patch_args}
         )
         if(iphreeqc_ADDED)
             target_include_directories(
