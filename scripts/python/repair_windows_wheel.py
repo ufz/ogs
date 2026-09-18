@@ -35,6 +35,10 @@ def main():
             "-m",
             "delvewheel",
             "repair",
+            # CMake installs DLLs beside the CLI executables in bin/. Reuse
+            # those DLLs for the extensions instead of bundling mangled copies
+            # in ogs.libs. The Python package registers bin/ for DLL loading.
+            "--ignore-existing",
             "--add-path",
             os.pathsep.join(add_paths),
             "-w",
@@ -43,6 +47,11 @@ def main():
             str(wheel),
         ]
         subprocess.run(command, check=True)
+
+    repaired_wheel = wheel_dir / wheel.name
+    if repaired_wheel.stat().st_size >= 100_000_000:
+        msg = f"{repaired_wheel.name} exceeds the 100 MB wheel size limit"
+        raise RuntimeError(msg)
 
 
 if __name__ == "__main__":
