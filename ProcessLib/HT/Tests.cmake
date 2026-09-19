@@ -13,14 +13,11 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROPERTIES WILL_FAIL true
     )
     OgsTest(PROJECTFILE Parabolic/HT/PicardDamping/damped.xml RUNTIME 1)
-    # Anderson acceleration alone falls into the same period-2 cycle as
-    # undamped Picard and fails too - no depth-limited history-based mixing
-    # can escape an exact period-2 orbit (see Parabolic/T/PicardDamping's
-    # anderson_acceleration.xml, which fails for the identical reason).
+    # Anderson acceleration alone escapes the period-2 cycle of undamped
+    # Picard (see also Parabolic/T/PicardDamping's anderson_acceleration.xml).
     OgsTest(
         PROJECTFILE Parabolic/HT/PicardDamping/anderson_acceleration.xml
         RUNTIME 2
-        PROPERTIES WILL_FAIL true
     )
     OgsTest(
         PROJECTFILE Parabolic/HT/PicardDamping/anderson_acceleration_damped.xml

@@ -105,20 +105,39 @@ std::vector<AndersonWeightsCase> exactWeightsCases()
                          Eigen::Vector3d(0.0, 0.0, 1.0), 0.0});
     }
     {
-        // f_1 is exactly parallel to f_0 (a factor of 2 apart), unlike the two
-        // "nearly duplicate" cases above, whose magnitudes agree to several
-        // digits. Cancelling a 2x-apart pair needs only modest weights
-        // (theta = [2, -1], both well under the max_weight cap), so neither
-        // guard (a) nor (b) fires, yet the exactly collinear steps still let
-        // the least-squares solve drive the model residual to exactly zero -
-        // an artefact of their direction, not of either step actually being
-        // small (both have non-negligible norm). Expect the fallback.
+        // f_1 = 2 f_0 is exactly parallel to f_0. This is the step sequence
+        // of a linear fixed-point map with gain 2 along f_0, for which the
+        // secant extrapolation theta = [2, -1] is exact: it zeroes the model
+        // residual with modest weights and must be accepted.
         Eigen::MatrixXd F(2, 2);
         F << 1.0, 2.0,  //
             0.0, 0.0;
-        cases.push_back(
-            {"CollinearStepsOfDifferentMagnitudeFallBackToNewestStep",
-             gramOf(F), Eigen::Vector2d(0.0, 1.0), 0.0});
+        cases.push_back({"CollinearStepsOfDifferentMagnitudeAreExtrapolated",
+                         gramOf(F), Eigen::Vector2d(2.0, -1.0), 1e-12});
+    }
+    {
+        // Three steps that span a plane only, as for a fixed-point map acting
+        // on two degrees of freedom (e.g. the nodes at a saturation front).
+        // The model residual can be zeroed exactly, with the unique weights
+        // theta = [1, 2, 4] / 7, which must be accepted.
+        Eigen::MatrixXd F(3, 3);
+        F << 1.0, 0.0, -0.25,  //
+            0.0, 0.5, -0.25,   //
+            0.0, 0.0, 0.0;
+        cases.push_back({"StepsSpanningAPlaneAreMixedToZeroResidual", gramOf(F),
+                         Eigen::Vector3d(1.0, 2.0, 4.0) / 7.0, 1e-12});
+    }
+    {
+        // Three collinear steps, as for a map acting on a single degree of
+        // freedom. The differences f_0 - f_2 and f_1 - f_2 are collinear, so
+        // the minimiser is not unique. The oldest step is dropped, and the
+        // two newest steps are extrapolated exactly, as in
+        // CollinearStepsOfDifferentMagnitudeAreExtrapolated.
+        Eigen::MatrixXd F(2, 3);
+        F << 1.0, 0.5, 0.25,  //
+            0.0, 0.0, 0.0;
+        cases.push_back({"CollinearDifferencesDropTheOldestStep", gramOf(F),
+                         Eigen::Vector3d(0.0, -1.0, 2.0), 1e-12});
     }
     {
         // The guards above must not fire on a healthy history: three decaying,
@@ -134,6 +153,17 @@ std::vector<AndersonWeightsCase> exactWeightsCases()
         Eigen::Vector3d const inverse_diagonal(1.0, 1e2, 1e4);
         cases.push_back({"DecayingIndependentResidualsAreMixed", G,
                          inverse_diagonal / inverse_diagonal.sum(), 1e-12});
+    }
+    {
+        // A large oldest step followed by two tiny orthogonal ones. Dropping
+        // the oldest step leaves two independent steps, whose difference is
+        // tiny only relative to the dropped step; they must still be mixed.
+        Eigen::MatrixXd G(3, 3);
+        G << 1.0, 0.0, 0.0,   //
+            0.0, 1e-18, 0.0,  //
+            0.0, 0.0, 4e-18;
+        cases.push_back({"TinyStepsAfterDroppingALargeOneAreMixed", G,
+                         Eigen::Vector3d(0.0, 0.8, 0.2), 1e-9});
     }
 
     return cases;
@@ -348,6 +378,35 @@ TEST(NumLibAndersonAccelerationHistory, DropLastStepUndoesTheRecordedStep)
     for (std::size_t i = 0; i < dropped.size(); ++i)
     {
         EXPECT_NEAR(dropped[i], expected[i], 1e-14);
+    }
+}
+
+TEST(NumLibAndersonAccelerationHistory,
+     UniformGainLinearMapIsSolvedByOneMixingStep)
+{
+    // g(x) = 3 x + 4 with the same gain in every component, a divergent map
+    // with the fixed point x* = -2. Its steps f = g(x) - x = 2 x + 4 satisfy
+    // f_1 = 3 f_0, i.e. they are collinear. The mixture theta = (3/2, -1/2)
+    // zeroes the predicted residual, and since the map is affine it is the
+    // exact fixed point: the secant step of a scalar linear map. The mixture
+    // must be accepted, not rejected as a degenerate history.
+    NumLib::AndersonAcceleration anderson(2);
+    auto const g = [](std::vector<double> x)
+    {
+        for (auto& x_i : x)
+        {
+            x_i = 3.0 * x_i + 4.0;
+        }
+        return x;
+    };
+
+    std::vector<double> const x_0 = {0.0, 1.0, -1.0};
+    std::vector<double> const x_1 = accelerated(anderson, x_0, g(x_0));
+    auto const x_2 = accelerated(anderson, x_1, g(x_1));
+
+    for (double const x_i : x_2)
+    {
+        EXPECT_NEAR(x_i, -2.0, 1e-14);
     }
 }
 #endif  // USE_PETSC

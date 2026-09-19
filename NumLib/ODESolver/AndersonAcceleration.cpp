@@ -5,8 +5,11 @@
 
 #include <spdlog/fmt/ranges.h>
 
+#include <Eigen/Eigenvalues>
 #include <Eigen/LU>
 #include <algorithm>
+#include <cmath>
+#include <limits>
 
 #include "AndersonWeights.h"
 #include "BaseLib/Error.h"
@@ -16,6 +19,52 @@
 
 namespace NumLib
 {
+namespace
+{
+//! Whether the differences f_i - f_newest of the steps with Gram matrix \p G
+//! are linearly independent, i.e. whether the constrained least-squares
+//! problem has a unique minimiser. A difference shorter than sqrt(eps) times
+//! the largest step counts as a duplicate; otherwise the differences count as
+//! dependent if the smallest eigenvalue of their unit-diagonal Gram matrix
+//! (their angles) is below sqrt(eps).
+bool hasUniqueMinimizer(Eigen::MatrixXd const& G)
+{
+    int const n = static_cast<int>(G.rows()) - 1;  // number of differences
+    if (n < 1)
+    {
+        return true;
+    }
+    double const tolerance = std::sqrt(std::numeric_limits<double>::epsilon());
+
+    // minCoeff() skips a NaN unless it is the first entry, hence hasNaN().
+    auto const allAboveTolerance =
+        [](Eigen::VectorXd const& v, double const threshold)
+    { return !v.hasNaN() && v.minCoeff() > threshold; };
+
+    // Gram matrix of the differences d_i = f_i - f_n.
+    Eigen::MatrixXd D = G.topLeftCorner(n, n);
+    D.colwise() -= G.col(n).head(n);
+    D.rowwise() -= G.row(n).head(n);
+    D.array() += G(n, n);
+
+    // A difference negligible against the largest step is a duplicate step.
+    Eigen::VectorXd const norms = D.diagonal().cwiseMax(0.0).cwiseSqrt();
+    if (!allAboveTolerance(norms,
+                           tolerance * std::sqrt(G.diagonal().maxCoeff())))
+    {
+        return false;
+    }
+    Eigen::VectorXd const inv_norms = norms.cwiseInverse();
+    Eigen::MatrixXd const C =
+        inv_norms.asDiagonal() * D * inv_norms.asDiagonal();
+    Eigen::VectorXd const eigenvalues =
+        Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd>(C,
+                                                       Eigen::EigenvaluesOnly)
+            .eigenvalues();
+    return allAboveTolerance(eigenvalues, tolerance);
+}
+}  // namespace
+
 namespace detail
 {
 Eigen::VectorXd computeAndersonWeights(Eigen::MatrixXd G)
@@ -51,18 +100,38 @@ Eigen::VectorXd computeAndersonWeights(Eigen::MatrixXd G)
     }
     G /= g_scale;
 
-    Eigen::MatrixXd M(history_size + 1, history_size + 1);
-    M.topLeftCorner(history_size, history_size) = G;
-    M.topRightCorner(history_size, 1).setOnes();
-    M.bottomLeftCorner(1, history_size).setOnes();
-    M(history_size, history_size) = 0.0;
+    // Drop the oldest steps until the minimiser is unique (e.g. duplicate
+    // steps, or a map acting on one DoF).
+    int number_of_steps = history_size;
+    while (number_of_steps > 1 && !hasUniqueMinimizer(G.bottomRightCorner(
+                                      number_of_steps, number_of_steps)))
+    {
+        --number_of_steps;
+    }
+    if (number_of_steps == 1)
+    {
+        // Only the plain step is left; the descent test would wrongly
+        // reject it.
+        return newest_step_only();
+    }
+    // Renormalised: the dropped steps may have been much larger.
+    Eigen::MatrixXd G_used =
+        G.bottomRightCorner(number_of_steps, number_of_steps);
+    G_used /= G_used.diagonal().maxCoeff();
 
-    Eigen::VectorXd rhs_aa(history_size + 1);
+    Eigen::MatrixXd M(number_of_steps + 1, number_of_steps + 1);
+    M.topLeftCorner(number_of_steps, number_of_steps) = G_used;
+    M.topRightCorner(number_of_steps, 1).setOnes();
+    M.bottomLeftCorner(1, number_of_steps).setOnes();
+    M(number_of_steps, number_of_steps) = 0.0;
+
+    Eigen::VectorXd rhs_aa(number_of_steps + 1);
     rhs_aa.setZero();
-    rhs_aa(history_size) = 1.0;
+    rhs_aa(number_of_steps) = 1.0;
 
-    Eigen::VectorXd const theta =
-        M.fullPivLu().solve(rhs_aa).head(history_size);
+    Eigen::VectorXd theta = Eigen::VectorXd::Zero(history_size);
+    theta.tail(number_of_steps) =
+        M.fullPivLu().solve(rhs_aa).head(number_of_steps);
 
     if (!theta.allFinite())
     {
@@ -74,18 +143,10 @@ Eigen::VectorXd computeAndersonWeights(Eigen::MatrixXd G)
         return newest_step_only();
     }
 
-    // The rank-revealing solve above never fails outright, so the weights have
-    // to be validated on their own merits. Note that an invertibility test on
-    // M would be the wrong check: it rejects healthy histories whose residual
-    // norms span many orders of magnitude (the normal situation for a
-    // converging iteration) while passing the ill-conditioned cases that
-    // actually do harm.
+    // Unique weights may still be useless; validate them.
     //
     // (a) Descent: the mixture only earns its place if the residual norm it
     //     predicts is smaller than that of the plain step it would replace.
-    //     For a degenerate history - linearly dependent steps, in particular
-    //     duplicates - the minimizer is not unique and the solve returns an
-    //     arbitrary one, which this test discards.
     //     Both norms are read off the same normalized G (divided by g_scale
     //     above), so the shared 1/g_scale factor cancels and the comparison is
     //     exactly the one on the unscaled residuals.
@@ -107,28 +168,15 @@ Eigen::VectorXd computeAndersonWeights(Eigen::MatrixXd G)
     //     cases that slip past it.
     constexpr double max_weight = 1e2;
 
-    // (c) No exact cancellation of substantial steps: guards (a) and (b) both
-    //     miss the case of exactly (or near-exactly) collinear stored steps
-    //     whose magnitudes differ enough that cancelling them needs only
-    //     modest weights - e.g. two steps in a 2x ratio need theta = (2, -1),
-    //     well inside the max_weight cap, yet a rank-deficient G lets their
-    //     combination be driven to an exactly-zero model residual regardless
-    //     of how far either step actually is from the fixed point.
-    //     That is trustworthy only when it is explained by a stored step that
-    //     is already that small on its own (the ZeroResidualGetsFullWeight
-    //     case, where G has a genuine zero diagonal entry): if every stored
-    //     step still has a non-negligible norm, an exactly-zero mixed
-    //     residual can only be an algebraic artefact of the steps happening
-    //     to be parallel, not evidence of proximity to the fixed point.
-    constexpr double numerically_zero = 1e-8;
-    bool const exact_cancellation_of_substantial_steps =
-        mixed_residual_norm_2 < numerically_zero &&
-        G.diagonal().minCoeff() > numerically_zero;
-
+    // A numerically zero predicted residual is accepted: it is the exact
+    // solution for a map that is affine on the span of the steps (e.g.
+    // collinear steps f_1 = c f_0 of a map with gain c). Convergence is
+    // checked on the unmixed step (see NonlinearSolver), so a rejected
+    // mixture costs an iteration, not correctness.
+    //
     // Negated comparison, so that a NaN norm takes the fallback as well.
     if (!(mixed_residual_norm_2 < newest_step_norm_2) ||
-        theta.cwiseAbs().maxCoeff() > max_weight ||
-        exact_cancellation_of_substantial_steps)
+        theta.cwiseAbs().maxCoeff() > max_weight)
     {
         // A fallback silently changes the iterate the solver would otherwise
         // take, so it is reported at INFO level rather than hidden in DBUG.
@@ -137,7 +185,7 @@ Eigen::VectorXd computeAndersonWeights(Eigen::MatrixXd G)
             "(predicted residual {:g} vs. {:g} for the plain step, largest "
             "weight {:g}). Falling back to the plain Picard step for this "
             "iteration.",
-            history_size, mixed_residual_norm_2, newest_step_norm_2,
+            number_of_steps, mixed_residual_norm_2, newest_step_norm_2,
             theta.cwiseAbs().maxCoeff());
         return newest_step_only();
     }
