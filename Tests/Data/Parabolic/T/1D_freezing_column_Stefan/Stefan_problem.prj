@@ -207,28 +207,32 @@
         </linear_solver>
     </linear_solvers>
     <test_definition>
+        <!-- The tolerances are of the order of the nonlinear solver
+             tolerance (reltol 1e-12 on the NORM2 of the temperature). The
+             Picard convergence check on the step before the Anderson mixing
+             changes the solution within that tolerance. -->
         <vtkdiff>
             <file>Stefan_problem_ts_46_t_46000000.000000.vtu</file>
             <field>temperature</field>
-            <absolute_tolerance>2e-11</absolute_tolerance>
+            <absolute_tolerance>1e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>Stefan_problem_ts_427_t_427000000.000000.vtu</file>
             <field>temperature</field>
-            <absolute_tolerance>7e-11</absolute_tolerance>
+            <absolute_tolerance>3e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>Stefan_problem_ts_46_t_46000000.000000.vtu</file>
             <field>heat_flux</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
+            <absolute_tolerance>3e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
             <file>Stefan_problem_ts_427_t_427000000.000000.vtu</file>
             <field>heat_flux</field>
-            <absolute_tolerance>1e-10</absolute_tolerance>
+            <absolute_tolerance>2e-10</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
     </test_definition>

@@ -271,6 +271,17 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                 LinAlg::scale(x_new_process, _damping);
                 LinAlg::axpy(x_new_process, 1.0 - _damping, *x[process_id]);
             }
+            // Check convergence before mixing: the mixture can reproduce
+            // x_old although x_old is not a fixed point.
+            if (!sys.isLinear() && _convergence_criterion->hasDeltaXCheck())
+            {
+                GlobalVector minus_delta_x(*x[process_id]);
+                LinAlg::axpy(minus_delta_x, -1.0,
+                             x_new_process);  // minus_delta_x = x - x_new
+                _convergence_criterion->checkDeltaX(minus_delta_x,
+                                                    x_new_process);
+            }
+
             // Anderson acceleration additionally mixes the last damped steps
             //   f_i = beta*(g(x_i) - x_i) (the difference x_new - x_old after
             //   the beta relaxation above); inert when anderson_depth < 2, in
@@ -316,23 +327,8 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             break;
         }
 
-        if (sys.isLinear())
-        {
-            error_norms_met = true;
-        }
-        else
-        {
-            if (_convergence_criterion->hasDeltaXCheck())
-            {
-                GlobalVector minus_delta_x(*x[process_id]);
-                LinAlg::axpy(minus_delta_x, -1.0,
-                             x_new_process);  // minus_delta_x = x - x_new
-                _convergence_criterion->checkDeltaX(minus_delta_x,
-                                                    x_new_process);
-            }
-
-            error_norms_met = _convergence_criterion->isSatisfied();
-        }
+        error_norms_met =
+            sys.isLinear() || _convergence_criterion->isSatisfied();
 
         // Update x s.t. in the next iteration we will compute the right delta x
         LinAlg::copy(x_new_process, *x[process_id]);
