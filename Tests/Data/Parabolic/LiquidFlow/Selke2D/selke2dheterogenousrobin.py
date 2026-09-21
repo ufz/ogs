@@ -26,7 +26,7 @@
 # The River Selke is a fourth-order stream with a length of 64 km draining a part of the forested Harz Mountains and the agriculturally dominated
 # Northern Harz foreland in Central Germany. Due to different water management targets such as the design of infiltration wells along a former pit
 # mine the area is of particular interest for hydrogeological research (cf. [Nixdorf et al., 2025](#references))
-# In this notebook we show how to append the [previous notebook on the Selke 2D process with Neumann boundary conditions](./selke2ddirichletneumann.py) to model a heterogeneous aquifer and Robin boundary constraints
+# In this notebook we show how to append the [previous notebook on the Selke 2D process with Neumann boundary conditions](../selke2ddirichletneumann) to model a heterogeneous aquifer and Robin boundary constraints
 
 # %%
 from pathlib import Path
