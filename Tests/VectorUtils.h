@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 #include <random>
+#include <vector>
+
+#include "MathLib/LinAlg/FinalizeVectorAssembly.h"
+#include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
 #include "MathLib/LinAlg/MatrixVectorTraits.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 
@@ -17,12 +21,11 @@ void fillVectorRandomly(Vector& x)
     using Index = typename MathLib::MatrixVectorTraits<Vector>::Index;
     Index const size = x.size();
 
-    for (Index i = 0; i < size; ++i) {
+    for (Index i = 0; i < size; ++i)
+    {
         MathLib::setVector(x, i, rnd(random_number_generator));
     }
-#ifdef USE_PETSC
-    finalizeVectorAssembly(x);
-#endif
+    MathLib::finalizeVectorAssembly(x);
 }
 
 inline void fillVectorRandomly(std::vector<double>& x)
