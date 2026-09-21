@@ -23,7 +23,7 @@ ogs-inspect:
     - if: $CI_MERGE_REQUEST_IID
   script:
     - |
-        git diff --name-only -z --diff-filter=ACMR "$CI_MERGE_REQUEST_DIFF_BASE_SHA" "${CI_MERGE_REQUEST_SOURCE_BRANCH_SHA:-$CI_COMMIT_SHA}" |
+        git diff --name-only -z --diff-filter=ACMR "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD |
           { grep -z '\.prj$' || true; } |
           xargs -0 -r ./ogs-inspect lint \
             --fail-on-warnings \
