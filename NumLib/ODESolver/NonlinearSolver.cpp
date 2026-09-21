@@ -164,7 +164,7 @@ void NonlinearSolver<NonlinearSolverTag::Picard>::
 }
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
-    std::vector<GlobalVector*>& x,
+    std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev,
     std::function<void(int, std::vector<GlobalVector*> const&)> const&
         postIterationCallback,
@@ -441,7 +441,7 @@ void NonlinearSolver<NonlinearSolverTag::Newton>::
 }
 
 NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
-    std::vector<GlobalVector*>& x,
+    std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev,
     std::function<void(int, std::vector<GlobalVector*> const&)> const&
         postIterationCallback,

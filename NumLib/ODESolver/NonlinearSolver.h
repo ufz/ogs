@@ -36,7 +36,8 @@ public:
 
     /*! Assemble and solve the equation system.
      *
-     * \param x   in: the initial guess, out: the solution.
+     * \param x   in: the initial guess, out: the solution. The vector of
+     *            pointers is not modified, the pointed-to vectors are.
      * \param x_prev previous time step solution.
      * \param postIterationCallback called after each iteration if set.
      * \param process_id usually used in staggered schemes.
@@ -45,7 +46,7 @@ public:
      * \retval false otherwise
      */
     virtual NonlinearSolverStatus solve(
-        std::vector<GlobalVector*>& x,
+        std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev,
         std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,
@@ -116,7 +117,7 @@ public:
         int const process_id) override;
 
     NonlinearSolverStatus solve(
-        std::vector<GlobalVector*>& x,
+        std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev,
         std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,
@@ -232,7 +233,7 @@ public:
         int const process_id) override;
 
     NonlinearSolverStatus solve(
-        std::vector<GlobalVector*>& x,
+        std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev,
         std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,

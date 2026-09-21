@@ -216,9 +216,10 @@ void calculateNonEquilibriumInitialResiduum(
 }
 
 NumLib::NonlinearSolverStatus solveOneTimeStepOneProcess(
-    std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
-    std::size_t const timestep, double const t, double const delta_t,
-    ProcessData const& process_data, std::vector<Output> const& outputs)
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, std::size_t const timestep,
+    double const t, double const delta_t, ProcessData const& process_data,
+    std::vector<Output> const& outputs)
 {
     auto& process = process_data.process;
     int const process_id = process_data.process_id;
@@ -635,7 +636,7 @@ bool TimeLoop::preTsNonlinearSolvePostTs(NumLib::Time const& t, double const dt,
 
 static NumLib::NonlinearSolverStatus solveMonolithicProcess(
     const NumLib::Time& t, const double dt, const std::size_t timestep_id,
-    ProcessData const& process_data, std::vector<GlobalVector*>& x,
+    ProcessData const& process_data, std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev,
     std::vector<Output> const& outputs)
 {

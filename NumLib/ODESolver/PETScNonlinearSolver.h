@@ -42,7 +42,7 @@ public:
         int const process_id) override;
 
     NonlinearSolverStatus solve(
-        std::vector<GlobalVector*>& x,
+        std::vector<GlobalVector*> const& x,
         std::vector<GlobalVector*> const& x_prev,
         std::function<void(int, std::vector<GlobalVector*> const&)> const&
             postIterationCallback,

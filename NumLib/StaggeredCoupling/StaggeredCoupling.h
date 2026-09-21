@@ -39,7 +39,7 @@ class StaggeredCoupling
 {
     template <typename ProcessData, typename Output>
     using ProcessSolver = std::function<NumLib::NonlinearSolverStatus(
-        std::vector<GlobalVector*>& /*xs*/,
+        std::vector<GlobalVector*> const& /*xs*/,
         std::vector<GlobalVector*> const& /*xs_prev*/,
         std::size_t const /*timestep*/, double const /*t*/,
         double const /*delta_t*/, ProcessData const& /*process_data*/,
@@ -80,7 +80,7 @@ public:
     template <typename ProcessData, typename Output>
     NumLib::NonlinearSolverStatus execute(
         const double t, const double dt, const std::size_t timestep_id,
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector*> const& process_solutions,
         std::vector<GlobalVector*> const& process_solutions_prev,
         std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
         std::vector<Output> const& outputs,
@@ -118,7 +118,7 @@ private:
         std::vector<CouplingNodeVariant>& coupling_nodes,
         const int max_iterations, const double t, const double dt,
         const std::size_t timestep_id,
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector*> const& process_solutions,
         std::vector<GlobalVector*> const& process_solutions_prev,
         std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
         std::vector<Output> const& outputs,
@@ -129,7 +129,7 @@ private:
     std::tuple<NumLib::NonlinearSolverStatus, bool, int> executeSubCoupling(
         CouplingNodeVariant& coupling_node, const double t, const double dt,
         const std::size_t timestep_id,
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector*> const& process_solutions,
         std::vector<GlobalVector*> const& process_solutions_prev,
         std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
         std::vector<Output> const& outputs,
@@ -141,7 +141,7 @@ private:
         int const global_coupling_iteration,
         CouplingNode const& regular_coupling_node, const double t,
         const double dt, const std::size_t timestep_id,
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector*> const& process_solutions,
         std::vector<GlobalVector*> const& process_solutions_prev,
         std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
         std::vector<Output> const& outputs,

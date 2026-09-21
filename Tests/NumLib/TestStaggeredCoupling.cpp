@@ -93,7 +93,7 @@ std::vector<std::unique_ptr<TestProcessData>> createProcessData()
 auto createProcessSolver(bool const nonlinear_solver_converged)
 {
     return [nonlinear_solver_converged, value = 0.0](
-               std::vector<GlobalVector*>& xs,
+               std::vector<GlobalVector*> const& xs,
                std::vector<GlobalVector*> const& /*xs_prev*/,
                std::size_t const /*timestep*/, double const /*t*/,
                double const /*dt*/, TestProcessData const& /*process_data*/,

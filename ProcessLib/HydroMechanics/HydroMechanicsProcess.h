@@ -100,9 +100,10 @@ private:
         std::vector<GlobalVector*> const& x_prev, const double t,
         double const dt, int const process_id) override;
 
-    void setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
-                                             double const t,
-                                             int const process_id) override;
+    void setInitialConditionsConcreteProcess(
+        std::vector<GlobalVector*> const& x,
+        double const t,
+        int const process_id) override;
 
     NumLib::LocalToGlobalIndexMap const& getDOFTable(
         const int process_id) const override;

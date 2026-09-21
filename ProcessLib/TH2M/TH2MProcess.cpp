@@ -222,7 +222,7 @@ void TH2MProcess<DisplacementDim>::initializeBoundaryConditions(
 
 template <int DisplacementDim>
 void TH2MProcess<DisplacementDim>::setInitialConditionsConcreteProcess(
-    std::vector<GlobalVector*>& x, double const t, int const process_id)
+    std::vector<GlobalVector*> const& x, double const t, int const process_id)
 {
     if (process_id != 0)
     {

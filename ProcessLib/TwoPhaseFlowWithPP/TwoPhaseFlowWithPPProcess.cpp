@@ -33,7 +33,7 @@ TwoPhaseFlowWithPPProcess::TwoPhaseFlowWithPPProcess(
 }
 
 void TwoPhaseFlowWithPPProcess::setInitialConditionsConcreteProcess(
-    std::vector<GlobalVector*>& x, double const t, int const process_id)
+    std::vector<GlobalVector*> const& x, double const t, int const process_id)
 {
     DBUG("SetInitialConditions ThermoRichardsMechanicsProcess.");
 
