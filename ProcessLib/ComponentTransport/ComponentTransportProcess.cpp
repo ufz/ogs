@@ -427,14 +427,8 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
     double const t,
     double const dt,
     std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev,
-    int const process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
-    if (process_id != 0)
-    {
-        return;
-    }
-
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
     dof_tables.reserve(x.size());
     std::generate_n(std::back_inserter(dof_tables), x.size(),
@@ -452,8 +446,7 @@ void ComponentTransportProcess::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &ComponentTransportLocalAssemblerInterface::computeSecondaryVariable,
-        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id);
+        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev);
 }
 
 std::vector<std::vector<std::string>>

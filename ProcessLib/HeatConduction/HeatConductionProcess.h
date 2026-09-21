@@ -42,10 +42,9 @@ public:
     }
     //! @}
 
-    void computeSecondaryVariableConcrete(double const t, double const dt,
-                                          std::vector<GlobalVector*> const& x,
-                                          GlobalVector const& x_prev,
-                                          int const process_id) override;
+    void computeSecondaryVariableConcrete(
+        double const t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev) override;
 
     bool shouldLinearSolverComputeOnlyUponTimestepChange() const override
     {

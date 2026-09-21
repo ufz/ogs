@@ -126,7 +126,7 @@ void HeatConductionProcess::assembleWithJacobianConcreteProcess(
 
 void HeatConductionProcess::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, int const process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
     DBUG("Compute heat flux for HeatConductionProcess.");
 
@@ -137,8 +137,7 @@ void HeatConductionProcess::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatConductionLocalAssemblerInterface::computeSecondaryVariable,
-        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id);
+        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev);
 }
 
 void HeatConductionProcess::preTimestepConcreteProcess(

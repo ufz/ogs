@@ -5,7 +5,6 @@
 
 #include <cassert>
 
-#include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/DOF/DOFTableUtil.h"
 
 namespace ProcessLib
@@ -62,15 +61,11 @@ void LocalAssemblerInterface::computeSecondaryVariable(
     std::size_t const mesh_item_id,
     std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, int const process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
     auto const local_x = NumLib::getLocalX(mesh_item_id, dof_tables, x);
-
-    // Todo: A more decent way is to directly pass x_prevs as done for x
-    auto const indices =
-        NumLib::getIndices(mesh_item_id, *dof_tables[process_id]);
-    auto const local_x_prev_vec = x_prev.get(indices);
-    auto const local_x_prev = MathLib::toVector(local_x_prev_vec);
+    auto const local_x_prev =
+        NumLib::getLocalX(mesh_item_id, dof_tables, x_prev);
 
     computeSecondaryVariableConcrete(t, dt, local_x, local_x_prev);
 }

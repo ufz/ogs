@@ -400,7 +400,7 @@ void SmallDeformationProcess<DisplacementDim>::initializeConcreteProcess(
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, int const process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
     DBUG("Compute the secondary variables for SmallDeformationProcess.");
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -410,8 +410,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &SmallDeformationLocalAssemblerInterface::computeSecondaryVariable,
-        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id);
+        _local_assemblers, getActiveElementIDs(), dof_tables, t, dt, x, x_prev);
 }
 
 template <int DisplacementDim>

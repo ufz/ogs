@@ -194,18 +194,13 @@ void ThermoRichardsFlowProcess::postTimestepConcreteProcess(
 
 void ThermoRichardsFlowProcess::computeSecondaryVariableConcrete(
     const double t, const double dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, int const process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
-    if (process_id != 0)
-    {
-        return;
-    }
     DBUG("Compute the secondary variables for ThermoRichardsFlowProcess.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
-        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
-        process_id);
+        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev);
 }
 
 }  // namespace ThermoRichardsFlow

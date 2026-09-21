@@ -468,16 +468,11 @@ void Process::postNonLinearSolver(std::vector<GlobalVector*> const& x,
 void Process::computeSecondaryVariable(double const t,
                                        double const dt,
                                        std::vector<GlobalVector*> const& x,
-                                       GlobalVector const& x_prev,
-                                       int const process_id)
+                                       std::vector<GlobalVector*> const& x_prev)
 {
-    for (auto const* solution : x)
-    {
-        MathLib::LinAlg::setLocalAccessibleVector(*solution);
-    }
-    MathLib::LinAlg::setLocalAccessibleVector(x_prev);
+    setLocalAccessibleVectors(x, x_prev);
 
-    computeSecondaryVariableConcrete(t, dt, x, x_prev, process_id);
+    computeSecondaryVariableConcrete(t, dt, x, x_prev);
 }
 
 void Process::preIteration(const unsigned iter, const GlobalVector& x)

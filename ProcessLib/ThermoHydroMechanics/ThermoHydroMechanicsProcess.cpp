@@ -484,20 +484,14 @@ template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::
     computeSecondaryVariableConcrete(double const t, double const dt,
                                      std::vector<GlobalVector*> const& x,
-                                     GlobalVector const& x_prev,
-                                     const int process_id)
+                                     std::vector<GlobalVector*> const& x_prev)
 {
-    if (process_id != 0)
-    {
-        return;
-    }
-
     DBUG("Compute the secondary variables for ThermoHydroMechanicsProcess.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::computeSecondaryVariable,
         local_assemblers_, getActiveElementIDs(), getDOFTables(x.size()), t, dt,
-        x, x_prev, process_id);
+        x, x_prev);
 }
 
 template <int DisplacementDim>

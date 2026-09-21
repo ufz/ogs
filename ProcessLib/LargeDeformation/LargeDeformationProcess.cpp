@@ -192,7 +192,7 @@ void LargeDeformationProcess<DisplacementDim>::postTimestepConcreteProcess(
 template <int DisplacementDim>
 void LargeDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, int const process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
     DBUG("Compute the secondary variables for LargeDeformationProcess.");
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -202,7 +202,7 @@ void LargeDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, _local_assemblers,
-        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+        getActiveElementIDs(), dof_tables, t, dt, x, x_prev);
 
     computeCellAverages<DisplacementDim>(cell_average_data_, _local_assemblers);
 }
