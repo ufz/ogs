@@ -53,7 +53,9 @@
 #         Can be given multiple times; the point coordinates in the gml files are
 #         compared using the given absolute and relative tolerances.
 # ~~~
-# cmake-lint: disable=C0103,R0911,R0912,R0915
+# cmake-lint: disable=C0103,C0111,R0911,R0912,R0915
+include(${PROJECT_SOURCE_DIR}/scripts/cmake/test/TestProperties.cmake)
+
 function(AddTest)
 
     # parse arguments
@@ -98,14 +100,17 @@ function(AddTest)
     if(NOT DEFINED AddTest_REQUIREMENTS)
         set(AddTest_REQUIREMENTS TRUE)
     endif()
-    if(NOT DEFINED AddTest_RUNTIME)
-        set(AddTest_RUNTIME 1)
-    elseif(AddTest_RUNTIME GREATER 750)
-        # Set a timeout on jobs larger than the default ctest timeout of 1500
-        # (s). The allowed runtime is twice as long as the given RUNTIME
-        # parameter.
-        math(EXPR timeout "${AddTest_RUNTIME} * 2")
-        set(timeout TIMEOUT ${timeout})
+    ogs_resolve_test_runtime(
+        "${AddTest_RUNTIME}"
+        "${ogs.ctest.large_runtime}"
+        "${OGS_CTEST_MAX_RUNTIME}"
+        AddTest_RUNTIME
+        _timeout
+        _is_large
+        _skip
+    )
+    if(_timeout)
+        set(timeout TIMEOUT ${_timeout})
     endif()
     if(NOT DEFINED AddTest_WORKING_DIRECTORY)
         if("${AddTest_EXECUTABLE}" STREQUAL "ogs")
@@ -115,12 +120,10 @@ function(AddTest)
         endif()
     endif()
 
-    if(DEFINED OGS_CTEST_MAX_RUNTIME)
-        if(${AddTest_RUNTIME} GREATER ${OGS_CTEST_MAX_RUNTIME})
-            return()
-        endif()
+    if(_skip)
+        return()
     endif()
-    if(${AddTest_RUNTIME} GREATER ${ogs.ctest.large_runtime})
+    if(_is_large)
         string(PREPEND AddTest_NAME "LARGE_")
     endif()
 
@@ -299,7 +302,9 @@ function(AddTest)
 
     if(_has_omp_variant)
         _add_test(${TEST_NAME}-omp)
-        _set_omp_test_properties()
+        ogs_set_omp_test_properties(
+            "${TEST_NAME}-omp" "${_processors}" "${labels}"
+        )
     endif()
 
     if(NOT AddTest_TESTER OR OGS_COVERAGE)
@@ -394,25 +399,6 @@ macro(_add_test TEST_NAME)
             ${timeout}
             ENVIRONMENT
             "PYDEVD_DISABLE_FILE_VALIDATION=1;UV_PYTHON=$ENV{UV_PYTHON};UV_PROJECT=$ENV{UV_PROJECT};UV_PROJECT_ENVIRONMENT=$ENV{UV_PROJECT_ENVIRONMENT}"
-    )
-endmacro()
-
-set(OGS_CTEST_OMP_THREADS 4
-    CACHE STRING "Number of threads used by OpenMP ctest variants."
-)
-
-# Sets number of threads, adds label 'omp'
-macro(_set_omp_test_properties)
-    get_test_property(${TEST_NAME}-omp ENVIRONMENT _environment)
-    if(NOT _environment)
-        set(_environment "")
-    endif()
-    math(EXPR _overall_processors "${OGS_CTEST_OMP_THREADS} * ${_processors}")
-    set_tests_properties(
-        ${TEST_NAME}-omp
-        PROPERTIES ENVIRONMENT
-                   "OGS_ASM_THREADS=${OGS_CTEST_OMP_THREADS};${_environment}"
-                   PROCESSORS ${_overall_processors} LABELS "${labels};omp"
     )
 endmacro()
 

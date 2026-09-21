@@ -12,14 +12,21 @@
         uv lock
         cd -
       fi
-    - build_dir_full=../build/${CMAKE_PRESET}
+    - build_dir_prefix=${CMAKE_PRESET_BUILD_DIR_PREFIX:-}
+    - export CMAKE_PRESET_BUILD_DIR_PREFIX=$build_dir_prefix
+    - build_dir_full=../build/${build_dir_prefix}${CMAKE_PRESET}
+    - |
+      case "$CMAKE_PRESET" in
+        clang-*|sanitizer|ci-iwyu) export CC=clang CXX=clang++ ;;
+        release-petsc*|debug-petsc*|coverage-petsc|ci-no-unity) export CC=mpicc CXX=mpic++ ;;
+      esac
     - log_file=$build_dir_full/make.txt
     - rm -rf $build_dir_full
     - mkdir -p $build_dir_full build
     - if [[ "$OSTYPE" == "darwin"* ]] ; then readlink_cmd=greadlink; else readlink_cmd=readlink; fi
     - ln -s `$readlink_cmd -f $build_dir_full` build/${CMAKE_PRESET}-${CI_JOB_NAME_SLUG}-${CI_JOB_ID}
     - |
-      if [[ $BUILD_CTEST_LARGE_ON_MASTER && ( "${CI_COMMIT_BRANCH}" == "master" || -n "${CI_COMMIT_TAG}" ) ]]; then
+      if [[ $BUILD_CTEST_LARGE_ON_MASTER && ( "${CI_COMMIT_BRANCH}" == "${CI_DEFAULT_BRANCH}" || -n "${CI_COMMIT_TAG}" ) ]]; then
         export BUILD_CTEST_LARGE=true
         echo "Enabling large ctests."
       fi
@@ -37,7 +44,7 @@
     - |
       build_with_ctest=false
       ctest_group="Experimental"
-      if [ "${CI_COMMIT_BRANCH}" = "master" ]; then
+      if [ "${CI_COMMIT_BRANCH}" = "${CI_DEFAULT_BRANCH}" ]; then
         ctest_group="master"
       fi
       if [ "$BUILD_CTEST" = true ] && [[ -z "$TARGETS" ]] && \
@@ -50,10 +57,11 @@
         export CMAKE_ARGS
         export CTEST_BINARY_DIRECTORY="$build_dir_full"
         export CTEST_GROUP="$ctest_group"
+        if [ "${CI_PIPELINE_SOURCE}" = "pipeline" ]; then export CTEST_SUBMIT=false; else export CTEST_SUBMIT=true; fi
         export CTEST_DASHBOARD_PHASE=configure
         ctest -S scripts/ci/ctest-dashboard.cmake -VV > >(tee "$log_file")
       else
-        cmake --preset=$CMAKE_PRESET --log-level=VERBOSE -Wno-dev $CMAKE_ARGS
+        cmake --preset=$CMAKE_PRESET -B "$build_dir_full" --log-level=VERBOSE -Wno-dev $CMAKE_ARGS
       fi
     # Activate .venv via .envrc
     - test -f $build_dir_full/.venv/bin/activate && source $build_dir_full/.envrc
@@ -100,52 +108,28 @@
             alias date=gdate
           fi
 
-          ctest_arguments=""
-          if [[ ! -z "$CTEST_ARGS" ]]; then
-            # Remove quotes from CTEST_ARGS
-            ctest_arguments=${CTEST_ARGS#\"}
-            ctest_arguments=${ctest_arguments%\"}
-            ctest_timeout=120 # Assume large
-          else
-            ctest_arguments="--preset=${CMAKE_PRESET}${preset_postfix}"
-          fi
-
-          if [ "$BUILD_CTEST_LARGE" != true ]; then
-            ctest_arguments="${ctest_arguments} -LE large"
-          fi
-
-          if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*web\ only.* ]]; then
-            ctest_arguments="${ctest_arguments} -R nb-"
+          ctest_preset="${CTEST_PRESET:-${CMAKE_PRESET}${preset_postfix}}"
+          export CTEST_PRESET="$ctest_preset"
+          if [[ -n "$CTEST_ARGS" ]]; then
+            ctest_timeout=120 # Explicit selections historically use the large budget.
           fi
 
           if [[ ! -z "$CTEST_TIMEOUT" ]]; then
             ctest_timeout="$CTEST_TIMEOUT"
           fi
+          export CTEST_TIMEOUT="$ctest_timeout"
 
-          # Don't submit on multi-project pipelines, e.g. triggered from ogstools
-          # as they run just a subset of benchmarks and therefore CDash complains
-          # about missing tests.
-          if [ "${CI_PIPELINE_SOURCE}" != "pipeline" ]; then
-            ctest_arguments="${ctest_arguments} -T Submit"
-          fi
-
-          ctest_actions="-T Test"
-          if [ "$build_with_ctest" = false ]; then
-            ctest_actions="-T Start -T Test"
-          fi
+          # Don't submit on multi-project pipelines, e.g. triggered from
+          # ogstools, because they run only a subset of benchmarks.
+          if [ "${CI_PIPELINE_SOURCE}" = "pipeline" ]; then export CTEST_SUBMIT=false; else export CTEST_SUBMIT=true; fi
 
           if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
             echo "Skipping ctests because of unit_tests-label."
           else
             echo "########################" + `date` + "########################"
-            echo "ctest arguments: ${ctest_arguments}"
-            ctest \
-                -M Experimental --group "${ctest_group}" "${regex_argument}" \
-                --test-dir "${build_dir_full}" ${ctest_actions} \
-                --no-tests=error \
-                ${ctest_arguments} \
-                --output-junit Tests/ctest.xml \
-                --stop-time "`date -d "today + ${ctest_timeout} minutes" +'%H:%M:%S'`"
+            export CTEST_DASHBOARD_PHASE=test
+            echo "ctest preset: ${CTEST_PRESET}; explicit arguments: ${CTEST_ARGS}"
+            ctest -S scripts/ci/ctest-dashboard.cmake -VV
           fi
         fi
 

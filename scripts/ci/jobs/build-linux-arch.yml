@@ -81,8 +81,7 @@ build linux petsc:
   tags: [envinf, shell, petsc]
   rules: *common-petsc-cpp-rules
   variables:
-    CMAKE_PRESET: release-petsc
-    CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON"
+    CMAKE_PRESET: release-petsc-all
     ADDITIONAL_TARGETS_PRE: "check-headers"
     ADDITIONAL_TARGETS_POST: ""
     BUILD_CTEST_LARGE_ON_MASTER: "true"
@@ -92,8 +91,8 @@ build linux petsc (py-cov):
   tags: [envinf, shell, petsc]
   rules: *common-petsc-python-rules
   variables:
-    CMAKE_PRESET: release-petsc
-    CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON -DOGS_COVERAGE_PYTHON=ON"
+    CMAKE_PRESET: release-petsc-all
+    CMAKE_ARGS: "-DOGS_COVERAGE_PYTHON=ON"
     ADDITIONAL_TARGETS_POST: "process_coverage_python"
     CTEST_ARGS: "-R nb-|pytest"
     BUILD_CTEST_LARGE_ON_MASTER: "true"
@@ -103,8 +102,7 @@ build linux petsc ext:
   tags: [envinf, shell]
   rules: *common-petsc-cpp-rules
   variables:
-    CMAKE_PRESET: release-petsc-full
-    CMAKE_ARGS: "-DOGS_USE_PIP=ON -DOGS_USE_MFRONT=ON"
+    CMAKE_PRESET: release-petsc-full-all
     CTEST_ARGS: "-L petsc-mumps"
 
 # ============================================================

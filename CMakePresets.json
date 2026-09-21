@@ -78,6 +78,15 @@
       }
     },
     {
+      "name": "_clang-mfront-analysis",
+      "hidden": true,
+      "inherits": "_clang",
+      "cacheVariables": {
+        "OGS_USE_MFRONT": "ON",
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy;--header-filter=${sourceDir}/.*"
+      }
+    },
+    {
       "name": "release",
       "inherits": [
         "_ninja",
@@ -135,6 +144,23 @@
       ]
     },
     {
+      "name": "release-petsc-all",
+      "inherits": [
+        "release",
+        "_petsc",
+        "_all"
+      ]
+    },
+    {
+      "name": "release-petsc-full-all",
+      "inherits": [
+        "release",
+        "_petsc",
+        "_petsc_full",
+        "_all"
+      ]
+    },
+    {
       "name": "debug-petsc-full",
       "inherits": [
         "debug",
@@ -188,24 +214,16 @@
     {
       "name": "clang-release",
       "inherits": [
-        "_clang",
+        "_clang-mfront-analysis",
         "release"
-      ],
-      "cacheVariables": {
-        "OGS_USE_MFRONT": "ON",
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy;--header-filter=${sourceDir}/.*"
-      }
+      ]
     },
     {
       "name": "clang-debug",
       "inherits": [
-        "_clang",
+        "_clang-mfront-analysis",
         "debug"
-      ],
-      "cacheVariables": {
-        "OGS_USE_MFRONT": "ON",
-        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--config-file=${sourceDir}/.clang-tidy;--header-filter=${sourceDir}/.*"
-      }
+      ]
     },
     {
       "name": "debug-all",
@@ -237,8 +255,11 @@
     {
       "name": "ci-no-unity",
       "inherits": [
-        "release-all",
-        "release-petsc-full"
+        "_ninja",
+        "_release",
+        "_petsc",
+        "_petsc_full",
+        "_all"
       ],
       "cacheVariables": {
         "OGS_USE_UNITY_BUILDS": "OFF"
@@ -248,7 +269,8 @@
       "name": "ci-iwyu",
       "inherits": [
         "_clang",
-        "release-all"
+        "_release",
+        "_all"
       ],
       "cacheVariables": {
         "OGS_INCLUDE_WHAT_YOU_USE": "ON",
@@ -328,6 +350,14 @@
       "configurePreset": "release-petsc-full"
     },
     {
+      "name": "release-petsc-all",
+      "configurePreset": "release-petsc-all"
+    },
+    {
+      "name": "release-petsc-full-all",
+      "configurePreset": "release-petsc-full-all"
+    },
+    {
       "name": "debug-petsc-full",
       "configurePreset": "debug-petsc-full"
     },
@@ -375,7 +405,7 @@
     },
     {
       "name": "debug-all",
-      "configurePreset": "release-all"
+      "configurePreset": "debug-all"
     },
     {
       "name": "coverage",
@@ -455,6 +485,27 @@
       "configurePreset": "release-petsc",
       "inherits": [
         "release-large"
+      ]
+    },
+    {
+      "name": "release-petsc-all",
+      "configurePreset": "release-petsc-all",
+      "inherits": [
+        "release"
+      ]
+    },
+    {
+      "name": "release-petsc-all-large",
+      "configurePreset": "release-petsc-all",
+      "inherits": [
+        "release-large"
+      ]
+    },
+    {
+      "name": "release-petsc-full-all",
+      "configurePreset": "release-petsc-full-all",
+      "inherits": [
+        "release"
       ]
     },
     {

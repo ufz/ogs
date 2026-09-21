@@ -1,3 +1,2 @@
 include:
   - local: "/scripts/ci/jobs/build-linux-arch.yml"
-  - local: "/scripts/ci/jobs/build-linux-petsc.yml"

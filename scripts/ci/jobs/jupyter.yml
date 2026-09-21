@@ -1,6 +1,6 @@
 test linux wheel via notebooks:
   stage: check
-  tags: [envinf, shell]
+  tags: [shell]
   needs: [meta]
   variables:
     OGS_GROUP: ogs-local

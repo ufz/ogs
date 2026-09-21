@@ -10,7 +10,9 @@ variables:
   BUILD_TYPE: Release
   BUILD_TESTS: "true"
   BUILD_CTEST: "true"
-  CTEST_ARGS: "" # If not empty supply arguments to select tests
+  CTEST_PRESET: "" # Named test preset; empty selects the build variant.
+  CTEST_ARGS: "" # If not empty supply a complete explicit test selection
+  CTEST_EXTRA_ARGS: "" # Additional execution arguments for either mode.
   CTEST_TIMEOUT: "" # in minutes
   ARTIFACTS_PAGES_URL: https://$CI_PROJECT_ROOT_NAMESPACE.$CI_PAGES_DOMAIN/-/$CI_PROJECT_NAME/-/jobs/$CI_JOB_ID/artifacts
   PIPELINE_NAME: "Default pipeline name"

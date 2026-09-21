@@ -19,8 +19,6 @@ find_program(CPPCHECK_TOOL_PATH cppcheck)
 # Find bash itself ...
 find_program(BASH_TOOL_PATH bash DOC "The bash executable")
 
-find_program(CCACHE_TOOL_PATH ccache)
-
 find_program(MODULE_CMD lmod PATHS /software/lmod/lmod/libexec)
 
 find_program(GMSH gmsh)

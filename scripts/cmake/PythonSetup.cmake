@@ -1,6 +1,4 @@
 # cmake-lint: disable=C0103
-include(${PROJECT_SOURCE_DIR}/scripts/cmake/test/AddTest.cmake)
-
 message(STATUS "┌─ PythonSetup.cmake")
 list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 
