@@ -23,7 +23,7 @@ ogs-inspect:
     - if: $CI_MERGE_REQUEST_IID
   script:
     - |
-        git diff --name-only -z --diff-filter=ACMR "$CI_MERGE_REQUEST_DIFF_BASE_SHA" "$CI_COMMIT_SHA" |
+        git diff --name-only -z --diff-filter=ACMR "$CI_MERGE_REQUEST_DIFF_BASE_SHA" HEAD |
           { grep -z '\.prj$' || true; } |
           xargs -0 -r ./ogs-inspect lint \
             --fail-on-warnings \
@@ -41,4 +41,15 @@ ogs-inspect:all-tests:
   rules:
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
   script:
-    - find Tests/Data -type f -name '*.prj' -print0 | xargs -0 -r ./ogs-inspect lint --fail-on-warnings
+    # All valid project files must pass
+    - find Tests/Data -path '*/InvalidProjectFiles' -prune -o -type f -name '*.prj' -print0 | xargs -0 -r ./ogs-inspect lint --fail-on-warnings
+
+    # All invalid project files must fail
+    - |
+      find Tests/Data -type f -name '*.prj' -path '*/InvalidProjectFiles/*' -print0 |
+        xargs -0 -r -P"$(nproc)" -n1 sh -c '
+          if ./ogs-inspect lint --quiet --fail-on-warnings "$1"; then
+            echo "Expected lint failure: $1"
+            exit 1
+          fi
+        ' sh
