@@ -62,6 +62,10 @@ struct ProcessData
     Process& process;
 };
 
+/// Builds the time-discretized ODE system matching the process' nonlinear
+/// solver and stores it in ProcessData::tdisc_ode_sys.
+void setTimeDiscretizedODESystem(ProcessData& process_data);
+
 void setEquationSystem(ProcessData const& process_data);
 
 }  // namespace ProcessLib
