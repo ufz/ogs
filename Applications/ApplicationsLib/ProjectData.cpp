@@ -1097,6 +1097,9 @@ void ProjectData::parseProcesses(
                             _local_coordinate_system, integration_order,
                             process_config);
                     break;
+                default:
+                    OGS_FATAL(
+                        "PHASE_FIELD process does not support given dimension");
             }
         }
         else
@@ -1122,6 +1125,10 @@ void ProjectData::parseProcesses(
                             _local_coordinate_system, integration_order,
                             process_config, _media);
                     break;
+                default:
+                    OGS_FATAL(
+                        "HM_PHASE_FIELD process does not support given "
+                        "dimension");
             }
         }
         else
@@ -1269,6 +1276,10 @@ void ProjectData::parseProcesses(
                             _local_coordinate_system, integration_order,
                             process_config, _media);
                     break;
+                default:
+                    OGS_FATAL(
+                        "THERMO_MECHANICS process does not support given "
+                        "dimension");
             }
         }
         else
@@ -1316,6 +1327,10 @@ void ProjectData::parseProcesses(
                             _local_coordinate_system, integration_order,
                             process_config, _media);
                     break;
+                default:
+                    OGS_FATAL(
+                        "RICHARDS_MECHANICS process does not support given "
+                        "dimension");
             }
         }
         else
@@ -1352,6 +1367,10 @@ void ProjectData::parseProcesses(
                             _local_coordinate_system, integration_order,
                             process_config, _media);
                     break;
+                default:
+                    OGS_FATAL(
+                        "THERMO_RICHARDS_MECHANICS process does not support "
+                        "given dimension");
             }
         }
         else
