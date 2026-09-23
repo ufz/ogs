@@ -15,6 +15,7 @@ import nbformat
 import papermill
 import toml
 from binder import sparse_path_query, sparse_paths_for_notebook
+from markdown_conversion import remove_duplicate_title_header
 from nbclient.exceptions import DeadKernelError
 from nbconvert import HTMLExporter
 from nbconvert.preprocessors import CellExecutionError
@@ -34,18 +35,22 @@ def get_website_output_path(notebook, exec_notebook_file):
     if "Tests/Data" not in str(exec_notebook_file):
         return None
 
-    first_cell = notebook.cells[0]
-    lines = first_cell.source.splitlines()
-    toml_begin = lines.index("+++")
-    toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
-    toml_lines = lines[toml_begin + 1 : toml_end]
-    parsed_frontmatter = toml.loads("\n".join(toml_lines))
+    parsed_frontmatter = get_frontmatter(notebook)
     return (
         Path(build_dir)
         / Path("web/content/docs/benchmarks")
         / Path(parsed_frontmatter["web_subsection"])
         / exec_notebook_file.stem.lower()
     )
+
+
+def get_frontmatter(notebook):
+    first_cell = notebook.cells[0]
+    lines = first_cell.source.splitlines()
+    toml_begin = lines.index("+++")
+    toml_end = max(loc for loc, val in enumerate(lines) if val == "+++")
+    toml_lines = lines[toml_begin + 1 : toml_end]
+    return toml.loads("\n".join(toml_lines))
 
 
 def save_to_website(exec_notebook_file):
@@ -68,6 +73,15 @@ def save_to_website(exec_notebook_file):
             exec_notebook_file,
         ],
         check=True,
+    )
+
+    markdown_file = (output_path or exec_notebook_file.parent) / "index.md"
+    markdown_file.write_text(
+        remove_duplicate_title_header(
+            markdown_file.read_text(encoding="utf-8"),
+            get_frontmatter(notebook).get("title"),
+        ),
+        encoding="utf-8",
     )
 
     if not output_path:
