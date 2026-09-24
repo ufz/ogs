@@ -245,7 +245,7 @@ void RichardsMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
 
 template <int DisplacementDim>
 void RichardsMechanicsProcess<DisplacementDim>::
-    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*> const& x,
                                         double const t,
                                         int const process_id)
 {

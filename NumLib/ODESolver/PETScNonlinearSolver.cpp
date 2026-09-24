@@ -16,7 +16,7 @@ struct PetscContext
 {
     using System = NumLib::NonlinearSystem<NumLib::NonlinearSolverTag::Newton>;
     System* system;
-    std::vector<GlobalVector*>& x;
+    std::vector<GlobalVector*> const& x;
     std::vector<GlobalVector*> const& x_prev;
     GlobalVector* r;
     GlobalMatrix* J;
@@ -139,7 +139,7 @@ void PETScNonlinearSolver::calculateNonEquilibriumInitialResiduum(
 }
 
 NonlinearSolverStatus PETScNonlinearSolver::solve(
-    std::vector<GlobalVector*>& x,
+    std::vector<GlobalVector*> const& x,
     std::vector<GlobalVector*> const& x_prev,
     std::function<void(int, std::vector<GlobalVector*> const&)> const&
     /*postIterationCallback*/,

@@ -189,7 +189,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
 
 template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
-    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*> const& x,
                                         double const t,
                                         int const process_id)
 {

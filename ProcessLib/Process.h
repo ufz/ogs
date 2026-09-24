@@ -82,7 +82,7 @@ public:
             media);
 
     void setInitialConditions(
-        std::vector<GlobalVector*>& process_solutions,
+        std::vector<GlobalVector*> const& process_solutions,
         std::vector<GlobalVector*> const& process_solutions_prev,
         double const t,
         int const process_id);
@@ -185,7 +185,7 @@ public:
     }
 
     virtual void solveReactionEquation(
-        std::vector<GlobalVector*>& /*x*/,
+        std::vector<GlobalVector*> const& /*x*/,
         std::vector<GlobalVector*> const& /*x_prev*/, double const /*t*/,
         double const /*dt*/, NumLib::EquationSystem& /*ode_sys*/,
         int const /*process_id*/)
@@ -232,7 +232,7 @@ private:
             media);
 
     virtual void setInitialConditionsConcreteProcess(
-        std::vector<GlobalVector*>& /*x*/,
+        std::vector<GlobalVector*> const& /*x*/,
         double const /*t*/,
         int const /*process_id*/)
     {

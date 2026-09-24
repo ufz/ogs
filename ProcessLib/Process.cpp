@@ -131,7 +131,7 @@ void Process::initialize(
 }
 
 void Process::setInitialConditions(
-    std::vector<GlobalVector*>& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev,
     double const t,
     int const process_id)

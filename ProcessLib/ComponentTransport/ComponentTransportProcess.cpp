@@ -203,7 +203,7 @@ void ComponentTransportProcess::initializeConcreteProcess(
 }
 
 void ComponentTransportProcess::setInitialConditionsConcreteProcess(
-    std::vector<GlobalVector*>& x, double const t, int const process_id)
+    std::vector<GlobalVector*> const& x, double const t, int const process_id)
 {
     if (!_chemical_solver_interface)
     {
@@ -304,9 +304,9 @@ Eigen::Vector3d ComponentTransportProcess::getFlux(
 }
 
 void ComponentTransportProcess::solveReactionEquation(
-    std::vector<GlobalVector*>& x, std::vector<GlobalVector*> const& x_prev,
-    double const t, double const dt, NumLib::EquationSystem& ode_sys,
-    int const process_id)
+    std::vector<GlobalVector*> const& x,
+    std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
+    NumLib::EquationSystem& ode_sys, int const process_id)
 {
     // todo (renchao): move chemical calculation to elsewhere.
     if (_process_data.lookup_table && process_id == 0)

@@ -15,7 +15,7 @@ namespace NumLib
 template <typename ProcessData, typename Output>
 NumLib::NonlinearSolverStatus StaggeredCoupling::execute(
     const double t, const double dt, const std::size_t timestep_id,
-    std::vector<GlobalVector*>& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<Output> const& outputs,
@@ -60,7 +60,7 @@ NumLib::NonlinearSolverStatus StaggeredCoupling::executeSingleIteration(
     int const global_coupling_iteration,
     CouplingNode const& regular_coupling_node, const double t, const double dt,
     const std::size_t timestep_id,
-    std::vector<GlobalVector*>& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<Output> const& outputs,
@@ -93,7 +93,7 @@ std::tuple<NumLib::NonlinearSolverStatus, bool, int>
 StaggeredCoupling::executeConcrete(
     std::vector<CouplingNodeVariant>& coupling_nodes, const int max_iterations,
     const double t, const double dt, const std::size_t timestep_id,
-    std::vector<GlobalVector*>& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<Output> const& outputs,
@@ -207,7 +207,7 @@ std::tuple<NumLib::NonlinearSolverStatus, bool, int>
 StaggeredCoupling::executeSubCoupling(
     CouplingNodeVariant& coupling_node, const double t, const double dt,
     const std::size_t timestep_id,
-    std::vector<GlobalVector*>& process_solutions,
+    std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev,
     std::vector<std::unique_ptr<ProcessData>> const& per_process_data,
     std::vector<Output> const& outputs,

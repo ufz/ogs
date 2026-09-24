@@ -426,7 +426,7 @@ void HydroMechanicsProcess<DisplacementDim>::postNonLinearSolverConcreteProcess(
 
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::
-    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*> const& x,
                                         double const t,
                                         int const process_id)
 {

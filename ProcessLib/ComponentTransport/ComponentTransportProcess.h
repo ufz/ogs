@@ -124,7 +124,7 @@ public:
                             MathLib::Point3d const& p, double const t,
                             std::vector<GlobalVector*> const& x) const override;
 
-    void solveReactionEquation(std::vector<GlobalVector*>& x,
+    void solveReactionEquation(std::vector<GlobalVector*> const& x,
                                std::vector<GlobalVector*> const& x_prev,
                                double const t, double const dt,
                                NumLib::EquationSystem& ode_sys,
@@ -163,9 +163,10 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
-                                             double const t,
-                                             int const process_id) override;
+    void setInitialConditionsConcreteProcess(
+        std::vector<GlobalVector*> const& x,
+        double const t,
+        int const process_id) override;
 
     void assembleConcreteProcess(const double t, double const dt,
                                  std::vector<GlobalVector*> const& x,

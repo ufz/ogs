@@ -349,7 +349,7 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
 
 template <int DisplacementDim>
 void ThermoHydroMechanicsProcess<DisplacementDim>::
-    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*> const& x,
                                         double const t,
                                         int const process_id)
 {

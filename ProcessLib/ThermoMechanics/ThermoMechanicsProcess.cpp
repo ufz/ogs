@@ -204,7 +204,7 @@ void ThermoMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
 
 template <int DisplacementDim>
 void ThermoMechanicsProcess<DisplacementDim>::
-    setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
+    setInitialConditionsConcreteProcess(std::vector<GlobalVector*> const& x,
                                         double const t, int const process_id)
 {
     DBUG("Set initial conditions of SmallDeformationProcess.");

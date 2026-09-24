@@ -47,9 +47,10 @@ private:
         MeshLib::Mesh const& mesh,
         unsigned const integration_order) override;
 
-    void setInitialConditionsConcreteProcess(std::vector<GlobalVector*>& x,
-                                             double const t,
-                                             int const process_id) override;
+    void setInitialConditionsConcreteProcess(
+        std::vector<GlobalVector*> const& x,
+        double const t,
+        int const process_id) override;
 
     void assembleConcreteProcess(double const t, double const dt,
                                  std::vector<GlobalVector*> const& x,
