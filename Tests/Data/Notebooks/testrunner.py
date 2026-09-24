@@ -138,14 +138,15 @@ def check_and_modify_frontmatter():
         repo = os.environ["CI_MERGE_REQUEST_SOURCE_PROJECT_URL"]
         branch = os.environ["CI_MERGE_REQUEST_SOURCE_BRANCH_NAME"]
 
-    notebook_url_path = f"lab/tree/ogs/{notebook_file_path_relative}"
+    notebook_path = notebook_file_path_relative.as_posix()
+    notebook_url_path = f"lab/tree/ogs/{notebook_path}"
     sparse_paths = sparse_paths_for_notebook(
         notebook_file_path_relative, args.binder_additional_path
     )
     binder_link = f"https://binder.opengeosys.org/v2/gh/bilke/binder-ogs-requirements/{petsc_prefix}{binder_tag}?urlpath=git-pull%3Frepo={repo}%26urlpath={notebook_url_path}%26branch={branch}%26depth=1{sparse_path_query(sparse_paths)}"
     metadata = (
         "notebook = true\n"
-        f'notebook_source_url = "{repo}/-/blob/{branch}/{notebook_file_path_relative}"\n'
+        f'notebook_source_url = "{repo}/-/blob/{branch}/{notebook_path}"\n'
         f'notebook_source_name = "{notebook_filename}"\n'
         f'notebook_binder_url = "{binder_link}"\n'
     )
