@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+echo "OGS_VERSION=${CI_COMMIT_TAG:-$(git describe --tags --long --dirty --always)}" >> build.env
+echo "OGS_LAST_TAG=${CI_COMMIT_TAG:-$(git describe --abbrev=0)}" >> build.env
+if [ -n "${CI_MERGE_REQUEST_IID:-}" ]; then
+  echo "Parsing CI-variables from MR description..."
+
+  # Fetch MR description from GitLab API
+  MR_DESC=$(curl --silent --header "PRIVATE-TOKEN: $CI_JOB_TOKEN" \
+    "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID" \
+    | jq -r '.description')
+
+  in_block=0
+  in_comment=0
+
+  while IFS= read -r line; do
+    # Track HTML comment start/end
+    if [[ "$line" =~ "<!--" ]]; then
+      in_comment=1
+    fi
+    if [[ "$line" =~ "-->" ]]; then
+      in_comment=0
+      continue
+    fi
+
+    # Skip everything inside comment
+    if [ $in_comment -eq 1 ]; then
+      continue
+    fi
+
+    # Detect CI variables block
+    if [[ "$line" =~ ^CI-variables: ]]; then
+      in_block=1
+      continue
+    fi
+    if [[ "$line" =~ ^\`\`\` ]] && [ $in_block -eq 1 ]; then
+      in_block=2
+      continue
+    fi
+    if [[ "$line" =~ ^\`\`\` ]] && [ $in_block -eq 2 ]; then
+      in_block=0
+      continue
+    fi
+    if [ $in_block -eq 2 ]; then
+      if [[ "$line" =~ [\;\|\&\`\(\)\{\}] ]]; then
+          echo "Invalid characters in $line (from MR description)."
+          exit 1
+      fi
+      echo "$line" >> build.env
+    fi
+  done <<< "$MR_DESC"
+fi
