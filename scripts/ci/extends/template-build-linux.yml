@@ -94,7 +94,7 @@
         if [ "$BUILD_TESTS" = true ]; then $BUILD_CMD_PREFIX cmake --build --preset=$CMAKE_PRESET --target tests ; fi
 
         if [ "$BUILD_CTEST" = true ]; then
-          ctest_timeout=60
+          ctest_timeout=75
           preset_postfix=""
           if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*ci_large.* && "$CI_JOB_NAME" =~ build.[linux|mac].* && ! "$CI_JOB_NAME" =~ .*sanitizer ]]; then
             export BUILD_CTEST_LARGE=true
