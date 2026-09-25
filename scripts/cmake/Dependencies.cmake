@@ -414,6 +414,25 @@ else()
     )
 endif()
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang")
+    include(CheckCXXSourceCompiles)
+    # range-v3 0.12 uses _LIBCPP_TEMPLATE_VIS when libc++ is detected. Newer
+    # libc++ headers no longer define that internal macro.
+    check_cxx_source_compiles(
+        "#include <__config>
+         #ifndef _LIBCPP_TEMPLATE_VIS
+         #error This libc++ version needs the range-v3 workaround.
+         #endif
+         int main() { return 0; }"
+        OGS_LIBCPP_HAS_TEMPLATE_VIS
+    )
+    if(NOT OGS_LIBCPP_HAS_TEMPLATE_VIS)
+        target_compile_definitions(
+            range-v3 INTERFACE META_NO_STD_FORWARD_DECLARATIONS
+        )
+    endif()
+endif()
+
 if(NOT (GUIX_BUILD OR CONDA_BUILD))
     if((OGS_BUILD_TESTING OR OGS_BUILD_UTILS))
         CPMAddPackage(
