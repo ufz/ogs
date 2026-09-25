@@ -116,7 +116,15 @@ if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "test")
         message(FATAL_ERROR "CTest test failed with exit code ${_test_result}.")
     endif()
     if(NOT "$ENV{CTEST_SUBMIT}" STREQUAL "false")
-        ctest_submit(PARTS Test RETURN_VALUE _submit_result)
+        set(_submit_parts Test)
+        set(_buildinfo_file
+            "${CTEST_BINARY_DIRECTORY}/Testing/Notes/buildinfo.txt"
+        )
+        if(EXISTS "${_buildinfo_file}")
+            set(CTEST_NOTES_FILES "${_buildinfo_file}")
+            list(APPEND _submit_parts Notes)
+        endif()
+        ctest_submit(PARTS ${_submit_parts} RETURN_VALUE _submit_result)
         if(_submit_result)
             message(
                 FATAL_ERROR
