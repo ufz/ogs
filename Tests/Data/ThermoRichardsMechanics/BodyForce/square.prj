@@ -59,11 +59,6 @@
                             <type>Constant</type>
                             <value>0.001</value>
                         </property>
-                        <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>4e-4</value>
-                        </property>
                     </properties>
                 </phase>
                 <phase>
