@@ -189,39 +189,9 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>E</name>
-            <type>Constant</type>
-            <value>2.7e9</value>
-        </parameter>
-        <parameter>
-            <name>nu</name>
-            <type>Constant</type>
-            <value>0.33</value>
-        </parameter>
-        <parameter>
-            <name>displacement0</name>
-            <type>Constant</type>
-            <values>0 0 0</values>
-        </parameter>
-        <parameter>
             <name>pressure_ic</name>
             <type>Constant</type>
             <values>-1e3</values>
-        </parameter>
-        <parameter>
-            <name>dirichlet0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>neumann0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>pressure_bc_left</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
         <parameter>
             <name>temperature0</name>
