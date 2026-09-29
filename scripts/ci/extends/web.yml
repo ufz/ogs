@@ -19,6 +19,6 @@
       find Tests/Data -type f \( -name "*.prj" -o -name "*.md" -o -name "*.xml" -o -name "*.include" \) | while IFS= read -r file; do
         target_dir="build/release/web/static/docs/featurematrix/bundle/$(dirname "$file")"
         mkdir -p "$target_dir"
-        ln -sf "$(realpath "$file")" "$target_dir/$(basename "$file")"
+        cp -p "$file" "$target_dir/"
       done
     - cmake --build --preset release -t web
