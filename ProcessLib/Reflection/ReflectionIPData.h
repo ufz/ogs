@@ -255,8 +255,18 @@ struct GetFlattenedIPDataFromLocAsm
 
             if constexpr (num_comp == 1)
             {
-                // scalar
-                result[ip] = ip_data;
+                // scalar; ip_data is either already a raw double, or (a
+                // GlobalDim = 1 vector field, e.g.
+                // GlobalDimVector<1>/GlobalDimMatrix<1>) a 1x1 Eigen matrix,
+                // which does not convert implicitly to double.
+                if constexpr (std::is_arithmetic_v<ConcreteIPData>)
+                {
+                    result[ip] = ip_data;
+                }
+                else
+                {
+                    result[ip] = ip_data(0, 0);
+                }
             }
             else if constexpr (num_rows == MathLib::KelvinVector::
                                                kelvin_vector_dimensions(Dim) &&
