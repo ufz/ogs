@@ -199,11 +199,6 @@
             <value>0.3</value>
         </parameter>
         <parameter>
-            <name>T0</name>
-            <type>Constant</type>
-            <value>273.15</value>
-        </parameter>
-        <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0</values>
@@ -215,11 +210,6 @@
         </parameter>
         <parameter>
             <name>dirichlet0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>Neumann0</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>

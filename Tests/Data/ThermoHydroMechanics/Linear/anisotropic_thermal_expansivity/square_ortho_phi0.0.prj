@@ -188,11 +188,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>pressure_bc_left</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>temperature0</name>
             <type>Constant</type>
             <value>293.15</value>

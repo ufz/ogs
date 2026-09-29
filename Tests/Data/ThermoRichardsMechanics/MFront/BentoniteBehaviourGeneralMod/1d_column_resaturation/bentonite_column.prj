@@ -232,11 +232,6 @@
             <value>298.15</value>   <!-- same as the IC -->
         </parameter>
         <parameter>
-            <name>pressure_BC_bot</name>
-            <type>Constant</type>
-            <value>-100.e6</value>  <!-- in kPa -->
-        </parameter>
-        <parameter>
             <name>pressure_BC_top</name>
             <type>Function</type>
             <expression>if (t &lt;=3600, -100.e6*(1-t/3600), 0)</expression> <!-- in kPa -->

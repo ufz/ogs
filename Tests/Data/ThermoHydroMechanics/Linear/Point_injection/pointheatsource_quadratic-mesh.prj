@@ -203,11 +203,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>Neumann0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>temperature_ic</name>
             <type>Constant</type>
             <value>273.15</value>
