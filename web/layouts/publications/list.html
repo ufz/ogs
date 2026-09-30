@@ -2,6 +2,7 @@
 {{ $pagesWithImage := where .RegularPagesRecursive "Params.image" "ne" nil }}
 {{ $paginator := .Paginate ($pagesWithImage.ByDate.Reverse) }}
 {{ $softwareCitationKeys := slice "ogs:latest" "ogstools:latest" }}
+{{ $featuredPublicationKeys := slice "bilke2019" "Meisel2026" }}
 
 <section class="border-b border-gray-200 bg-gray-50">
   <div class="mx-auto w-full px-4 py-12 sm:px-6 lg:max-w-7xl lg:py-16">
@@ -64,6 +65,68 @@
           <a class="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600"
             href="{{ . }}">
             Zenodo Release
+          </a>
+          {{ end }}
+          {{ with $bibtex }}
+          <button
+            class="js-copy-bibtex-source inline-flex items-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-800 transition hover:border-brand-300 hover:text-brand-700"
+            type="button" data-target="{{ $bibtexId }}">
+            Copy BibTeX
+          </button>
+          <pre id="{{ $bibtexId }}" class="hidden">{{ . }}</pre>
+          {{ end }}
+        </div>
+      </article>
+      {{ end }}
+      {{ end }}
+    </div>
+
+    <div id="featured-publications" class="mt-5 grid gap-5 md:grid-cols-2">
+      {{ range $featuredPublicationKeys }}
+      {{ $citationKey := . }}
+      {{ $publication := false }}
+      {{ range where $.Site.RegularPages "Section" "publications" }}
+      {{ if eq (lower (.Params.citationKey | default "")) (lower $citationKey) }}
+      {{ $publication = . }}
+      {{ end }}
+      {{ end }}
+      {{ if $publication }}
+      {{ $authors := $publication.Params.authors | default (slice) }}
+      {{ $authorText := "" }}
+      {{ if gt (len $authors) 3 }}
+      {{ $authorText = printf "%s et al." (index $authors 0) }}
+      {{ else if gt (len $authors) 0 }}
+      {{ $authorText = delimit $authors ", " }}
+      {{ end }}
+      {{ $venue := $publication.Params.journal | default $publication.Params.publisher }}
+      {{ $doi := $publication.Params.doi | default "" }}
+      {{ $doiUrl := "" }}
+      {{ if $doi }}
+      {{ if or (hasPrefix $doi "http://") (hasPrefix $doi "https://") }}
+      {{ $doiUrl = $doi }}
+      {{ else }}
+      {{ $doiUrl = printf "https://doi.org/%s" $doi }}
+      {{ end }}
+      {{ end }}
+      {{ $bibtex := $publication.Params.bibtex | default "" }}
+      {{ $bibtexId := printf "featured-bibtex-%s" $publication.File.UniqueID }}
+      <article class="rounded-lg border border-gray-200 bg-white p-5">
+        <div class="font-mono text-[11px] font-semibold tracking-widest text-teal-700">
+          FEATURED PUBLICATION
+        </div>
+        <h2 class="mt-3 text-xl font-bold tracking-tight text-gray-950">
+          <a class="hover:text-brand-700" href="{{ $publication.RelPermalink }}">
+            {{ $publication.Title | safeHTML }}
+          </a>
+        </h2>
+        <p class="mt-3 text-sm leading-relaxed text-gray-600">
+          {{ with $authorText }}{{ . }}{{ end }}{{ with $publication.Params.year }} ({{ . }}){{ end }}{{ with $venue }}. {{ . }}.{{ end }}
+        </p>
+        <div class="mt-5 flex flex-wrap gap-3">
+          {{ with $doiUrl }}
+          <a class="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600"
+            href="{{ . }}">
+            Read Publication
           </a>
           {{ end }}
           {{ with $bibtex }}
