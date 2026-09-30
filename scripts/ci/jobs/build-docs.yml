@@ -165,7 +165,14 @@ spell check docs:
   stage: check
   needs: []
   script:
-    - vale web/content --output ./Documentation/.vale/vale-json.tmpl > vale-report.json
+    - |
+      if vale web/content --output ./Documentation/.vale/vale-json.tmpl > vale-report.json; then
+        :
+      else
+        echo "There were spell check errors:"
+        vale web/content
+        exit 1
+      fi
   artifacts:
     paths:
       - vale-report.json

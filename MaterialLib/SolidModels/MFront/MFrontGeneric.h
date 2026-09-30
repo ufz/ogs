@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <array>
 // clang-format off
 // The exception include is needed as in MGIS-rliv-2.2 branch it is missing.
 // TODO(naumov): remove after TFEL-5 update.
@@ -559,12 +560,19 @@ public:
                 behaviour_data.s1.thermodynamic_forces.data()});
 
         auto v = mgis::behaviour::make_view(behaviour_data);
+        std::array<char, 512> error_message{};
+        v.error_message = error_message.data();
         auto const status = mgis::behaviour::integrate(v, _behaviour);
         if (status != 1)
         {
-            throw NumLib::AssemblyException(
-                "MFront: integration failed with status " +
-                std::to_string(status) + ".");
+            auto message = "MFront: integration failed with status " +
+                           std::to_string(status) + ".";
+            if (error_message[0] != '\0')
+            {
+                message += "\nMFront diagnostic: ";
+                message += error_message.data();
+            }
+            throw NumLib::AssemblyException(message);
         }
 
         OGSMFrontThermodynamicForcesData tdyn_forces_data;

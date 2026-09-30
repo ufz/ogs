@@ -1,7 +1,11 @@
 mfront_behaviours_check_library(
-    OgsMFrontBehaviourForUnitTests CheckParamPassing1
-    CheckStiffnessMatrixAllBlocks CheckStiffnessMatrixAllBlocksReordered
-    CheckStiffnessMatrixExcessBlocks CheckStiffnessMatrixMissingBlocks
+    OgsMFrontBehaviourForUnitTests
+    CheckIntegrationFailure
+    CheckParamPassing1
+    CheckStiffnessMatrixAllBlocks
+    CheckStiffnessMatrixAllBlocksReordered
+    CheckStiffnessMatrixExcessBlocks
+    CheckStiffnessMatrixMissingBlocks
 )
 
 # Disable warnings for generated OgsMFrontBehaviourForUnitTests

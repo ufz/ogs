@@ -1,0 +1,23 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
+// vim: ft=cpp sw=2 ts=2 sts=2 et
+
+@DSL DefaultGenericBehaviour;
+@Behaviour CheckIntegrationFailure;
+@Author Aqeel Afzal Chaudhry;
+@Date 28 / 09 / 2026;
+@Description {
+  Check propagation of MFront integration failure diagnostics to OGS.
+}
+
+@Gradient StrainStensor eps_total;
+eps_total.setGlossaryName("Strain");
+
+@Flux StressStensor sigma;
+sigma.setGlossaryName("Stress");
+
+@ProvidesTangentOperator;
+@Integrator {
+  tfel::raise("MFront unit-test diagnostic");
+}
