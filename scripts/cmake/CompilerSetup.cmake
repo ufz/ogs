@@ -93,7 +93,7 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL
             add_compile_options(
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-array-bounds>
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overflow>
-                $<$<COMPILE_LANGUAGE:CXX>:-Wmaybe-uninitialized>
+                $<$<COMPILE_LANGUAGE:CXX>:-Wno-maybe-uninitialized>
             )
         endif()
     endif()
