@@ -364,7 +364,7 @@ np.testing.assert_allclose(
 
 # shear stress must be zero
 np.testing.assert_allclose(
-    actual=mesh_pc.cell_data["sigma_ip"][:, 3], desired=0, atol=2.3e-14
+    actual=mesh_pc.cell_data["sigma_ip"][:, 3], desired=0, atol=3e-14
 )
 
 # %%

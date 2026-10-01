@@ -148,7 +148,6 @@ std::ostream& operator<<(std::ostream& os, RejectedMedium const& c)
 {
     return os << c.name;
 }
-}  // namespace
 
 // Without either property there is no thermo-osmosis. The helper returns an
 // exact Eigen::Matrix::Zero(), so the test pins exact zeros rather than
@@ -353,3 +352,4 @@ TEST(ProcessLibCheckThermoOsmosisProperties, AcceptsValidParametrisations)
         EXPECT_NO_THROW(ProcessLib::checkThermoOsmosisProperties(*medium));
     }
 }
+}  // namespace

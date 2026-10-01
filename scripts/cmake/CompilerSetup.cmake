@@ -76,26 +76,32 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL
             )
         endif()
         add_compile_options($<$<COMPILE_LANGUAGE:CXX>:-fext-numeric-literals>)
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.1.1
-           OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.2.1
-           OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 13.3.0
-           OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 14.1.1
-           OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 14.2.1
+        # GCC versions reporting false positives from inlined Eigen code despite
+        # Eigen being a SYSTEM include. Listed explicitly so that fixed future
+        # versions report these warnings again. See
+        # https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/5037
+        set(_gcc_versions_with_eigen_false_positives 13.3.0 14.1.1 14.2.1
+                                                     15.2.1 16.1.1 16.2.1
         )
-            # See https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/5037
+        if(CMAKE_CXX_COMPILER_VERSION IN_LIST
+           _gcc_versions_with_eigen_false_positives
+        )
             add_compile_options(
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-array-bounds>
                 $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overflow>
-                $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overread>
             )
+            if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS 15)
+                add_compile_options(
+                    $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overread>
+                )
+            endif()
+            if(CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 15)
+                add_compile_options(
+                    $<$<COMPILE_LANGUAGE:CXX>:-Wno-maybe-uninitialized>
+                )
+            endif()
         endif()
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 15.2.1)
-            add_compile_options(
-                $<$<COMPILE_LANGUAGE:CXX>:-Wno-array-bounds>
-                $<$<COMPILE_LANGUAGE:CXX>:-Wno-stringop-overflow>
-                $<$<COMPILE_LANGUAGE:CXX>:-Wmaybe-uninitialized>
-            )
-        endif()
+        unset(_gcc_versions_with_eigen_false_positives)
     endif()
 
     if(COMPILER_IS_CLANG)
