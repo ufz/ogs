@@ -14,6 +14,7 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Common/HydraulicProcess/checkVolumeBalanceEquationSetting.h"
 #include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
+#include "ProcessLib/Common/LiquidThermalExpansion/CheckLiquidThermalExpansivity.h"
 #include "ProcessLib/Common/ThermoOsmosis/CheckThermoOsmosisProperties.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -170,6 +171,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         config.getConfigParameter("linear", false);
 
     checkThermoOsmosisProperties(media);
+    checkLiquidThermalExpansivity(media);
 
     auto media_map =
         MaterialPropertyLib::createMaterialSpatialDistributionMap(media, mesh);
