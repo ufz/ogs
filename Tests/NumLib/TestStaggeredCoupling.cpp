@@ -139,7 +139,6 @@ struct TimeLoopMockup
         createProcessData();
     std::vector<TestOutput> const outputs;
 };
-}  // namespace
 
 class NumLibStaggeredCoupling : public ::testing::Test
 {
@@ -211,3 +210,4 @@ TEST_F(NumLibStaggeredCoupling, DISABLED_RejectsTimeStepIfNonlinearSolverFails)
     EXPECT_EQ(1, coupling.lastNumberOfCouplingIterations());
     EXPECT_FALSE(status.error_norms_met);
 }
+}  // namespace
