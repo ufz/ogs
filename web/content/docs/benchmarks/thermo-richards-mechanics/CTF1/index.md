@@ -9,7 +9,7 @@ image = "CTF1_results_S.jpg"
 {{< data-link >}}
 
 This test simulates the coupled thermal hydraulic processes in
- In the CTF1 experiment carried out by Villar et al. [[1]](#1).
+the CTF1 experiment carried out by Villar et al. [[1]](#1).
 
 The description of this test can be found in
 the paper by Wang et al. [[2]](#2). In the calculation, the formula of
