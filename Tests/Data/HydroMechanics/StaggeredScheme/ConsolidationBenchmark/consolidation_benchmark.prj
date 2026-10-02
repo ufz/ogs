@@ -14,8 +14,7 @@
             <coupling_scheme>
                 <type>staggered</type>
                 <fixed_stress_stabilization_parameter>
-                    1.0 </fixed_stress_stabilization_parameter>
-                <fixed_stress_over_time_step>true</fixed_stress_over_time_step>
+                    0.5 </fixed_stress_stabilization_parameter>
             </coupling_scheme>
             <integration_order>4</integration_order>
             <constitutive_relation>
@@ -90,7 +89,7 @@
     </media>
     <time_loop>
         <global_process_coupling>
-            <max_iter> 2 </max_iter>
+            <max_iter> 20 </max_iter>
             <convergence_criteria>
                 <!-- convergence criterion for the first process -->
                 <convergence_criterion>

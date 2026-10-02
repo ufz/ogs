@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="consolidation_benchmark.prj">
+    <add sel="/*/processes/process/coupling_scheme">
+        <fixed_stress_over_time_step>true</fixed_stress_over_time_step>
+    </add>
+    <!-- The two fixed-stress stabilisation variants converge to different
+         discrete solutions, so this variant records its own reference
+         results; the tolerance values follow the base benchmark. -->
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>ConsolidationBenchmark_ts_12_t_6.000000.vtu</file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>ConsolidationBenchmark_ts_12_t_6.000000.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>2e-8</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>ConsolidationBenchmark_ts_20_t_10.000000.vtu</file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-15</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>ConsolidationBenchmark_ts_20_t_10.000000.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>2e-8</absolute_tolerance>
+                <relative_tolerance>1e-15</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
