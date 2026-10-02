@@ -195,34 +195,11 @@
             <value>1.523e6</value>
         </parameter>
         <parameter>
-            <name>pressure_bc_left</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>temperature0</name>
             <type>Constant</type>
             <value>293.15</value>
         </parameter>
-        <parameter>
-            <name>Tvalue</name>
-            <type>Constant</type>
-            <value>293.15</value>
-        </parameter>
-        <parameter>
-            <name>temperature1</name>
-            <type>CurveScaled</type>
-            <parameter>Tvalue</parameter>
-            <curve>Tcurve</curve>
-        </parameter>
     </parameters>
-    <curves>
-        <curve>
-            <name>Tcurve</name>
-            <coords>0 1</coords>
-            <values>1 1.5</values>
-        </curve>
-    </curves>
     <process_variables>
         <process_variable>
             <name>displacement</name>

@@ -199,13 +199,6 @@
             <values>-0.55919290347074683016 0.829037572555041692</values>
         </parameter>
         <parameter>
-            <name>ThermalConductivityClay</name>
-            <type>Constant</type>
-            <values>2.75862068965517 0 0 1.49425287356322</values>
-            <use_local_coordinate_system>true
-              </use_local_coordinate_system>
-        </parameter>
-        <parameter>
             <name>IntrinsicPermClay</name>
             <type>Constant</type>
             <values>1e-20 0 0 1e-20</values>
