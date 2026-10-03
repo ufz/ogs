@@ -75,6 +75,7 @@ foreach(process ${_enabled_processes})
     )
         append_source_and_header_files(
             _sources _headers _private DIRECTORIES Common/ThermoOsmosis
+            Common/LiquidThermalExpansion
         )
         break()
     endif()

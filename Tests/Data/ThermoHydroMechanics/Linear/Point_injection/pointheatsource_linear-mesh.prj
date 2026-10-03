@@ -48,18 +48,30 @@
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Linear</type>
-                            <reference_value>999.1</reference_value>
-                            <independent_variable>
+                            <type>Function</type>
+                            <value>
+                                <expression> 999.1</expression>
+                            </value>
+                            <dvalue>
+                                <!-- As a special case of the liquid thermal expansion model,
+                                 the classic point heat source benchmark uses a constant liquid
+                                 density ($\rho_L$) together with a constant liquid thermal
+                                 expansivity ($\alpha_L^T$). This setup allows an analytical
+                                 solution, although the flow equation is no longer a physically
+                                 based mass balance because
+                                 $\alpha_L^T \neq -\frac{\partial \rho_L}{\partial T} / \rho_L$.
+                                 Therefore, the dvalue is fixed to a constant value of -4e-4 * 999.1
+                                 so that the flow equation remains consistent with the analytical
+                                 solution, which is used only to evaluate the liquid thermal
+                                 expansivity through the dValue function.
+                                 -->
                                 <variable_name>temperature</variable_name>
-                                <reference_condition>273.15</reference_condition>
-                                <slope>-4e-4</slope>
-                            </independent_variable>
-                        </property>
-                        <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>4.0e-4</value>
+                                <expression>-4e-4 * 999.1</expression>
+                            </dvalue>
+                            <dvalue>
+                                <variable_name>liquid_phase_pressure</variable_name>
+                                <expression>0.0</expression>
+                            </dvalue>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -185,11 +197,6 @@
         </parameter>
         <parameter>
             <name>dirichlet0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>Neumann0</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>

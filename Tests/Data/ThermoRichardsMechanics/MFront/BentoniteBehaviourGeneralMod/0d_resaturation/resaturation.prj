@@ -64,11 +64,6 @@
                             <value>999.1</value>
                         </property>
                         <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>1e-5</value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1.e-3</value>

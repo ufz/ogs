@@ -52,11 +52,6 @@
                             </independent_variable>
                         </property>
                         <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>2.07e-4</value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1.278e-9</value>
@@ -135,11 +130,6 @@
                                 <reference_condition>283.15</reference_condition>
                                 <slope>-2.07e-4</slope>
                             </independent_variable>
-                        </property>
-                        <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>2.07e-4</value>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -225,11 +215,6 @@
                                 <reference_condition>283.15</reference_condition>
                                 <slope>-2.07e-4</slope>
                             </independent_variable>
-                        </property>
-                        <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>2.07e-4</value>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -366,11 +351,6 @@
         </parameter>
         <parameter>
             <name>dirichlet0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>Neumann0</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>

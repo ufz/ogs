@@ -12,7 +12,6 @@
 #include "MaterialLib/MPL/Utils/FormEffectiveThermalConductivity.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormEigenVector.h"
-#include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "NumLib/Fem/Interpolation.h"
@@ -443,9 +442,14 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
         //
         // pressure equation, temperature part.
         //
+        // d(rho)/dT of the fluid, derived from the density model's
+        // temperature dependence.
+        double const drho_LR_dT =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template dValue<double>(variables, MPL::Variable::temperature,
+                                         x_position, t, dt);
         double const fluid_volumetric_thermal_expansion_coefficient =
-            MPL::getLiquidThermalExpansivity(liquid_phase, variables, rho_LR,
-                                             x_position, t, dt);
+            (rho_LR == 0.0) ? 0.0 : -drho_LR_dT / rho_LR;
         const double eff_thermal_expansion =
             S_L * (alphaB_minus_phi *
                        solid_linear_thermal_expansion_coefficient.trace() +
@@ -583,12 +587,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::
                     gas_phase->property(MPL::PropertyType::specific_latent_heat)
                         .template value<double>(variables, x_position, t, dt) *
                     rho_LR;
-
-                double const drho_LR_dT =
-                    liquid_phase.property(MPL::PropertyType::density)
-                        .template dValue<double>(variables,
-                                                 MPL::Variable::temperature,
-                                                 x_position, t, dt);
 
                 double const rho_wv_over_rho_L = rho_wv / rho_LR;
                 M_TT.noalias() +=
@@ -896,9 +894,14 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
         //
         // pressure equation, temperature part.
         //
+        // d(rho)/dT of the fluid, derived from the density model's
+        // temperature dependence.
+        double const drho_LR_dT =
+            liquid_phase.property(MPL::PropertyType::density)
+                .template dValue<double>(variables, MPL::Variable::temperature,
+                                         x_position, t, dt);
         double const fluid_volumetric_thermal_expansion_coefficient =
-            MPL::getLiquidThermalExpansivity(liquid_phase, variables, rho_LR,
-                                             x_position, t, dt);
+            (rho_LR == 0.0) ? 0.0 : -drho_LR_dT / rho_LR;
         const double eff_thermal_expansion =
             S_L * (alphaB_minus_phi *
                        solid_linear_thermal_expansion_coefficient.trace() +
@@ -1054,12 +1057,6 @@ void ThermoRichardsFlowLocalAssembler<ShapeFunction, GlobalDim>::assemble(
                     gas_phase->property(MPL::PropertyType::specific_latent_heat)
                         .template value<double>(variables, x_position, t, dt) *
                     rho_LR;
-
-                double const drho_LR_dT =
-                    liquid_phase.property(MPL::PropertyType::density)
-                        .template dValue<double>(variables,
-                                                 MPL::Variable::temperature,
-                                                 x_position, t, dt);
 
                 double const rho_wv_over_rho_L = rho_wv / rho_LR;
                 local_M

@@ -52,11 +52,6 @@
                             </independent_variable>
                         </property>
                         <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>2.07e-4</value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1.278e-9</value>

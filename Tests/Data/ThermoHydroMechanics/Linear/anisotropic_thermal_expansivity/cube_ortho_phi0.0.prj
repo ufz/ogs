@@ -64,11 +64,6 @@
                             </independent_variable>
                         </property>
                         <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>3.98e-4</value>
-                        </property>
-                        <property>
                             <name>viscosity</name>
                             <type>Constant</type>
                             <value>1.e-3</value>
@@ -196,11 +191,6 @@
         </parameter>
         <parameter>
             <name>neumann0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>pressure_bc_left</name>
             <type>Constant</type>
             <value>0</value>
         </parameter>

@@ -18,6 +18,7 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
+#include "ProcessLib/Common/LiquidThermalExpansion/CheckLiquidThermalExpansivity.h"
 #include "ProcessLib/Common/ThermoOsmosis/CheckThermoOsmosisProperties.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
@@ -53,6 +54,7 @@ void checkMPLProperties(
     }
 
     checkThermoOsmosisProperties(media);
+    checkLiquidThermalExpansivity(media);
 }
 
 void checkProcessVariableComponents(ProcessVariable const& variable,

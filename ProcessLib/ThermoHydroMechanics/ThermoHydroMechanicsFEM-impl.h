@@ -11,7 +11,6 @@
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/FormKelvinVector.h"
-#include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
 #include "MaterialLib/SolidModels/SelectSolidConstitutiveRelation.h"
 #include "MathLib/EigenBlockMatrixView.h"
 #include "MathLib/KelvinVector.h"
@@ -359,6 +358,8 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
     crv.fluid_compressibility = 1 / fluid_density * drho_dp;
 
+    // d(rho)/dT of the fluid, derived from the density model's
+    // temperature dependence.
     crv.drho_LR_dT =
         liquid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template dValue<double>(vars,
@@ -366,8 +367,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                                      x_position, t, dt);
 
     double const fluid_volumetric_thermal_expansion_coefficient =
-        MaterialPropertyLib::getLiquidThermalExpansivity(
-            liquid_phase, vars, fluid_density, x_position, t, dt);
+        (fluid_density == 0.0) ? 0.0 : -crv.drho_LR_dT / fluid_density;
 
     // Use the viscosity model to compute the viscosity
     ip_data_output.viscosity =
@@ -1023,8 +1023,16 @@ void ThermoHydroMechanicsLocalAssembler<
             auto const solid_skeleton_compressibility =
                 1 / solid_material.getBulkModulus(t, x_position, &C_el);
             double const fluid_volumetric_thermal_expansion_coefficient =
-                MaterialPropertyLib::getLiquidThermalExpansivity(
-                    liquid_phase, vars, fluid_density, x_position, t, dt);
+                (fluid_density == 0.0)
+                    ? 0.0
+                    : -liquid_phase
+                           .property(
+                               MaterialPropertyLib::PropertyType::density)
+                           .template dValue<double>(
+                               vars,
+                               MaterialPropertyLib::Variable::temperature,
+                               x_position, t, dt) /
+                          fluid_density;
 
             KTT.noalias() +=
                 dNdx.transpose() *

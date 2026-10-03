@@ -67,13 +67,29 @@
                         </property>
                         <property>
                             <name>density</name>
-                            <type>Constant</type>
-                            <value>1000</value>
-                        </property>
-                        <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>4e-4</value>   <!-- Pitz et al. -->
+                            <type>Function</type>
+                            <value>
+                                <expression>1000.0</expression>
+                            </value>
+                            <dvalue>
+                                <!-- As a special case of the liquid thermal expansion model,
+                                 this benchmark uses a constant liquid density ($\rho_L$)
+                                 together with a constant liquid thermal expansivity
+                                 ($\alpha_L^T$ = 4e-4, Pitz et al.), as in the original setup,
+                                 although the flow equation is then no longer a physically based
+                                 mass balance because
+                                 $\alpha_L^T \neq -\frac{\partial \rho_L}{\partial T} / \rho_L$.
+                                 Therefore, the dvalue is fixed to a constant value of -4e-4 * 1000.0,
+                                 which is used only to evaluate the liquid thermal expansivity
+                                 through the dValue function.
+                                 -->
+                                <variable_name>temperature</variable_name>
+                                <expression>-0.4</expression>
+                            </dvalue>
+                            <dvalue>
+                                <variable_name>liquid_phase_pressure</variable_name>
+                                <expression>0.0</expression>
+                            </dvalue>
                         </property>
                         <property>
                             <name>viscosity</name>
@@ -214,11 +230,6 @@
             <name>temperature_BC</name>
             <type>Constant</type>
             <value>298.15</value>   <!-- same as the IC -->
-        </parameter>
-        <parameter>
-            <name>pressure_BC_bot</name>
-            <type>Constant</type>
-            <value>-100.e6</value>  <!-- in kPa -->
         </parameter>
         <parameter>
             <name>pressure_BC_top</name>

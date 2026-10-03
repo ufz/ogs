@@ -3,7 +3,7 @@
 
 #include "FluidThermalExpansionModel.h"
 
-#include "MaterialLib/MPL/Utils/GetLiquidThermalExpansivity.h"
+#include "MaterialLib/MPL/Phase.h"
 
 namespace ProcessLib::ThermoRichardsMechanics
 {
@@ -27,10 +27,18 @@ void FluidThermalExpansionModel<DisplacementDim>::eval(
 
     double const phi = poro_data.phi;
 
+    // d(rho)/dT of the fluid, derived from the density model's
+    // temperature dependence.
+    double const dRho_LR_dT =
+        media_data.liquid.property(MPL::PropertyType::density)
+            .template dValue<double>(variables, MPL::Variable::temperature,
+                                     x_t.x, x_t.t, x_t.dt);
+
+    // Fluid's contribution to the effective thermal expansion, scaled by
+    // porosity.
     double const fluid_volumetric_thermal_expansion =
-        phi * MPL::getLiquidThermalExpansivity(media_data.liquid, variables,
-                                               rho_L_data.rho_LR, x_t.x, x_t.t,
-                                               x_t.dt);
+        (rho_L_data.rho_LR == 0.0) ? 0.0
+                                   : -phi * dRho_LR_dT / rho_L_data.rho_LR;
 
     out.eff_thermal_expansion =
         (biot_data() - phi) *

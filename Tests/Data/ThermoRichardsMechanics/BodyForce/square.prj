@@ -59,11 +59,6 @@
                             <type>Constant</type>
                             <value>0.001</value>
                         </property>
-                        <property>
-                            <name>thermal_expansivity</name>
-                            <type>Constant</type>
-                            <value>4e-4</value>
-                        </property>
                     </properties>
                 </phase>
                 <phase>
@@ -202,13 +197,6 @@
             <type>Constant</type>
             <!-- 34 degrees bedding angle -->
             <values>-0.55919290347074683016 0.829037572555041692</values>
-        </parameter>
-        <parameter>
-            <name>ThermalConductivityClay</name>
-            <type>Constant</type>
-            <values>2.75862068965517 0 0 1.49425287356322</values>
-            <use_local_coordinate_system>true
-              </use_local_coordinate_system>
         </parameter>
         <parameter>
             <name>IntrinsicPermClay</name>
