@@ -117,10 +117,16 @@
         <processes>
             <process ref="SimpleThermalConvection">
                 <nonlinear_solver>basic_picard</nonlinear_solver>
+                <!-- The pressure is of order 3e7 and the temperature of
+                     order 10, so a single absolute tolerance on the norm of
+                     the whole increment cannot judge both. 1e-3 amounted to a
+                     relative 3e-13 and was reached only once the iterate
+                     stagnated in double precision. -->
                 <convergence_criterion>
-                    <type>DeltaX</type>
+                    <type>PerComponentDeltaX</type>
                     <norm_type>NORM2</norm_type>
-                    <abstol>1.e-3</abstol>
+                    <!-- Order matches the process variables: T, then p. -->
+                    <reltols>1e-8 1e-8</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>
