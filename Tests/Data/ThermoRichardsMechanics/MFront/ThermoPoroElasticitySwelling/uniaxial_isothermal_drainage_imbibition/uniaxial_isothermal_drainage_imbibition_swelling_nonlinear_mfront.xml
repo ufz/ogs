@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="uniaxial_isothermal_drainage_imbibition_swelling_mfront.prj">
+    <replace sel="/*/parameters/parameter[name='swelling_exponent_x']/value/text()">1.2</replace>
+    <replace sel="/*/parameters/parameter[name='swelling_exponent_y']/value/text()">0.8</replace>
+    <replace sel="/*/parameters/parameter[name='lower_saturation_limit']/value/text()">0.55</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">uniaxial_isothermal_drainage_imbibition_swelling_nonlinear_mfront</replace>
+    <replace msel="/*/test_definition/vtkdiff/regex/text()">uniaxial_isothermal_drainage_imbibition_swelling_nonlinear_mfront_ts_.*[.]vtu</replace>
+</OpenGeoSysProjectDiff>

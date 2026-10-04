@@ -124,6 +124,17 @@ if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MultiMaterialEhlers/square_1e1_2_matIDs_restart.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_basic_mfront_model_ctest.xml)
     OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticity/uniaxial_isothermal_drainage_imbibition_extended_mfront_model_ctest.xml)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticitySwelling/non_isothermal_constant_volume_swelling/non_isothermal_constant_volume_swelling_mfront.prj RUNTIME 45)
+    OgsTest(
+        PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticitySwelling/non_isothermal_constant_volume_swelling/non_isothermal_constant_volume_swelling_ogs_native.xml
+        RUNTIME 45
+    )
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticitySwelling/uniaxial_isothermal_drainage_imbibition/uniaxial_isothermal_drainage_imbibition_swelling_mfront.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticitySwelling/uniaxial_isothermal_drainage_imbibition/uniaxial_isothermal_drainage_imbibition_swelling_nonlinear_mfront.xml RUNTIME 1)
+    OgsTest(
+        PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticitySwelling/uniaxial_isothermal_drainage_imbibition/uniaxial_isothermal_drainage_imbibition_swelling_ogs_native.xml
+        RUNTIME 1
+    )
 
     if (NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/A2/A2.xml RUNTIME 8)

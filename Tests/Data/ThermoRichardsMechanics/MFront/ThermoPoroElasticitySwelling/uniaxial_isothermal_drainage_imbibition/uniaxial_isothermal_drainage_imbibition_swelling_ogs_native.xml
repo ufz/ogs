@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="uniaxial_isothermal_drainage_imbibition_swelling_mfront.prj">
+    <remove sel="/*/processes/process/subtype"/>
+    <remove sel="/*/processes/process/constitutive_relation/type"/>
+    <remove sel="/*/processes/process/constitutive_relation/behaviour"/>
+    <remove sel="/*/processes/process/constitutive_relation/material_properties"/>
+    <add sel="/*/processes/process/constitutive_relation">
+        <type>LinearElasticIsotropic</type>
+        <youngs_modulus>E</youngs_modulus>
+        <poissons_ratio>nu</poissons_ratio>
+    </add>
+    <add sel="/*/media/medium[@id='0']/phases/phase[type='Solid']/properties">
+        <property>
+            <name>swelling_stress_rate</name>
+            <type>SaturationDependentSwelling</type>
+            <swelling_pressures>1000000 1500000 0</swelling_pressures>
+            <exponents>1 1 1</exponents>
+            <lower_saturation_limit>0.20</lower_saturation_limit>
+            <upper_saturation_limit>0.9</upper_saturation_limit>
+        </property>
+    </add>
+    <remove sel="/*/parameters/parameter[name='bishops_model_type']"/>
+    <remove sel="/*/parameters/parameter[name='bishops_model_value']"/>
+    <remove sel="/*/parameters/parameter[name='S_L_res']"/>
+    <remove sel="/*/parameters/parameter[name='S_G_res']"/>
+    <remove sel="/*/parameters/parameter[name='p_b']"/>
+    <remove sel="/*/parameters/parameter[name='m_S']"/>
+    <remove sel="/*/parameters/parameter[name='max_swelling_pressure_x']"/>
+    <remove sel="/*/parameters/parameter[name='max_swelling_pressure_y']"/>
+    <remove sel="/*/parameters/parameter[name='max_swelling_pressure_z']"/>
+    <remove sel="/*/parameters/parameter[name='swelling_exponent_x']"/>
+    <remove sel="/*/parameters/parameter[name='swelling_exponent_y']"/>
+    <remove sel="/*/parameters/parameter[name='swelling_exponent_z']"/>
+    <remove sel="/*/parameters/parameter[name='lower_saturation_limit']"/>
+    <remove sel="/*/parameters/parameter[name='upper_saturation_limit']"/>
+</OpenGeoSysProjectDiff>

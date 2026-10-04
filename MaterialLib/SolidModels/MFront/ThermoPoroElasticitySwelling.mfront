@@ -1,0 +1,279 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
+@DSL DefaultGenericBehaviour;
+@Behaviour ThermoPoroElasticitySwelling;
+@Author Aqeel Afzal Chaudhry, Thomas Nagel;
+@Date 29 / 08 / 2026;
+@Description {
+A small-strain isotropic thermo-poroelastic behaviour returning liquid
+saturation and total stress. It combines linear thermoelasticity,
+van Genuchten retention, selectable Bishop effective-stress weighting
+(power law or saturation cutoff), and directional saturation-dependent
+swelling along the global coordinate axes. The swelling stress is updated
+from the exact change in the bounded swelling potential. Analytical
+tangent blocks are provided for strain, temperature, and liquid pressure.
+}
+
+@Gradient StrainStensor εᵗᵒ;
+εᵗᵒ.setGlossaryName("Strain");
+
+@Gradient real p_LR;
+p_LR.setEntryName("LiquidPressure");
+
+@Flux StressStensor σ;
+σ.setGlossaryName("Stress");
+
+@Flux real S_L;
+S_L.setEntryName("Saturation");
+
+@StateVariable StressStensor swelling_stress;
+swelling_stress.setEntryName("swelling_stress");
+
+@TangentOperatorBlocks{∂σ∕∂Δεᵗᵒ, ∂σ∕∂ΔT, ∂σ∕∂Δp_LR, ∂S_L∕∂Δp_LR};
+
+@MaterialProperty stress E;
+E.setGlossaryName("YoungModulus");
+@MaterialProperty real ν;
+ν.setGlossaryName("PoissonRatio");
+@MaterialProperty real α;
+α.setGlossaryName("ThermalExpansion");
+@MaterialProperty real αᵇ;
+αᵇ.setEntryName("BiotCoefficient");
+@MaterialProperty real S_L_res;
+S_L_res.setEntryName("ResidualLiquidSaturation");
+@MaterialProperty real S_G_res;
+S_G_res.setEntryName("ResidualGasSaturation");
+@MaterialProperty real pᵇ;
+pᵇ.setEntryName("BubblePressure");
+@MaterialProperty real m_S;
+m_S.setEntryName("VanGenuchtenExponent_m");
+
+@MaterialProperty real bishop_model_type;
+bishop_model_type.setEntryName("BishopsModelType");
+
+@MaterialProperty real bishop_model_value;
+bishop_model_value.setEntryName("BishopsModelValue");
+
+// Swelling properties (SaturationDependentSwelling as in OGS TRM).
+// Index i of SwellingPressures [Pa] and Exponents [-] acts on the global
+// normal stress component i: xx, yy, zz (rr, zz, θθ if axisymmetric).
+// The saturation limits are dimensionless.
+@MaterialProperty real swelling_pressures[3];
+swelling_pressures.setEntryName("SwellingPressures");
+@MaterialProperty real exponents[3];
+exponents.setEntryName("Exponents");
+@MaterialProperty real lower_saturation_limit;
+lower_saturation_limit.setEntryName("LowerSaturationLimit");
+@MaterialProperty real upper_saturation_limit;
+upper_saturation_limit.setEntryName("UpperSaturationLimit");
+
+@ProvidesTangentOperator;
+@Integrator {
+  const auto is_finite = [](const auto& value) {
+    return tfel::math::ieee754::isfinite(value);
+  };
+  const auto value_as_string = [](const auto& value) {
+    return tfel::material::BoundsCheckBase::convert_to_string(value);
+  };
+
+  if (!is_finite(E) || E <= 0.0) {
+    tfel::raise("Invalid YoungModulus: expected E > 0; got " +
+                value_as_string(E));
+  }
+  if (!is_finite(ν) || ν <= -1.0 || ν >= 0.5) {
+    tfel::raise("Invalid PoissonRatio: expected -1 < nu < 0.5; got " +
+                value_as_string(ν));
+  }
+  if (!is_finite(α)) {
+    tfel::raise("Invalid ThermalExpansion: expected a finite value; got " +
+                value_as_string(α));
+  }
+  if (!is_finite(αᵇ) || αᵇ < 0.0 || αᵇ > 1.0) {
+    tfel::raise(
+        "Invalid BiotCoefficient: expected 0 <= alpha_B <= 1; got " +
+        value_as_string(αᵇ));
+  }
+  if (!is_finite(S_L_res) || !is_finite(S_G_res) || S_L_res < 0.0 ||
+      S_G_res < 0.0 || S_L_res + S_G_res >= 1.0) {
+    tfel::raise(
+        "Invalid residual saturations: expected S_L_res >= 0, "
+        "S_G_res >= 0, and S_L_res + S_G_res < 1; got S_L_res=" +
+        value_as_string(S_L_res) +
+        ", S_G_res=" + value_as_string(S_G_res));
+  }
+  if (!is_finite(pᵇ) || pᵇ <= 0.0) {
+    tfel::raise("Invalid BubblePressure: expected p_b > 0; got " +
+                value_as_string(pᵇ));
+  }
+  if (!is_finite(m_S) || m_S <= 0.0 || m_S >= 1.0) {
+    tfel::raise(
+        "Invalid VanGenuchtenExponent_m: expected 0 < m < 1; got " +
+        value_as_string(m_S));
+  }
+  if (!is_finite(bishop_model_type) ||
+      (bishop_model_type != 0.0 && bishop_model_type != 1.0)) {
+    tfel::raise(
+        "Invalid BishopsModelType: expected 0 (power law) or 1 (cutoff); "
+        "got " +
+        value_as_string(bishop_model_type));
+  }
+  if (bishop_model_type == 0.0) {
+    if (!is_finite(bishop_model_value) || bishop_model_value < 0.0) {
+      tfel::raise(
+          "Invalid BishopsModelValue: expected a non-negative exponent; "
+          "got " +
+          value_as_string(bishop_model_value));
+    }
+  } else {
+    if (!is_finite(bishop_model_value) || bishop_model_value < 0.0 ||
+        bishop_model_value > 1.0) {
+      tfel::raise(
+          "Invalid BishopsModelValue: expected a cutoff in [0, 1]; got " +
+          value_as_string(bishop_model_value));
+    }
+  }
+  for (int i = 0; i < 3; ++i) {
+    if (!is_finite(swelling_pressures[i])) {
+      tfel::raise("Invalid SwellingPressures[" + value_as_string(i) +
+                  "]: expected a finite value; got " +
+                  value_as_string(swelling_pressures[i]));
+    }
+    if (!is_finite(exponents[i]) || exponents[i] <= 0.0) {
+      tfel::raise("Invalid Exponents[" + value_as_string(i) +
+                  "]: expected a positive swelling exponent; got " +
+                  value_as_string(exponents[i]));
+    }
+  }
+  if (!is_finite(lower_saturation_limit) ||
+      !is_finite(upper_saturation_limit) || lower_saturation_limit < 0.0 ||
+      upper_saturation_limit > 1.0 ||
+      lower_saturation_limit >= upper_saturation_limit) {
+    tfel::raise(
+        "Invalid swelling saturation limits: expected 0 <= lower < upper "
+        "<= 1; got lower=" +
+        value_as_string(lower_saturation_limit) +
+        ", upper=" + value_as_string(upper_saturation_limit));
+  }
+
+  // elastic constant
+  const auto λ = computeLambda(E, ν);
+  const auto μ = computeMu(E, ν);
+  const auto K = E / (3 ⋅ (1 - 2 ⋅ ν));
+
+  // retention
+  const auto core = [&](const auto p_cap) {
+    return std::pow(std::max(p_cap, 0.0) / pᵇ, 1.0 / (1.0 - m_S));
+  };
+  const auto Se = [&](const auto p_cap) {
+    return std::pow(core(p_cap) + 1.0, -m_S);
+  };
+  const auto saturation = [&](const auto p_cap) {
+    return Se(p_cap) ⋅ (1.0 - S_G_res - S_L_res) + S_L_res;
+  };
+  const double S = saturation(-(p_LR + Δp_LR));
+  S_L = std::clamp(S, S_L_res, 1.0 - S_G_res);
+  const double S_prev = saturation(-(p_LR));
+  const double S_L_prev = std::clamp(S_prev, S_L_res, 1.0 - S_G_res);
+
+  const auto ∂S_L∕∂p_cap = [&](const auto p_cap) {
+    return (1.0 - S_G_res - S_L_res) *
+           (S_L < (1 - S_G_res) && S_L > S_L_res
+                ? -m_S / (pᵇ ⋅ (1 - m_S)) ⋅
+                      std::pow(core(p_cap) + 1.0, -m_S - 1) ⋅
+                      // Guard: core overflows to inf for m_S near 1 at high
+                      // suction, where this factor tends to 0 and the product
+                      // must not become 0 * inf = NaN.
+                      (is_finite(core(p_cap)) ? std::pow(core(p_cap), m_S) : 0.)
+                : 0.);
+  };
+
+  // Bishop power law or cutoff
+  auto χ = 1.0;
+  auto ∂χ∕∂S_L = 0.0;
+  auto χ_prev = 1.0;
+
+  if (bishop_model_type == 0.0) {
+    if (bishop_model_value == 0.0) {
+      χ = 1.0;
+      ∂χ∕∂S_L = 0.0;
+      χ_prev = 1.0;
+    } else {
+      χ = std::pow(S_L, bishop_model_value);
+      // Deliberate NaN-safe admission tests: the plain form
+      // `bishop_model_value >= 1.0` alone admits a NaN S_L (from a diverging
+      // Newton iterate) into std::pow below. A NaN S_L fails both tests and
+      // keeps the zero tangent. At S_L == 0 with bishop_model_value < 1 the
+      // true derivative is unbounded and 0 is kept as a documented choice.
+      if (S_L > 0.0 || (S_L == 0.0 && bishop_model_value >= 1.0)) {
+        ∂χ∕∂S_L =
+            bishop_model_value * std::pow(S_L, bishop_model_value - 1.0);
+      }
+      χ_prev = std::pow(S_L_prev, bishop_model_value);
+    }
+  } else {
+    const double S_cut = bishop_model_value;
+    if (S_L < S_cut) {
+      χ = 0.0;
+    } else {
+      χ = 1.0;
+    }
+    ∂χ∕∂S_L = 0.0;
+    χ_prev = S_L_prev < S_cut ? 0.0 : 1.0;
+  }
+
+  const auto normalized_saturation = [&](const double s) {
+    return (s - lower_saturation_limit) /
+           (upper_saturation_limit - lower_saturation_limit);
+  };
+
+  // SaturationDependentSwelling
+  const auto swelling_potential = [&](const double saturation,
+                                      const double exponent) {
+    if (saturation <= lower_saturation_limit) {
+      return 0.0;
+    }
+    if (saturation >= upper_saturation_limit) {
+      return 1.0;
+    }
+    const double normalized = normalized_saturation(saturation);
+    return std::pow(normalized, exponent);
+  };
+
+  StressStensor swelling_contribution(stress(0));
+  StressStensor dswelling_contribution_dS(stress(0));
+  for (int i = 0; i < 3; ++i) {
+    const double phi = swelling_potential(S_L, exponents[i]);
+    const double phi_prev = swelling_potential(S_L_prev, exponents[i]);
+    swelling_contribution[i] = swelling_pressures[i] * (phi - phi_prev);
+
+    // Strict bounds are deliberate: a NaN S_L fails both tests and keeps the
+    // swelling tangent zero instead of reaching std::pow below.
+    if (S_L > lower_saturation_limit && S_L < upper_saturation_limit) {
+      const double normalized = normalized_saturation(S_L);
+      const double dphi_dS =
+          exponents[i] / (upper_saturation_limit - lower_saturation_limit) *
+          std::pow(normalized, exponents[i] - 1.0);
+      dswelling_contribution_dS[i] = swelling_pressures[i] * dphi_dS;
+    }
+  }
+
+  swelling_stress -= swelling_contribution;
+
+  // Total stress
+  σ = σ + λ ⋅ trace(Δεᵗᵒ) ⋅ I₂ + 2 ⋅ μ ⋅ Δεᵗᵒ - 3 ⋅ K ⋅ α ⋅ ΔT ⋅ I₂ -
+      αᵇ ⋅ (χ ⋅ (p_LR + Δp_LR) - χ_prev ⋅ p_LR) ⋅ I₂ -
+      swelling_contribution;
+
+  if (computeTangentOperator_) {
+    ∂σ∕∂Δεᵗᵒ = λ ⋅ (I₂ ⊗ I₂) + 2 ⋅ μ ⋅ I₄;
+    ∂σ∕∂Δp_LR =
+        -αᵇ ⋅ (χ - (p_LR + Δp_LR) ⋅ ∂χ∕∂S_L ⋅
+                        ∂S_L∕∂p_cap(-(p_LR + Δp_LR))) ⋅
+            I₂ +
+        dswelling_contribution_dS *
+            ∂S_L∕∂p_cap(-(p_LR + Δp_LR));
+    ∂σ∕∂ΔT = -3 ⋅ K ⋅ α ⋅ I₂;
+    ∂S_L∕∂Δp_LR = -∂S_L∕∂p_cap(-(p_LR + Δp_LR));
+  }
+}
