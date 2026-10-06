@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="saturation_mcc_semiexpl_coupled_power_law.prj">
+    <replace sel="/*/parameters/parameter[name='initial_stress']/values/text()">-5000000 -5000000 -5000000 0</replace>
+    <replace sel="/*/parameters/parameter[name='bishops_model_type']/value/text()">1</replace>
+    <replace sel="/*/parameters/parameter[name='bishops_model_value']/value/text()">0.9</replace>
+    <remove sel="/*/media/medium/properties/property[name='bishops_effective_stress']"/>
+    <add sel="/*/media/medium/properties">
+        <property>
+            <name>bishops_effective_stress</name>
+            <type>BishopsSaturationCutoff</type>
+            <cutoff_value>0.9</cutoff_value>
+        </property>
+    </add>
+    <replace sel="/*/time_loop/output/prefix/text()">saturation_mcc_cutoff</replace>
+    <replace msel="/*/test_definition/vtkdiff/regex/text()">saturation_mcc_cutoff_.*[.]vtu</replace>
+</OpenGeoSysProjectDiff>

@@ -135,6 +135,11 @@ if(OGS_USE_MFRONT AND (NOT OGS_USE_LIS))
         PROJECTFILE ThermoRichardsMechanics/MFront/ThermoPoroElasticitySwelling/uniaxial_isothermal_drainage_imbibition/uniaxial_isothermal_drainage_imbibition_swelling_ogs_native.xml
         RUNTIME 1
     )
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/TRM_MCC_coupled/saturation_mcc_semiexpl_coupled_power_law.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/TRM_MCC_coupled/saturation_mcc_semiexpl_power_law.xml RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/TRM_MCC_coupled/saturation_mcc_semiexpl_coupled_swelling.xml RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/TRM_MCC_coupled/saturation_mcc_semiexpl_coupled_cutoff.xml RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/TRM_MCC_coupled/saturation_mcc_semiexpl_cutoff.xml RUNTIME 1)
 
     if (NOT OGS_USE_MPI)
         OgsTest(PROJECTFILE ThermoRichardsMechanics/MFront/A2/A2.xml RUNTIME 8)

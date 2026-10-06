@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="saturation_mcc_semiexpl_coupled_power_law.prj">
+    <replace sel="/*/parameters/parameter[name='max_swelling_pressure_x']/value/text()">2000000</replace>
+    <replace sel="/*/parameters/parameter[name='max_swelling_pressure_y']/value/text()">4000000</replace>
+    <replace sel="/*/parameters/parameter[name='max_swelling_pressure_z']/value/text()">3000000</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">saturation_mcc_swelling</replace>
+    <replace msel="/*/test_definition/vtkdiff/regex/text()">saturation_mcc_swelling_.*[.]vtu</replace>
+    <add sel="/*/test_definition">
+        <vtkdiff>
+            <regex>saturation_mcc_swelling_.*[.]vtu</regex>
+            <field>swelling_stress</field>
+            <absolute_tolerance>1e-7</absolute_tolerance>
+            <relative_tolerance>0</relative_tolerance>
+        </vtkdiff>
+    </add>
+</OpenGeoSysProjectDiff>
