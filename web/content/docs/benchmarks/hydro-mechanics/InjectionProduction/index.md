@@ -200,7 +200,7 @@ where $\alpha$ denotes Biot coefficient, $S$ is the storage coefficient,
 
 In the staggered scheme for solving HM coupled equations, the fixed-stress splitting
 is employed to enhance the convergence. The fixed stress splitting is based on
-the volumetric total stress rate definition the hydro-mechanics:
+the volumetric total stress rate definition for hydro-mechanics:
 $$
  \dot{\sigma}_v=K_b ({\dot \varepsilon}_v-\dot{\varepsilon}^{ne}_v)- \alpha\dot {p},
 $$
