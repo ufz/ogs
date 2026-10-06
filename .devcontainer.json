@@ -1,6 +1,6 @@
 {
   "name": "ogs-gcc-dev",
-  "image": "mcr.microsoft.com/devcontainers/cpp",
+  "image": "mcr.microsoft.com/devcontainers/cpp:ubuntu26.04",
   "mounts": [
     "source=devcontainer-cpm-cache,target=/opt/cpm,type=volume",
     "source=devcontainer-ccache-cache,target=/opt/ccache,type=volume",
