@@ -5,6 +5,7 @@
 
 #include <Eigen/Geometry>
 
+#include "BaseLib/Error.h"
 #include "MeshLib/Elements/Elements.h"
 #include "MeshLib/Elements/FaceRule.h"
 #include "MeshLib/Elements/MapBulkElementPoint.h"
@@ -158,6 +159,38 @@ private:
             auto const& l1 = surface_element.getNode(1)->asEigenVector3d();
             Eigen::Vector3d const line = l1 - l0;
             surface_element_normal = line.cross(bulk_normal);
+        }
+        else if (surface_element.getGeomType() == MeshLib::MeshElemType::POINT)
+        {
+            // The "surface" of a 1D bulk element (a line) is a single point
+            // coinciding with one of its two end nodes; the direction from
+            // that point to the other end node is this class's normal for
+            // that point (there is no cross product available in 0D to
+            // derive it from the surface element itself, unlike the LINE and
+            // default cases above). As with the LINE/default cases, this is
+            // not the literal geometric outward normal but the orientation
+            // that, per the inflow-positive convention documented below,
+            // gives an intuitive flux sign (see the comment on
+            // `surface_element_normal.normalize()` further down).
+            auto const& x = surface_element.getNode(0)->asEigenVector3d();
+            auto const& a = bulk_element.getNode(0)->asEigenVector3d();
+            auto const& b = bulk_element.getNode(1)->asEigenVector3d();
+            // a + b - 2 * x evaluates to a - b or to b - a, depending on
+            // whether x coincides with the start (a) or the end (b) of the
+            // (assumed straight) line element.
+            surface_element_normal = a + b - 2 * x;
+            // Written as a negated '> 0.0' rather than '<= 0.0' so that a
+            // NaN squaredNorm() (already-corrupted coordinates) is also
+            // rejected, matching the pattern also used for the guard in
+            // NumLib/ODESolver/AndersonAcceleration.cpp.
+            if (!(surface_element_normal.squaredNorm() > 0.0))
+            {
+                OGS_FATAL(
+                    "SurfaceFlux: the bulk line element {:d} has zero "
+                    "length (its two end nodes coincide), so no boundary "
+                    "normal can be derived for it.",
+                    bulk_element.getID());
+            }
         }
         else
         {

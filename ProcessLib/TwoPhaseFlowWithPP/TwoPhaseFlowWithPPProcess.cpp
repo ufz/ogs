@@ -35,7 +35,7 @@ TwoPhaseFlowWithPPProcess::TwoPhaseFlowWithPPProcess(
 void TwoPhaseFlowWithPPProcess::setInitialConditionsConcreteProcess(
     std::vector<GlobalVector*> const& x, double const t, int const process_id)
 {
-    DBUG("SetInitialConditions ThermoRichardsMechanicsProcess.");
+    DBUG("SetInitialConditions TwoPhaseFlowWithPPProcess.");
 
     GlobalExecutor::executeMemberOnDereferenced(
         &TwoPhaseFlowWithPPLocalAssemblerInterface::setInitialConditions,

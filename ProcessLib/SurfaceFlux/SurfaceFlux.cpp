@@ -40,9 +40,18 @@ SurfaceFlux::SurfaceFlux(MeshLib::Mesh& boundary_mesh,
             MeshLib::getBulkIDString(MeshLib::MeshItemType::Face),
             MeshLib::MeshItemType::Cell, 1);
 
-    ProcessLib::createLocalAssemblers<SurfaceFluxLocalAssembler>(
-        boundary_mesh.getDimension() + 1,  // or bulk_mesh.getDimension()?
-        boundary_mesh.getElements(), *dof_table, _local_assemblers,
+    // MinElementDim = 0: the boundary mesh may consist of point elements,
+    // namely when the bulk mesh is 1D (see SurfaceFluxLocalAssembler's own
+    // handling of a MeshLib::MeshElemType::POINT boundary element).
+    ProcessLib::createLocalAssemblers<SurfaceFluxLocalAssembler,
+                                      /*MinElementDim=*/0>(
+        // The bulk mesh's dimension is not available here (only the boundary
+        // mesh and the bulk element/face id property vectors are), but a
+        // boundary mesh's own dimension is always one less than its bulk
+        // mesh's, so boundary_mesh.getDimension() + 1 recovers it, including
+        // for the MinElementDim = 0 (point) boundary of a 1D bulk mesh.
+        boundary_mesh.getDimension() + 1, boundary_mesh.getElements(),
+        *dof_table, _local_assemblers,
         NumLib::IntegrationOrder{integration_order},
         boundary_mesh.isAxiallySymmetric(), *bulk_element_ids, *bulk_face_ids);
 }
