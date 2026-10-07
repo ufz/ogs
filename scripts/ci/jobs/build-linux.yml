@@ -95,6 +95,7 @@ build in devcontainer:
   tags: [shell, envinf]
   needs: [meta]
   script:
+    - rm -rf ../build/devcontainer-release-all
     - devcontainer up --workspace-folder .
     - devcontainer exec --workspace-folder . cmake --preset release-all
     - devcontainer exec --workspace-folder . cmake --build --preset release-all
