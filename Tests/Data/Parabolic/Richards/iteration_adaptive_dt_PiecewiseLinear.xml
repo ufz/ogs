@@ -1,10 +1,15 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProjectDiff base_file="RichardsFlow_2d_small_iteration_adaptive_dt.prj">
-    <!-- The multipliers are constant over the range of iteration numbers that
-         actually occurs in this benchmark, hence PiecewiseLinear and the
-         default PiecewiseConstant interpolation must yield the same time step
-         sequence and the same results. The base test definition, and with it
-         the reference file, is therefore inherited unchanged. -->
+    <!-- The support points are chosen such that PiecewiseLinear interpolation
+         reproduces the lookup of the default PiecewiseConstant interpolation
+         (8 10 12 -> 1.1 0.5 0.1) at every integer iteration number: 1.1 up to
+         9 iterations, 0.5 for 10 and 11, 0.1 from 12 on. Hence, independent of
+         the iteration counts that actually occur, both interpolation types
+         must yield the same time step sequence and the same results. The base
+         test definition, and with it the reference file, is therefore
+         inherited unchanged. -->
+    <replace sel="/*/time_loop/processes/process/time_stepping/number_iterations/text()">9 10 11 12</replace>
+    <replace sel="/*/time_loop/processes/process/time_stepping/multiplier/text()">1.1 0.5 0.5 0.1</replace>
     <add sel="/*/time_loop/processes/process/time_stepping">
         <multiplier_interpolation_type>PiecewiseLinear</multiplier_interpolation_type>
     </add>
