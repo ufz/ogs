@@ -6,7 +6,7 @@ weight = 10
 +++
 <div class="note">
 
-### Work in progress
+## Work in progress
 
 This page is a work in progress.
 
@@ -83,6 +83,36 @@ Those values can be called from the 'equation' tag in 'parameter' if 'type' 'for
 
 ## Interpolation
 
-Curve represents a piece-wise linear function -- the values between coordinates are interpolated linearly though.
+By default, a curve represents a piece-wise linear function -- the values between coordinates are interpolated linearly.
 Outside of the curve's range of definition the curve becomes a constant using the first value on the left and last value on the
 right.
+
+With the optional tag `<interpolation>pchip</interpolation>` inside `<curve>`, the values are interpolated by a shape-preserving piecewise cubic Hermite polynomial (PCHIP) instead.
+The curve is then continuously differentiable within the range of the supporting points and monotone wherever the data is monotone, i.e., it does not over- or undershoot the supporting values.
+At least four supporting points are required.
+This gives a continuous derivative, e.g., for the Jacobian of properties defined by curves.
+
+```xml
+<curve>
+    <name>CurveName</name>
+    <interpolation>pchip</interpolation>
+    <coords>x_1 x_2 ... x_n</coords>
+    <values>y(x_1) y(x_2) ... y(x_n)</values>
+</curve>
+```
+
+By default the slope at the two end points is the slope of the adjacent interval.
+It can be set with the optional tags `<left_end_slope>` and `<right_end_slope>`.
+To keep the curve monotone on the end intervals, a given slope must have the sign of the slope of the adjacent interval and at most three times its magnitude (0 for a flat interval); other values are rejected.
+A zero slope at the first point is useful for retention curves, which are constant (slope 0) below their first point:
+the derivative of the saturation, and thus the capacity of the Richards equation, is then continuous at the saturated edge of the curve instead of jumping there.
+
+```xml
+<curve>
+    <name>capillary_pressure</name>
+    <interpolation>pchip</interpolation>
+    <left_end_slope>0</left_end_slope>
+    <coords>...</coords>
+    <values>...</values>
+</curve>
+```

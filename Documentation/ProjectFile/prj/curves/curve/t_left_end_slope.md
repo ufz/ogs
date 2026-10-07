@@ -1,0 +1,3 @@
+Slope of the curve at the first (smallest) supporting point. Only for the interpolation `pchip`; by default the slope of the first interval is used. The slope must have the sign of the slope of the first interval and at most three times its magnitude (0 if the first two values are equal), otherwise the curve would over- or undershoot the supporting values in the first interval.
+
+Outside of the range of the supporting points the curve is constant, i.e., its slope is 0 there. A value of 0 makes the derivative of the curve continuous at the first supporting point. This is useful for a retention curve, where the capacity is proportional to the derivative of the saturation and would otherwise jump at the saturated edge of the curve.

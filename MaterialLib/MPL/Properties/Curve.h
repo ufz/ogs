@@ -15,8 +15,8 @@ namespace MaterialPropertyLib
 {
 using StringOrVariable = std::variant<std::string, Variable>;
 /// Definition of a curve property, i.e., a property interpolating pairs of
-/// supporting point and value. The pairs and the interpolation are specified
-/// by a curve.
+/// supporting point and value piecewise linearly or with PCHIP. The pairs and
+/// the interpolation are specified by a curve.
 /// The current implementation accepts only the double datatype defined in
 /// PropertyDataType.
 class Curve final : public Property

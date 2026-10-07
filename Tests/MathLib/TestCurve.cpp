@@ -134,6 +134,37 @@ TEST(MathLibCurve, CopyOfMovedFromCurveIsDiagnosed)
     EXPECT_EQ(1.0, target.getValue(1.0));
 }
 
+TEST(MathLibCurve, PchipCreatedFromConfig)
+{
+    auto const curve = createCurveFromXml(
+        "<curve>"
+        "   <interpolation>pchip</interpolation>"
+        "   <coords> 0 1 2.5 3 5 6.5</coords>"
+        "   <values> 0 1 1.2 4 4.1 2.0</values>"
+        "</curve>");
+
+    // The cubic interpolant, not the piecewise linear one (0.5 at 0.5).
+    EXPECT_NEAR(0.59400826446281, curve->getValue(0.5), 1e-12);
+    EXPECT_NEAR(1.18801652892562, curve->getDerivative(0.5), 1e-12);
+}
+
+TEST(MathLibCurve, InvalidConfigIsRejected)
+{
+    // End slopes are not allowed for linear interpolation.
+    EXPECT_THROW(createCurveFromXml("<curve>"
+                                    "   <left_end_slope>0</left_end_slope>"
+                                    "   <coords> 0 1 2.5 3</coords>"
+                                    "   <values> 0 1 1.2 4</values>"
+                                    "</curve>"),
+                 std::runtime_error);
+    EXPECT_THROW(createCurveFromXml("<curve>"
+                                    "   <interpolation>cubic</interpolation>"
+                                    "   <coords> 0 1 2.5 3</coords>"
+                                    "   <values> 0 1 1.2 4</values>"
+                                    "</curve>"),
+                 std::runtime_error);
+}
+
 TEST(MathLibCurve, LinearInputErrorNamesTheCurve)
 {
     try
@@ -151,4 +182,48 @@ TEST(MathLibCurve, LinearInputErrorNamesTheCurve)
                   std::string_view::npos)
             << e.what();
     }
+}
+
+TEST(MathLibCurve, CopyKeepsCubicInterpolant)
+{
+    std::vector<double> const x = {0, 1, 2.5, 3, 5, 6.5};
+    std::vector<double> const y = {0, 1, 1.2, 4, 4.1, 2.0};
+    MathLib::Curve const curve{MathLib::Pchip{}, "test", x, y};
+
+    EXPECT_NEAR(0.59400826446281, curve.getValue(0.5), 1e-12);
+    auto const copy = curve;
+    expectSameInterpolant(curve, copy, x);
+}
+
+TEST(MathLibCurve, LinearIsDefault)
+{
+    for (auto const* const xml : {"<curve>"
+                                  "   <coords> 0 1 2.5 3</coords>"
+                                  "   <values> 0 1 1.2 4</values>"
+                                  "</curve>",
+                                  "<curve>"
+                                  "   <interpolation>linear</interpolation>"
+                                  "   <coords> 0 1 2.5 3</coords>"
+                                  "   <values> 0 1 1.2 4</values>"
+                                  "</curve>"})
+    {
+        auto const curve = createCurveFromXml(xml);
+        EXPECT_NEAR(0.5, curve->getValue(0.5), 1e-14);
+        EXPECT_NEAR(1.1, curve->getValue(1.75), 1e-14);
+    }
+}
+
+TEST(MathLibCurve, PchipEndSlopesFromConfig)
+{
+    auto const curve = createCurveFromXml(
+        "<curve>"
+        "   <interpolation>pchip</interpolation>"
+        "   <left_end_slope>0</left_end_slope>"
+        "   <right_end_slope>-0.5</right_end_slope>"
+        "   <coords> 0 1 2.5 3 5 6.5</coords>"
+        "   <values> 0 1 1.2 4 4.1 2.0</values>"
+        "</curve>");
+
+    EXPECT_NEAR(0.0, curve->getDerivative(0), 1e-14);
+    EXPECT_NEAR(-0.5, curve->getDerivative(6.5), 1e-14);
 }
