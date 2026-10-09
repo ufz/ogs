@@ -28,3 +28,24 @@ ninja
 ninja tests
 ctest -LE large -j 16
 ```
+
+## Run ctests with Guix OGS executables
+
+To run ctests in Guix, set `OGS_TEST_USE_PATH` to `ON`. CTest then resolves
+project executables from the Guix shell's `PATH`.
+
+Usage:
+
+```bash
+# Run from the repository root on the host.
+cmake --preset release -DOGS_TEST_USE_PATH=ON \
+      -DOGS_EXCLUDE_CTESTS='xmlpatch;partmesh' -B ../build/guix-test
+
+# Run CTest against the same build directory, within the Guix environment.
+guix time-machine -C scripts/guix/channels.scm -- \
+  shell -m scripts/guix/manifest-serial.scm cmake -- \
+  ctest --test-dir ../build/guix-test -LE large --output-on-failure -j 8
+```
+
+The Guix OGS build does not install the repository's `apply_xmlpatch` test
+helper, and its `partmesh` tests are excluded for this workflow.
