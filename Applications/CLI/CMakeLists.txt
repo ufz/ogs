@@ -122,7 +122,13 @@ target_link_libraries(
 )
 
 # ---- Tests ----
-add_test(NAME ogs_no_args COMMAND ogs)
+if(OGS_TEST_USE_PATH)
+    add_test(NAME ogs_no_args COMMAND "${CMAKE_COMMAND}" -E env ogs)
+elseif(OGS_TEST_EXECUTABLE)
+    add_test(NAME ogs_no_args COMMAND "${OGS_TEST_EXECUTABLE}")
+else()
+    add_test(NAME ogs_no_args COMMAND ogs)
+endif()
 set_tests_properties(ogs_no_args PROPERTIES WILL_FAIL TRUE LABELS "default")
 
 # ---- Installation ----
