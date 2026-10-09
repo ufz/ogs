@@ -31,6 +31,28 @@ build guix:
       fi
     - guix time-machine -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- build -m scripts/guix/${GUIX_MANIFEST} ${LOAD_ARG}
 
+build guix serial ctests:
+  stage: build
+  tags: [guix]
+  needs: []
+  variables:
+    GIT_SUBMODULE_STRATEGY: recursive
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: $CI_MERGE_REQUEST_IID
+    - if: $CI_COMMIT_TAG
+      when: never
+  script:
+    - cmake --preset release -DOGS_TEST_USE_PATH=ON -DOGS_EXCLUDE_CTESTS='xmlpatch;partmesh;dlopen;ConTracer_2d' -B ../build/guix-ctest
+    - |
+      export CTEST_BINARY_DIRECTORY=../build/guix-ctest
+      export CTEST_DASHBOARD_PHASE=test
+      export CTEST_GROUP=Experimental
+      if [ "${CI_COMMIT_BRANCH}" = "${CI_DEFAULT_BRANCH}" ]; then export CTEST_GROUP=master; fi
+      if [ "${CI_PIPELINE_SOURCE}" = "pipeline" ]; then export CTEST_SUBMIT=false; else export CTEST_SUBMIT=true; fi
+      export CTEST_ARGS="--output-on-failure -j ${CTEST_PARALLEL_LEVEL}"
+      guix time-machine -C scripts/guix/channels.scm -- shell -m scripts/guix/manifest-serial.scm -- ctest -S scripts/ci/ctest-dashboard.cmake -VV
+
 deploy container:
   stage: build
   tags: [guix]
