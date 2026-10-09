@@ -6,6 +6,12 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/HTCWithFracture/2D_single_fracture_HTC_Monolithic.prj RUNTIME 1
         PROPERTIES WILL_FAIL true)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionOnly.prj)
+    OgsTest(
+        PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionOnly_mechanics_dependent_permeability.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "depends on the stress or the strain. The ComponentTransport process does not solve the deformation equation"
+        RUNTIME 1
+    )
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/StaggeredScheme/ConcentrationDiffusionOnly.prj)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionOnly_3Components.prj)
     OgsTest(PROJECTFILE Parabolic/ComponentTransport/SimpleSynthetics/ConcentrationDiffusionAndStorage.prj)

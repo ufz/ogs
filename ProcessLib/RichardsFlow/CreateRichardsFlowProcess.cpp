@@ -5,6 +5,7 @@
 
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Utils/CheckNoMechanicsDependentPermeability.h"
 #include "ParameterLib/ConstantParameter.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
@@ -97,6 +98,8 @@ std::unique_ptr<Process> createRichardsFlowProcess(
 
     DBUG("Check the media properties of RichardsFlow process ...");
     checkMPLProperties(mesh, media_map);
+    MaterialPropertyLib::checkNoMechanicsDependentPermeability(media_map,
+                                                               "RICHARDS_FLOW");
     DBUG("Media properties verified.");
 
     RichardsFlowProcessData process_data{
