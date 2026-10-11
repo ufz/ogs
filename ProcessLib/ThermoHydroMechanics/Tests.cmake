@@ -12,6 +12,15 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare_staggered.xml
         RUNTIME 1
     )
+    # Cross-check of the fixed-stress splitting with a non-zero stabilization
+    # parameter, including its thermal term:
+    # fixed_stress_stabilization_parameter 0.5 with the same monolithic
+    # reference results.
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare_fixed_stress_staggered.xml
+        RUNTIME 1
+    )
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/WithFreezingPhase.prj RUNTIME 1)
     OgsTest(
         PROJECTFILE
