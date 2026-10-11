@@ -472,11 +472,11 @@ bool TimeLoop::executeTimeStep()
 
     updateDeactivatedSubdomains(_per_process_data, _current_time());
 
-    successful_time_step =
+    last_step_converged_ =
         preTsNonlinearSolvePostTs(_current_time, _dt(), timesteps);
     INFO("[time] Time step #{:d} took {:g} s.", timesteps,
          time_timestep.elapsed());
-    return successful_time_step;
+    return last_step_converged_;
 }
 
 bool TimeLoop::calculateNextTimeStep()
@@ -530,7 +530,7 @@ void TimeLoop::outputLastTimeStep() const
         _accepted_steps + _rejected_steps, _accepted_steps, _rejected_steps);
 
     // output last time step
-    if (successful_time_step)
+    if (last_step_converged_)
     {
         outputSolutions(_accepted_steps, _current_time(),
                         &Output::doOutputLastTimestep);

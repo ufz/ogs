@@ -162,7 +162,7 @@ bool Simulation::executeSimulation()
         }
     }
 
-    return time_loop.successful_time_step;
+    return time_loop.lastStepConverged();
 }
 
 void Simulation::outputLastTimeStep() const
