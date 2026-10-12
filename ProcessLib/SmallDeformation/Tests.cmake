@@ -197,7 +197,11 @@ if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/SimpleMechanics.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE Mechanics/EvaluatingBbarWithSimpleExamples/evaluating_bbbar_with_simple_examples.py RUNTIME 20)
     NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole/Linear_Disc_with_hole.py RUNTIME 8)
-    NotebookTest(NOTEBOOKFILE Mechanics/ReleaseNodalForceKirsch/kirsch.py RUNTIME 20)
+    NotebookTest(
+        NOTEBOOKFILE Mechanics/ReleaseNodalForceKirsch/kirsch.py
+        RUNTIME 20
+        PROPERTIES PROCESSORS 4
+    )
     if(NOT WIN32)
         NotebookTest(NOTEBOOKFILE Mechanics/Linear/DiscWithHole_convergence_study/Linear_Disc_with_hole_convergence_analysis.py RUNTIME 35)
     endif()
