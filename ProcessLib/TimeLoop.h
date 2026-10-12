@@ -55,7 +55,8 @@ public:
 
     NumLib::Time endTime() const { return _end_time; }
     NumLib::Time currentTime() const { return _current_time; }
-    bool successful_time_step = true;
+    /// Whether the solvers of the step taken last met their error norms.
+    bool lastStepConverged() const { return last_step_converged_; }
 
 private:
     bool preTsNonlinearSolvePostTs(NumLib::Time const& t, double const dt,
@@ -133,6 +134,7 @@ private:
     NumLib::TimeIncrement _dt{0.};
     int _repeating_times_of_rejected_step = 0;
     bool _previous_step_rejected = false;
+    bool last_step_converged_ = true;
 
     /// Number of global coupling iterations of the previous time step in the
     /// staggered scheme. It drives the time step size control of all processes.

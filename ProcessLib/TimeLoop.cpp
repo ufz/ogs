@@ -11,7 +11,6 @@
 #include "BaseLib/RunTime.h"
 #include "MathLib/LinAlg/LinAlg.h"
 #include "NumLib/ODESolver/ConvergenceCriterionPerComponent.h"
-#include "NumLib/ODESolver/PETScNonlinearSolver.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "NumLib/StaggeredCoupling/StaggeredCoupling.h"
 #include "NumLib/TimeStepping/Time.h"
@@ -102,65 +101,6 @@ void postTimestepForAllProcesses(
         pcs.postTimestep(process_solutions, process_solutions_prev, t(), dt,
                          process_id);
     }
-}
-
-template <NumLib::ODESystemTag ODETag>
-void setTimeDiscretizedODESystem(
-    ProcessData& process_data,
-    NumLib::ODESystem<ODETag, NumLib::NonlinearSolverTag::Picard>& ode_sys)
-{
-    using Tag = NumLib::NonlinearSolverTag;
-    // A concrete Picard solver
-    using NonlinearSolverPicard = NumLib::NonlinearSolver<Tag::Picard>;
-    // A concrete Newton solver
-    using NonlinearSolverNewton = NumLib::NonlinearSolver<Tag::Newton>;
-
-    if (dynamic_cast<NonlinearSolverPicard*>(&process_data.nonlinear_solver))
-    {
-        // The Picard solver can also work with a Newton-ready ODE,
-        // because the Newton ODESystem derives from the Picard ODESystem.
-        // So no further checks are needed here.
-
-        process_data.tdisc_ode_sys = std::make_unique<
-            NumLib::TimeDiscretizedODESystem<ODETag, Tag::Picard>>(
-            process_data.process_id, ode_sys, *process_data.time_disc);
-    }
-    // TODO (naumov) Provide a function to nonlinear_solver to distinguish the
-    // types. Could be handy, because a nonlinear solver could handle both types
-    // like PETScSNES.
-    else if ((dynamic_cast<NonlinearSolverNewton*>(
-                  &process_data.nonlinear_solver) != nullptr)
-#ifdef USE_PETSC
-             || (dynamic_cast<NumLib::PETScNonlinearSolver*>(
-                     &process_data.nonlinear_solver) != nullptr)
-#endif  // USE_PETSC
-    )
-    {
-        // The Newton-Raphson method needs a Newton-ready ODE.
-
-        using ODENewton = NumLib::ODESystem<ODETag, Tag::Newton>;
-        if (auto* ode_newton = dynamic_cast<ODENewton*>(&ode_sys))
-        {
-            process_data.tdisc_ode_sys = std::make_unique<
-                NumLib::TimeDiscretizedODESystem<ODETag, Tag::Newton>>(
-                process_data.process_id, *ode_newton, *process_data.time_disc);
-        }
-        else
-        {
-            OGS_FATAL(
-                "You are trying to solve a non-Newton-ready ODE with the"
-                " Newton-Raphson method. Aborting");
-        }
-    }
-    else
-    {
-        OGS_FATAL("Encountered unknown nonlinear solver type. Aborting");
-    }
-}
-
-void setTimeDiscretizedODESystem(ProcessData& process_data)
-{
-    setTimeDiscretizedODESystem(process_data, process_data.process);
 }
 
 std::pair<std::vector<GlobalVector*>, std::vector<GlobalVector*>>
@@ -532,11 +472,11 @@ bool TimeLoop::executeTimeStep()
 
     updateDeactivatedSubdomains(_per_process_data, _current_time());
 
-    successful_time_step =
+    last_step_converged_ =
         preTsNonlinearSolvePostTs(_current_time, _dt(), timesteps);
     INFO("[time] Time step #{:d} took {:g} s.", timesteps,
          time_timestep.elapsed());
-    return successful_time_step;
+    return last_step_converged_;
 }
 
 bool TimeLoop::calculateNextTimeStep()
@@ -590,7 +530,7 @@ void TimeLoop::outputLastTimeStep() const
         _accepted_steps + _rejected_steps, _accepted_steps, _rejected_steps);
 
     // output last time step
-    if (successful_time_step)
+    if (last_step_converged_)
     {
         outputSolutions(_accepted_steps, _current_time(),
                         &Output::doOutputLastTimestep);
