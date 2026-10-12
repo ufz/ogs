@@ -191,4 +191,5 @@ endif()
 
 if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/TotalInitialStress/total_initial_stress_HM.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/TotalInitialStress/total_initial_stress_HM_staggered.xml RUNTIME 1)
 endif()
