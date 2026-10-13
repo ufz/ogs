@@ -3,6 +3,8 @@
 
 #include "CouplingScheme.h"
 
+#include <cmath>
+
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/Logging.h"
@@ -47,10 +49,11 @@ CouplingScheme parseCouplingScheme(BaseLib::ConfigTree const& config)
          fixed_stress_stabilization_parameter);
 
     {  // Check parameter value. Optimum is not a-priori known, but within
-       // certain interval [Storvik & Nordbotten]
+       // certain interval [Storvik & Nordbotten].
         double const csp_min = 1.0 / 6.0;
         double const csp_max = 1.0;
-        if (fixed_stress_stabilization_parameter < csp_min ||
+        if (std::isnan(fixed_stress_stabilization_parameter) ||
+            fixed_stress_stabilization_parameter < csp_min ||
             fixed_stress_stabilization_parameter > csp_max)
         {
             WARN(
