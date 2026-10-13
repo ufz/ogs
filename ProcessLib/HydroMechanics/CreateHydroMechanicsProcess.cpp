@@ -25,56 +25,6 @@ namespace ProcessLib
 {
 namespace HydroMechanics
 {
-
-CouplingScheme parseCouplingScheme(
-    std::optional<BaseLib::ConfigTree> const& config)
-{
-    if (!config)
-    {
-        return Monolithic{};
-    }
-
-    auto const coupling_scheme_type =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme__type}
-        config->getConfigParameter<std::string>("type");
-
-    if (coupling_scheme_type == "monolithic")
-    {
-        return Monolithic{};
-    }
-
-    // Default value is 0.5, which is recommended by [Mikelic & Wheeler].
-    double const fixed_stress_stabilization_parameter =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme__fixed_stress_stabilization_parameter}
-        config->getConfigParameter<double>(
-            "fixed_stress_stabilization_parameter", 0.5);
-
-    DBUG("Using value {:g} for coupling parameter of staggered scheme.",
-         fixed_stress_stabilization_parameter);
-
-    {  // Check parameter value. Optimum is not a-priori known, but within
-       // certain interval [Storvik & Nordbotten]
-        double const csp_min = 1.0 / 6.0;
-        double const csp_max = 1.0;
-        if (fixed_stress_stabilization_parameter < csp_min ||
-            fixed_stress_stabilization_parameter > csp_max)
-        {
-            WARN(
-                "Value of coupling scheme parameter = {:g} is out of "
-                "reasonable range ({:g}, {:g}).",
-                fixed_stress_stabilization_parameter, csp_min, csp_max);
-        }
-    }
-
-    bool const fixed_stress_over_time_step =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme__fixed_stress_over_time_step}
-        config->getConfigParameter<std::string>("fixed_stress_over_time_step",
-                                                "false") == "true";
-
-    return Staggered{fixed_stress_stabilization_parameter,
-                     fixed_stress_over_time_step};
-}
-
 template <int DisplacementDim>
 std::unique_ptr<Process> createHydroMechanicsProcess(
     std::string const& name, MeshLib::Mesh& mesh,
@@ -102,9 +52,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         }
     }
 
-    auto const coupling_scheme = parseCouplingScheme(
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme}
-        config.getConfigSubtreeOptional("coupling_scheme"));
+    auto const coupling_scheme =
+        Common::HydroMechanics::parseCouplingScheme(config);
 
     /// \section processvariableshm Process Variables
 
@@ -119,7 +68,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     int const hydraulic_process_id = 0;
     int mechanics_related_process_id = 0;
 
-    if (std::holds_alternative<Monolithic>(coupling_scheme))
+    if (std::holds_alternative<Common::HydroMechanics::Monolithic>(
+            coupling_scheme))
     {
         /// Primary process variables as they appear in the global component
         /// vector:
@@ -134,7 +84,8 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         process_variables.push_back(std::move(per_process_variables));
     }
 
-    if (std::holds_alternative<Staggered>(coupling_scheme))
+    if (std::holds_alternative<Common::HydroMechanics::Staggered>(
+            coupling_scheme))
     {
         using namespace std::string_literals;
         for (auto const& variable_name : {"pressure"s, "displacement"s})
@@ -260,8 +211,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
     return std::make_unique<HydroMechanicsProcess<DisplacementDim>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables),
-        std::holds_alternative<Monolithic>(coupling_scheme), is_linear);
+        std::move(process_data), std::move(secondary_variables), is_linear);
 }
 
 template std::unique_ptr<Process> createHydroMechanicsProcess<2>(

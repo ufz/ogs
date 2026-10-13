@@ -521,8 +521,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
     auto const& identity2 = Invariants::identity2;
 
-    auto const staggered_scheme =
-        std::get<Staggered>(_process_data.coupling_scheme);
+    auto const staggered_scheme = std::get<Common::HydroMechanics::Staggered>(
+        _process_data.coupling_scheme);
     auto const fixed_stress_stabilization_parameter =
         staggered_scheme.fixed_stress_stabilization_parameter;
     auto const fixed_stress_over_time_step =
@@ -846,7 +846,8 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
     int const n_integration_points = _integration_method.getNumberOfPoints();
 
     auto const staggered_scheme_ptr =
-        std::get_if<Staggered>(&_process_data.coupling_scheme);
+        std::get_if<Common::HydroMechanics::Staggered>(
+            &_process_data.coupling_scheme);
 
     if (staggered_scheme_ptr &&
         process_id == _process_data.hydraulic_process_id)
@@ -927,7 +928,8 @@ void HydroMechanicsLocalAssembler<
                                            int const process_id)
 {
     auto const staggered_scheme_ptr =
-        std::get_if<Staggered>(&_process_data.coupling_scheme);
+        std::get_if<Common::HydroMechanics::Staggered>(
+            &_process_data.coupling_scheme);
 
     if (staggered_scheme_ptr &&
         process_id == _process_data.hydraulic_process_id)

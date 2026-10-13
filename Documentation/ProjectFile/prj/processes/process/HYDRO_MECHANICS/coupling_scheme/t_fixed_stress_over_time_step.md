@@ -4,4 +4,4 @@ If it is not given, volume stress rate is fixed
 over coupling iteration in the fixed stress splitting approach in each time
 step.
 
-\copydoc ProcessLib::HydroMechanics::Staggered::fixed_stress_over_time_step.
+\copydoc ProcessLib::Common::HydroMechanics::Staggered::fixed_stress_over_time_step

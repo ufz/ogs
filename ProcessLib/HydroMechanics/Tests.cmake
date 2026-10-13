@@ -50,6 +50,17 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE HydroMechanics/Principal_Stress/Tube/tube.prj)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/ConsolidationBenchmark/consolidation_benchmark.prj RUNTIME 2)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/ConsolidationBenchmark/consolidation_benchmark_mono.prj RUNTIME 1)
+    # fixed_stress_over_time_step variant of the ConsolidationBenchmark;
+    # converges to a different discrete solution and therefore records its own
+    # reference results (tolerance values as the base benchmark).
+    OgsTest(
+        PROJECTFILE
+            HydroMechanics/StaggeredScheme/ConsolidationBenchmarkFixedStressOverTimeStep/consolidation_benchmark_over_time_step.xml
+        EXECUTABLE_ARGS
+            -m
+            ${Data_SOURCE_DIR}/HydroMechanics/StaggeredScheme/ConsolidationBenchmark
+        RUNTIME 2
+    )
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1D.prj)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1DMono.prj)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1DMono_python.prj)
