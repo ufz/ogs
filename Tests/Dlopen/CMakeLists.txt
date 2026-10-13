@@ -5,6 +5,9 @@ if(LINUX)
     # surplus arguments (${ARGN}) are added as commandline arguments to the test
     # command.
     function(add_dlopen_tests dir)
+        if("dlopen" IN_LIST OGS_EXCLUDE_CTESTS)
+            return()
+        endif()
         get_directory_property(_targets DIRECTORY "${dir}" BUILDSYSTEM_TARGETS)
 
         foreach(target IN LISTS _targets)
