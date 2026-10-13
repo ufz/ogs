@@ -478,6 +478,99 @@ private:
     static const int displacement_index = ShapeFunctionPressure::NPOINTS * 2;
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
+
+    /// Adds the tangent-stiffness and the internal-force residual
+    /// contributions of the momentum balance of one integration point to the
+    /// local system: \f[ K_{uu} \mathrel{+}=
+    ///    w\,B^{\mathrm T}\,(C + J_{uu}^{\mathrm{fr}})\,B, \f]
+    /// \f[ f_u \mathrel{-}= w\,(B^{\mathrm T}\,\sigma_{\mathrm{eff}}
+    ///    - N_u^{\mathrm T}\,\rho\,\boldsymbol b), \f]
+    /// and, with a frozen liquid phase, \f[ f_u \mathrel{-}=
+    ///    w\,B^{\mathrm T}\,r_u^{\mathrm{fr}}. \f]
+    /// \param jacobian the \f$K_{uu}\f$ Jacobian block to add the
+    /// tangent-stiffness contribution to.
+    /// \param residual the \f$f_u\f$ residual segment to add the
+    /// internal-force contribution to.
+    /// \param ip_data the integration point data (shape functions and
+    /// weight).
+    /// \param crv_u the mechanical property values at
+    /// the integration point.
+    /// \param B the strain-displacement matrix.
+    /// \param effective_stress stress entering the internal force, the
+    /// effective stress \f$\sigma_{\mathrm{eff}}\f$ of the solid skeleton.
+    /// \param has_frozen_liquid_phase whether the medium has a frozen liquid
+    /// phase, which adds the ice-stress contributions.
+    template <typename JacobianBlock, typename ResidualSegment,
+              typename BMatrix,
+              typename EffectiveStress>
+    void addMomentumBalanceStiffnessAndResidual(  //
+        JacobianBlock&& jacobian, ResidualSegment&& residual,
+        IpData const& ip_data,
+        MechanicalPropertyValues<DisplacementDim> const& crv_u,
+        BMatrix const& B, EffectiveStress const& effective_stress,
+        bool const has_frozen_liquid_phase) const;
+
+    /// Element matrices of the energy balance equation, accumulated over the
+    /// integration points by addEnergyBalanceIntegrationPointTerms() and
+    /// added to the local system by addEnergyBalanceElementTerms().
+    struct EnergyBalanceTerms
+    {
+        using NodalMatrixType =
+            typename ShapeMatricesTypePressure::NodalMatrixType;
+
+        explicit EnergyBalanceTerms(unsigned const n_integration_points)
+        {
+            ip_flux_vector.reserve(n_integration_points);
+        }
+
+        NodalMatrixType MTT =
+            NodalMatrixType::Zero(temperature_size, temperature_size);
+        /// Temperature derivative of the heat capacity part of the storage
+        /// term, \f$\int N^T J_{TT} N\f$; Jacobian only.
+        NodalMatrixType dMTT_dT_T =
+            NodalMatrixType::Zero(temperature_size, temperature_size);
+        NodalMatrixType KTT =
+            NodalMatrixType::Zero(temperature_size, temperature_size);
+        NodalMatrixType KTp =
+            NodalMatrixType::Zero(temperature_size, pressure_size);
+        NodalMatrixType dKTT_dT_T =
+            NodalMatrixType::Zero(temperature_size, temperature_size);
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+    };
+
+    /// Adds the energy balance contributions of one integration point to
+    /// \p energy_balance.
+    ///
+    /// Reads the Darcy velocity and the fluid density of the integration
+    /// point from \p ip_data_output, so updateCommonProperties() and
+    /// updateFlowProperties() must have been called for this integration
+    /// point before.
+    template <typename TemperatureVector>
+    void addEnergyBalanceIntegrationPointTerms(
+        EnergyBalanceTerms& energy_balance, IpData const& ip_data,
+        IntegrationPointDataForOutput<DisplacementDim> const& ip_data_output,
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        FlowPropertyValues<DisplacementDim> const& fpv,
+        ThermalPropertyValues<DisplacementDim> const& crv_T,
+        TemperatureVector const& T) const;
+
+    /// Applies the advection stabilisation to the accumulated \p energy_balance
+    /// and adds them to the temperature-temperature Jacobian block and to the
+    /// temperature residual segment.
+    ///
+    /// The stabilisation is added to \p energy_balance in place, hence the
+    /// terms are consumed: a second call would add the advection twice.
+    template <typename JacobianBlock, typename ResidualSegment,
+              typename TemperatureVector, typename TemperaturePrevVector,
+              typename PressureVector>
+    void addEnergyBalanceElementTerms(EnergyBalanceTerms&& energy_balance,
+                                      JacobianBlock&& jacobian_TT,
+                                      ResidualSegment&& residual_T,
+                                      TemperatureVector const& T,
+                                      TemperaturePrevVector const& T_prev,
+                                      PressureVector const& p,
+                                      double const dt) const;
 };
 
 }  // namespace ThermoHydroMechanics

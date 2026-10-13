@@ -25,6 +25,103 @@ namespace ProcessLib
 {
 namespace ThermoHydroMechanics
 {
+
+namespace
+{
+/// Pressure storage coefficient of the mass-balance accumulation term,
+/// \f[ \phi\,c_f + (\alpha - \phi)\,\beta_{SR}
+///    + \Delta S_p^{\mathrm{fr}}, \f]
+/// \param porosity \f$\phi\f$, the porosity.
+/// \param fluid_compressibility \f$c_f\f$, the fluid compressibility.
+/// \param alpha_biot \f$\alpha\f$, the Biot coefficient.
+/// \param beta_SR \f$\beta_{SR}\f$.
+/// \param frozen_liquid_contribution \f$\Delta S_p^{\mathrm{fr}}\f$, the
+/// storage contribution of a frozen liquid phase
+/// (HydraulicPropertyValues::storage_p_fr); zero without a frozen liquid
+/// phase.
+double massBalancePressureStorageCoefficient(
+    double const porosity, double const fluid_compressibility,
+    double const alpha_biot, double const beta_SR,
+    double const frozen_liquid_contribution)
+{
+    return porosity * fluid_compressibility +
+           (alpha_biot - porosity) * beta_SR + frozen_liquid_contribution;
+}
+
+/// Temperature storage coefficient of the mass-balance accumulation term,
+/// \f$\beta + \Delta S_T^{\mathrm{fr}}\f$.
+/// \param beta \f$\beta\f$, the thermal storage factor
+/// (HydraulicPropertyValues::beta).
+/// \param frozen_liquid_contribution \f$\Delta S_T^{\mathrm{fr}}\f$, the
+/// storage contribution of a frozen liquid phase
+/// (HydraulicPropertyValues::storage_T_fr); zero without a frozen liquid
+/// phase.
+double massBalanceTemperatureStorageCoefficient(
+    double const beta, double const frozen_liquid_contribution)
+{
+    return beta + frozen_liquid_contribution;
+}
+
+/// Rate bracket of the mass-balance accumulation term,
+/// \f$S_p\,\dot p - S_T\,\dot T + \dot e\f$. Charged by the mass-balance
+/// residual (via storage_p, storage_T and the volumetric strain rate term)
+/// and reused for the fluid-density derivative of the residual, so the two
+/// cannot diverge.
+/// \param storage_p_coefficient \f$S_p\f$, the pressure storage coefficient.
+/// \param p_dot \f$\dot p\f$, the pressure rate.
+/// \param temperature_storage_coefficient \f$S_T\f$, the temperature storage
+/// coefficient.
+/// \param T_dot \f$\dot T\f$, the temperature rate.
+/// \param volumetric_strain_rate_term \f$\dot e\f$, the volumetric strain
+/// rate term (scheme specific).
+double massBalanceStorageRate(double const storage_p_coefficient,
+                              double const p_dot,
+                              double const temperature_storage_coefficient,
+                              double const T_dot,
+                              double const volumetric_strain_rate_term)
+{
+    return storage_p_coefficient * p_dot -
+           temperature_storage_coefficient * T_dot +
+           volumetric_strain_rate_term;
+}
+
+/// Returns the derivative of the mass-balance residual with respect to the
+/// fluid density, \f$\partial r_p/\partial\rho_{\mathrm L}\f$: the
+/// derivative of the storage rate bracket and the derivative of the viscous
+/// Darcy flux
+/// \f$\rho_{\mathrm L}\,K/\mu\,k_{\mathrm{rel}}
+/// (\nabla p + \rho_{\mathrm L}\boldsymbol g)\f$ with respect to the fluid
+/// density. The caller multiplies it by
+/// \f$\partial\rho_{\mathrm L}/\partial x\f$ for each differentiation
+/// direction \f$x\f$ (pressure or temperature).
+///
+/// (TODO (WW): the contributions of the second fluid-density derivatives,
+/// \f$\partial^2\rho_{\mathrm L}/\partial x\,\partial x'\f$, are currently
+/// not assembled.)
+/// \param ip_data the integration point data (shape functions and weight).
+/// \param storage_rate the storage rate bracket (see
+/// massBalanceStorageRate()).
+/// \param velocity the Darcy velocity.
+/// \param buoyancy_flux the buoyancy flux term.
+template <typename IpData, typename Velocity, typename BuoyancyFlux>
+auto massBalanceJacobianWrtFluidDensity(IpData const& ip_data,
+                                        double const storage_rate,
+                                        Velocity const& velocity,
+                                        BuoyancyFlux const& buoyancy_flux)
+{
+    auto const& N = ip_data.N;
+    auto const& dNdx = ip_data.dNdx;
+    double const w = ip_data.integration_weight;
+
+    // Derivative of the viscous Darcy flux with respect to the fluid density.
+    auto const dviscous_flux_drho = (-velocity - buoyancy_flux);
+
+    return (N.transpose() * N * (storage_rate * w) +
+            dNdx.transpose() * dviscous_flux_drho * N * w)
+        .eval();
+}
+}  // namespace
+
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
@@ -300,6 +397,9 @@ CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
     vars.liquid_saturation = 1.0;
 
+    // Note: if a volumetric strain dependent porosity model is available in
+    // future, set vars.volumetric_strain = Invariants::trace(eps) here, so that
+    // the porosity property can use it to compute the porosity.
     auto const porosity =
         medium->property(MaterialPropertyLib::PropertyType::porosity)
             .template value<double>(vars, x_position, t, dt);
@@ -357,12 +457,6 @@ CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         cpv.modified_biot += cpv.alpha_biot * ip_data.phi_fr / porosity *
                              (rho_fr / fluid_density - 1);
-    }
-
-    if (frozen_liquid_phase)
-    {
-        auto const& frozen_liquid_saturation = (*medium)
-            [MaterialPropertyLib::PropertyType::frozen_liquid_saturation];
 
         ip_data.phi_fr_prev = [&]()
         {
@@ -892,24 +986,7 @@ void ThermoHydroMechanicsLocalAssembler<
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
-    typename ShapeMatricesTypePressure::NodalMatrixType MTT;
-    MTT.setZero(temperature_size, temperature_size);
-
-    typename ShapeMatricesTypePressure::NodalMatrixType dMTT_dT_T;
-    dMTT_dT_T.setZero(temperature_size, temperature_size);
-
-    typename ShapeMatricesTypePressure::NodalMatrixType KTT;
-    KTT.setZero(temperature_size, temperature_size);
-
-    typename ShapeMatricesTypePressure::NodalMatrixType KTp;
-    KTp.setZero(temperature_size, pressure_size);
-
-    typename ShapeMatricesTypePressure::NodalMatrixType dKTT_dT_T;
-    dKTT_dT_T.setZero(temperature_size, temperature_size);
-
-    std::vector<GlobalDimVectorType> ip_flux_vector;
-    ip_flux_vector.reserve(n_integration_points);
-    double average_velocity_norm = 0.0;
+    EnergyBalanceTerms energy_balance(n_integration_points);
 
     typename ShapeMatricesTypePressure::NodalMatrixType dKTT_dp_T;
     dKTT_dp_T.setZero(temperature_size, pressure_size);
@@ -969,8 +1046,6 @@ void ThermoHydroMechanicsLocalAssembler<
         auto const& N = ip_data.N;
         auto const& dNdx = ip_data.dNdx;
 
-        auto const T_int_pt = cpv.vars.temperature;
-
         auto const x_coord = space_time_data.x.getCoordinates().value()[0];
         auto const B =
             LinearBMatrix::computeBMatrix<DisplacementDim,
@@ -984,27 +1059,11 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         // displacement equation, displacement part (K_uu and f_u).
         //
-        if (has_frozen_liquid_phase)
-        {
-            local_rhs.template segment<displacement_size>(displacement_index)
-                .noalias() -= B.transpose() * crv_u.r_u_fr * w;
-            local_Jac
-                .template block<displacement_size, displacement_size>(
-                    displacement_index, displacement_index)
-                .noalias() += B.transpose() * (crv_u.C + crv_u.J_uu_fr) * B * w;
-        }
-        else
-        {
-            local_Jac
-                .template block<displacement_size, displacement_size>(
-                    displacement_index, displacement_index)
-                .noalias() += B.transpose() * crv_u.C * B * w;
-        }
-
-        local_rhs.template segment<displacement_size>(displacement_index)
-            .noalias() -= (B.transpose() * ip_data.sigma_eff -
-                           N_u_op(N_u).transpose() * crv_u.rho * b) *
-                          w;
+        addMomentumBalanceStiffnessAndResidual(
+            local_Jac.template block<displacement_size, displacement_size>(
+                displacement_index, displacement_index),
+            local_rhs.template segment<displacement_size>(displacement_index),
+            ip_data, crv_u, B, ip_data.sigma_eff, has_frozen_liquid_phase);
 
         auto const uT_coeff =
             has_frozen_liquid_phase
@@ -1044,10 +1103,9 @@ void ThermoHydroMechanicsLocalAssembler<
             .noalias() += dNdx.transpose() * K_over_mu * fpv.grad_p * N *
                           (dk_rel_dT * scaling_factor * w);
 
-        double const storage_p_coeff =
-            ip_data.porosity * crv_p.fluid_compressibility +
-            (cpv.alpha_biot - ip_data.porosity) * crv_p.beta_SR +
-            (has_frozen_liquid_phase ? crv_p.storage_p_fr : 0.0);
+        double const storage_p_coeff = massBalancePressureStorageCoefficient(
+            ip_data.porosity, crv_p.fluid_compressibility, cpv.alpha_biot,
+            crv_p.beta_SR, has_frozen_liquid_phase ? crv_p.storage_p_fr : 0.0);
 
         storage_p.noalias() +=
             N.transpose() * N * (storage_p_coeff * scaling_factor * w);
@@ -1083,8 +1141,8 @@ void ThermoHydroMechanicsLocalAssembler<
         // pressure equation, temperature part (M_pT)
         //
 
-        double const storage_T_coeff =
-            crv_p.beta + (has_frozen_liquid_phase ? crv_p.storage_T_fr : 0.0);
+        double const storage_T_coeff = massBalanceTemperatureStorageCoefficient(
+            crv_p.beta, has_frozen_liquid_phase ? crv_p.storage_T_fr : 0.0);
 
         storage_T.noalias() +=
             N.transpose() * storage_T_coeff * N * scaling_factor * w;
@@ -1104,22 +1162,12 @@ void ThermoHydroMechanicsLocalAssembler<
             // The contribution to Jacobian from d()/ drho
             // drho/dp, d()/ drho drho/dT:
             //
-            // Rate bracket as charged by the mass-balance residual above
-            // (storage_p, storage_T and the volumetric strain rate term),
-            // reused here so the residual and its fluid-density derivative
-            // cannot diverge.
-            double const storage_rate = storage_p_coeff * cpv.p_dot -
-                                        storage_T_coeff * cpv.T_dot +
-                                        up_eps_v_dot;
+            double const storage_rate = massBalanceStorageRate(
+                storage_p_coeff, cpv.p_dot, storage_T_coeff, cpv.T_dot,
+                up_eps_v_dot);
 
-            // The term from d (rho_L K(grad p - rho_L b)/dp:
-            // derivative of rhp_L * K_over_mu * k_rel (grad p + rho_l g) with
-            // respect to pressure and temperature.
-            // TODO (WW): Add the second fluid-density derivatives.
-            auto const dr_p_drho =
-                (N.transpose() * N * (storage_rate * w) +
-                 dNdx.transpose() * (-velocity - fpv.buoyancy_flux) * N * w)
-                    .eval();
+            auto const dr_p_drho = massBalanceJacobianWrtFluidDensity(
+                ip_data, storage_rate, velocity, fpv.buoyancy_flux);
             local_Jac
                 .template block<pressure_size, pressure_size>(pressure_index,
                                                               pressure_index)
@@ -1131,38 +1179,13 @@ void ThermoHydroMechanicsLocalAssembler<
         }
 
         //
-        // temperature equation, temperature part.
+        // temperature equation
         //
-        double const c_f = crv_T.c_f;
-        KTT.noalias() +=
-            dNdx.transpose() * crv_T.effective_thermal_conductivity * dNdx * w;
-        dKTT_dT_T.noalias() +=
-            dNdx.transpose() * crv_T.dlambda_eff_dT * dNdx * T * N * w;
-
-        ip_flux_vector.emplace_back(velocity * fluid_density * c_f);
-        // Without any flux correction the flux derivative is as follows. The
-        // contribution to KTT is different if any stabilization scheme is used,
-        // but this is ignored for the moment.
-        GlobalDimVectorType const dip_flux_vector_dT =
-            crv_T.dvelocity_dT * fluid_density * c_f +
-            velocity * drho_LR_dT * c_f;
-        dKTT_dT_T.noalias() +=
-            N.transpose() * dip_flux_vector_dT.transpose() * dNdx * T * N * w;
-        average_velocity_norm += velocity.norm();
-
-        MTT.noalias() += N.transpose() *
-                         (crv_T.sensible_volumetric_heat_capacity -
-                          crv_T.latent_volumetric_heat_capacity) *
-                         N * w;
-        dMTT_dT_T.noalias() += N.transpose() * crv_T.J_TT * N * w;
-
-        //
-        // temperature equation, pressure part
-        //
-        KTp.noalias() +=
-            dNdx.transpose() * fpv.K_pT_thermal_osmosis * dNdx * (T_int_pt * w);
+        addEnergyBalanceIntegrationPointTerms(
+            energy_balance, ip_data, _ip_data_output[ip], cpv, fpv, crv_T, T);
 
         // linearized darcy
+        double const c_f = crv_T.c_f;
         dKTT_dp_T.noalias() -= N.transpose() * (dNdx * T).transpose() *
                                K_over_mu * dNdx *
                                (fluid_density * c_f * k_rel * w);
@@ -1208,21 +1231,20 @@ void ThermoHydroMechanicsLocalAssembler<
          */
     }
 
-    NumLib::assembleAdvectionMatrix(
-        _process_data.stabilizer, _ip_data, ip_flux_vector,
-        average_velocity_norm / static_cast<double>(n_integration_points), KTT);
-
-    // temperature equation, temperature part
-    local_Jac
-        .template block<temperature_size, temperature_size>(temperature_index,
-                                                            temperature_index)
-        .noalias() += KTT + dKTT_dT_T + MTT / dt + dMTT_dT_T;
-
-    // temperature equation, pressure part
+    // temperature equation, pressure part. Before the temperature part below,
+    // which consumes the terms.
     local_Jac
         .template block<temperature_size, pressure_size>(temperature_index,
                                                          pressure_index)
-        .noalias() += KTp + dKTT_dp_T;
+        .noalias() += energy_balance.KTp + dKTT_dp_T;
+
+    // temperature equation, temperature part and f_T
+    addEnergyBalanceElementTerms(
+        std::move(energy_balance),
+        local_Jac.template block<temperature_size, temperature_size>(
+            temperature_index, temperature_index),
+        local_rhs.template segment<temperature_size>(temperature_index), T,
+        T_prev, p, dt);
 
     // displacement equation, pressure part
     local_Jac
@@ -1266,10 +1288,126 @@ void ThermoHydroMechanicsLocalAssembler<
     // displacement equation (f_u)
     local_rhs.template segment<displacement_size>(displacement_index)
         .noalias() += Kup * p;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+template <typename JacobianBlock, typename ResidualSegment, typename BMatrix,
+          typename EffectiveStress>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    addMomentumBalanceStiffnessAndResidual(
+        JacobianBlock&& jacobian, ResidualSegment&& residual,
+        IpData const& ip_data,
+        MechanicalPropertyValues<DisplacementDim> const& crv_u,
+        BMatrix const& B, EffectiveStress const& effective_stress,
+        bool const has_frozen_liquid_phase) const
+{
+    auto const& N_u = ip_data.N_u;
+    double const w = ip_data.integration_weight;
+    auto const& b = _process_data.specific_body_force;
+
+    if (has_frozen_liquid_phase)
+    {
+        residual.noalias() -= B.transpose() * crv_u.r_u_fr * w;
+        jacobian.noalias() += B.transpose() * (crv_u.C + crv_u.J_uu_fr) * B * w;
+    }
+    else
+    {
+        jacobian.noalias() += B.transpose() * crv_u.C * B * w;
+    }
+
+    residual.noalias() -= (B.transpose() * effective_stress -
+                           N_u_op(N_u).transpose() * crv_u.rho * b) *
+                          w;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+template <typename TemperatureVector>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    addEnergyBalanceIntegrationPointTerms(
+        EnergyBalanceTerms& energy_balance, IpData const& ip_data,
+        IntegrationPointDataForOutput<DisplacementDim> const& ip_data_output,
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        FlowPropertyValues<DisplacementDim> const& fpv,
+        ThermalPropertyValues<DisplacementDim> const& crv_T,
+        TemperatureVector const& T) const
+{
+    auto const& w = ip_data.integration_weight;
+    auto const& N = ip_data.N;
+    auto const& dNdx = ip_data.dNdx;
+
+    double const T_int_pt = cpv.vars.temperature;
+    auto const& velocity = ip_data_output.velocity;
+    double const fluid_density = ip_data_output.fluid_density;
+    double const c_f = crv_T.c_f;
+
+    //
+    // temperature equation, temperature part.
+    //
+    energy_balance.KTT.noalias() +=
+        dNdx.transpose() * crv_T.effective_thermal_conductivity * dNdx * w;
+    energy_balance.dKTT_dT_T.noalias() +=
+        dNdx.transpose() * crv_T.dlambda_eff_dT * dNdx * T * N * w;
+
+    energy_balance.ip_flux_vector.emplace_back(velocity * fluid_density * c_f);
+    // Without any flux correction the flux derivative is as follows. The
+    // contribution to KTT is different if any stabilisation scheme is used,
+    // but this is ignored for the moment.
+    GlobalDimVectorType const dip_flux_vector_dT =
+        crv_T.dvelocity_dT * fluid_density * c_f +
+        velocity * cpv.drho_LR_dT * c_f;
+    energy_balance.dKTT_dT_T.noalias() +=
+        N.transpose() * dip_flux_vector_dT.transpose() * dNdx * T * N * w;
+    energy_balance.average_velocity_norm += velocity.norm();
+
+    energy_balance.MTT.noalias() += N.transpose() *
+                                    (crv_T.sensible_volumetric_heat_capacity -
+                                     crv_T.latent_volumetric_heat_capacity) *
+                                    N * w;
+    energy_balance.dMTT_dT_T.noalias() += N.transpose() * crv_T.J_TT * N * w;
+
+    //
+    // temperature equation, pressure part
+    //
+    energy_balance.KTp.noalias() +=
+        dNdx.transpose() * fpv.K_pT_thermal_osmosis * dNdx * (T_int_pt * w);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+template <typename JacobianBlock, typename ResidualSegment,
+          typename TemperatureVector, typename TemperaturePrevVector,
+          typename PressureVector>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    addEnergyBalanceElementTerms(EnergyBalanceTerms&& energy_balance,
+                                 JacobianBlock&& jacobian_TT,
+                                 ResidualSegment&& residual_T,
+                                 TemperatureVector const& T,
+                                 TemperaturePrevVector const& T_prev,
+                                 PressureVector const& p,
+                                 double const dt) const
+{
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    NumLib::assembleAdvectionMatrix(
+        _process_data.stabilizer, _ip_data, energy_balance.ip_flux_vector,
+        energy_balance.average_velocity_norm /
+            static_cast<double>(n_integration_points),
+        energy_balance.KTT);
+
+    // temperature equation, temperature part
+    jacobian_TT.noalias() += energy_balance.KTT + energy_balance.dKTT_dT_T +
+                             energy_balance.MTT / dt + energy_balance.dMTT_dT_T;
 
     // temperature equation (f_T)
-    local_rhs.template segment<temperature_size>(temperature_index).noalias() -=
-        KTT * T + MTT * (T - T_prev) / dt + KTp * p;
+    residual_T.noalias() -= energy_balance.KTT * T +
+                            energy_balance.MTT * (T - T_prev) / dt +
+                            energy_balance.KTp * p;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
