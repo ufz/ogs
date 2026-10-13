@@ -439,12 +439,15 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
     std::vector<GlobalVector*> const& x_prev, double const t, double const dt,
     const int process_id)
 {
-    if (process_id != 0)
+    DBUG("PostTimestep ThermoHydroMechanicsProcess.");
+
+    // The hydraulic process updates neither the element states nor the output
+    // data; its dispatch would return on every element without doing anything.
+    if (!_use_monolithic_scheme &&
+        process_id == _process_data.hydraulic_process_id)
     {
         return;
     }
-
-    DBUG("PostTimestep ThermoHydroMechanicsProcess.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,

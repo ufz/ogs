@@ -392,6 +392,7 @@ struct MechanicalPropertyValues final
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>::Constant(
             std::numeric_limits<double>::quiet_NaN());
+    // Used by the monolithic scheme only.
     MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr =
         MathLib::KelvinVector::KelvinVectorType<DisplacementDim>::Constant(
             std::numeric_limits<double>::quiet_NaN());

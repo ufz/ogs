@@ -107,6 +107,12 @@ public:
                               std::vector<double>& local_rhs_data,
                               std::vector<double>& local_Jac_data) override;
 
+    void assembleWithJacobianForStaggeredScheme(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
+        std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data) override;
+
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
@@ -479,6 +485,21 @@ private:
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
 
+    void assembleWithJacobianForEnergyBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data);
+
+    void assembleWithJacobianForMassBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data);
+
+    void assembleWithJacobianForMomentumBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data);
+
     /// Adds the tangent-stiffness and the internal-force residual
     /// contributions of the momentum balance of one integration point to the
     /// local system: \f[ K_{uu} \mathrel{+}=
@@ -496,8 +517,10 @@ private:
     /// \param crv_u the mechanical property values at
     /// the integration point.
     /// \param B the strain-displacement matrix.
-    /// \param effective_stress stress entering the internal force, the
-    /// effective stress \f$\sigma_{\mathrm{eff}}\f$ of the solid skeleton.
+    /// \param effective_stress stress entering the internal force: the
+    /// effective stress \f$\sigma_{\mathrm{eff}}\f$ of the solid skeleton for
+    /// the monolithic scheme; the staggered scheme passes the same with its
+    /// explicitly assembled Biot pressure coupling subtracted.
     /// \param has_frozen_liquid_phase whether the medium has a frozen liquid
     /// phase, which adds the ice-stress contributions.
     template <typename JacobianBlock, typename ResidualSegment,
@@ -512,7 +535,8 @@ private:
 
     /// Element matrices of the energy balance equation, accumulated over the
     /// integration points by addEnergyBalanceIntegrationPointTerms() and
-    /// added to the local system by addEnergyBalanceElementTerms().
+    /// added to the local system by addEnergyBalanceElementTerms(). Shared by
+    /// the monolithic and the staggered assemblers.
     struct EnergyBalanceTerms
     {
         using NodalMatrixType =
