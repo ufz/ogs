@@ -26,6 +26,31 @@ namespace ProcessLib
 namespace ThermoHydroMechanics
 {
 
+/// Fixed-stress artificial storage coefficient, \f$\beta_{FS}\,\alpha'\,c_s\f$.
+/// \param beta_FS \f$\beta_{FS}\f$, the fixed-stress stabilization parameter.
+/// \param modified_biot \f$\alpha'\f$, the modified Biot coefficient.
+/// \param solid_skeleton_compressibility \f$c_s\f$, the solid skeleton
+/// compressibility.
+inline double artificialStorageCoefficient(
+    double const beta_FS, double const modified_biot,
+    double const solid_skeleton_compressibility)
+{
+    return beta_FS * modified_biot * solid_skeleton_compressibility;
+}
+
+/// Fixed-stress thermal strain rate contribution, \f$\beta_{FS}\,\alpha_T\,
+/// \dot T\f$.
+/// \param beta_FS \f$\beta_{FS}\f$, the fixed-stress stabilization parameter.
+/// \param thermal_expansion_coefficient \f$\alpha_T\f$, the volumetric
+/// thermal expansion coefficient.
+/// \param T_dot \f$\dot T\f$, the temperature rate.
+inline double fixedStressThermalStrainRate(
+    double const beta_FS, double const thermal_expansion_coefficient,
+    double const T_dot)
+{
+    return beta_FS * thermal_expansion_coefficient * T_dot;
+}
+
 namespace
 {
 /// Pressure storage coefficient of the mass-balance accumulation term,
@@ -238,6 +263,11 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::eps);
     }
+    if (name == "strain_rate_variable")
+    {
+        return ProcessLib::setIntegrationPointScalarData(
+            values, _ip_data, &IpData::strain_rate_variable);
+    }
     if (name.starts_with("material_state_variable_"))
     {
         name.remove_prefix(24);
@@ -350,10 +380,10 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    updateCommonProperties(Eigen::Ref<Eigen::VectorXd const> const local_x,
-                           Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
-                           SpaceTimeData const& space_time_data,
-                           IpState const& ip_state) const
+    updateCoreCommonProperties(
+        Eigen::Ref<Eigen::VectorXd const> const local_x,
+        Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
+        SpaceTimeData const& space_time_data, IpState const& ip_state) const
 {
     auto const& [x_position, t, dt] = space_time_data;
     auto& ip_data = ip_state.ip_data;
@@ -460,6 +490,63 @@ CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         cpv.modified_biot += cpv.alpha_biot * ip_data.phi_fr / porosity *
                              (rho_fr / fluid_density - 1);
+    }
+
+    // Consider also anisotropic thermal expansion.
+    cpv.solid_linear_thermal_expansion_coefficient =
+        MPL::formKelvinVector<DisplacementDim>(
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_expansivity)
+                .value(vars, x_position, t, dt));
+    cpv.solid_volumetric_thermal_expansion_coefficient =
+        Invariants::trace(cpv.solid_linear_thermal_expansion_coefficient);
+
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+        dthermal_strain =
+            cpv.solid_linear_thermal_expansion_coefficient * cpv.dT_int_pt;
+
+    //
+    // The mechanical strain is set here, before the variable array is passed
+    // on in cpv.vars, so that permeability models that depend on it can read
+    // it in the property evaluations later.
+    //
+    auto& eps_m = ip_data.eps_m;
+    auto const& eps_m_prev = ip_data.eps_m_prev;
+    eps_m.noalias() = eps_m_prev + eps - cpv.eps_prev - dthermal_strain;
+    vars.mechanical_strain
+        .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+            eps_m);
+
+    cpv.vars = vars;
+    return cpv;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    updateCommonProperties(Eigen::Ref<Eigen::VectorXd const> const local_x,
+                           Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
+                           SpaceTimeData const& space_time_data,
+                           IpState const& ip_state) const
+{
+    auto const& [x_position, t, dt] = space_time_data;
+    auto& ip_data = ip_state.ip_data;
+
+    auto cpv = updateCoreCommonProperties(local_x, local_x_prev,
+                                          space_time_data, ip_state);
+
+    [[maybe_unused]] auto const& [medium, liquid_phase, solid_phase,
+                                  frozen_liquid_phase] = getMediumPhases();
+
+    MaterialPropertyLib::VariableArray& vars = cpv.vars;
+    double const porosity = vars.porosity;
+
+    if (frozen_liquid_phase)
+    {
+        auto const& frozen_liquid_saturation = (*medium)
+            [MaterialPropertyLib::PropertyType::frozen_liquid_saturation];
 
         ip_data.phi_fr_prev = [&]()
         {
@@ -489,37 +576,10 @@ CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     .value(vars, x_position, t, dt));
     }
 
-    // Consider also anisotropic thermal expansion.
-    cpv.solid_linear_thermal_expansion_coefficient =
-        MPL::formKelvinVector<DisplacementDim>(
-            solid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_expansivity)
-                .value(vars, x_position, t, dt));
-    cpv.solid_volumetric_thermal_expansion_coefficient =
-        Invariants::trace(cpv.solid_linear_thermal_expansion_coefficient);
-
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-        dthermal_strain =
-            cpv.solid_linear_thermal_expansion_coefficient * cpv.dT_int_pt;
-
-    //
-    // The mechanical strain is set here, before the variable array is passed
-    // on in cpv.vars, so that permeability models that depend on it can read
-    // it in the property evaluations later.
-    //
-    auto& eps_m = ip_data.eps_m;
-    auto const& eps_m_prev = ip_data.eps_m_prev;
-    eps_m.noalias() = eps_m_prev + eps - cpv.eps_prev - dthermal_strain;
-    vars.mechanical_strain
-        .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-            eps_m);
-
     cpv.solid_density =
         solid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template value<double>(vars, x_position, t, dt);
 
-    cpv.vars = vars;
     return cpv;
 }
 
@@ -1422,6 +1482,10 @@ void ThermoHydroMechanicsLocalAssembler<
     bool const has_frozen_liquid_phase =
         medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid);
 
+    auto const staggered_scheme = std::get<Common::HydroMechanics::Staggered>(
+        _process_data.coupling_scheme);
+    auto const beta_FS = staggered_scheme.fixed_stress_stabilization_parameter;
+
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
 
@@ -1457,7 +1521,14 @@ void ThermoHydroMechanicsLocalAssembler<
             cpv.vars.porosity, crv_p.fluid_compressibility, cpv.alpha_biot,
             crv_p.beta_SR, has_frozen_liquid_phase ? crv_p.storage_p_fr : 0.0);
 
-        storage_p.noalias() += N.transpose() * N * (storage_p_coeff * rw);
+        // Artificial compressibility from the fixed stress splitting:
+        auto const artificial_storage_coef = artificialStorageCoefficient(
+            beta_FS, cpv.modified_biot, crv_p.solid_skeleton_compressibility);
+
+        double const storage_p_coeff_with_stabilization =
+            storage_p_coeff + cpv.modified_biot * artificial_storage_coef;
+        storage_p.noalias() +=
+            N.transpose() * N * (storage_p_coeff_with_stabilization * rw);
 
         laplace_T.noalias() +=
             dNdx.transpose() * fpv.K_pT_thermal_osmosis * dNdx * rw;
@@ -1478,9 +1549,16 @@ void ThermoHydroMechanicsLocalAssembler<
 
         //
         // pressure equation, displacement part.
+        double const fixed_stress_stabilization =
+            cpv.modified_biot *
+            (_ip_data[ip].strain_rate_variable +
+             fixedStressThermalStrainRate(
+                 beta_FS, cpv.solid_volumetric_thermal_expansion_coefficient,
+                 cpv.T_dot));
+
         double const storage_rate = massBalanceStorageRate(
-            storage_p_coeff, cpv.p_dot, storage_T_coef, cpv.T_dot,
-            cpv.modified_biot * cpv.eps_v_dot);
+            storage_p_coeff_with_stabilization, cpv.p_dot, storage_T_coef,
+            cpv.T_dot, fixed_stress_stabilization);
         local_rhs.noalias() -= (storage_rate * rw) * N;
 
         if (!_process_data.is_volume_balance_equation_type)
@@ -1739,6 +1817,43 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    evaluateExtraStrainRateForFixedStressSplit(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt, double const beta_FS)
+{
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
+    {
+        auto& ip_data = _ip_data[ip];
+        auto const& N_u = ip_data.N_u;
+        auto const space_time_data = makeSpaceTimeData(N_u, t, dt);
+        IpState const ip_state{ip_data, _ip_data_output[ip]};
+
+        auto const cpv = updateCoreCommonProperties(local_x, local_x_prev,
+                                                    space_time_data, ip_state);
+
+        auto const solid_skeleton_compressibility =
+            solidSkeletonCompressibility(
+                space_time_data, ip_data,
+                static_cast<double>(cpv.vars.temperature));
+
+        // Artificial compressibility from the fixed stress splitting:
+
+        auto const artificial_storage_coef = artificialStorageCoefficient(
+            beta_FS, cpv.modified_biot, solid_skeleton_compressibility);
+
+        ip_data.strain_rate_variable =
+            cpv.eps_v_dot - artificial_storage_coef * cpv.p_dot -
+            fixedStressThermalStrainRate(
+                beta_FS, cpv.solid_volumetric_thermal_expansion_coefficient,
+                cpv.T_dot);
+    }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::postTimestepConcrete(Eigen::VectorXd const& local_x,
                                            Eigen::VectorXd const& local_x_prev,
@@ -1803,6 +1918,28 @@ void ThermoHydroMechanicsLocalAssembler<
     if (update_heat)
     {
         (*_process_data.cell_sensible_heat)[_element.getID()] = sensible_heat;
+    }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    postNonLinearSolverConcrete(Eigen::VectorXd const& local_x,
+                                Eigen::VectorXd const& local_x_prev,
+                                double const t, double const dt,
+                                int const process_id)
+{
+    auto const staggered_scheme_ptr =
+        std::get_if<Common::HydroMechanics::Staggered>(
+            &_process_data.coupling_scheme);
+
+    if (staggered_scheme_ptr &&
+        (process_id == _process_data.mechanical_process_id))
+    {
+        evaluateExtraStrainRateForFixedStressSplit(
+            local_x, local_x_prev, t, dt,
+            staggered_scheme_ptr->fixed_stress_stabilization_parameter);
     }
 }
 

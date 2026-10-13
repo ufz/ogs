@@ -99,6 +99,18 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
             PASS_REGULAR_EXPRESSION
             "coupling scheme configuration is missing its <type> element"
     )
+    # Out-of-range stabilization parameters must warn about the range.
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/RejectedCouplingSchemeOptions/out_of_range_fixed_stress_stabilization_parameter.xml
+        EXECUTABLE_ARGS
+            -m
+            ${Data_SOURCE_DIR}/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
+        NO_TEST_DEFINITION
+        PROPERTIES
+            PASS_REGULAR_EXPRESSION
+            "is out of reasonable range"
+    )
     OgsTest(
         PROJECTFILE
             ThermoHydroMechanics/RejectedCouplingSchemeOptions/unknown_coupling_scheme_type.xml

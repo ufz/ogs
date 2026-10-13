@@ -172,6 +172,11 @@ public:
                               double const t, double const dt,
                               int const /*process_id*/) override;
 
+    void postNonLinearSolverConcrete(Eigen::VectorXd const& local_x,
+                                     Eigen::VectorXd const& local_x_prev,
+                                     double const t, double const dt,
+                                     int const process_id) override;
+
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_x_prev) override;
@@ -218,6 +223,17 @@ public:
     {
         std::vector<double> result;
         getIntPtIceVolume(0, {}, {}, result);
+        return result;
+    }
+
+    std::vector<double> getStrainRateVariable() const override
+    {
+        std::vector<double> result;
+        result.reserve(_ip_data.size());
+        for (auto const& ip_data : _ip_data)
+        {
+            result.push_back(ip_data.strain_rate_variable);
+        }
         return result;
     }
 
@@ -275,6 +291,18 @@ private:
     /// Resolves the aqueous liquid, the solid and, if the medium defines one,
     /// the frozen liquid phase of this element's medium.
     MediumPhases getMediumPhases() const;
+
+    /// Evaluates the subset of the common values that the fixed-stress split
+    /// needs: the primary variable rates, the volumetric strain rate, the solid
+    /// thermal expansion and the (modified) Biot coefficient. Updates the
+    /// strain, mechanical strain and ice volume fraction in ip_data.
+    /// solid_density, the derivatives of the ice volume fraction and the ice
+    /// thermal expansion are left unset.
+    CommonPropertyValues<DisplacementDim> updateCoreCommonProperties(
+        Eigen::Ref<Eigen::VectorXd const> const local_x,
+        Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
 
     /// Evaluates the values shared by all balance equations and updates the
     /// strain, mechanical strain and ice volume fraction in ip_data.
@@ -595,6 +623,12 @@ private:
                                       TemperaturePrevVector const& T_prev,
                                       PressureVector const& p,
                                       double const dt) const;
+
+    void evaluateExtraStrainRateForFixedStressSplit(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt,
+        double const beta_FS  // fixed stress stabilization parameter
+    );
 };
 
 }  // namespace ThermoHydroMechanics

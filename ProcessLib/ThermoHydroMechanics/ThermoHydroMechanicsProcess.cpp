@@ -78,6 +78,14 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
             static_cast<int>(mesh.getDimension() == 2 ? 4 : 6) /*n components*/,
             integration_order, local_assemblers_,
             &LocalAssemblerInterface<DisplacementDim>::getEpsilon));
+
+    if (!_use_monolithic_scheme)
+    {
+        _integration_point_writer.emplace_back(std::make_unique<
+                                               MeshLib::IntegrationPointWriter>(
+            "strain_rate_variable_ip", 1, integration_order, local_assemblers_,
+            &LocalAssemblerInterface<DisplacementDim>::getStrainRateVariable));
+    }
 }
 
 template <int DisplacementDim>
@@ -451,6 +459,32 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::postTimestepConcreteProcess(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface<DisplacementDim>::postTimestep,
+        local_assemblers_, getActiveElementIDs(), getDOFTables(x.size()), x,
+        x_prev, t, dt, process_id);
+}
+
+template <int DisplacementDim>
+void ThermoHydroMechanicsProcess<DisplacementDim>::
+    postNonLinearSolverConcreteProcess(std::vector<GlobalVector*> const& x,
+                                       std::vector<GlobalVector*> const& x_prev,
+                                       const double t, double const dt,
+                                       const int process_id)
+{
+    DBUG("PostNonLinearSolver ThermoHydroMechanicsProcess.");
+
+    // The fixed-stress strain rate variable is updated after the mechanical
+    // solve of the staggered scheme only; the dispatch for the monolithic
+    // scheme and the other processes would return on every element without
+    // doing anything.
+    if (_use_monolithic_scheme ||
+        process_id != _process_data.mechanical_process_id)
+    {
+        return;
+    }
+
+    // Calculate strain, stress or other internal variables of mechanics.
+    GlobalExecutor::executeSelectedMemberOnDereferenced(
+        &LocalAssemblerInterface<DisplacementDim>::postNonLinearSolver,
         local_assemblers_, getActiveElementIDs(), getDOFTables(x.size()), x,
         x_prev, t, dt, process_id);
 }

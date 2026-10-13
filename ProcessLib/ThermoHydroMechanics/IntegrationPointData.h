@@ -72,6 +72,23 @@ struct IntegrationPointData final
     double phi_fr_prev = std::numeric_limits<double>::quiet_NaN();
     double integration_weight = 0;
 
+    /// Fixed-stress split of the staggered scheme: the volumetric strain rate
+    /// with its pressure and temperature driven parts removed,
+    /// \f[ \dot{\epsilon}_v - \beta_\mathrm{FS}\,\alpha\,K_S\,\dot p
+    ///     - \beta_\mathrm{FS}\,\alpha_T\,\dot T, \f]
+    /// with the stabilization parameter \f$\beta_\mathrm{FS}\f$, the
+    /// (ice-modified) Biot coefficient \f$\alpha\f$, the drained skeleton
+    /// compressibility \f$K_S\f$ and the volumetric solid thermal expansion
+    /// coefficient \f$\alpha_T\f$. Evaluated after the mechanical solve of
+    /// every coupling iteration. The mass balance equation adds back the
+    /// pressure and temperature driven parts with the current iterates.
+    ///
+    /// The HydroMechanics process stores the same split differently: its
+    /// strain_rate_variable holds only \f$\dot p\f$ of the previous coupling
+    /// iteration (or the full expression for the time step variant), and the
+    /// volumetric strain rate is evaluated during assembly.
+    double strain_rate_variable = 0.0;
+
     void pushBackState()
     {
         eps0_prev = eps0;
@@ -252,6 +269,8 @@ struct IntegrationPointState final
 /// Values shared by all balance equations. Evaluated once per integration
 /// point by updateCommonProperties(); every other update*Properties() function
 /// takes these as input and must not recompute them.
+/// updateCoreCommonProperties() leaves drho_LR_dT, solid_density and the
+/// freezing derivatives unset (NaN).
 template <int DisplacementDim>
 struct CommonPropertyValues final
 {

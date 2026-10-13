@@ -97,6 +97,11 @@ private:
                                      const double t, const double dt,
                                      int const process_id) override;
 
+    void postNonLinearSolverConcreteProcess(
+        std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, const double t,
+        double const dt, int const process_id) override;
+
     std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
         override;
