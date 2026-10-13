@@ -37,6 +37,8 @@ struct Staggered
     /// \f[\dot{\sigma}_v^{n, k} = \dot{\sigma}_v^{n, k-1}, \f]
     /// where \f$k\f$ is the coupling iteration index, and
     /// \f[ \dot{()}^{n, k} = \left(()^{n, k} - ()^{n-1}\right)/dt. \f]
+    /// The ThermoHydroMechanics process does not implement this selection and
+    /// refuses to start with it set.
     bool fixed_stress_over_time_step;
 };
 

@@ -40,23 +40,38 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     config.checkConfigParameter("type", "THERMO_HYDRO_MECHANICS");
     DBUG("Create ThermoHydroMechanicsProcess.");
 
-    auto const coupling_scheme =
-        //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__coupling_scheme}
-        config.getConfigParameterOptional<std::string>("coupling_scheme");
-    const bool use_monolithic_scheme =
-        !(coupling_scheme && (*coupling_scheme == "staggered"));
+    auto coupling_scheme = Common::HydroMechanics::parseCouplingScheme(config);
+
+    auto const* const staggered_scheme =
+        std::get_if<Common::HydroMechanics::Staggered>(&coupling_scheme);
+    bool const staggered = staggered_scheme != nullptr;
+    if (staggered_scheme && staggered_scheme->fixed_stress_over_time_step)
+    {
+        OGS_FATAL(
+            "The coupling scheme option fixed_stress_over_time_step is not "
+            "supported by the ThermoHydroMechanics process, which fixes the "
+            "volume stress rate over the coupling iteration only.");
+    }
 
     /// \section processvariablesthm Process Variables
 
     //! \ogs_file_param{prj__processes__process__THERMO_HYDRO_MECHANICS__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
+    // Process ids of the individual equations. The monolithic scheme keeps
+    // all equations in the single process 0. The staggered scheme solves one
+    // equation per process, numbered in the order of the process variable
+    // lists assembled below: temperature, pressure, displacement.
+    int const thermal_process_id = 0;
+    int const hydraulic_process_id = staggered ? 1 : 0;
+    int const mechanical_process_id = staggered ? 2 : 0;
+
     ProcessVariable* variable_T;
     ProcessVariable* variable_p;
     ProcessVariable* variable_u;
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
-    if (use_monolithic_scheme)  // monolithic scheme.
+    if (!staggered)  // monolithic scheme.
     {
         /// Primary process variables as they appear in the global component
         /// vector:
@@ -203,7 +218,11 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
         is_volume_balance_equation_type,
         std::move(initial_stress),
         specific_body_force,
-        std::move(stabilizer)};
+        std::move(stabilizer),
+        std::move(coupling_scheme),
+        thermal_process_id,
+        hydraulic_process_id,
+        mechanical_process_id};
 
     SecondaryVariableCollection secondary_variables;
 
@@ -212,8 +231,7 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     return std::make_unique<ThermoHydroMechanicsProcess<DisplacementDim>>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
         integration_order, std::move(process_variables),
-        std::move(process_data), std::move(secondary_variables),
-        use_monolithic_scheme, is_linear);
+        std::move(process_data), std::move(secondary_variables), is_linear);
 }
 
 template std::unique_ptr<Process> createThermoHydroMechanicsProcess<2>(

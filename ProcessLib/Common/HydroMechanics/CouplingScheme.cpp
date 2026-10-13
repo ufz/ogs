@@ -24,19 +24,33 @@ CouplingScheme parseCouplingScheme(BaseLib::ConfigTree const& config)
 
     auto const coupling_scheme_type =
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme__type}
-        coupling_scheme_config->getConfigParameter<std::string>("type");
+        coupling_scheme_config->getConfigParameterOptional<std::string>("type");
 
-    if (coupling_scheme_type == "monolithic")
+    if (!coupling_scheme_type)
+    {
+        OGS_FATAL(
+            "The coupling scheme configuration is missing its <type> "
+            "element.\n"
+            "Use the nested form:\n"
+            "    <coupling_scheme>\n"
+            "        <type>staggered</type>\n"
+            "    </coupling_scheme>\n"
+            "with the type named 'monolithic' or 'staggered'.");
+    }
+
+    auto const& type = *coupling_scheme_type;
+
+    if (type == "monolithic")
     {
         return Monolithic{};
     }
 
-    if (coupling_scheme_type != "staggered")
+    if (type != "staggered")
     {
         OGS_FATAL(
             "Unknown coupling scheme type '{:s}'. Valid options are "
             "'monolithic' and 'staggered'.",
-            coupling_scheme_type);
+            type);
     }
 
     // Default value is 0.5, which is recommended by [Mikelic & Wheeler].

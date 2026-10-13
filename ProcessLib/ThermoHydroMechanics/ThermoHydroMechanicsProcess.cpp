@@ -28,13 +28,14 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>&&
         process_variables,
     ThermoHydroMechanicsProcessData<DisplacementDim>&& process_data,
-    SecondaryVariableCollection&& secondary_variables,
-    bool const use_monolithic_scheme, bool const is_linear)
+    SecondaryVariableCollection&& secondary_variables, bool const is_linear)
     : Process(std::move(name), mesh, std::move(jacobian_assembler), parameters,
               integration_order, std::move(process_variables),
-              std::move(secondary_variables), use_monolithic_scheme),
+              std::move(secondary_variables),
+              process_data.isMonolithicSchemeUsed()),
       AssemblyMixin<ThermoHydroMechanicsProcess<DisplacementDim>>{
-          *_jacobian_assembler, is_linear, use_monolithic_scheme},
+          *_jacobian_assembler, is_linear,
+          process_data.isMonolithicSchemeUsed()},
       _process_data(std::move(process_data))
 
 {
@@ -93,7 +94,8 @@ ThermoHydroMechanicsProcess<DisplacementDim>::getMatrixSpecifications(
 {
     // For the monolithic scheme or the M process (deformation) in the staggered
     // scheme.
-    if (_use_monolithic_scheme || process_id == 2)
+    if (_use_monolithic_scheme ||
+        process_id == _process_data.mechanical_process_id)
     {
         auto const& l = *_local_to_global_index_map;
         return {l.dofSizeWithoutGhosts(), l.dofSizeWithoutGhosts(),
@@ -154,13 +156,13 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::constructDofTable()
     else
     {
         // For displacement equation.
-        const int process_id = 2;
         std::vector<MeshLib::MeshSubset> all_mesh_subsets;
-        std::generate_n(std::back_inserter(all_mesh_subsets),
-                        getProcessVariables(process_id)[0]
-                            .get()
-                            .getNumberOfGlobalComponents(),
-                        [&]() { return *_mesh_subset_all_nodes; });
+        std::generate_n(
+            std::back_inserter(all_mesh_subsets),
+            getProcessVariables(_process_data.mechanical_process_id)[0]
+                .get()
+                .getNumberOfGlobalComponents(),
+            [&]() { return *_mesh_subset_all_nodes; });
 
         std::vector<int> const vec_n_components{DisplacementDim};
         _local_to_global_index_map =
@@ -331,20 +333,19 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeBoundaryConditions(
 
     // Staggered scheme:
     // for the equations of heat transport
-    const int thermal_process_id = 0;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, thermal_process_id, media);
+        *_local_to_global_index_map_with_base_nodes,
+        _process_data.thermal_process_id, media);
 
     // for the equations of mass balance
-    const int hydraulic_process_id = 1;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map_with_base_nodes, hydraulic_process_id,
-        media);
+        *_local_to_global_index_map_with_base_nodes,
+        _process_data.hydraulic_process_id, media);
 
     // for the equations of deformation.
-    const int mechanical_process_id = 2;
     initializeProcessBoundaryConditionsAndSourceTerms(
-        *_local_to_global_index_map, mechanical_process_id, media);
+        *_local_to_global_index_map, _process_data.mechanical_process_id,
+        media);
 }
 
 template <int DisplacementDim>
@@ -389,13 +390,13 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::
     else
     {
         // For the staggered scheme
-        if (process_id == 0)
+        if (process_id == _process_data.thermal_process_id)
         {
             DBUG(
                 "Assemble the Jacobian equations of heat transport process in "
                 "ThermoHydroMechanics for the staggered scheme.");
         }
-        else if (process_id == 1)
+        else if (process_id == _process_data.hydraulic_process_id)
         {
             DBUG(
                 "Assemble the Jacobian equations of liquid fluid process in "
