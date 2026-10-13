@@ -895,8 +895,9 @@ void ThermoHydroMechanicsLocalAssembler<
         //
         //  RHS, pressure part
         //
+        double const up_eps_v_dot = up_coeff * crv.eps_v_dot;
         local_rhs.template segment<pressure_size>(pressure_index).noalias() -=
-            N * (up_coeff * crv.eps_v_dot * scaling_factor * w);
+            N * (up_eps_v_dot * scaling_factor * w);
 
         local_rhs.template segment<pressure_size>(pressure_index).noalias() +=
             dNdx.transpose() * crv.K_over_mu * b *
@@ -931,27 +932,27 @@ void ThermoHydroMechanicsLocalAssembler<
             // The contribution to Jacobian from d()/ drho
             // drho/dp, d()/ drho drho/dT:
             //
-            double const storage_p_solid_coeff =
-                (crv.alpha_biot - ip_data.porosity) * crv.beta_SR;
-
             double const p_dot = N.dot(p - p_prev) / dt;
             double const T_dot = N.dot(T - T_prev) / dt;
-            double const drho_dp_coeff = storage_p_solid_coeff * p_dot +
-                                         storage_T_coeff * T_dot +
-                                         up_coeff * crv.eps_v_dot;
+            // Rate bracket as charged by the mass-balance residual above
+            // (storage_p, storage_T and the volumetric strain rate term),
+            // reused here so the residual and its fluid-density derivative
+            // cannot diverge.
+            double const storage_rate = storage_p_coeff * p_dot -
+                                        storage_T_coeff * T_dot + up_eps_v_dot;
 
             local_Jac
                 .template block<pressure_size, pressure_size>(pressure_index,
                                                               pressure_index)
                 .noalias() +=
                 // TODO (WW) : Add ip_data.porosity * d2rho_LR_dp2 * w.
-                N.transpose() * N * (drho_dp_coeff * crv.drho_LR_dp * w);
+                N.transpose() * N * (storage_rate * crv.drho_LR_dp * w);
             local_Jac
                 .template block<pressure_size, temperature_size>(
                     pressure_index, temperature_index)
                 .noalias() +=
                 // TODO (WW) : Add ip_data.porosity * d2rho_LR_dpdT * w.
-                N.transpose() * N * (drho_dp_coeff * crv.drho_LR_dT * w);
+                N.transpose() * N * (storage_rate * crv.drho_LR_dT * w);
 
             // The term from d (rho_L K(grad p - rho_L b)/dp:
             // derivative of rhp_L * K_over_mu * k_rel (grad p + rho_l g) with
