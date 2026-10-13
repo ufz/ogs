@@ -8,6 +8,8 @@
 
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/EigenBlockMatrixView.h"
@@ -237,14 +239,86 @@ private:
         IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
                              ShapeMatricesTypePressure, DisplacementDim,
                              ShapeFunctionDisplacement::NPOINTS>;
+    using IpState = IntegrationPointState<IpData, DisplacementDim>;
 
 private:
-    ConstitutiveRelationsValues<DisplacementDim> updateConstitutiveRelations(
+    /// Bundles the evaluation time and location of one integration point for
+    /// the evaluation functions below.
+    SpaceTimeData makeSpaceTimeData(
+        typename ShapeMatricesTypeDisplacement::NodalRowVectorType const& N_u,
+        double const t, double const dt) const
+    {
+        return {ParameterLib::SpatialPosition{
+                    std::nullopt, _element.getID(),
+                    MathLib::Point3d(
+                        NumLib::interpolateCoordinates<
+                            ShapeFunctionDisplacement,
+                            ShapeMatricesTypeDisplacement>(_element, N_u))},
+                t, dt};
+    }
+    /// Phases of the medium of this element.
+    struct MediumPhases
+    {
+        MaterialPropertyLib::Medium const* medium;
+        MaterialPropertyLib::Phase const& liquid;
+        MaterialPropertyLib::Phase const& solid;
+        /// nullptr when the medium defines no frozen liquid phase.
+        MaterialPropertyLib::Phase const* frozen_liquid;
+    };
+
+    /// Resolves the aqueous liquid, the solid and, if the medium defines one,
+    /// the frozen liquid phase of this element's medium.
+    MediumPhases getMediumPhases() const;
+
+    /// Evaluates the values shared by all balance equations and updates the
+    /// strain, mechanical strain, porosity and ice volume fraction in ip_data.
+    CommonPropertyValues<DisplacementDim> updateCommonProperties(
         Eigen::Ref<Eigen::VectorXd const> const local_x,
         Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
-        ParameterLib::SpatialPosition const& x_position, double const t,
-        double const dt, IpData& ip_data,
-        IntegrationPointDataForOutput<DisplacementDim>& ip_data_output) const;
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Evaluates the Darcy flow related values and updates the viscosity and
+    /// velocity in ip_data_output.
+    FlowPropertyValues<DisplacementDim> updateFlowProperties(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        Eigen::Ref<Eigen::VectorXd const> const local_x,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Evaluates the specific heat capacities and the sensible volumetric heat
+    /// capacity.
+    HeatCapacityValues computeHeatCapacities(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Evaluates the thermal conductivities and the heat-capacity and
+    /// temperature-Jacobian values of the energy balance.
+    ThermalPropertyValues<DisplacementDim> updateThermalProperties(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        FlowPropertyValues<DisplacementDim> const& fpv,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Evaluates the fluid- and solid-skeleton compressibilities and the
+    /// pressure- and temperature-Jacobian values of the balance equations.
+    HydraulicPropertyValues updateHydraulicProperties(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Updates the solid (and ice) constitutive relations and the stresses in
+    /// ip_data.
+    MechanicalPropertyValues<DisplacementDim> updateMechanicalProperties(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Inverse of the drained bulk modulus of the solid skeleton.
+    double solidSkeletonCompressibility(SpaceTimeData const& space_time_data,
+                                        IpData& ip_data,
+                                        double const temperature) const;
 
     std::size_t setSigma(double const* values)
     {
