@@ -275,15 +275,13 @@ template <int DisplacementDim, typename ConstitutiveTraits>
 void ThermoRichardsMechanicsProcess<DisplacementDim, ConstitutiveTraits>::
     computeSecondaryVariableConcrete(const double t, const double dt,
                                      std::vector<GlobalVector*> const& x,
-                                     GlobalVector const& x_prev,
-                                     int const process_id)
+                                     std::vector<GlobalVector*> const& x_prev)
 {
     DBUG("Compute the secondary variables for ThermoRichardsMechanicsProcess.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
-        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
-        process_id);
+        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev);
 
     computeCellAverages<DisplacementDim>(cell_average_data_, local_assemblers_);
 }

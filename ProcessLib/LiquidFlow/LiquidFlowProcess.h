@@ -17,7 +17,7 @@ class Element;
 class Mesh;
 template <typename PROP_VAL_TYPE>
 class PropertyVector;
-}
+}  // namespace MeshLib
 
 namespace ProcessLib
 {
@@ -85,10 +85,9 @@ public:
         std::unique_ptr<ProcessLib::SurfaceFluxData>&& surfaceflux,
         bool const is_linear);
 
-    void computeSecondaryVariableConcrete(double const t, double const dt,
-                                          std::vector<GlobalVector*> const& x,
-                                          GlobalVector const& x_prev,
-                                          int const process_id) override;
+    void computeSecondaryVariableConcrete(
+        double const t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev) override;
 
     bool isLinear() const override { return _is_linear; }
 

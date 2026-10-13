@@ -224,7 +224,7 @@ SmallDeformationProcess<DisplacementDim>::initializeAssemblyOnSubmeshes(
 template <int DisplacementDim>
 void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, int const process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
     DBUG("Compute the secondary variables for SmallDeformationProcess.");
     std::vector<NumLib::LocalToGlobalIndexMap const*> dof_tables;
@@ -234,7 +234,7 @@ void SmallDeformationProcess<DisplacementDim>::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerInterface::computeSecondaryVariable, local_assemblers_,
-        getActiveElementIDs(), dof_tables, t, dt, x, x_prev, process_id);
+        getActiveElementIDs(), dof_tables, t, dt, x, x_prev);
 
     computeCellAverages<DisplacementDim>(cell_average_data_, local_assemblers_);
 }

@@ -136,10 +136,9 @@ private:
     /// the staggered scheme is used.
     GlobalSparsityPattern sparsity_pattern_with_linear_element_;
 
-    void computeSecondaryVariableConcrete(double const t, double const dt,
-                                          std::vector<GlobalVector*> const& x,
-                                          GlobalVector const& x_prev,
-                                          const int process_id) override;
+    void computeSecondaryVariableConcrete(
+        double const t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev) override;
     /**
      * @copydoc ProcessLib::Process::getDOFTableForExtrapolatorData()
      */

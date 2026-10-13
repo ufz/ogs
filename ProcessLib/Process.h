@@ -68,12 +68,16 @@ public:
 
     void preIteration(const unsigned iter, GlobalVector const& x) final;
 
-    /// compute secondary variables for the coupled equations or for output.
+    /// Computes secondary variables for the coupled equations or for output.
+    ///
+    /// The secondary variables are computed from the solutions of all
+    /// processes. Therefore this function is process id independent and it
+    /// must be called once per time step only, even if the staggered scheme
+    /// splits this process into several process ids.
     void computeSecondaryVariable(double const t,
                                   double const dt,
                                   std::vector<GlobalVector*> const& x,
-                                  GlobalVector const& x_prev,
-                                  int const process_id);
+                                  std::vector<GlobalVector*> const& x_prev);
 
     NumLib::IterationResult postIteration(GlobalVector const& x) final;
 
@@ -287,8 +291,7 @@ private:
         double const /*t*/,
         double const /*dt*/,
         std::vector<GlobalVector*> const& /*x*/,
-        GlobalVector const& /*x_prev*/,
-        int const /*process_id*/)
+        std::vector<GlobalVector*> const& /*x_prev*/)
     {
     }
 

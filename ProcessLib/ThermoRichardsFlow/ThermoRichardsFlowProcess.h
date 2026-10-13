@@ -152,10 +152,9 @@ private:
     /// the staggered scheme is used.
     GlobalSparsityPattern _sparsity_pattern_with_linear_element;
 
-    void computeSecondaryVariableConcrete(double const t, double const dt,
-                                          std::vector<GlobalVector*> const& x,
-                                          GlobalVector const& x_prev,
-                                          int const process_id) override;
+    void computeSecondaryVariableConcrete(
+        double const t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev) override;
 };
 
 }  // namespace ThermoRichardsFlow

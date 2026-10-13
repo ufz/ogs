@@ -76,10 +76,9 @@ private:
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
         override;
 
-    void computeSecondaryVariableConcrete(double const t, double const dt,
-                                          std::vector<GlobalVector*> const& x,
-                                          GlobalVector const& x_prev,
-                                          int const process_id) override;
+    void computeSecondaryVariableConcrete(
+        double const t, double const dt, std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev) override;
 
 private:
     SmallDeformationProcessData<DisplacementDim> process_data_;

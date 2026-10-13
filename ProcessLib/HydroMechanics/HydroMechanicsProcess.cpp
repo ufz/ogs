@@ -446,19 +446,13 @@ void HydroMechanicsProcess<DisplacementDim>::
 template <int DisplacementDim>
 void HydroMechanicsProcess<DisplacementDim>::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, const int process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
-    if (process_id != process_data_.hydraulic_process_id)
-    {
-        return;
-    }
-
     DBUG("Compute the secondary variables for HydroMechanicsProcess.");
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &LocalAssemblerIF::computeSecondaryVariable, local_assemblers_,
-        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev,
-        process_id);
+        getActiveElementIDs(), getDOFTables(x.size()), t, dt, x, x_prev);
 }
 
 template <int DisplacementDim>

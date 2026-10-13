@@ -67,7 +67,7 @@ public:
         std::size_t const mesh_item_id,
         std::vector<NumLib::LocalToGlobalIndexMap const*> const& dof_tables,
         double const t, double const dt, std::vector<GlobalVector*> const& x,
-        GlobalVector const& x_prev, int const process_id);
+        std::vector<GlobalVector*> const& x_prev);
 
     virtual void preTimestep(std::size_t const mesh_item_id,
                              NumLib::LocalToGlobalIndexMap const& dof_table,

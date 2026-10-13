@@ -309,7 +309,7 @@ void HeatTransportBHEProcess::assembleWithJacobianConcreteProcess(
 
 void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
     double const t, double const dt, std::vector<GlobalVector*> const& x,
-    GlobalVector const& x_prev, int const process_id)
+    std::vector<GlobalVector*> const& x_prev)
 {
     DBUG("Compute heat flux for HeatTransportBHE process.");
 
@@ -320,8 +320,7 @@ void HeatTransportBHEProcess::computeSecondaryVariableConcrete(
 
     GlobalExecutor::executeSelectedMemberOnDereferenced(
         &HeatTransportBHELocalAssemblerInterface::computeSecondaryVariable,
-        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev,
-        process_id);
+        local_assemblers_, getActiveElementIDs(), dof_tables, t, dt, x, x_prev);
 }
 
 NumLib::IterationResult HeatTransportBHEProcess::postIterationConcreteProcess(

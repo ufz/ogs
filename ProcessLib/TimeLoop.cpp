@@ -90,14 +90,23 @@ void postTimestepForAllProcesses(
     std::vector<GlobalVector*> const& process_solutions,
     std::vector<GlobalVector*> const& process_solutions_prev)
 {
+    // A staggered scheme may reference the same process under several process
+    // ids, so compute the secondary variables only on a process' first
+    // occurrence, i.e. once per distinct process.
+    std::vector<Process*> processes_computed;
     for (auto& process_data : per_process_data)
     {
         auto const process_id = process_data->process_id;
         auto& pcs = process_data->process;
 
-        pcs.computeSecondaryVariable(t(), dt, process_solutions,
-                                     *process_solutions_prev[process_id],
-                                     process_id);
+        // Secondary variables depend on the solutions of all processes.
+        if (!ranges::contains(processes_computed, &pcs))
+        {
+            processes_computed.push_back(&pcs);
+            pcs.computeSecondaryVariable(t(), dt, process_solutions,
+                                         process_solutions_prev);
+        }
+
         pcs.postTimestep(process_solutions, process_solutions_prev, t(), dt,
                          process_id);
     }
@@ -707,6 +716,10 @@ TimeLoop::~TimeLoop()
 void TimeLoop::preOutputInitialConditions(NumLib::Time const& t,
                                           const double dt) const
 {
+    // Compute the secondary variables once per distinct process, even though
+    // a staggered scheme may reference the same process under several process
+    // ids.
+    std::vector<Process*> processes_computed;
     for (auto const& process_data : _per_process_data)
     {
         // If nonlinear solver diverged, the solution has already been
@@ -727,10 +740,13 @@ void TimeLoop::preOutputInitialConditions(NumLib::Time const& t,
                       _process_solutions_prev, process_id);
 
         // Update secondary variables, which might be uninitialized, before
-        // output.
-        pcs.computeSecondaryVariable(_start_time(), dt, _process_solutions,
-                                     *_process_solutions_prev[process_id],
-                                     process_id);
+        // output. They are computed from the solutions of all processes.
+        if (!ranges::contains(processes_computed, &pcs))
+        {
+            processes_computed.push_back(&pcs);
+            pcs.computeSecondaryVariable(_start_time(), dt, _process_solutions,
+                                         _process_solutions_prev);
+        }
     }
 }
 }  // namespace ProcessLib
