@@ -3,18 +3,23 @@
 
 #pragma once
 
+#include <limits>
 #include <memory>
 
+#include "MaterialLib/MPL/VariableType.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 
 namespace ProcessLib
 {
 namespace ThermoHydroMechanics
 {
+using SpaceTimeData = ConstitutiveRelations::SpaceTimeData;
+
 template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
           typename ShapeMatricesTypePressure, int DisplacementDim, int NPoints>
 struct IntegrationPointData final
@@ -80,12 +85,10 @@ struct IntegrationPointData final
     }
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
-    computeElasticTangentStiffness(
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature)
+    computeElasticTangentStiffness(SpaceTimeData const& space_time_data,
+                                   double const temperature)
     {
+        auto const& [x_position, t, dt] = space_time_data;
         namespace MPL = MaterialPropertyLib;
 
         MPL::VariableArray variable_array;
@@ -118,11 +121,9 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         MaterialPropertyLib::VariableArray const& variable_array,
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature_prev)
+        SpaceTimeData const& space_time_data, double const temperature_prev)
     {
+        auto const& [x_position, t, dt] = space_time_data;
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev.stress
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
@@ -149,11 +150,9 @@ struct IntegrationPointData final
     computeElasticTangentStiffnessIce(
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             ice_constitutive_relation,
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature)
+        SpaceTimeData const& space_time_data, double const temperature)
     {
+        auto const& [x_position, t, dt] = space_time_data;
         namespace MPL = MaterialPropertyLib;
 
         MPL::VariableArray variable_array;
@@ -193,11 +192,9 @@ struct IntegrationPointData final
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             ice_constitutive_relation,
         MaterialPropertyLib::VariableArray const& variable_array,
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature_prev)
+        SpaceTimeData const& space_time_data, double const temperature_prev)
     {
+        auto const& [x_position, t, dt] = space_time_data;
         MaterialPropertyLib::VariableArray variable_array_prev;
 
         variable_array_prev.stress

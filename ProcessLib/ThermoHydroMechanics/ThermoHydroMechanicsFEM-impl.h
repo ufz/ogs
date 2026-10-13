@@ -318,7 +318,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     auto const& alpha = crv.alpha_biot;
 
     auto const C_el = ip_data.computeElasticTangentStiffness(
-        t, x_position, dt, static_cast<double>(T_int_pt));
+        {x_position, t, dt}, static_cast<double>(T_int_pt));
     auto const solid_skeleton_compressibility =
         1 / solid_material.getBulkModulus(t, x_position, &C_el);
 
@@ -461,7 +461,7 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
             eps_m);
 
-    crv.C = ip_data.updateConstitutiveRelation(vars, t, x_position, dt,
+    crv.C = ip_data.updateConstitutiveRelation(vars, {x_position, t, dt},
                                                T_prev_int_pt);
 
     crv.rho = solid_density * (1 - porosity) + porosity * fluid_density;
@@ -628,11 +628,11 @@ ConstitutiveRelationsValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
                 eps_m_ice);
         auto const C_IR = ip_data.updateConstitutiveRelationIce(
-            *_process_data.ice_constitutive_relation, vars_ice, t, x_position,
-            dt, T_prev_int_pt);
+            *_process_data.ice_constitutive_relation, vars_ice,
+            {x_position, t, dt}, T_prev_int_pt);
 
         auto const C_el_ice = ip_data.computeElasticTangentStiffnessIce(
-            *_process_data.ice_constitutive_relation, t, x_position, dt,
+            *_process_data.ice_constitutive_relation, {x_position, t, dt},
             static_cast<double>(T_int_pt));
         crv.beta_IR =
             1. / _process_data.ice_constitutive_relation->getBulkModulus(
@@ -1020,7 +1020,7 @@ void ThermoHydroMechanicsLocalAssembler<
         if (fluid_compressibility != 0)
         {
             auto const C_el = ip_data.computeElasticTangentStiffness(
-                t, x_position, dt, static_cast<double>(T_int_pt));
+                {x_position, t, dt}, static_cast<double>(T_int_pt));
             auto const solid_skeleton_compressibility =
                 1 / solid_material.getBulkModulus(t, x_position, &C_el);
             double const fluid_volumetric_thermal_expansion_coefficient =
