@@ -87,7 +87,11 @@ def apply_add_tag(
 
     - "text": Replaces the target element's text content with the diff element's text
     - "attrib": Adds or updates an attribute on the target element
-    - "tag": Appends all non-comment child elements from the diff element to the target
+    - "tag": Inserts all non-comment child elements from the diff element relative to
+      the target, according to the diff element's "pos" attribute (XML Patch semantics,
+      RFC 5261): "before"/"after" insert the children as the target's previous/next
+      siblings; anything else (including no "pos" attribute) appends them as the
+      target's last children, as before.
 
     Args:
         diff_element: The XML element containing the addition specification and content
@@ -105,8 +109,24 @@ def apply_add_tag(
         case "attrib":
             change_attrib(target_element, attrib_name, diff_element.text)
         case "tag":
-            for child_to_add in list(diff_element):
-                if not isinstance(child_to_add, etree._Comment):
+            children_to_add = [
+                child
+                for child in list(diff_element)
+                if not isinstance(child, etree._Comment)
+            ]
+            pos = diff_element.attrib.get("pos")
+            if pos == "before":
+                for child_to_add in children_to_add:
+                    target_element.addprevious(
+                        etree.fromstring(etree.tostring(child_to_add))
+                    )
+            elif pos == "after":
+                for child_to_add in reversed(children_to_add):
+                    target_element.addnext(
+                        etree.fromstring(etree.tostring(child_to_add))
+                    )
+            else:
+                for child_to_add in children_to_add:
                     target_element.append(
                         etree.fromstring(etree.tostring(child_to_add))
                     )

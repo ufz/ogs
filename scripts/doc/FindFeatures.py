@@ -243,7 +243,27 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
                 "time_discretization",
                 "global_process_coupling",
                 "secondary_variable",
+                "coupling_scheme",
             ]
+        },
+        # Add coupling scheme types for processes. Checks whether there is a coupling
+        # scheme type present. The possible types are extracted by scanning all .prj
+        # files, since coupling scheme types are not documented as individual c_*.md
+        # files like process types are.
+        **{
+            "Coupling scheme: "
+            + case: lambda xml, case=case: check_tag_text(
+                xml, ".//processes/process/coupling_scheme/type", case
+            )
+            for case in np.unique(
+                [
+                    text
+                    for xml in xml_files
+                    for text in xml.xpath(
+                        ".//processes/process/coupling_scheme/type/text()"
+                    )
+                ]
+            )
         },
         # Check for property names. For each possible name an feature dict entry will be created. The possible names are extracted by scanning all .prj files and look for said names.
         **{
