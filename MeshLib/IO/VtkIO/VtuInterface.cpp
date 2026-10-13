@@ -28,16 +28,18 @@
 
 namespace
 {
-// Configure VTK before mesh I/O in OGS and the command line utilities. VTK's
-// TBB backend does not honour OMP_NUM_THREADS. Default to one thread, but allow
-// users to override the limit through VTK_SMP_MAX_THREADS. Leave OpenMP
+// Configure VTK's parallelism before mesh I/O. VTK's TBB backend does not
+// honour OMP_NUM_THREADS. Default to one thread, but allow users to
+// override the limit through VTK_SMP_MAX_THREADS. Leave OpenMP backend
 // unchanged because its thread setting is shared with the Eigen solver.
 [[maybe_unused]] bool const vtk_smp_initialised = []
 {
-    if (std::string_view{vtkSMPTools::GetBackend()} != "OpenMP")
+    if (std::string_view{vtkSMPTools::GetBackend()} != "OpenMP" &&
+        !std::getenv("VTK_SMP_MAX_THREADS"))
     {
-        vtkSMPTools::Initialize(std::getenv("VTK_SMP_MAX_THREADS") ? 0 : 1);
+        vtkSMPTools::Initialize(1);
     }
+    // else: VTK's SMPTools honour VTK_SMP_MAX_THREADS
     return true;
 }();
 }  // namespace

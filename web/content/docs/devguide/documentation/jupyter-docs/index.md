@@ -135,6 +135,26 @@ endif()
 - If the notebook is in `web/content` it is important to prefix the notebook file name with `notebook-`! The prefix is required to indicate Hugo that this is a notebook and not a regular markdown page.
 - `RUNTIME` larger than 600 s is executed as large benchmark job.
 
+If a notebook runs OGS with multiple threads, also declare its CPU requirement
+with `PROPERTIES PROCESSORS`. For example, a notebook using four solver or
+assembly threads should be registered as follows:
+
+```cmake
+NotebookTest(
+    NOTEBOOKFILE Mechanics/ReleaseNodalForceKirsch/kirsch.py
+    RUNTIME 20
+    PROPERTIES PROCESSORS 4
+)
+```
+
+The [`PROCESSORS` property](https://cmake.org/cmake/help/latest/prop_test/PROCESSORS.html)
+lets CTest account for the test's CPU usage when scheduling concurrent tests.
+It does not set or limit the number of threads used by the notebook or its OGS subprocesses.
+Configure those separately as described in
+[shared-memory parallelism]({{< relref "/docs/userguide/basics/openmp.md" >}}).
+If a notebook launches multiple OGS runs at once, account for their combined
+CPU requirement.
+
 <div class='note'>
 
 If your notebook should **not** appear on the website add the `SKIP_WEB`-option to `NotebookTest()`. This may be useful if the notebook serves as CI test only, e.g. comparing multiple simulation runs or doing performance measurements. But please also note that there will be no artifact produced (except for notebook errors which get reported as usual).
