@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <string_view>
 #include <vector>
 
 namespace MathLib
@@ -24,19 +25,25 @@ public:
      * \f$y_j\f$ for all \f$j \in [0, n]\f$.
      *
      * It is not assumed that the supporting points are sorted, i.e.
-     * \f$x_0 < x_1 < \dots < x_n\f$. It is assumed, that the supporting points
-     * are pairwise different. The user can set the flag supp_pnts_sorted to
-     * true, if the supporting points are sorted. This will save some setup
-     * time.
+     * \f$x_0 < x_1 < \dots < x_n\f$. The supporting points must be pairwise
+     * different and at least one must be given; otherwise it is a fatal error,
+     * see sortAndCheckSupportingPoints(). The user can set the flag
+     * supp_pnts_sorted to true, if the supporting points are sorted. This will
+     * save some setup time.
      * @param supporting_points vector of supporting points
      * @param values_at_supp_pnts vector of values at the supporting points
      * @param supp_pnts_sorted false (default), if it is sure the supporting
      * points are sorted
      * one can set the switch to true
+     * @param description describes the owner of the supporting points in
+     * error messages
      */
-    PiecewiseLinearInterpolation(std::vector<double> supporting_points,
-                                 std::vector<double> values_at_supp_pnts,
-                                 bool supp_pnts_sorted = false);
+    PiecewiseLinearInterpolation(
+        std::vector<double> supporting_points,
+        std::vector<double>
+            values_at_supp_pnts,
+        bool supp_pnts_sorted = false,
+        std::string_view description = "piecewise linear interpolation");
 
     PiecewiseLinearInterpolation(std::vector<int> const& supporting_points,
                                  std::vector<double> const& values_at_supp_pnts,
