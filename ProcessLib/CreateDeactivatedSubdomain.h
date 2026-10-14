@@ -8,7 +8,10 @@
 #include <string>
 #include <vector>
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+namespace MathLib
+{
+class Curve;
+}  // namespace MathLib
 
 namespace BaseLib
 {
@@ -36,8 +39,6 @@ std::vector<DeactivatedSubdomain> createDeactivatedSubdomains(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
 }  // namespace ProcessLib

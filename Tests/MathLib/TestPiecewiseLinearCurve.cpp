@@ -5,9 +5,10 @@
 
 #include <cmath>
 #include <limits>
+#include <memory>
 
 #include "BaseLib/ConfigTree.h"
-#include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
+#include "MathLib/Curve/PiecewiseLinearCurveConfig.h"
 #include "MathLib/Curve/PiecewiseLinearMonotonicCurve.h"
 #include "Tests/TestTools.h"
 
@@ -18,7 +19,8 @@ std::unique_ptr<CurveType> createPiecewiseLinearCurve(const char xml[])
     BaseLib::ConfigTree conf(std::move(ptree), "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
     auto const& sub_config = conf.getConfigSubtree("curve");
-    return MathLib::createPiecewiseLinearCurve<CurveType>(sub_config);
+    auto [xs, ys] = MathLib::parsePiecewiseLinearCurveConfig(sub_config);
+    return std::make_unique<CurveType>(std::move(xs), std::move(ys));
 }
 
 TEST(MathLibCurve, PiecewiseLinearCurveParsing)

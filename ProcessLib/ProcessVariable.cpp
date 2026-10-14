@@ -107,8 +107,7 @@ ProcessVariable::ProcessVariable(
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
     std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+             std::unique_ptr<MathLib::Curve>> const& curves)
     :  //! \ogs_file_param{prj__process_variables__process_variable__name}
       _name(config.getConfigParameter<std::string>("name")),
       _mesh(mesh),

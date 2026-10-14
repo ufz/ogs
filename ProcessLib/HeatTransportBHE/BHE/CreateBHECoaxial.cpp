@@ -19,9 +19,7 @@ static std::tuple<BoreholeGeometry, RefrigerantProperties, GroutParameters,
 parseBHECoaxialConfig(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     // if the BHE is using python boundary condition
     auto const bhe_if_use_python_bc_conf =
@@ -81,9 +79,7 @@ template <typename T_BHE>
 T_BHE createBHECoaxial(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     auto coaxial = parseBHECoaxialConfig(config, parameters, curves);
     return {std::get<0>(coaxial), std::get<1>(coaxial), std::get<2>(coaxial),
@@ -93,16 +89,12 @@ T_BHE createBHECoaxial(
 template BHE_CXA createBHECoaxial<BHE_CXA>(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
 template BHE_CXC createBHECoaxial<BHE_CXC>(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

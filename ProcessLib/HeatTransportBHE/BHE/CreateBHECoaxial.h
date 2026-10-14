@@ -8,8 +8,10 @@
 #include <string>
 #include <vector>
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
-
+namespace MathLib
+{
+class Curve;
+}
 namespace BaseLib
 {
 class ConfigTree;
@@ -28,9 +30,7 @@ template <typename T_BHE>
 T_BHE createBHECoaxial(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 }  // namespace BHE
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

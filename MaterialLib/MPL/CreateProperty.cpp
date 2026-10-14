@@ -21,9 +21,7 @@ std::unique_ptr<MaterialPropertyLib::Property> createProperty(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     using namespace MaterialPropertyLib;
     // Parsing the property type:
@@ -392,9 +390,7 @@ std::unique_ptr<PropertyArray> createProperties(
     std::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     if (!config)
     {

@@ -12,7 +12,7 @@
 #include "BaseLib/FileTools.h"
 #include "GeoLib/Raster.h"
 #include "InfoLib/TestInfo.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "MeshLib/Mesh.h"
 #include "MeshToolsLib/MeshGenerators/MeshGenerator.h"
 #include "ParameterLib/Parameter.h"
@@ -40,9 +40,7 @@ std::unique_ptr<LookupTable> createTestLookupTable(const char xml[])
         meshes.push_back(std::move(mesh));
     }
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
 
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
     {

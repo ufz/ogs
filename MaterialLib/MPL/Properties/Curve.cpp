@@ -3,11 +3,13 @@
 
 #include "Curve.h"
 
+#include "MathLib/Curve/Curve.h"
+
 namespace MaterialPropertyLib
 {
 Curve::Curve(std::string name,
              StringOrVariable const independent_variable,
-             MathLib::PiecewiseLinearInterpolation const& curve)
+             MathLib::Curve const& curve)
     : independent_variable_(independent_variable), curve_(curve)
 {
     name_ = std::move(name);

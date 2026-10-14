@@ -24,7 +24,7 @@ class ConfigTree;
 
 namespace MathLib
 {
-class PiecewiseLinearInterpolation;
+class Curve;
 }  // namespace MathLib
 
 namespace MeshLib
@@ -188,9 +188,7 @@ std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
     const std::vector<std::unique_ptr<MeshLib::Mesh>>& meshes,
     std::vector<GeoLib::NamedRaster> const& named_rasters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
 //! Checks whether the parameter can be used on the given mesh. The parameter's
 //! domain of definition can be arbitrary (like for constant parameters), or the

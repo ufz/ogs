@@ -29,8 +29,7 @@ namespace HeatTransportBHE
 using BHECreatorFunc = std::function<BHE::BHETypes(
     BaseLib::ConfigTree const&,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>&,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&)>;
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const&)>;
 
 std::map<std::string_view, BHECreatorFunc> bheCreators = {
     {"1U",
@@ -68,9 +67,7 @@ void createAndInsertBHE(
     const std::vector<int>& bhe_ids_of_this_bhe,
     const BaseLib::ConfigTree& bhe_config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     BHEMeshData const& bhe_mesh_data,
     std::map<int, BHE::BHETypes>& bhes_map)
 {
@@ -122,9 +119,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media)
 {
     //! \ogs_file_param{prj__processes__process__type}

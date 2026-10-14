@@ -16,9 +16,8 @@ namespace ProcessLib
 const std::string DeactivatedSubdomain::zero_parameter_name =
     "zero_for_element_deactivation_approach";
 
-bool isTimeInSupportInterval(
-    MathLib::PiecewiseLinearInterpolation const& deactivation_curve,
-    double const t)
+bool isTimeInSupportInterval(MathLib::Curve const& deactivation_curve,
+                             double const t)
 {
     return NumLib::TimeInterval{deactivation_curve.getSupportMin(),
                                 deactivation_curve.getSupportMax()}

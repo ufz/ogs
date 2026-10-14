@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "BoundaryCondition.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 
 namespace BaseLib
@@ -37,7 +37,7 @@ class DeactivatedSubdomainDirichlet final : public BoundaryCondition
 public:
     DeactivatedSubdomainDirichlet(
         MeshLib::PropertyVector<unsigned char> const& is_active,
-        MathLib::PiecewiseLinearInterpolation time_interval,
+        MathLib::Curve time_interval,
         ParameterLib::Parameter<double> const& parameter,
         bool const set_outer_nodes_dirichlet_values,
         DeactivatedSubdomainMesh const& subdomain,
@@ -60,7 +60,7 @@ private:
     int const _variable_id;
     int const _component_id;
 
-    MathLib::PiecewiseLinearInterpolation const _time_interval;
+    MathLib::Curve const _time_interval;
     MeshLib::PropertyVector<unsigned char> const& _is_active;
 
     bool const _set_outer_nodes_dirichlet_values;

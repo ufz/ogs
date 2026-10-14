@@ -16,7 +16,7 @@ class ConfigTree;
 
 namespace MathLib
 {
-class PiecewiseLinearInterpolation;
+class Curve;
 }
 
 namespace ProcessLib
@@ -30,9 +30,7 @@ struct RefrigerantProperties;
 FlowAndTemperatureControl createFlowAndTemperatureControl(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     RefrigerantProperties const& refrigerant);
 }  // namespace BHE
 }  // namespace HeatTransportBHE

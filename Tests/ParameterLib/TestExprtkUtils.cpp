@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "ParameterLib/ExprtkUtils.h"
 #include "ParameterLib/SpatialPosition.h"
 #include "Tests/AutoCheckTools.h"
@@ -16,23 +16,23 @@
 namespace ac = autocheck;
 
 /// Helper to create a simple identity test curve.
-static std::unique_ptr<MathLib::PiecewiseLinearInterpolation>
-createLinearTestCurve()
+static std::unique_ptr<MathLib::Curve> createLinearTestCurve()
 {
     std::vector<double> support_points{0.0, 1.0, 2.0};
     std::vector<double> values{0.0, 1.0, 2.0};
-    return std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-        std::move(support_points), std::move(values));
+    return std::make_unique<MathLib::Curve>(MathLib::PiecewiseLinear{},
+                                            std::move(support_points),
+                                            std::move(values));
 }
 
 /// Helper to create an alternating test curve.
-static std::unique_ptr<MathLib::PiecewiseLinearInterpolation>
-createAlternatingTestCurve()
+static std::unique_ptr<MathLib::Curve> createAlternatingTestCurve()
 {
     std::vector<double> support_points{0.0, 1.0, 2.0, 3.0};
     std::vector<double> values{0.0, 1.0, 0.0, 1.0};
-    return std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-        std::move(support_points), std::move(values));
+    return std::make_unique<MathLib::Curve>(MathLib::PiecewiseLinear{},
+                                            std::move(support_points),
+                                            std::move(values));
 }
 
 struct ExprtkUtilsTest : public ::testing::Test
@@ -44,9 +44,7 @@ struct ExprtkUtilsTest : public ::testing::Test
         curves["alternating"] = createAlternatingTestCurve();
     }
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
     ac::gtest_reporter gtest_reporter;
 };
 

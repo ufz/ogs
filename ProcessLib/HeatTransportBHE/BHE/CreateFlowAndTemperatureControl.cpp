@@ -5,7 +5,7 @@
 
 #include "BaseLib/Algorithm.h"
 #include "BaseLib/ConfigTree.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "PowerWithCOP.h"
 #include "RefrigerantProperties.h"
 
@@ -18,9 +18,7 @@ namespace BHE
 PowerWithCOP createPowerWithCOPStruct(
     std::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     //! \ogs_file_param_special{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__hot_water__power}
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__heating__power}
@@ -43,9 +41,7 @@ PowerWithCOP createPowerWithCOPStruct(
 CoolingVariant createCoolingVariant(
     std::optional<BaseLib::ConfigTree> const& cooling_config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     if (  //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__AdvancedBuildingPower__cooling__active}
         cooling_config->getConfigParameter<bool>("active", false))
@@ -272,9 +268,7 @@ FlowAndTemperatureControl createAdvancedBuildingPower(
     std::optional<BaseLib::ConfigTree> const& hot_water_config,
     std::optional<BaseLib::ConfigTree> const& cooling_config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     ParameterLib::Parameter<double> const& flow_rate_param,
     RefrigerantProperties const& refrigerant,
     double const flow_rate_min,
@@ -326,9 +320,7 @@ FlowAndTemperatureControl createAdvancedBuildingPower(
 FlowAndTemperatureControl createFlowAndTemperatureControl(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     RefrigerantProperties const& refrigerant)
 {
     //! \ogs_file_param{prj__processes__process__HEAT_TRANSPORT_BHE__borehole_heat_exchangers__borehole_heat_exchanger__flow_and_temperature_control__type}

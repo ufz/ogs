@@ -1,17 +1,15 @@
 // SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
 // SPDX-License-Identifier: BSD-3-Clause
 
-#include "CreatePiecewiseLinearCurve.h"
+#include "PiecewiseLinearCurveConfig.h"
 
-#include <boost/endian/conversion.hpp>
-#include <fstream>
-#include <iostream>
+#include <string>
+#include <utility>
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
-#include "BaseLib/StringTools.h"
 
 namespace MathLib
 {

@@ -14,7 +14,7 @@ namespace ProcessLib
 {
 DeactivatedSubdomainDirichlet::DeactivatedSubdomainDirichlet(
     MeshLib::PropertyVector<unsigned char> const& is_active,
-    MathLib::PiecewiseLinearInterpolation time_interval,
+    MathLib::Curve time_interval,
     ParameterLib::Parameter<double> const& parameter,
     bool const set_outer_nodes_dirichlet_values,
     DeactivatedSubdomainMesh const& subdomain,

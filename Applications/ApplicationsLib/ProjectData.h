@@ -11,7 +11,7 @@
 #include "BaseLib/ConfigTree-fwd.h"
 #include "ChemistryLib/ChemicalSolverInterface.h"
 #include "MaterialLib/MPL/Medium.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/Parameter.h"
 #include "ProcessLib/Process.h"
@@ -143,7 +143,5 @@ private:
 
     std::map<std::string, std::unique_ptr<NumLib::NonlinearSolverBase>>
         _nonlinear_solvers;
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        _curves;
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> _curves;
 };

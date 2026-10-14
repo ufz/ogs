@@ -34,9 +34,7 @@ struct FunctionParameter final : public Parameter<T>
     FunctionParameter(
         std::string const& name,
         std::vector<std::string> const& vec_expression_str,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves)
+        std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
         : Parameter<T>(name, nullptr),
           function_evaluation_(BaseLib::getNumberOfThreads(),
                                {"x", "y", "z", "t"}, vec_expression_str, curves)
@@ -72,8 +70,6 @@ struct FunctionParameter final : public Parameter<T>
 std::unique_ptr<ParameterBase> createFunctionParameter(
     std::string const& name,
     BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
 }  // namespace ParameterLib

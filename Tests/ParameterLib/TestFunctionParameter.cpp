@@ -13,20 +13,20 @@
 #include <omp.h>
 #endif
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "ParameterLib/FunctionParameter.h"
 #include "ParameterLib/SpatialPosition.h"
 #include "Tests/AutoCheckTools.h"
 
 namespace ac = autocheck;
 
-static std::unique_ptr<MathLib::PiecewiseLinearInterpolation>
-createLinearTestCurveFunctionParameter()
+static std::unique_ptr<MathLib::Curve> createLinearTestCurveFunctionParameter()
 {
     std::vector<double> support_points{0.0, 1.0, 2.0};
     std::vector<double> values{0.0, 1.0, 2.0};
-    return std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-        std::move(support_points), std::move(values));
+    return std::make_unique<MathLib::Curve>(MathLib::PiecewiseLinear{},
+                                            std::move(support_points),
+                                            std::move(values));
 }
 
 struct GeneratorForVectorArray4
@@ -68,9 +68,7 @@ struct FunctionParameterOpenMPTest : public ::testing::Test,
     }
 
     int original_max_threads_ = 1;
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves_;
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves_;
     ac::gtest_reporter gtest_reporter;
 };
 
