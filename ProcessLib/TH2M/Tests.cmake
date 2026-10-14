@@ -90,6 +90,10 @@ if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE TH2M/H2/double_diffusion_experiment/DoubleDiffusionExperiment.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE TH2M/feminibenchmarks/FE_Mini_Benchmarks.py RUNTIME 5)
     if (OGS_USE_MFRONT)
-        NotebookTest(NOTEBOOKFILE TH2M/ExcavationTH2M/excavation_th2m.py RUNTIME 117)
+        NotebookTest(
+            NOTEBOOKFILE TH2M/ExcavationTH2M/excavation_th2m.py
+            RUNTIME 117
+            PROPERTIES PROCESSORS 4
+        )
     endif()
 endif()

@@ -5,6 +5,7 @@
 
 #include <vtkGenericDataObjectReader.h>
 #include <vtkNew.h>
+#include <vtkSMPTools.h>
 #include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 #if defined(USE_PETSC)
@@ -14,6 +15,8 @@
 #include <vtkUnstructuredGrid.h>
 
 #include <boost/algorithm/string/erase.hpp>
+#include <cstdlib>
+#include <string_view>
 
 #include "BaseLib/DisableFPE.h"
 #include "BaseLib/FileTools.h"
@@ -22,6 +25,24 @@
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Vtk/VtkMappedMeshSource.h"
 #include "VtkMeshConverter.h"
+
+namespace
+{
+// Configure VTK's parallelism before mesh I/O. VTK's TBB backend does not
+// honour OMP_NUM_THREADS. Default to one thread, but allow users to
+// override the limit through VTK_SMP_MAX_THREADS. Leave OpenMP backend
+// unchanged because its thread setting is shared with the Eigen solver.
+[[maybe_unused]] bool const vtk_smp_initialised = []
+{
+    if (std::string_view{vtkSMPTools::GetBackend()} != "OpenMP" &&
+        !std::getenv("VTK_SMP_MAX_THREADS"))
+    {
+        vtkSMPTools::Initialize(1);
+    }
+    // else: VTK's SMPTools honour VTK_SMP_MAX_THREADS
+    return true;
+}();
+}  // namespace
 
 namespace MeshLib
 {
