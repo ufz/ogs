@@ -108,6 +108,7 @@ environment-pass = [
   "CCACHE_DIR",
   "CCACHE_MAXSIZE",
   "CMAKE_ARGS",
+  "OGS_VERSION",
 ]
 
 [tool.cibuildwheel.linux.config-settings]
