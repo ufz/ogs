@@ -103,19 +103,19 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
 
     /// \section processvariables Process Variables
     DBUG("Create nonisothermal two-phase flow model.");
-    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables}
+    //! \ogs_file_param{prj__processes__process__THERMAL_TWOPHASE_WITH_PP__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");
 
     /// Primary process variables as they appear in the global component vector:
     auto per_process_variables = findProcessVariables(
         variables, pv_config,
-        {//! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__gas_pressure}
+        {//! \ogs_file_param_special{prj__processes__process__THERMAL_TWOPHASE_WITH_PP__process_variables__gas_pressure}
          "gas_pressure",
-         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__capillary_pressure}
+         //! \ogs_file_param_special{prj__processes__process__THERMAL_TWOPHASE_WITH_PP__process_variables__capillary_pressure}
          "capillary_pressure",
-         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__total_molar_fraction_contaminant}
+         //! \ogs_file_param_special{prj__processes__process__THERMAL_TWOPHASE_WITH_PP__process_variables__total_molar_fraction_contaminant}
          "total_molar_fraction_contaminant",
-         //! \ogs_file_param_special{prj__processes__process__TWOPHASE_FLOW_THERMAL__process_variables__temperature}
+         //! \ogs_file_param_special{prj__processes__process__THERMAL_TWOPHASE_WITH_PP__process_variables__temperature}
          "temperature"});
     std::vector<std::vector<std::reference_wrapper<ProcessVariable>>>
         process_variables;
@@ -127,7 +127,7 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
     /// \section parameters Process Parameters
     // Specific body force
     std::vector<double> const b =
-        //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__specific_body_force}
+        //! \ogs_file_param{prj__processes__process__THERMAL_TWOPHASE_WITH_PP__specific_body_force}
         config.getConfigParameter<std::vector<double>>("specific_body_force");
     assert(!b.empty() && b.size() < 4);
     Eigen::VectorXd specific_body_force(b.size());
@@ -137,7 +137,7 @@ std::unique_ptr<Process> createThermalTwoPhaseFlowWithPPProcess(
         std::copy_n(b.data(), b.size(), specific_body_force.data());
     }
 
-    //! \ogs_file_param{prj__processes__process__TWOPHASE_FLOW_THERMAL__mass_lumping}
+    //! \ogs_file_param{prj__processes__process__THERMAL_TWOPHASE_WITH_PP__mass_lumping}
     auto mass_lumping = config.getConfigParameter<bool>("mass_lumping");
 
     auto media_map =
