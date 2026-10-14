@@ -5,7 +5,6 @@
 
 #include <cassert>
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MeshLib/PropertyVector.h"
 #include "ProcessLib/Utils/CreateLocalAssemblers.h"
 #include "ThermalTwoPhaseFlowWithPPLocalAssembler.h"

@@ -17,10 +17,6 @@ namespace MeshLib
 {
 class Mesh;
 }
-namespace MathLib
-{
-class PiecewiseLinearInterpolation;
-}
 namespace MaterialPropertyLib
 {
 class Medium;
