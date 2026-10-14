@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <vector>
 
+#include "MathLib/InterpolationAlgorithms/PiecewiseConstantInterpolation.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "MathLib/InterpolationAlgorithms/SupportingPoints.h"
 
@@ -60,4 +61,24 @@ TEST(MathLibSupportingPoints, PiecewiseLinearInterpolationChecksInput)
         MathLib::PiecewiseLinearInterpolation(
             std::vector<double>{2, 1}, std::vector<double>{20, 10}, true),
         std::runtime_error);
+}
+
+TEST(MathLibSupportingPoints, PiecewiseConstantInterpolationSortsInput)
+{
+    MathLib::PiecewiseConstantInterpolation const interpolation(
+        std::vector<int>{3, 1, 2}, std::vector<double>{30, 10, 20});
+    EXPECT_EQ(10, interpolation.value(0));
+    EXPECT_EQ(10, interpolation.value(1.5));
+    EXPECT_EQ(20, interpolation.value(2.5));
+    EXPECT_EQ(30, interpolation.value(4));
+
+    EXPECT_THROW(MathLib::PiecewiseConstantInterpolation(std::vector<double>{},
+                                                         std::vector<double>{}),
+                 std::runtime_error);
+    EXPECT_THROW(MathLib::PiecewiseConstantInterpolation(
+                     std::vector<double>{1, 2}, std::vector<double>{10}),
+                 std::runtime_error);
+    EXPECT_THROW(MathLib::PiecewiseConstantInterpolation(
+                     std::vector<double>{1, 1}, std::vector<double>{10, 20}),
+                 std::runtime_error);
 }
