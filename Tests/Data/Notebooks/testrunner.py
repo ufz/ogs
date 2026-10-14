@@ -130,7 +130,7 @@ def check_and_modify_frontmatter():
     # Add metadata used by the Hugo layout to render the notebook banner.
     repo = "https://gitlab.opengeosys.org/ogs/ogs"
     branch = "master"
-    binder_tag = "6.5.8-0.8.2"
+    binder_tag = "6.5.9-0.8.2"
     petsc_prefix = ""
     if petsc_enabled():
         petsc_prefix = "petsc-"
