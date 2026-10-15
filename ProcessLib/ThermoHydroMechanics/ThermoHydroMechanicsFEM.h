@@ -8,6 +8,8 @@
 
 #include "IntegrationPointData.h"
 #include "LocalAssemblerInterface.h"
+#include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/PhysicalConstant.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/EigenBlockMatrixView.h"
@@ -162,57 +164,7 @@ public:
     void postTimestepConcrete(Eigen::VectorXd const& local_x,
                               Eigen::VectorXd const& local_x_prev,
                               double const t, double const dt,
-                              int const /*process_id*/) override
-    {
-        unsigned const n_integration_points =
-            _integration_method.getNumberOfPoints();
-
-        auto const [T, p, u] = localDOF(local_x);
-        auto const [T_prev, p_prev, u_prev] = localDOF(local_x_prev);
-
-        // Stored sensible heat integrated over the element, for output.
-        double sensible_heat = 0.0;
-
-        for (unsigned ip = 0; ip < n_integration_points; ip++)
-        {
-            auto& ip_data = _ip_data[ip];
-            auto const& N_u = ip_data.N_u;
-            auto const& dNdx_u = ip_data.dNdx_u;
-
-            ParameterLib::SpatialPosition const x_position{
-                std::nullopt, _element.getID(),
-                MathLib::Point3d(
-                    NumLib::interpolateCoordinates<
-                        ShapeFunctionDisplacement,
-                        ShapeMatricesTypeDisplacement>(_element, N_u))};
-
-            auto const crv = updateConstitutiveRelations(
-                local_x, local_x_prev, x_position, t, dt, _ip_data[ip],
-                _ip_data_output[ip]);
-
-            // Stored sensible heat (latent already excluded).
-            sensible_heat += crv.sensible_volumetric_heat_capacity *
-                             ip_data.N.dot(T) * ip_data.integration_weight;
-
-            auto const x_coord =
-                x_position.getCoordinates().value()[0];  // r for axisymmetry
-            auto const B = LinearBMatrix::computeBMatrix<
-                DisplacementDim, ShapeFunctionDisplacement::NPOINTS,
-                typename BMatricesType::BMatrixType>(dNdx_u, N_u, x_coord,
-                                                     _is_axially_symmetric);
-
-            MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-                eps_prev = B * u_prev;
-
-            _ip_data[ip].eps0 =
-                _ip_data[ip].eps0_prev +
-                (1 - _ip_data[ip].phi_fr_prev / _ip_data[ip].porosity) *
-                    (eps_prev - _ip_data[ip].eps0_prev);
-            _ip_data[ip].pushBackState();
-        }
-
-        (*_process_data.cell_sensible_heat)[_element.getID()] = sensible_heat;
-    }
+                              int const /*process_id*/) override;
 
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
@@ -287,14 +239,86 @@ private:
         IntegrationPointData<BMatricesType, ShapeMatricesTypeDisplacement,
                              ShapeMatricesTypePressure, DisplacementDim,
                              ShapeFunctionDisplacement::NPOINTS>;
+    using IpState = IntegrationPointState<IpData, DisplacementDim>;
 
 private:
-    ConstitutiveRelationsValues<DisplacementDim> updateConstitutiveRelations(
+    /// Bundles the evaluation time and location of one integration point for
+    /// the evaluation functions below.
+    SpaceTimeData makeSpaceTimeData(
+        typename ShapeMatricesTypeDisplacement::NodalRowVectorType const& N_u,
+        double const t, double const dt) const
+    {
+        return {ParameterLib::SpatialPosition{
+                    std::nullopt, _element.getID(),
+                    MathLib::Point3d(
+                        NumLib::interpolateCoordinates<
+                            ShapeFunctionDisplacement,
+                            ShapeMatricesTypeDisplacement>(_element, N_u))},
+                t, dt};
+    }
+    /// Phases of the medium of this element.
+    struct MediumPhases
+    {
+        MaterialPropertyLib::Medium const* medium;
+        MaterialPropertyLib::Phase const& liquid;
+        MaterialPropertyLib::Phase const& solid;
+        /// nullptr when the medium defines no frozen liquid phase.
+        MaterialPropertyLib::Phase const* frozen_liquid;
+    };
+
+    /// Resolves the aqueous liquid, the solid and, if the medium defines one,
+    /// the frozen liquid phase of this element's medium.
+    MediumPhases getMediumPhases() const;
+
+    /// Evaluates the values shared by all balance equations and updates the
+    /// strain, mechanical strain and ice volume fraction in ip_data.
+    CommonPropertyValues<DisplacementDim> updateCommonProperties(
         Eigen::Ref<Eigen::VectorXd const> const local_x,
         Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
-        ParameterLib::SpatialPosition const& x_position, double const t,
-        double const dt, IpData& ip_data,
-        IntegrationPointDataForOutput<DisplacementDim>& ip_data_output) const;
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Evaluates the Darcy flow related values and updates the viscosity and
+    /// velocity in ip_data_output.
+    FlowPropertyValues<DisplacementDim> updateFlowProperties(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        Eigen::Ref<Eigen::VectorXd const> const local_x,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Evaluates the specific heat capacities and the sensible volumetric heat
+    /// capacity.
+    HeatCapacityValues computeHeatCapacities(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Evaluates the thermal conductivities and the heat-capacity and
+    /// temperature-Jacobian values of the energy balance.
+    ThermalPropertyValues<DisplacementDim> updateThermalProperties(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        FlowPropertyValues<DisplacementDim> const& fpv,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Evaluates the fluid- and solid-skeleton compressibilities and the
+    /// pressure- and temperature-Jacobian values of the balance equations.
+    HydraulicPropertyValues updateHydraulicProperties(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Updates the solid (and ice) constitutive relations and the stresses in
+    /// ip_data.
+    MechanicalPropertyValues<DisplacementDim> updateMechanicalProperties(
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
+
+    /// Inverse of the drained bulk modulus of the solid skeleton.
+    double solidSkeletonCompressibility(SpaceTimeData const& space_time_data,
+                                        IpData& ip_data,
+                                        double const temperature) const;
 
     std::size_t setSigma(double const* values)
     {
@@ -454,6 +478,99 @@ private:
     static const int displacement_index = ShapeFunctionPressure::NPOINTS * 2;
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
+
+    /// Adds the tangent-stiffness and the internal-force residual
+    /// contributions of the momentum balance of one integration point to the
+    /// local system: \f[ K_{uu} \mathrel{+}=
+    ///    w\,B^{\mathrm T}\,(C + J_{uu}^{\mathrm{fr}})\,B, \f]
+    /// \f[ f_u \mathrel{-}= w\,(B^{\mathrm T}\,\sigma_{\mathrm{eff}}
+    ///    - N_u^{\mathrm T}\,\rho\,\boldsymbol b), \f]
+    /// and, with a frozen liquid phase, \f[ f_u \mathrel{-}=
+    ///    w\,B^{\mathrm T}\,r_u^{\mathrm{fr}}. \f]
+    /// \param jacobian the \f$K_{uu}\f$ Jacobian block to add the
+    /// tangent-stiffness contribution to.
+    /// \param residual the \f$f_u\f$ residual segment to add the
+    /// internal-force contribution to.
+    /// \param ip_data the integration point data (shape functions and
+    /// weight).
+    /// \param crv_u the mechanical property values at
+    /// the integration point.
+    /// \param B the strain-displacement matrix.
+    /// \param effective_stress stress entering the internal force, the
+    /// effective stress \f$\sigma_{\mathrm{eff}}\f$ of the solid skeleton.
+    /// \param has_frozen_liquid_phase whether the medium has a frozen liquid
+    /// phase, which adds the ice-stress contributions.
+    template <typename JacobianBlock, typename ResidualSegment,
+              typename BMatrix,
+              typename EffectiveStress>
+    void addMomentumBalanceStiffnessAndResidual(  //
+        JacobianBlock&& jacobian, ResidualSegment&& residual,
+        IpData const& ip_data,
+        MechanicalPropertyValues<DisplacementDim> const& crv_u,
+        BMatrix const& B, EffectiveStress const& effective_stress,
+        bool const has_frozen_liquid_phase) const;
+
+    /// Element matrices of the energy balance equation, accumulated over the
+    /// integration points by addEnergyBalanceIntegrationPointTerms() and
+    /// added to the local system by addEnergyBalanceElementTerms().
+    struct EnergyBalanceTerms
+    {
+        using NodalMatrixType =
+            typename ShapeMatricesTypePressure::NodalMatrixType;
+
+        explicit EnergyBalanceTerms(unsigned const n_integration_points)
+        {
+            ip_flux_vector.reserve(n_integration_points);
+        }
+
+        NodalMatrixType MTT =
+            NodalMatrixType::Zero(temperature_size, temperature_size);
+        /// Temperature derivative of the heat capacity part of the storage
+        /// term, \f$\int N^T J_{TT} N\f$; Jacobian only.
+        NodalMatrixType dMTT_dT_T =
+            NodalMatrixType::Zero(temperature_size, temperature_size);
+        NodalMatrixType KTT =
+            NodalMatrixType::Zero(temperature_size, temperature_size);
+        NodalMatrixType KTp =
+            NodalMatrixType::Zero(temperature_size, pressure_size);
+        NodalMatrixType dKTT_dT_T =
+            NodalMatrixType::Zero(temperature_size, temperature_size);
+        std::vector<GlobalDimVectorType> ip_flux_vector;
+        double average_velocity_norm = 0.0;
+    };
+
+    /// Adds the energy balance contributions of one integration point to
+    /// \p energy_balance.
+    ///
+    /// Reads the Darcy velocity and the fluid density of the integration
+    /// point from \p ip_data_output, so updateCommonProperties() and
+    /// updateFlowProperties() must have been called for this integration
+    /// point before.
+    template <typename TemperatureVector>
+    void addEnergyBalanceIntegrationPointTerms(
+        EnergyBalanceTerms& energy_balance, IpData const& ip_data,
+        IntegrationPointDataForOutput<DisplacementDim> const& ip_data_output,
+        CommonPropertyValues<DisplacementDim> const& cpv,
+        FlowPropertyValues<DisplacementDim> const& fpv,
+        ThermalPropertyValues<DisplacementDim> const& crv_T,
+        TemperatureVector const& T) const;
+
+    /// Applies the advection stabilisation to the accumulated \p energy_balance
+    /// and adds them to the temperature-temperature Jacobian block and to the
+    /// temperature residual segment.
+    ///
+    /// The stabilisation is added to \p energy_balance in place, hence the
+    /// terms are consumed: a second call would add the advection twice.
+    template <typename JacobianBlock, typename ResidualSegment,
+              typename TemperatureVector, typename TemperaturePrevVector,
+              typename PressureVector>
+    void addEnergyBalanceElementTerms(EnergyBalanceTerms&& energy_balance,
+                                      JacobianBlock&& jacobian_TT,
+                                      ResidualSegment&& residual_T,
+                                      TemperatureVector const& T,
+                                      TemperaturePrevVector const& T_prev,
+                                      PressureVector const& p,
+                                      double const dt) const;
 };
 
 }  // namespace ThermoHydroMechanics

@@ -3,18 +3,23 @@
 
 #pragma once
 
+#include <limits>
 #include <memory>
 
+#include "MaterialLib/MPL/VariableType.h"
 #include "MaterialLib/SolidModels/LinearElasticIsotropic.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/LinAlg/Eigen/EigenMapTools.h"
 #include "NumLib/Fem/ShapeMatrixPolicy.h"
 #include "ParameterLib/Parameter.h"
+#include "ProcessLib/ConstitutiveRelations/Base.h"
 
 namespace ProcessLib
 {
 namespace ThermoHydroMechanics
 {
+using SpaceTimeData = ConstitutiveRelations::SpaceTimeData;
+
 template <typename BMatricesType, typename ShapeMatrixTypeDisplacement,
           typename ShapeMatricesTypePressure, int DisplacementDim, int NPoints>
 struct IntegrationPointData final
@@ -26,7 +31,7 @@ struct IntegrationPointData final
           material_state_variables(
               solid_material.createMaterialStateVariables())
     {
-        // Initialize current time step values
+        // Initialise current time step values
         static const int kelvin_vector_size =
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
         sigma_eff.setZero(kelvin_vector_size);
@@ -39,7 +44,7 @@ struct IntegrationPointData final
         eps_m_ice.setZero(kelvin_vector_size);
         eps_m_ice_prev.resize(kelvin_vector_size);
 
-        // Previous time step values are not initialized and are set later.
+        // Previous time step values are not initialised and are set later.
         sigma_eff_prev.resize(kelvin_vector_size);
         sigma_eff_ice_prev.resize(kelvin_vector_size);
     }
@@ -67,8 +72,6 @@ struct IntegrationPointData final
     double phi_fr_prev = std::numeric_limits<double>::quiet_NaN();
     double integration_weight = 0;
 
-    double porosity = 0;
-
     void pushBackState()
     {
         eps0_prev = eps0;
@@ -80,12 +83,10 @@ struct IntegrationPointData final
     }
 
     MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>
-    computeElasticTangentStiffness(
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature)
+    computeElasticTangentStiffness(SpaceTimeData const& space_time_data,
+                                   double const temperature)
     {
+        auto const& [x_position, t, dt] = space_time_data;
         namespace MPL = MaterialPropertyLib;
 
         MPL::VariableArray variable_array;
@@ -118,11 +119,9 @@ struct IntegrationPointData final
 
     typename BMatricesType::KelvinMatrixType updateConstitutiveRelation(
         MaterialPropertyLib::VariableArray const& variable_array,
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature_prev)
+        SpaceTimeData const& space_time_data, double const temperature_prev)
     {
+        auto const& [x_position, t, dt] = space_time_data;
         MaterialPropertyLib::VariableArray variable_array_prev;
         variable_array_prev.stress
             .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
@@ -149,11 +148,9 @@ struct IntegrationPointData final
     computeElasticTangentStiffnessIce(
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             ice_constitutive_relation,
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature)
+        SpaceTimeData const& space_time_data, double const temperature)
     {
+        auto const& [x_position, t, dt] = space_time_data;
         namespace MPL = MaterialPropertyLib;
 
         MPL::VariableArray variable_array;
@@ -193,11 +190,9 @@ struct IntegrationPointData final
         MaterialLib::Solids::MechanicsBase<DisplacementDim> const&
             ice_constitutive_relation,
         MaterialPropertyLib::VariableArray const& variable_array,
-        double const t,
-        ParameterLib::SpatialPosition const& x_position,
-        double const dt,
-        double const temperature_prev)
+        SpaceTimeData const& space_time_data, double const temperature_prev)
     {
+        auto const& [x_position, t, dt] = space_time_data;
         MaterialPropertyLib::VariableArray variable_array_prev;
 
         variable_array_prev.stress
@@ -243,58 +238,164 @@ struct IntegrationPointDataForOutput
     double rho_fr = std::numeric_limits<double>::quiet_NaN();
 };
 
+/// The integration point state of one property evaluation: the integration
+/// point data and the cached output quantities of a single integration point,
+/// referenced rather than owned. Evaluated property values are written back
+/// to the referenced state as documented for each update*() function.
+template <typename IpData, int DisplacementDim>
+struct IntegrationPointState final
+{
+    IpData& ip_data;
+    IntegrationPointDataForOutput<DisplacementDim>& ip_data_output;
+};
+
+/// Values shared by all balance equations. Evaluated once per integration
+/// point by updateCommonProperties(); every other update*Properties() function
+/// takes these as input and must not recompute them.
 template <int DisplacementDim>
-struct ConstitutiveRelationsValues
+struct CommonPropertyValues final
+{
+    MaterialPropertyLib::VariableArray vars;
+
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> eps_prev =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>::Constant(
+            std::numeric_limits<double>::quiet_NaN());
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>
+        solid_linear_thermal_expansion_coefficient =
+            MathLib::KelvinVector::KelvinVectorType<DisplacementDim>::Constant(
+                std::numeric_limits<double>::quiet_NaN());
+    double solid_volumetric_thermal_expansion_coefficient =
+        std::numeric_limits<double>::quiet_NaN();
+
+    double T_prev_int_pt = std::numeric_limits<double>::quiet_NaN();
+    double dT_int_pt = std::numeric_limits<double>::quiet_NaN();
+    double T_dot = std::numeric_limits<double>::quiet_NaN();
+    double p_prev_int_pt = std::numeric_limits<double>::quiet_NaN();
+    double p_dot = std::numeric_limits<double>::quiet_NaN();
+    double eps_v_dot = std::numeric_limits<double>::quiet_NaN();
+
+    double alpha_biot = std::numeric_limits<double>::quiet_NaN();
+    /// Biot coefficient including the ice volume fraction correction. Equal to
+    /// alpha_biot without a frozen liquid phase.
+    double modified_biot = std::numeric_limits<double>::quiet_NaN();
+    double drho_LR_dT = std::numeric_limits<double>::quiet_NaN();
+    double solid_density = std::numeric_limits<double>::quiet_NaN();
+
+    /// \name Freezing related values; NaN without a frozen liquid phase.
+    /// @{
+    double dphi_fr_dT = std::numeric_limits<double>::quiet_NaN();
+    double d2phi_fr_dT2 = std::numeric_limits<double>::quiet_NaN();
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>
+        ice_linear_thermal_expansion_coefficient =
+            MathLib::KelvinVector::KelvinVectorType<DisplacementDim>::Constant(
+                std::numeric_limits<double>::quiet_NaN());
+    /// @}
+};
+
+/// Darcy flow related values needed by the energy and mass balance equations.
+template <int DisplacementDim>
+struct FlowPropertyValues final
+{
+    using DimVector = MatrixPolicyType::VectorType<DisplacementDim>;
+    using DimMatrix =
+        typename MatrixPolicyType::MatrixType<DisplacementDim, DisplacementDim>;
+
+    DimMatrix K_over_mu =
+        DimMatrix::Constant(DisplacementDim, DisplacementDim,
+                            std::numeric_limits<double>::quiet_NaN());
+    DimMatrix K_pT_thermal_osmosis =
+        DimMatrix::Constant(DisplacementDim, DisplacementDim,
+                            std::numeric_limits<double>::quiet_NaN());
+    DimVector grad_p = DimVector::Constant(
+        DisplacementDim, std::numeric_limits<double>::quiet_NaN());
+    double k_rel = std::numeric_limits<double>::quiet_NaN();
+    DimVector buoyancy_flux = DimVector::Constant(
+        DisplacementDim, std::numeric_limits<double>::quiet_NaN());
+};
+
+/// Specific heat capacities and the sensible volumetric heat capacity.
+struct HeatCapacityValues final
+{
+    double c_f = std::numeric_limits<double>::quiet_NaN();
+    double c_s = std::numeric_limits<double>::quiet_NaN();
+    /// NaN without a frozen liquid phase.
+    double c_fr = std::numeric_limits<double>::quiet_NaN();
+    /// Without the latent contribution.
+    double sensible_volumetric_heat_capacity =
+        std::numeric_limits<double>::quiet_NaN();
+};
+
+template <int DisplacementDim>
+struct ThermalPropertyValues final
 {
     using DimMatrix =
         typename MatrixPolicyType::MatrixType<DisplacementDim, DisplacementDim>;
     using DimVector = MatrixPolicyType::VectorType<DisplacementDim>;
 
-    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C;
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim>
-        solid_linear_thermal_expansion_coefficient;
-    DimMatrix K_over_mu;
-    DimMatrix K_pT_thermal_osmosis;
-    DimMatrix effective_thermal_conductivity;
-    DimMatrix dlambda_eff_dT;
+    DimMatrix effective_thermal_conductivity =
+        DimMatrix::Constant(DisplacementDim, DisplacementDim,
+                            std::numeric_limits<double>::quiet_NaN());
+    DimMatrix dlambda_eff_dT =
+        DimMatrix::Constant(DisplacementDim, DisplacementDim,
+                            std::numeric_limits<double>::quiet_NaN());
     DimVector dvelocity_dT = DimVector::Constant(
         DisplacementDim, std::numeric_limits<double>::quiet_NaN());
-    double eps_v_dot = 0;
-    double alpha_biot = 0;
-    double beta = 0;
-    double beta_SR = 0;
-    double c_f = 0;
+
+    double dk_rel_dT = std::numeric_limits<double>::quiet_NaN();
+    double c_f = std::numeric_limits<double>::quiet_NaN();
     // Sensible contribution to the volumetric heat capacity. The effective
     // value used in the temperature mass matrix is sensible - latent.
-    double sensible_volumetric_heat_capacity = 0;
+    double sensible_volumetric_heat_capacity =
+        std::numeric_limits<double>::quiet_NaN();
     // Latent contribution L (effective = sensible - L). Zero without a
     // frozen liquid phase.
     double latent_volumetric_heat_capacity = 0.0;
-    double fluid_compressibility = 0;
-    double rho = 0;
-    double drho_LR_dT = 0;
-    double drho_LR_dp = 0;
-    /* // TODO(WW): Add these second derivatives in the future once the
-     computation of the secondary derivatives of the corresponding MPL
-     properties are available.
-       double d2rho_LR_dp2;
-       double d2rho_LR_dp_dT;
-    */
 
-    double J_TT = 0;
+    double J_TT = std::numeric_limits<double>::quiet_NaN();
+};
 
-    // Freezing related values.
-    double beta_IR = 0;
-    double beta_T_SI = 0;
-    double mass_exchange = 0;
-    double k_rel = 0;
-    double dk_rel_dT = 0;
-    double storage_p_fr = 0;
-    double storage_T_fr = 0;
-    double J_pT_fr = 0;
-    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr;
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr;
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr;
+struct HydraulicPropertyValues final
+{
+    double drho_L_dp = std::numeric_limits<double>::quiet_NaN();
+    /* // TODO(WW): Add this second derivative in the future once the
+      computation of the secondary derivatives of the corresponding MPL
+      properties are available.
+        double d2rho_LR_dp2;
+     */
+    double solid_skeleton_compressibility =
+        std::numeric_limits<double>::quiet_NaN();
+    double fluid_compressibility = std::numeric_limits<double>::quiet_NaN();
+    double beta = std::numeric_limits<double>::quiet_NaN();
+    double beta_SR = std::numeric_limits<double>::quiet_NaN();
+
+    /// \name Freezing related values; NaN without a frozen liquid phase.
+    /// @{
+    double storage_p_fr = std::numeric_limits<double>::quiet_NaN();
+    double storage_T_fr = std::numeric_limits<double>::quiet_NaN();
+    double J_pT_fr = std::numeric_limits<double>::quiet_NaN();
+    /// @}
+};
+
+template <int DisplacementDim>
+struct MechanicalPropertyValues final
+{
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> C =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>::Constant(
+            std::numeric_limits<double>::quiet_NaN());
+    double rho = std::numeric_limits<double>::quiet_NaN();
+
+    /// \name Freezing related values; unset without a frozen liquid phase.
+    /// @{
+    MathLib::KelvinVector::KelvinMatrixType<DisplacementDim> J_uu_fr =
+        MathLib::KelvinVector::KelvinMatrixType<DisplacementDim>::Constant(
+            std::numeric_limits<double>::quiet_NaN());
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> r_u_fr =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>::Constant(
+            std::numeric_limits<double>::quiet_NaN());
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> J_uT_fr =
+        MathLib::KelvinVector::KelvinVectorType<DisplacementDim>::Constant(
+            std::numeric_limits<double>::quiet_NaN());
+    /// @}
 };
 
 }  // namespace ThermoHydroMechanics
