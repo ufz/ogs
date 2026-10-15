@@ -271,7 +271,7 @@ private:
     MediumPhases getMediumPhases() const;
 
     /// Evaluates the values shared by all balance equations and updates the
-    /// strain, mechanical strain, porosity and ice volume fraction in ip_data.
+    /// strain, mechanical strain and ice volume fraction in ip_data.
     CommonPropertyValues<DisplacementDim> updateCommonProperties(
         Eigen::Ref<Eigen::VectorXd const> const local_x,
         Eigen::Ref<Eigen::VectorXd const> const local_x_prev,

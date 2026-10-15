@@ -72,8 +72,6 @@ struct IntegrationPointData final
     double phi_fr_prev = std::numeric_limits<double>::quiet_NaN();
     double integration_weight = 0;
 
-    double porosity = 0;
-
     void pushBackState()
     {
         eps0_prev = eps0;

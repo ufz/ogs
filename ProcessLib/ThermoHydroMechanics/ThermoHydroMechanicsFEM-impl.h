@@ -404,7 +404,6 @@ CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
         medium->property(MaterialPropertyLib::PropertyType::porosity)
             .template value<double>(vars, x_position, t, dt);
     vars.porosity = porosity;
-    ip_data.porosity = porosity;
 
     cpv.alpha_biot =
         medium->property(MaterialPropertyLib::PropertyType::biot_coefficient)
@@ -1104,7 +1103,7 @@ void ThermoHydroMechanicsLocalAssembler<
                           (dk_rel_dT * scaling_factor * w);
 
         double const storage_p_coeff = massBalancePressureStorageCoefficient(
-            ip_data.porosity, crv_p.fluid_compressibility, cpv.alpha_biot,
+            cpv.vars.porosity, crv_p.fluid_compressibility, cpv.alpha_biot,
             crv_p.beta_SR, has_frozen_liquid_phase ? crv_p.storage_p_fr : 0.0);
 
         storage_p.noalias() +=
@@ -1496,7 +1495,7 @@ void ThermoHydroMechanicsLocalAssembler<
         updateMechanicalProperties(cpv, space_time_data, ip_state);
 
         ip_data.eps0 =
-            ip_data.eps0_prev + (1 - ip_data.phi_fr_prev / ip_data.porosity) *
+            ip_data.eps0_prev + (1 - ip_data.phi_fr_prev / cpv.vars.porosity) *
                                     (cpv.eps_prev - ip_data.eps0_prev);
         ip_data.pushBackState();
 
