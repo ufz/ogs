@@ -4,6 +4,7 @@
 #include "EigenTools.h"
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include <range/v3/view/zip.hpp>
 #include <utility>
@@ -87,8 +88,8 @@ void applyKnownSolutionComplete(
         }
     }
 
-    // Contributions A_eigen(i,k)*x_k of the known columns k to a row i, with
-    // the position of k in vec_knownX_id.
+    // Contributions of the known columns k to a row i: the value of
+    // A_eigen(i,k) and the position of k in vec_knownX_id.
     std::vector<std::pair<std::size_t, double>> contributions;
     for (SpMat::Index row_id = 0; row_id < A_eigen.outerSize(); ++row_id)
     {
@@ -111,19 +112,32 @@ void applyKnownSolutionComplete(
             auto const position = first_position[col_id];
             if (position != not_known)
             {
-                contributions.emplace_back(position,
-                                           it.value() * vec_knownX_x[position]);
+                contributions.emplace_back(position, it.value());
                 it.valueRef() = 0.0;
             }
         }
 
-        // b_i -= A_eigen(i,k)*x_k, i!=k, in the order of vec_knownX_id.
+        // b_i -= A_eigen(i,k)*x_k, i!=k, in the order of vec_knownX_id. The
+        // product and the subtraction must round exactly as they do in the
+        // reference implementation via the transposed matrix, where the
+        // compiler contracts "b -= a*x" to a single fused multiply-add if the
+        // instruction set supports it (-ffp-contract=fast, the GCC default).
+        // Since this happens in another translation unit, mirror the
+        // contraction explicitly here, driven by the same __FMA__ macro, so
+        // that the result stays bit-identical independent of the build.
         std::sort(contributions.begin(), contributions.end(),
                   [](auto const& a, auto const& b)
                   { return a.first < b.first; });
         for (auto const& contribution : contributions)
         {
-            b_eigen[row_id] -= contribution.second;
+#ifdef __FMA__
+            b_eigen[row_id] = std::fma(-contribution.second,
+                                       vec_knownX_x[contribution.first],
+                                       b_eigen[row_id]);
+#else
+            b_eigen[row_id] -=
+                contribution.second * vec_knownX_x[contribution.first];
+#endif
         }
     }
 

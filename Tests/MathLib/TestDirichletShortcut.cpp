@@ -5,9 +5,17 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <chrono>
+#include <cmath>
+#include <cstdlib>
+#include <exception>
+#include <iostream>
+#include <limits>
 #include <random>
 #include <range/v3/algorithm/sample.hpp>
 #include <range/v3/numeric/iota.hpp>
+#include <string>
+#include <vector>
 
 #ifndef USE_PETSC
 #include "MathLib/LinAlg/Eigen/EigenMatrix.h"
@@ -293,5 +301,138 @@ TEST(MathLib, DirichletCompleteMatchesTransposition)
         testing::Pointwise(testing::Eq(), rhs_reference.getRawVector()));
     EXPECT_EQ(1.0, A.getRawMatrix().coeff(0, 0));
     EXPECT_EQ(1.0, A.getRawMatrix().coeff(1, 1));
+}
+/// Timing of the complete matrix update against the former implementation on
+/// a matrix with the sparsity of bilinear quadrilaterals on an n x n node grid
+/// (9-point stencil) and Dirichlet BCs on all boundary nodes. Disabled by
+/// default; run with
+///   testrunner --gtest_also_run_disabled_tests \
+///       --gtest_filter=MathLib.DISABLED_DirichletCompletePerformance
+/// The grid size can be set via the environment variable
+/// OGS_DIRICHLET_PERFORMANCE_GRID (default: 1000 nodes per direction).
+TEST(MathLib, DISABLED_DirichletCompletePerformance)
+{
+    Eigen::Index n = 1000;
+    if (char const* const grid = std::getenv("OGS_DIRICHLET_PERFORMANCE_GRID"))
+    {
+        try
+        {
+            n = std::stol(grid);
+        }
+        catch (std::exception const&)
+        {
+            std::cerr << "OGS_DIRICHLET_PERFORMANCE_GRID='" << grid
+                      << "' is not a number, keeping " << n << '\n';
+        }
+    }
+    // The triplet indices are cast to int, so n*n must stay within int.
+    Eigen::Index const max_n =
+        static_cast<Eigen::Index>(std::sqrt(std::numeric_limits<int>::max()));
+    n = std::clamp<Eigen::Index>(n, 2, max_n);
+    Eigen::Index const n_rows = n * n;
+    int const repetitions = 5;
+
+    std::mt19937 gen{42};
+    std::uniform_real_distribution dist{1., 2.};
+
+    std::vector<Eigen::Triplet<double>> triplets;
+    triplets.reserve(9 * n_rows);
+    for (Eigen::Index i = 0; i < n; ++i)
+    {
+        for (Eigen::Index j = 0; j < n; ++j)
+        {
+            for (Eigen::Index di = -1; di <= 1; ++di)
+            {
+                for (Eigen::Index dj = -1; dj <= 1; ++dj)
+                {
+                    if (i + di < 0 || i + di >= n || j + dj < 0 || j + dj >= n)
+                    {
+                        continue;
+                    }
+                    triplets.emplace_back(i * n + j, (i + di) * n + j + dj,
+                                          dist(gen));
+                }
+            }
+        }
+    }
+    MathLib::EigenMatrix A{n_rows};
+    A.getRawMatrix().setFromTriplets(triplets.begin(), triplets.end());
+    A.getRawMatrix().makeCompressed();
+
+    MathLib::EigenVector rhs{n_rows};
+    for (Eigen::Index row = 0; row < n_rows; ++row)
+    {
+        rhs[row] = dist(gen);
+    }
+
+    std::vector<Eigen::Index> known_x_ids;
+    for (Eigen::Index i = 0; i < n; ++i)
+    {
+        for (Eigen::Index j = 0; j < n; ++j)
+        {
+            if (i == 0 || j == 0 || i == n - 1 || j == n - 1)
+            {
+                known_x_ids.push_back(i * n + j);
+            }
+        }
+    }
+    std::vector<double> known_x_values(known_x_ids.size());
+    for (auto& known_x : known_x_values)
+    {
+        known_x = dist(gen);
+    }
+
+    auto time = [&](auto&& apply)
+    {
+        double best = std::numeric_limits<double>::max();
+        for (int r = 0; r < repetitions; ++r)
+        {
+            auto A_copy = A;
+            auto rhs_copy = rhs;
+            auto const start = std::chrono::steady_clock::now();
+            apply(A_copy, rhs_copy);
+            std::chrono::duration<double> const elapsed =
+                std::chrono::steady_clock::now() - start;
+            best = std::min(best, elapsed.count());
+        }
+        return best;
+    };
+
+    double const t_former = time(
+        [&](MathLib::EigenMatrix& A_copy, MathLib::EigenVector& rhs_copy)
+        {
+            applyKnownSolutionCompleteByTransposition(
+                A_copy.getRawMatrix(), rhs_copy.getRawVector(), known_x_ids,
+                known_x_values);
+        });
+    MathLib::EigenVector x{n_rows};
+    double const t_new = time(
+        [&](MathLib::EigenMatrix& A_copy, MathLib::EigenVector& rhs_copy)
+        {
+            MathLib::applyKnownSolution(
+                A_copy, rhs_copy, x, known_x_ids, known_x_values,
+                MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
+        });
+
+    std::cout << "rows: " << n_rows
+              << ", nonzeros: " << A.getRawMatrix().nonZeros()
+              << ", Dirichlet DOFs: " << known_x_ids.size() << '\n'
+              << "former (transposition): " << t_former << " s\n"
+              << "single pass:            " << t_new << " s\n"
+              << "speed-up:               " << t_former / t_new << '\n';
+
+    // Same result as the former implementation.
+    auto A_former = A;
+    auto rhs_former = rhs;
+    applyKnownSolutionCompleteByTransposition(A_former.getRawMatrix(),
+                                              rhs_former.getRawVector(),
+                                              known_x_ids, known_x_values);
+    auto A_new = A;
+    auto rhs_new = rhs;
+    MathLib::applyKnownSolution(
+        A_new, rhs_new, x, known_x_ids, known_x_values,
+        MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
+    EXPECT_TRUE(A_former.getRawMatrix().isApprox(A_new.getRawMatrix(), 0.0));
+    EXPECT_TRUE(rhs_former.getRawVector() == rhs_new.getRawVector());
 }
 #endif
