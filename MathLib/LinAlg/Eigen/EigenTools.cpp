@@ -119,25 +119,18 @@ void applyKnownSolutionComplete(
 
         // b_i -= A_eigen(i,k)*x_k, i!=k, in the order of vec_knownX_id. The
         // product and the subtraction must round exactly as they do in the
-        // reference implementation via the transposed matrix, where the
-        // compiler contracts "b -= a*x" to a single fused multiply-add if the
-        // instruction set supports it (-ffp-contract=fast, the GCC default).
-        // Since this happens in another translation unit, mirror the
-        // contraction explicitly here, driven by the same __FMA__ macro, so
-        // that the result stays bit-identical independent of the build.
+        // test's reference applyKnownSolutionCompleteByTransposition. Both
+        // implementations accumulate each product with std::fma, single
+        // fused rounding, so both round identically whatever the build
+        // does with "b -= a*x".
         std::sort(contributions.begin(), contributions.end(),
                   [](auto const& a, auto const& b)
                   { return a.first < b.first; });
         for (auto const& contribution : contributions)
         {
-#ifdef __FMA__
             b_eigen[row_id] = std::fma(-contribution.second,
                                        vec_knownX_x[contribution.first],
                                        b_eigen[row_id]);
-#else
-            b_eigen[row_id] -=
-                contribution.second * vec_knownX_x[contribution.first];
-#endif
         }
     }
 

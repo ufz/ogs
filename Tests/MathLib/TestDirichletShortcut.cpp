@@ -306,7 +306,7 @@ TEST(MathLib, DirichletCompleteMatchesTransposition)
 /// a matrix with the sparsity of bilinear quadrilaterals on an n x n node grid
 /// (9-point stencil) and Dirichlet BCs on all boundary nodes. Disabled by
 /// default; run with
-///   testrunner --gtest_also_run_disabled_tests \
+///   testrunner --gtest_also_run_disabled_tests
 ///       --gtest_filter=MathLib.DISABLED_DirichletCompletePerformance
 /// The grid size can be set via the environment variable
 /// OGS_DIRICHLET_PERFORMANCE_GRID (default: 1000 nodes per direction).
@@ -349,8 +349,9 @@ TEST(MathLib, DISABLED_DirichletCompletePerformance)
                     {
                         continue;
                     }
-                    triplets.emplace_back(i * n + j, (i + di) * n + j + dj,
-                                          dist(gen));
+                    triplets.emplace_back(
+                        static_cast<int>(i * n + j),
+                        static_cast<int>((i + di) * n + j + dj), dist(gen));
                 }
             }
         }
