@@ -26,7 +26,7 @@ struct IntegrationPointData final
           material_state_variables(
               solid_material.createMaterialStateVariables())
     {
-        // Initialize current time step values
+        // Initialise current time step values
         static const int kelvin_vector_size =
             MathLib::KelvinVector::kelvin_vector_dimensions(DisplacementDim);
         sigma_eff.setZero(kelvin_vector_size);
@@ -39,7 +39,7 @@ struct IntegrationPointData final
         eps_m_ice.setZero(kelvin_vector_size);
         eps_m_ice_prev.resize(kelvin_vector_size);
 
-        // Previous time step values are not initialized and are set later.
+        // Previous time step values are not initialised and are set later.
         sigma_eff_prev.resize(kelvin_vector_size);
         sigma_eff_ice_prev.resize(kelvin_vector_size);
     }
