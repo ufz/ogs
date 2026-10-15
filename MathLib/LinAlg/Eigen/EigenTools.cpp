@@ -3,7 +3,10 @@
 
 #include "EigenTools.h"
 
+#include <algorithm>
+#include <limits>
 #include <range/v3/view/zip.hpp>
+#include <utility>
 
 #include "EigenVector.h"
 
@@ -29,43 +32,107 @@ void setRowsToZeroOffDiagonal(
     }
 }
 
+/// Symmetric elimination of the known solutions: the off-diagonal entries of
+/// the known rows and columns are zeroed, the latter after their
+/// contributions have been moved to the right-hand side, and the known rows
+/// are scaled to the diagonal entry.
+///
+/// The columns are processed in a single pass over the row-major matrix with
+/// a dense marker of the known DOFs. This avoids transposing the matrix twice,
+/// i.e., two copies of the whole matrix. The sparsity pattern is kept, except
+/// that missing diagonal entries of known rows are inserted.
+///
+/// The contributions of the known columns are subtracted from each row of
+/// the right-hand side in the order of \c vec_knownX_id, so the result is
+/// identical to the one of the former implementation via the transposed
+/// matrix whenever its "b -= a*x" is fused to a single rounding. Where the
+/// build leaves "b -= a*x" uncontracted, the former implementation rounds
+/// twice per product while std::fma below rounds once, and the results
+/// differ by at most one rounding per product. If an id occurs multiple
+/// times, e.g., for a node with a Dirichlet BC that also lies in a
+/// deactivated subdomain, the value of its first occurrence is moved to the
+/// right-hand side, while the known row gets the value of its last
+/// occurrence. The ids must be valid row indices of \c A_eigen and
+/// \c vec_knownX_x must hold one value per id, otherwise OGS_FATAL below
+/// throws std::runtime_error.
 void applyKnownSolutionComplete(
     MathLib::EigenMatrix::RawMatrixType& A_eigen,
     MathLib::EigenVector::RawVectorType& b_eigen,
     const std::vector<MathLib::EigenMatrix::IndexType>& vec_knownX_id,
     const std::vector<double>& vec_knownX_x)
 {
-    setRowsToZeroOffDiagonal(A_eigen, vec_knownX_id);
-
     using SpMat = MathLib::EigenMatrix::RawMatrixType;
-    SpMat AT = A_eigen.transpose();
 
-    // Reserve space for at least one value (on the diagonal). For
-    // deactivated subdomains some rows and columns might end empty (in the
-    // A matrix) and so no space is reserved for the Dirichlet conditions in
-    // the transposed matrix. Then the coeffRef call will do costly
-    // reallocations.
-    AT.reserve(Eigen::VectorXi::Constant(A_eigen.rows(), 1));
-
-    for (std::size_t ix = 0; ix < vec_knownX_id.size(); ix++)
+    if (vec_knownX_id.empty())
     {
-        SpMat::Index const row_id = vec_knownX_id[ix];
-        auto const x = vec_knownX_x[ix];
+        return;
+    }
 
-        // b_i -= A_eigen(i,k)*val, i!=k
-        // set column to zero, subtract from rhs
-        for (SpMat::InnerIterator it(AT, row_id); it; ++it)
+    // Position of the first occurrence of each known id in vec_knownX_id,
+    // sized for the columns as well, which the single pass also looks up.
+    constexpr std::size_t not_known = std::numeric_limits<std::size_t>::max();
+    std::vector<std::size_t> first_position(
+        std::max(A_eigen.rows(), A_eigen.cols()), not_known);
+    for (std::size_t i = 0; i < vec_knownX_id.size(); ++i)
+    {
+        auto const id = vec_knownX_id[i];
+        if (id < 0 || id >= A_eigen.rows())
         {
-            if (it.col() == row_id)
+            OGS_FATAL("Known-solution id {} is not a row of the matrix.", id);
+        }
+        auto& position = first_position[id];
+        if (position == not_known)
+        {
+            position = i;
+        }
+    }
+
+    // Contributions A_eigen(i,k)*x_k of the known columns k to a row i, with
+    // the position of k in vec_knownX_id.
+    std::vector<std::pair<std::size_t, double>> contributions;
+    for (SpMat::Index row_id = 0; row_id < A_eigen.outerSize(); ++row_id)
+    {
+        bool const is_known_row = first_position[row_id] != not_known;
+        contributions.clear();
+        for (SpMat::InnerIterator it(A_eigen, row_id); it; ++it)
+        {
+            auto const col_id = it.col();
+            if (col_id == row_id)
             {
                 continue;
             }
-
-            b_eigen[it.col()] -= it.value() * x;
-            it.valueRef() = 0.0;
+            if (is_known_row)
+            {
+                // Known rows do not contribute to the right-hand side; they
+                // are overwritten below.
+                it.valueRef() = 0.0;
+                continue;
+            }
+            auto const position = first_position[col_id];
+            if (position != not_known)
+            {
+                contributions.emplace_back(position,
+                                           it.value() * vec_knownX_x[position]);
+                it.valueRef() = 0.0;
+            }
         }
 
-        auto& c = AT.coeffRef(row_id, row_id);
+        // b_i -= A_eigen(i,k)*x_k, i!=k, in the order of vec_knownX_id.
+        std::sort(contributions.begin(), contributions.end(),
+                  [](auto const& a, auto const& b)
+                  { return a.first < b.first; });
+        for (auto const& contribution : contributions)
+        {
+            b_eigen[row_id] -= contribution.second;
+        }
+    }
+
+    for (auto const& [row_id, x] :
+         ranges::views::zip(vec_knownX_id, vec_knownX_x))
+    {
+        // Inserts the diagonal entry if missing, e.g., for rows of
+        // deactivated subdomains, which are empty.
+        auto& c = A_eigen.coeffRef(row_id, row_id);
         if (c != 0.0)
         {
             b_eigen[row_id] = x * c;
@@ -77,7 +144,10 @@ void applyKnownSolutionComplete(
         }
     }
 
-    A_eigen = AT.transpose();
+    if (!A_eigen.isCompressed())
+    {
+        A_eigen.makeCompressed();
+    }
 }
 
 void applyKnownSolutionIncomplete(
@@ -126,6 +196,13 @@ void applyKnownSolution(
     const std::vector<double>& vec_knownX_x,
     DirichletBCApplicationMode const mode)
 {
+    if (vec_knownX_id.size() != vec_knownX_x.size())
+    {
+        OGS_FATAL(
+            "Known-solution ids and values must pair up: {} ids, {} values.",
+            vec_knownX_id.size(), vec_knownX_x.size());
+    }
+
     using SpMat = EigenMatrix::RawMatrixType;
     static_assert(SpMat::IsRowMajor, "matrix is assumed to be row major!");
 
