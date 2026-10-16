@@ -8,6 +8,7 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem_staggered.xml RUNTIME 3)
     OgsTest(PROJECTFILE ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj RUNTIME 13)
     OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/HT/SimpleSynthetics/deactivated_subdomain/THM_DeactivatedSubdomain.xml)
     OgsTest(
         PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare_staggered.xml
         RUNTIME 1

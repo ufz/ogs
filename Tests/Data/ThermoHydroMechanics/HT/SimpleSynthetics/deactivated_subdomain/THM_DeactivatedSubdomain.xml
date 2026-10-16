@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="../../../../Parabolic/HT/SimpleSynthetics/deactivated_subdomain/HT_DeactivatedSubdomain.prj">
+
+    <!-- THM counterpart of the HT deactivated-subdomain test. -->
+
+    <replace sel="/*/processes/process/type/text()">THERMO_HYDRO_MECHANICS</replace>
+    <add sel="/*/processes/process/process_variables">
+        <displacement>displacement</displacement>
+    </add>
+    <!-- THM does not output darcy_velocity. -->
+    <remove sel="/*/processes/process/secondary_variables/secondary_variable[@name='darcy_velocity']"/>
+    <add sel="/*/processes/process">
+        <constitutive_relation>
+            <type>LinearElasticIsotropic</type>
+            <youngs_modulus>_youngs_modulus</youngs_modulus>
+            <poissons_ratio>_poissons_ratio</poissons_ratio>
+        </constitutive_relation>
+        <equation_balance_type>mass</equation_balance_type>
+    </add>
+
+    <add msel="/*/media/medium/phases/phase[type='Solid']/properties">
+        <property>
+            <name>thermal_expansivity</name>
+            <type>Constant</type>
+            <value>0</value>
+        </property>
+    </add>
+    <add msel="/*/media/medium/properties">
+        <property>
+            <name>biot_coefficient</name>
+            <type>Constant</type>
+            <value>1</value>
+        </property>
+    </add>
+    <replace msel="/*/media/medium/phases/phase[type='Solid']/properties/property[name='storage']/value/text()">1</replace>
+    <replace msel="/*/media/medium/properties/property[name='thermal_longitudinal_dispersivity']/value/text()">1</replace>
+
+    <!-- THM has no Picard assembly (no assembly without Jacobian), so Newton
+         is used; the displacement components are not checked for
+         convergence. -->
+    <replace sel="/*/nonlinear_solvers/nonlinear_solver[name='basic_picard']/type/text()">Newton</replace>
+    <replace sel="/*/time_loop/processes/process/convergence_criterion/reltols/text()">1e-15 1e-15 1 1</replace>
+
+    <replace sel="/*/time_loop/output/prefix/text()">Test_THM_DeactivatedSubdomain_{:meshname}</replace>
+
+    <add sel="/*/parameters">
+        <parameter>
+            <name>_youngs_modulus</name>
+            <type>Constant</type>
+            <value>1e15</value>
+        </parameter>
+        <parameter>
+            <name>_poissons_ratio</name>
+            <type>Constant</type>
+            <value>1e-05</value>
+        </parameter>
+        <parameter>
+            <name>_displacement0_IC</name>
+            <type>Constant</type>
+            <values>0 0</values>
+        </parameter>
+        <parameter>
+            <name>_displacement0_BC</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+    </add>
+
+    <add sel="/*/process_variables">
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>_displacement0_IC</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <type>Dirichlet</type>
+                    <mesh>square_1x1_quad_16</mesh>
+                    <component>0</component>
+                    <parameter>_displacement0_BC</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <type>Dirichlet</type>
+                    <mesh>square_1x1_quad_16</mesh>
+                    <component>1</component>
+                    <parameter>_displacement0_BC</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </add>
+
+    <!-- THM does not output darcy_velocity. -->
+    <remove sel="/*/test_definition/vtkdiff[field='darcy_velocity']"/>
+    <replace msel="/*/test_definition/vtkdiff/regex/text()">Test_THM_DeactivatedSubdomain_square_1x1_quad_16_ts_.*.vtu</replace>
+
+</OpenGeoSysProjectDiff>
