@@ -19,9 +19,9 @@ struct Monolithic
 struct Staggered
 {
     /// An optional input to set an algorithmic parameter of the staggered
-    /// scheme. In the HydroMechanics process the fixed-stress split has been
-    /// implemented as staggered scheme with a stabilization parameter to be
-    /// set. For more details see [user guide -
+    /// scheme. In the HydroMechanics and the ThermoHydroMechanics processes
+    /// the fixed-stress split has been implemented as staggered scheme with a
+    /// stabilization parameter to be set. For more details see [user guide -
     /// conventions](https://www.opengeosys.org/docs/userguide/basics/conventions/#fixed-stress-split-for-hydro-mechanical-processes).
     double fixed_stress_stabilization_parameter;
 
@@ -37,6 +37,8 @@ struct Staggered
     /// \f[\dot{\sigma}_v^{n, k} = \dot{\sigma}_v^{n, k-1}, \f]
     /// where \f$k\f$ is the coupling iteration index, and
     /// \f[ \dot{()}^{n, k} = \left(()^{n, k} - ()^{n-1}\right)/dt. \f]
+    /// The ThermoHydroMechanics process does not implement this selection and
+    /// refuses to start with it set.
     bool fixed_stress_over_time_step;
 };
 

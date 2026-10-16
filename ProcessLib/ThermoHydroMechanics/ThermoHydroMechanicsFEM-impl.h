@@ -26,6 +26,31 @@ namespace ProcessLib
 namespace ThermoHydroMechanics
 {
 
+/// Fixed-stress artificial storage coefficient, \f$\beta_{FS}\,\alpha'\,c_s\f$.
+/// \param beta_FS \f$\beta_{FS}\f$, the fixed-stress stabilization parameter.
+/// \param modified_biot \f$\alpha'\f$, the modified Biot coefficient.
+/// \param solid_skeleton_compressibility \f$c_s\f$, the solid skeleton
+/// compressibility.
+inline double artificialStorageCoefficient(
+    double const beta_FS, double const modified_biot,
+    double const solid_skeleton_compressibility)
+{
+    return beta_FS * modified_biot * solid_skeleton_compressibility;
+}
+
+/// Fixed-stress thermal strain rate contribution, \f$\beta_{FS}\,\alpha_T\,
+/// \dot T\f$.
+/// \param beta_FS \f$\beta_{FS}\f$, the fixed-stress stabilization parameter.
+/// \param thermal_expansion_coefficient \f$\alpha_T\f$, the volumetric
+/// thermal expansion coefficient.
+/// \param T_dot \f$\dot T\f$, the temperature rate.
+inline double fixedStressThermalStrainRate(
+    double const beta_FS, double const thermal_expansion_coefficient,
+    double const T_dot)
+{
+    return beta_FS * thermal_expansion_coefficient * T_dot;
+}
+
 namespace
 {
 /// Pressure storage coefficient of the mass-balance accumulation term,
@@ -238,6 +263,11 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
         return ProcessLib::setIntegrationPointKelvinVectorData<DisplacementDim>(
             values, _ip_data, &IpData::eps);
     }
+    if (name == "strain_rate_variable")
+    {
+        return ProcessLib::setIntegrationPointScalarData(
+            values, _ip_data, &IpData::strain_rate_variable);
+    }
     if (name.starts_with("material_state_variable_"))
     {
         name.remove_prefix(24);
@@ -290,11 +320,8 @@ void ThermoHydroMechanicsLocalAssembler<
     DisplacementDim>::setInitialConditionsConcrete(Eigen::VectorXd const
                                                        local_x,
                                                    double const t,
-                                                   int const /*process_id*/)
+                                                   int const process_id)
 {
-    // TODO: For staggered scheme, overload
-    // LocalAssemblerInterface::setInitialConditions to enable local_x contains
-    // the primary variables from all coupled processes.
     auto const [T, p, u] = localDOF(local_x);
 
     constexpr double dt = std::numeric_limits<double>::quiet_NaN();
@@ -308,36 +335,43 @@ void ThermoHydroMechanicsLocalAssembler<
     {
         auto& ip_data = _ip_data[ip];
         auto const& N = ip_data.N;
-        auto const& N_u = ip_data.N_u;
-        ParameterLib::SpatialPosition const x_position{
-            std::nullopt, _element.getID(),
-            MathLib::Point3d(
-                NumLib::interpolateCoordinates<ShapeFunctionDisplacement,
-                                               ShapeMatricesTypeDisplacement>(
-                    _element, N_u))};
+        auto const space_time_data = makeSpaceTimeData(ip_data.N_u, t, dt);
 
-        auto& sigma_eff = ip_data.sigma_eff;
-        if (_process_data.initial_stress.isTotalStress())
+        // For staggered execution the thermal process is always solved first.
+        // Thus, regardless of the coupling scheme or monolithic formulation,
+        // this branch is executed only once.
+        if (process_id == _process_data.thermal_process_id)
         {
-            auto const alpha_b =
-                medium->property(MPL::PropertyType::biot_coefficient)
-                    .template value<double>(vars, x_position, t, dt);
-
-            sigma_eff.noalias() += alpha_b * N.dot(p) * Invariants::identity2;
+            if (frozen_liquid_phase)
+            {
+                vars.temperature = N.dot(T);
+                auto const porosity =
+                    (*medium)[MaterialPropertyLib::PropertyType::porosity]
+                        .template value<double>(vars, space_time_data.x, t, dt);
+                auto const S_fr =
+                    (*medium)[MaterialPropertyLib::PropertyType::
+                                  frozen_liquid_saturation]
+                        .template value<double>(vars, space_time_data.x, t, dt);
+                ip_data.phi_fr = S_fr * porosity;
+            }
         }
-        ip_data.sigma_eff_prev.noalias() = sigma_eff;
 
-        vars.temperature = N.dot(T);
-        if (frozen_liquid_phase)
+        // Regardless of coupling scheme or monolithic solution strategy,
+        // the initial effective stress is computed exactly once in the
+        // branch below.
+        if (process_id == _process_data.mechanical_process_id)
         {
-            auto const porosity =
-                (*medium)[MaterialPropertyLib::PropertyType::porosity]
-                    .template value<double>(vars, x_position, t, dt);
-            auto const S_fr =
-                (*medium)[MaterialPropertyLib::PropertyType::
-                              frozen_liquid_saturation]
-                    .template value<double>(vars, x_position, t, dt);
-            ip_data.phi_fr = S_fr * porosity;
+            auto& sigma_eff = ip_data.sigma_eff;
+            if (_process_data.initial_stress.isTotalStress())
+            {
+                auto const alpha_b =
+                    medium->property(MPL::PropertyType::biot_coefficient)
+                        .template value<double>(vars, space_time_data.x, t, dt);
+
+                sigma_eff.noalias() +=
+                    alpha_b * N.dot(p) * Invariants::identity2;
+            }
+            ip_data.sigma_eff_prev.noalias() = sigma_eff;
         }
     }
 }
@@ -346,10 +380,10 @@ template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
-    updateCommonProperties(Eigen::Ref<Eigen::VectorXd const> const local_x,
-                           Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
-                           SpaceTimeData const& space_time_data,
-                           IpState const& ip_state) const
+    updateCoreCommonProperties(
+        Eigen::Ref<Eigen::VectorXd const> const local_x,
+        Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
+        SpaceTimeData const& space_time_data, IpState const& ip_state) const
 {
     auto const& [x_position, t, dt] = space_time_data;
     auto& ip_data = ip_state.ip_data;
@@ -456,6 +490,63 @@ CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
 
         cpv.modified_biot += cpv.alpha_biot * ip_data.phi_fr / porosity *
                              (rho_fr / fluid_density - 1);
+    }
+
+    // Consider also anisotropic thermal expansion.
+    cpv.solid_linear_thermal_expansion_coefficient =
+        MPL::formKelvinVector<DisplacementDim>(
+            solid_phase
+                .property(
+                    MaterialPropertyLib::PropertyType::thermal_expansivity)
+                .value(vars, x_position, t, dt));
+    cpv.solid_volumetric_thermal_expansion_coefficient =
+        Invariants::trace(cpv.solid_linear_thermal_expansion_coefficient);
+
+    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
+        dthermal_strain =
+            cpv.solid_linear_thermal_expansion_coefficient * cpv.dT_int_pt;
+
+    //
+    // The mechanical strain is set here, before the variable array is passed
+    // on in cpv.vars, so that permeability models that depend on it can read
+    // it in the property evaluations later.
+    //
+    auto& eps_m = ip_data.eps_m;
+    auto const& eps_m_prev = ip_data.eps_m_prev;
+    eps_m.noalias() = eps_m_prev + eps - cpv.eps_prev - dthermal_strain;
+    vars.mechanical_strain
+        .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
+            eps_m);
+
+    cpv.vars = vars;
+    return cpv;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    updateCommonProperties(Eigen::Ref<Eigen::VectorXd const> const local_x,
+                           Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
+                           SpaceTimeData const& space_time_data,
+                           IpState const& ip_state) const
+{
+    auto const& [x_position, t, dt] = space_time_data;
+    auto& ip_data = ip_state.ip_data;
+
+    auto cpv = updateCoreCommonProperties(local_x, local_x_prev,
+                                          space_time_data, ip_state);
+
+    [[maybe_unused]] auto const& [medium, liquid_phase, solid_phase,
+                                  frozen_liquid_phase] = getMediumPhases();
+
+    MaterialPropertyLib::VariableArray& vars = cpv.vars;
+    double const porosity = vars.porosity;
+
+    if (frozen_liquid_phase)
+    {
+        auto const& frozen_liquid_saturation = (*medium)
+            [MaterialPropertyLib::PropertyType::frozen_liquid_saturation];
 
         ip_data.phi_fr_prev = [&]()
         {
@@ -485,37 +576,10 @@ CommonPropertyValues<DisplacementDim> ThermoHydroMechanicsLocalAssembler<
                     .value(vars, x_position, t, dt));
     }
 
-    // Consider also anisotropic thermal expansion.
-    cpv.solid_linear_thermal_expansion_coefficient =
-        MPL::formKelvinVector<DisplacementDim>(
-            solid_phase
-                .property(
-                    MaterialPropertyLib::PropertyType::thermal_expansivity)
-                .value(vars, x_position, t, dt));
-    cpv.solid_volumetric_thermal_expansion_coefficient =
-        Invariants::trace(cpv.solid_linear_thermal_expansion_coefficient);
-
-    MathLib::KelvinVector::KelvinVectorType<DisplacementDim> const
-        dthermal_strain =
-            cpv.solid_linear_thermal_expansion_coefficient * cpv.dT_int_pt;
-
-    //
-    // The mechanical strain is set here, before the variable array is passed
-    // on in cpv.vars, so that permeability models that depend on it can read
-    // it in the property evaluations later.
-    //
-    auto& eps_m = ip_data.eps_m;
-    auto const& eps_m_prev = ip_data.eps_m_prev;
-    eps_m.noalias() = eps_m_prev + eps - cpv.eps_prev - dthermal_strain;
-    vars.mechanical_strain
-        .emplace<MathLib::KelvinVector::KelvinVectorType<DisplacementDim>>(
-            eps_m);
-
     cpv.solid_density =
         solid_phase.property(MaterialPropertyLib::PropertyType::density)
             .template value<double>(vars, x_position, t, dt);
 
-    cpv.vars = vars;
     return cpv;
 }
 
@@ -1291,6 +1355,228 @@ void ThermoHydroMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    assembleWithJacobianForStaggeredScheme(const double t, double const dt,
+                                           Eigen::VectorXd const& local_x,
+                                           Eigen::VectorXd const& local_x_prev,
+                                           int const process_id,
+                                           std::vector<double>& local_b_data,
+                                           std::vector<double>& local_Jac_data)
+
+{
+    if (process_id == _process_data.thermal_process_id)
+    {
+        assembleWithJacobianForEnergyBalanceEquation(
+            t, dt, local_x, local_x_prev, local_b_data, local_Jac_data);
+        return;
+    }
+
+    if (process_id == _process_data.hydraulic_process_id)
+    {
+        assembleWithJacobianForMassBalanceEquation(
+            t, dt, local_x, local_x_prev, local_b_data, local_Jac_data);
+        return;
+    }
+
+    if (process_id == _process_data.mechanical_process_id)
+    {
+        assembleWithJacobianForMomentumBalanceEquation(
+            t, dt, local_x, local_x_prev, local_b_data, local_Jac_data);
+        return;
+    }
+
+    OGS_FATAL(
+        "The process id {} is out of range for this staggered scheme "
+        "with 3 processes.",
+        process_id);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    assembleWithJacobianForEnergyBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data)
+{
+    assert(local_x.size() ==
+           pressure_size + displacement_size + temperature_size);
+
+    auto const [T, p, u] = localDOF(local_x);
+    auto const [T_prev, p_prev, u_prev] = localDOF(local_x_prev);
+
+    auto local_Jac = MathLib::createZeroedMatrix<
+        typename ShapeMatricesTypeDisplacement::template MatrixType<
+            temperature_size, temperature_size>>(
+        local_Jac_data, temperature_size, temperature_size);
+
+    auto local_rhs =
+        MathLib::createZeroedVector<typename ShapeMatricesTypeDisplacement::
+                                        template VectorType<temperature_size>>(
+            local_b_data, temperature_size);
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    EnergyBalanceTerms energy_balance(n_integration_points);
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto& ip_data = _ip_data[ip];
+        auto const space_time_data = makeSpaceTimeData(ip_data.N_u, t, dt);
+        IpState const ip_state{ip_data, _ip_data_output[ip]};
+
+        // Get common properties
+        auto const cpv = updateCommonProperties(local_x, local_x_prev,
+                                                space_time_data, ip_state);
+        auto const fpv =
+            updateFlowProperties(cpv, local_x, space_time_data, ip_state);
+
+        auto const crv_T =
+            updateThermalProperties(cpv, fpv, space_time_data, ip_state);
+
+        addEnergyBalanceIntegrationPointTerms(
+            energy_balance, ip_data, _ip_data_output[ip], cpv, fpv, crv_T, T);
+    }
+
+    addEnergyBalanceElementTerms(std::move(energy_balance), local_Jac,
+                                 local_rhs, T, T_prev, p, dt);
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    assembleWithJacobianForMassBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data)
+{
+    assert(local_x.size() ==
+           pressure_size + displacement_size + temperature_size);
+
+    auto const [T, p, u] = localDOF(local_x);
+
+    auto local_Jac = MathLib::createZeroedMatrix<
+        typename ShapeMatricesTypeDisplacement::template MatrixType<
+            pressure_size, pressure_size>>(local_Jac_data, pressure_size,
+                                           pressure_size);
+
+    auto local_rhs =
+        MathLib::createZeroedVector<typename ShapeMatricesTypeDisplacement::
+                                        template VectorType<pressure_size>>(
+            local_b_data, pressure_size);
+
+    typename ShapeMatricesTypePressure::NodalMatrixType laplace_p;
+    laplace_p.setZero(pressure_size, pressure_size);
+
+    typename ShapeMatricesTypePressure::NodalMatrixType laplace_T;
+    laplace_T.setZero(pressure_size, temperature_size);
+
+    typename ShapeMatricesTypePressure::NodalMatrixType storage_p;
+    storage_p.setZero(pressure_size, pressure_size);
+
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    bool const has_frozen_liquid_phase =
+        medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid);
+
+    auto const staggered_scheme = std::get<Common::HydroMechanics::Staggered>(
+        _process_data.coupling_scheme);
+    auto const beta_FS = staggered_scheme.fixed_stress_stabilization_parameter;
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto& ip_data = _ip_data[ip];
+        auto const space_time_data = makeSpaceTimeData(ip_data.N_u, t, dt);
+        IpState const ip_state{ip_data, _ip_data_output[ip]};
+
+        auto const cpv = updateCommonProperties(local_x, local_x_prev,
+                                                space_time_data, ip_state);
+        auto const fpv =
+            updateFlowProperties(cpv, local_x, space_time_data, ip_state);
+        auto const crv_p =
+            updateHydraulicProperties(cpv, space_time_data, ip_state);
+
+        auto const& w = ip_data.integration_weight;
+
+        auto const& N = ip_data.N;
+        auto const& dNdx = ip_data.dNdx;
+
+        auto const& velocity = _ip_data_output[ip].velocity;
+
+        double const fluid_density = _ip_data_output[ip].fluid_density;
+        double const rw = _process_data.is_volume_balance_equation_type
+                              ? w
+                              : fluid_density * w;
+
+        laplace_p.noalias() +=
+            dNdx.transpose() * fpv.K_over_mu * dNdx * (fpv.k_rel * rw);
+
+        double const storage_p_coeff = massBalancePressureStorageCoefficient(
+            cpv.vars.porosity, crv_p.fluid_compressibility, cpv.alpha_biot,
+            crv_p.beta_SR, has_frozen_liquid_phase ? crv_p.storage_p_fr : 0.0);
+
+        // Artificial compressibility from the fixed stress splitting:
+        auto const artificial_storage_coef = artificialStorageCoefficient(
+            beta_FS, cpv.modified_biot, crv_p.solid_skeleton_compressibility);
+
+        double const storage_p_coeff_with_stabilization =
+            storage_p_coeff + cpv.modified_biot * artificial_storage_coef;
+        storage_p.noalias() +=
+            N.transpose() * N * (storage_p_coeff_with_stabilization * rw);
+
+        laplace_T.noalias() +=
+            dNdx.transpose() * fpv.K_pT_thermal_osmosis * dNdx * rw;
+        // (Grad N * K_pT_thermal_osmosis * grad T) drho_L_dp has already been
+        // included in the velocity drho_L_dp term.
+
+        //
+        //  RHS, pressure part
+        //
+        local_rhs.noalias() += dNdx.transpose() * fpv.buoyancy_flux * rw;
+
+        //
+        // pressure equation, temperature part (M_pT) due to thermal expansion
+        // of fluid and solid matrix.
+        //
+        double const storage_T_coef = massBalanceTemperatureStorageCoefficient(
+            crv_p.beta, has_frozen_liquid_phase ? crv_p.storage_T_fr : 0.0);
+
+        //
+        // pressure equation, displacement part.
+        double const fixed_stress_stabilization =
+            cpv.modified_biot *
+            (_ip_data[ip].strain_rate_variable +
+             fixedStressThermalStrainRate(
+                 beta_FS, cpv.solid_volumetric_thermal_expansion_coefficient,
+                 cpv.T_dot));
+
+        double const storage_rate = massBalanceStorageRate(
+            storage_p_coeff_with_stabilization, cpv.p_dot, storage_T_coef,
+            cpv.T_dot, fixed_stress_stabilization);
+        local_rhs.noalias() -= (storage_rate * rw) * N;
+
+        if (!_process_data.is_volume_balance_equation_type)
+        {
+            local_Jac.noalias() +=
+                massBalanceJacobianWrtFluidDensity(
+                    ip_data, storage_rate, velocity, fpv.buoyancy_flux) *
+                crv_p.drho_L_dp;
+        }
+    }
+
+    local_Jac.noalias() += laplace_p + storage_p / dt;
+
+    local_rhs.noalias() -= laplace_p * p + laplace_T * T;
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
 template <typename JacobianBlock, typename ResidualSegment, typename BMatrix,
           typename EffectiveStress>
 void ThermoHydroMechanicsLocalAssembler<
@@ -1411,6 +1697,69 @@ void ThermoHydroMechanicsLocalAssembler<
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    assembleWithJacobianForMomentumBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data)
+{
+    assert(local_x.size() ==
+           pressure_size + displacement_size + temperature_size);
+
+    auto local_Jac = MathLib::createZeroedMatrix<
+        typename ShapeMatricesTypeDisplacement::template MatrixType<
+            displacement_size, displacement_size>>(
+        local_Jac_data, displacement_size, displacement_size);
+
+    auto local_rhs =
+        MathLib::createZeroedVector<typename ShapeMatricesTypeDisplacement::
+                                        template VectorType<displacement_size>>(
+            local_b_data, displacement_size);
+
+    auto const& medium = _process_data.media_map.getMedium(_element.getID());
+    bool const has_frozen_liquid_phase =
+        medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid);
+
+    unsigned const n_integration_points =
+        _integration_method.getNumberOfPoints();
+
+    for (unsigned ip = 0; ip < n_integration_points; ip++)
+    {
+        auto& ip_data = _ip_data[ip];
+        auto const& N_u = ip_data.N_u;
+        auto const& dNdx_u = ip_data.dNdx_u;
+
+        auto const space_time_data = makeSpaceTimeData(N_u, t, dt);
+        IpState const ip_state{ip_data, _ip_data_output[ip]};
+        auto const cpv = updateCommonProperties(local_x, local_x_prev,
+                                                space_time_data, ip_state);
+
+        auto const crv_u =
+            updateMechanicalProperties(cpv, space_time_data, ip_state);
+
+        auto const x_coord = space_time_data.x.getCoordinates().value()[0];
+        auto const B =
+            LinearBMatrix::computeBMatrix<DisplacementDim,
+                                          ShapeFunctionDisplacement::NPOINTS,
+                                          typename BMatricesType::BMatrixType>(
+                dNdx_u, N_u, x_coord, _is_axially_symmetric);
+
+        // Scheme specific: the staggered scheme assembles the Biot pressure
+        // coupling of the momentum balance explicitly.
+        auto const effective_stress =
+            (ip_data.sigma_eff -
+             (cpv.modified_biot * cpv.vars.liquid_phase_pressure) *
+                 Invariants::identity2)
+                .eval();
+        addMomentumBalanceStiffnessAndResidual(local_Jac, local_rhs, ip_data,
+                                               crv_u, B, effective_stress,
+                                               has_frozen_liquid_phase);
+    }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
 std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
     getIntPtDarcyVelocity(
@@ -1468,12 +1817,63 @@ std::vector<double> const& ThermoHydroMechanicsLocalAssembler<
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
 void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    evaluateExtraStrainRateForFixedStressSplit(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt, double const beta_FS)
+{
+    int const n_integration_points = _integration_method.getNumberOfPoints();
+    for (int ip = 0; ip < n_integration_points; ip++)
+    {
+        auto& ip_data = _ip_data[ip];
+        auto const& N_u = ip_data.N_u;
+        auto const space_time_data = makeSpaceTimeData(N_u, t, dt);
+        IpState const ip_state{ip_data, _ip_data_output[ip]};
+
+        auto const cpv = updateCoreCommonProperties(local_x, local_x_prev,
+                                                    space_time_data, ip_state);
+
+        auto const solid_skeleton_compressibility =
+            solidSkeletonCompressibility(
+                space_time_data, ip_data,
+                static_cast<double>(cpv.vars.temperature));
+
+        // Artificial compressibility from the fixed stress splitting:
+
+        auto const artificial_storage_coef = artificialStorageCoefficient(
+            beta_FS, cpv.modified_biot, solid_skeleton_compressibility);
+
+        ip_data.strain_rate_variable =
+            cpv.eps_v_dot - artificial_storage_coef * cpv.p_dot -
+            fixedStressThermalStrainRate(
+                beta_FS, cpv.solid_volumetric_thermal_expansion_coefficient,
+                cpv.T_dot);
+    }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
     ShapeFunctionDisplacement, ShapeFunctionPressure,
     DisplacementDim>::postTimestepConcrete(Eigen::VectorXd const& local_x,
                                            Eigen::VectorXd const& local_x_prev,
                                            double const t, double const dt,
-                                           int const /*process_id*/)
+                                           int const process_id)
 {
+    auto const staggered_scheme_ptr =
+        std::get_if<Common::HydroMechanics::Staggered>(
+            &_process_data.coupling_scheme);
+
+    bool const update_mechanics =
+        !staggered_scheme_ptr ||
+        process_id == _process_data.mechanical_process_id;
+    bool const update_heat =
+        !staggered_scheme_ptr || process_id == _process_data.thermal_process_id;
+    if (!update_mechanics && !update_heat)
+    {
+        return;
+    }
+
     auto const T =
         local_x.template segment<temperature_size>(temperature_index);
     // Stored sensible heat integrated over the element, for output.
@@ -1492,23 +1892,55 @@ void ThermoHydroMechanicsLocalAssembler<
         auto const cpv = updateCommonProperties(local_x, local_x_prev,
                                                 space_time_data, ip_state);
 
-        updateMechanicalProperties(cpv, space_time_data, ip_state);
+        if (update_mechanics)
+        {
+            updateMechanicalProperties(cpv, space_time_data, ip_state);
 
-        ip_data.eps0 =
-            ip_data.eps0_prev + (1 - ip_data.phi_fr_prev / cpv.vars.porosity) *
-                                    (cpv.eps_prev - ip_data.eps0_prev);
-        ip_data.pushBackState();
+            ip_data.eps0 = ip_data.eps0_prev +
+                           (1 - ip_data.phi_fr_prev / cpv.vars.porosity) *
+                               (cpv.eps_prev - ip_data.eps0_prev);
+            ip_data.pushBackState();
+        }
 
-        // Updates the velocity and viscosity for output.
-        updateFlowProperties(cpv, local_x, space_time_data, ip_state);
-        auto const hcv = computeHeatCapacities(cpv, space_time_data, ip_state);
+        if (update_heat)
+        {
+            // Updates the velocity and viscosity for output.
+            updateFlowProperties(cpv, local_x, space_time_data, ip_state);
+            auto const hcv =
+                computeHeatCapacities(cpv, space_time_data, ip_state);
 
-        // Stored sensible heat (latent already excluded).
-        sensible_heat += hcv.sensible_volumetric_heat_capacity *
-                         ip_data.N.dot(T) * ip_data.integration_weight;
+            // Stored sensible heat (latent already excluded).
+            sensible_heat += hcv.sensible_volumetric_heat_capacity *
+                             ip_data.N.dot(T) * ip_data.integration_weight;
+        }
     }
 
-    (*_process_data.cell_sensible_heat)[_element.getID()] = sensible_heat;
+    if (update_heat)
+    {
+        (*_process_data.cell_sensible_heat)[_element.getID()] = sensible_heat;
+    }
+}
+
+template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
+          int DisplacementDim>
+void ThermoHydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure, DisplacementDim>::
+    postNonLinearSolverConcrete(Eigen::VectorXd const& local_x,
+                                Eigen::VectorXd const& local_x_prev,
+                                double const t, double const dt,
+                                int const process_id)
+{
+    auto const staggered_scheme_ptr =
+        std::get_if<Common::HydroMechanics::Staggered>(
+            &_process_data.coupling_scheme);
+
+    if (staggered_scheme_ptr &&
+        (process_id == _process_data.mechanical_process_id))
+    {
+        evaluateExtraStrainRateForFixedStressSplit(
+            local_x, local_x_prev, t, dt,
+            staggered_scheme_ptr->fixed_stress_stabilization_parameter);
+    }
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,

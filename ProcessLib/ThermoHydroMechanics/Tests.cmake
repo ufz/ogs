@@ -5,9 +5,43 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoHydroMechanics/A2/A2_heating.prj RUNTIME 6)
     OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem.prj RUNTIME 5)
     OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem_Function.xml RUNTIME 5)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/1D_freezing_column_Stefan/Stefan_problem_staggered.xml RUNTIME 3)
     OgsTest(PROJECTFILE ThermoHydroMechanics/ColumnDeformationFreezing/TM.prj RUNTIME 13)
     OgsTest(PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare.prj RUNTIME 1)
+    OgsTest(
+        PROJECTFILE ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare_staggered.xml
+        RUNTIME 1
+    )
+    # Cross-check of the fixed-stress splitting with a non-zero stabilization
+    # parameter, including its thermal term:
+    # fixed_stress_stabilization_parameter 0.5 with the same monolithic
+    # reference results.
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/9percentWaterFreezingExpansion/UnitSquare_fixed_stress_staggered.xml
+        RUNTIME 1
+    )
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/WithFreezingPhase.prj RUNTIME 1)
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/StaggeredSchemeClonedFromHydroMechanics/ConsolidationBenchmark/consolidation_benchmark_THM_staggered.xml
+        EXECUTABLE_ARGS -m ${Data_SOURCE_DIR}/HydroMechanics/StaggeredScheme/ConsolidationBenchmark
+        RUNTIME 2
+    )
+    OgsTest(PROJECTFILE ThermoHydroMechanics/StaggeredSchemeClonedFromHydroMechanics/InjectionProduction1D/InjectionProduction1D_THM_staggered.xml RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/StaggeredSchemeClonedFromHydroMechanics/MandelCryer/MandelCryerStaggered_THM_staggered.xml RUNTIME 18)
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/StaggeredSchemeClonedFromHT/ADecovalexTHMCBasedHTExample/th_decovalex_THM.xml
+        EXECUTABLE_ARGS -m ${Data_SOURCE_DIR}/Parabolic/HT/StaggeredCoupling/ADecovalexTHMCBasedHTExample
+        RUNTIME 5
+    )
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/StaggeredSchemeClonedFromHT/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow_THM.xml
+        EXECUTABLE_ARGS -m ${Data_SOURCE_DIR}/Parabolic/HT/StaggeredCoupling/HeatTransportInStationaryFlow
+        RUNTIME 1
+    )
 
     if (OGS_USE_MFRONT)
         OgsTest(PROJECTFILE ThermoHydroMechanics/MultiMaterial/DP_Ehlers/M/square_1e1_2_matIDs.prj RUNTIME 1)
@@ -76,7 +110,56 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj
         RUNTIME 1
     )
+    # Rejected coupling scheme options must abort with the fatal message.
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/RejectedCouplingSchemeOptions/fixed_stress_over_time_step.xml
+        EXECUTABLE_ARGS
+            -m
+            ${Data_SOURCE_DIR}/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
+        NO_TEST_DEFINITION
+        PROPERTIES
+            PASS_REGULAR_EXPRESSION
+            "fixed_stress_over_time_step is not supported by the ThermoHydroMechanics process"
+    )
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/RejectedCouplingSchemeOptions/missing_coupling_scheme_type.xml
+        EXECUTABLE_ARGS
+            -m
+            ${Data_SOURCE_DIR}/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
+        NO_TEST_DEFINITION
+        PROPERTIES
+            PASS_REGULAR_EXPRESSION
+            "coupling scheme configuration is missing its <type> element"
+    )
+    # Out-of-range stabilization parameters must warn about the range.
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/RejectedCouplingSchemeOptions/out_of_range_fixed_stress_stabilization_parameter.xml
+        EXECUTABLE_ARGS
+            -m
+            ${Data_SOURCE_DIR}/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
+        NO_TEST_DEFINITION
+        PROPERTIES
+            PASS_REGULAR_EXPRESSION
+            "is out of reasonable range"
+    )
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/RejectedCouplingSchemeOptions/unknown_coupling_scheme_type.xml
+        EXECUTABLE_ARGS
+            -m
+            ${Data_SOURCE_DIR}/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
+        NO_TEST_DEFINITION
+        PROPERTIES PASS_REGULAR_EXPRESSION "Unknown coupling scheme type"
+    )
     OgsTest(PROJECTFILE ThermoHydroMechanics/BGRaCreepAndInitialStressAtIP_AREHS/arehs-salt-THM01_0.prj RUNTIME 29)
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/BGRaCreepAndInitialStressAtIP_AREHS/arehs-salt-THM01_0_staggered.xml
+        RUNTIME 95
+    )
     # ThermoHydroMechanics; thermo_osmosis and thermo_filtration effects, linear poroelastic, column consolidation
     OgsTest(PROJECTFILE ThermoHydroMechanics/Linear/ThermoOsmosis/Column.prj RUNTIME 9)
     OgsTest(
@@ -108,4 +191,5 @@ endif()
 
 if(NOT OGS_USE_MPI)
     OgsTest(PROJECTFILE ThermoHydroMechanics/TotalInitialStress/total_initial_stress_HM.prj RUNTIME 1)
+    OgsTest(PROJECTFILE ThermoHydroMechanics/TotalInitialStress/total_initial_stress_HM_staggered.xml RUNTIME 1)
 endif()

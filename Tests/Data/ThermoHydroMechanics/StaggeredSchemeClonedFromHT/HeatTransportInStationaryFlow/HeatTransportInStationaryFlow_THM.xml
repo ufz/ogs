@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="HeatTransportInStationaryFlow.prj">
+
+    <replace sel="/*/processes/process/type/text()">
+        THERMO_HYDRO_MECHANICS
+    </replace>
+    <remove sel="/*/processes/process/coupling_scheme"/>
+    <remove sel="/*/processes/process/secondary_variables"/>
+
+
+    <add sel="/*/processes/process">
+        <coupling_scheme>
+            <type>staggered</type>
+            <fixed_stress_stabilization_parameter>0.0</fixed_stress_stabilization_parameter>
+        </coupling_scheme>
+        <constitutive_relation>
+            <type>LinearElasticIsotropic</type>
+            <youngs_modulus>E</youngs_modulus>
+            <poissons_ratio>nu</poissons_ratio>
+        </constitutive_relation>
+        <secondary_variables>
+            <secondary_variable internal_name="velocity" output_name="darcy_velocity"/>
+        </secondary_variables>
+    </add>
+
+    <add sel="/*/processes/process/process_variables">
+        <displacement>displacement</displacement>
+    </add>
+
+    <add sel="/*/media/medium[1]/properties">
+        <property>
+            <name>biot_coefficient</name>
+            <type>Constant</type>
+            <value>1.0</value>
+        </property>
+    </add>    
+ 
+    <add sel="/*/media/medium[1]/phases/phase[type='Solid']/properties">
+        <property>
+            <name>thermal_expansivity</name>
+            <type>Constant</type>
+            <value>1.0</value>
+        </property>
+    </add>    
+
+    <remove sel="/*/media/medium[1]/properties/property[name='thermal_longitudinal_dispersivity']"/>
+    <remove sel="/*/media/medium[1]/properties/property[name='thermal_transversal_dispersivity']"/>
+
+    <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[1]/reltol/text()">1e-13</replace>
+    <replace sel="/*/time_loop/global_process_coupling/convergence_criteria/convergence_criterion[2]/reltol/text()">1e-13</replace>
+    <add sel="/*/time_loop/global_process_coupling/convergence_criteria/*[2]" pos="after">
+        <convergence_criterion>
+            <type>DeltaX</type>
+            <norm_type>NORM2</norm_type>
+            <abstol>1.e-5</abstol>
+            <reltol>1.e-14</reltol>
+        </convergence_criterion>
+    </add>
+
+    <add sel="/*/time_loop/processes/process[1]/convergence_criterion">
+        <reltol>1.e-14</reltol>   
+    </add>
+    <add sel="/*/time_loop/processes/process[2]/convergence_criterion">
+        <reltol>1.e-14</reltol>   
+    </add>
+
+    <add sel="/*/time_loop/processes/*[2]" pos="after">
+        <!-- M -->
+        <process ref="HeatTransportInStationaryFlow">
+            <nonlinear_solver>basic_newton_u</nonlinear_solver>
+            <convergence_criterion>
+                <type>DeltaX</type>
+                <norm_type>NORM2</norm_type>
+                <abstol>1.e-8</abstol>
+            </convergence_criterion>
+            <time_discretization>
+                <type>BackwardEuler</type>
+            </time_discretization>
+            <time_stepping>
+                <type>FixedTimeStepping</type>
+                <t_initial> 0.0 </t_initial>
+                <t_end> 5.e+4 </t_end>
+                <timesteps>
+                    <pair>
+                        <repeat>54</repeat>
+                        <delta_t>1000</delta_t>
+                    </pair>
+                </timesteps>
+            </time_stepping>
+        </process>
+    </add>
+
+    <add sel="/*/parameters">
+        <parameter>
+            <name>E</name>
+            <type>Constant</type>
+            <value>3.0e9</value>
+        </parameter>
+        <parameter>
+            <name>nu</name>
+            <type>Constant</type>
+            <value>0.2</value>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0.0</value>
+        </parameter>
+        <parameter>
+            <name>u0</name>
+            <type>Constant</type>
+            <values>0.0 0.0</values>
+        </parameter>
+    </add>
+
+    <add sel="/*/process_variables/*[2]" pos="after">
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>u0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>mesh</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>mesh</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </add>
+
+
+    <replace sel="/*/nonlinear_solvers/nonlinear_solver[name='picard_T']/type/text()">
+        Newton
+    </replace>
+
+    <replace sel="/*/nonlinear_solvers/nonlinear_solver[name='picard_H']/type/text()">
+        Newton
+    </replace>
+
+    <add sel="/*/nonlinear_solvers/*[2]" pos="after">
+        <nonlinear_solver>
+            <name>basic_newton_u</name>
+            <type>Newton</type>
+            <max_iter>50</max_iter>
+            <linear_solver>general_linear_solver_u</linear_solver>
+        </nonlinear_solver>
+    </add>
+
+    <add sel="/*/linear_solvers/*[2]" pos="after">
+        <linear_solver>
+            <name>general_linear_solver_u</name>
+            <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>CG</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-8</error_tolerance>
+                <scaling>1</scaling>
+            </eigen>
+            <petsc>
+                <prefix>sd</prefix>
+                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </add>
+
+</OpenGeoSysProjectDiff>
+

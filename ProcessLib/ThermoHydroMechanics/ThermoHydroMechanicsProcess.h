@@ -38,7 +38,7 @@ public:
             process_variables,
         ThermoHydroMechanicsProcessData<DisplacementDim>&& process_data,
         SecondaryVariableCollection&& secondary_variables,
-        bool const use_monolithic_scheme, bool const is_linear);
+        bool const is_linear);
 
     //! \name ODESystem interface
     //! @{
@@ -52,10 +52,9 @@ public:
      * process.
      *
      * @param process_id Process ID. If the monolithic scheme is applied,
-     *                               process_id = 0. For the staggered scheme,
-     *                               process_id = 0 represents the
-     *                               hydraulic (H) process, while process_id = 1
-     *                               represents the mechanical (M) process.
+     *                   process_id = 0. For the staggered scheme, it is one of
+     *                   the thermal, hydraulic or mechanical process ids in
+     *                   ThermoHydroMechanicsProcessData.
      * @return Matrix specifications including size and sparse pattern.
      */
     THERMOHYDROMECHANICS_EXPORT MathLib::MatrixSpecifications
@@ -98,6 +97,11 @@ private:
                                      const double t, const double dt,
                                      int const process_id) override;
 
+    void postNonLinearSolverConcreteProcess(
+        std::vector<GlobalVector*> const& x,
+        std::vector<GlobalVector*> const& x_prev, const double t,
+        double const dt, int const process_id) override;
+
     std::vector<std::vector<std::string>> initializeAssemblyOnSubmeshes(
         std::vector<std::reference_wrapper<MeshLib::Mesh>> const& meshes)
         override;
@@ -135,11 +139,11 @@ private:
     getDOFTableForExtrapolatorData() const override;
 
     /// Check whether the process represented by \c process_id is/has
-    /// mechanical process. In the present implementation, the mechanical
-    /// process has process_id == 1 in the staggered scheme.
+    /// mechanical process.
     bool hasMechanicalProcess(int const process_id) const
     {
-        return _use_monolithic_scheme || process_id == 2;
+        return _use_monolithic_scheme ||
+               process_id == _process_data.mechanical_process_id;
     }
 };
 

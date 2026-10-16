@@ -107,6 +107,12 @@ public:
                               std::vector<double>& local_rhs_data,
                               std::vector<double>& local_Jac_data) override;
 
+    void assembleWithJacobianForStaggeredScheme(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, int const process_id,
+        std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data) override;
+
     void initializeConcrete() override
     {
         unsigned const n_integration_points =
@@ -166,6 +172,11 @@ public:
                               double const t, double const dt,
                               int const /*process_id*/) override;
 
+    void postNonLinearSolverConcrete(Eigen::VectorXd const& local_x,
+                                     Eigen::VectorXd const& local_x_prev,
+                                     double const t, double const dt,
+                                     int const process_id) override;
+
     void computeSecondaryVariableConcrete(
         double const t, double const dt, Eigen::VectorXd const& local_x,
         Eigen::VectorXd const& local_x_prev) override;
@@ -212,6 +223,17 @@ public:
     {
         std::vector<double> result;
         getIntPtIceVolume(0, {}, {}, result);
+        return result;
+    }
+
+    std::vector<double> getStrainRateVariable() const override
+    {
+        std::vector<double> result;
+        result.reserve(_ip_data.size());
+        for (auto const& ip_data : _ip_data)
+        {
+            result.push_back(ip_data.strain_rate_variable);
+        }
         return result;
     }
 
@@ -269,6 +291,18 @@ private:
     /// Resolves the aqueous liquid, the solid and, if the medium defines one,
     /// the frozen liquid phase of this element's medium.
     MediumPhases getMediumPhases() const;
+
+    /// Evaluates the subset of the common values that the fixed-stress split
+    /// needs: the primary variable rates, the volumetric strain rate, the solid
+    /// thermal expansion and the (modified) Biot coefficient. Updates the
+    /// strain, mechanical strain and ice volume fraction in ip_data.
+    /// solid_density, the derivatives of the ice volume fraction and the ice
+    /// thermal expansion are left unset.
+    CommonPropertyValues<DisplacementDim> updateCoreCommonProperties(
+        Eigen::Ref<Eigen::VectorXd const> const local_x,
+        Eigen::Ref<Eigen::VectorXd const> const local_x_prev,
+        SpaceTimeData const& space_time_data,
+        IpState const& ip_state) const;
 
     /// Evaluates the values shared by all balance equations and updates the
     /// strain, mechanical strain and ice volume fraction in ip_data.
@@ -479,6 +513,21 @@ private:
     static const int displacement_size =
         ShapeFunctionDisplacement::NPOINTS * DisplacementDim;
 
+    void assembleWithJacobianForEnergyBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data);
+
+    void assembleWithJacobianForMassBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data);
+
+    void assembleWithJacobianForMomentumBalanceEquation(
+        const double t, double const dt, Eigen::VectorXd const& local_x,
+        Eigen::VectorXd const& local_x_prev, std::vector<double>& local_b_data,
+        std::vector<double>& local_Jac_data);
+
     /// Adds the tangent-stiffness and the internal-force residual
     /// contributions of the momentum balance of one integration point to the
     /// local system: \f[ K_{uu} \mathrel{+}=
@@ -496,8 +545,10 @@ private:
     /// \param crv_u the mechanical property values at
     /// the integration point.
     /// \param B the strain-displacement matrix.
-    /// \param effective_stress stress entering the internal force, the
-    /// effective stress \f$\sigma_{\mathrm{eff}}\f$ of the solid skeleton.
+    /// \param effective_stress stress entering the internal force: the
+    /// effective stress \f$\sigma_{\mathrm{eff}}\f$ of the solid skeleton for
+    /// the monolithic scheme; the staggered scheme passes the same with its
+    /// explicitly assembled Biot pressure coupling subtracted.
     /// \param has_frozen_liquid_phase whether the medium has a frozen liquid
     /// phase, which adds the ice-stress contributions.
     template <typename JacobianBlock, typename ResidualSegment,
@@ -512,7 +563,8 @@ private:
 
     /// Element matrices of the energy balance equation, accumulated over the
     /// integration points by addEnergyBalanceIntegrationPointTerms() and
-    /// added to the local system by addEnergyBalanceElementTerms().
+    /// added to the local system by addEnergyBalanceElementTerms(). Shared by
+    /// the monolithic and the staggered assemblers.
     struct EnergyBalanceTerms
     {
         using NodalMatrixType =
@@ -571,6 +623,12 @@ private:
                                       TemperaturePrevVector const& T_prev,
                                       PressureVector const& p,
                                       double const dt) const;
+
+    void evaluateExtraStrainRateForFixedStressSplit(
+        Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
+        double const t, double const dt,
+        double const beta_FS  // fixed stress stabilization parameter
+    );
 };
 
 }  // namespace ThermoHydroMechanics

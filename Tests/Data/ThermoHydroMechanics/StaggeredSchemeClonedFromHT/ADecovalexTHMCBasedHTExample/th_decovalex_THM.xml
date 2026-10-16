@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="th_decovalex.prj">
+
+    <replace msel="/*/processes/process/type/text()">
+        THERMO_HYDRO_MECHANICS
+    </replace>
+    <remove msel="/*/processes/process/coupling_scheme"/>
+    <remove msel="/*/processes/process/secondary_variables"/>
+
+
+    <add msel="/*/processes/process">
+        <coupling_scheme>
+            <type>staggered</type>
+            <fixed_stress_stabilization_parameter>0.0</fixed_stress_stabilization_parameter>
+        </coupling_scheme>
+        <constitutive_relation id="0">
+            <type>LinearElasticIsotropic</type>
+            <youngs_modulus>E_b</youngs_modulus>
+            <poissons_ratio>nu_b</poissons_ratio>
+        </constitutive_relation>
+        <constitutive_relation id="1">
+            <type>LinearElasticIsotropic</type>
+            <youngs_modulus>E_rock</youngs_modulus>
+            <poissons_ratio>nu_rock</poissons_ratio>
+        </constitutive_relation>
+        <secondary_variables>
+            <secondary_variable internal_name="velocity" output_name="darcy_velocity"/>
+        </secondary_variables>
+    </add>
+
+    <add msel="/*/processes/process/process_variables">
+        <displacement>displacement</displacement>
+    </add>
+
+    <remove msel="/*/media/medium[1]/properties/property[name='thermal_longitudinal_dispersivity']"/>
+    <remove msel="/*/media/medium[2]/properties/property[name='thermal_longitudinal_dispersivity']"/>
+    <remove msel="/*/media/medium[1]/properties/property[name='thermal_transversal_dispersivity']"/>
+    <remove msel="/*/media/medium[2]/properties/property[name='thermal_transversal_dispersivity']"/>
+
+    <add sel="/*/time_loop/global_process_coupling/convergence_criteria/*[2]" pos="after">
+        <convergence_criterion>
+            <type>DeltaX</type>
+            <norm_type>NORM2</norm_type>
+            <abstol>1.e-5</abstol>
+            <reltol>1.e-14</reltol>
+        </convergence_criterion>
+    </add>
+
+    <replace msel="/*/time_loop/processes/process[1]/convergence_criterion/reltol/text()">
+        1.e-14
+    </replace>
+    <replace msel="/*/time_loop/processes/process[2]/convergence_criterion/reltol/text()">
+        1.e-14
+    </replace>
+
+    <add sel="/*/time_loop/processes/*[2]" pos="after">
+        <!-- M -->
+        <process ref="th_decovalex">
+            <nonlinear_solver>basic_newton_u</nonlinear_solver>
+            <convergence_criterion>
+                <type>DeltaX</type>
+                <norm_type>NORM2</norm_type>
+                <abstol>1.e-8</abstol>
+            </convergence_criterion>
+            <time_discretization>
+                <type>BackwardEuler</type>
+            </time_discretization>
+            <time_stepping>
+                <type>FixedTimeStepping</type>
+                <t_initial> 0.0 </t_initial>
+                <t_end> 1.e3 </t_end>
+                <timesteps>
+                    <pair>
+                        <repeat>4</repeat>
+                        <delta_t>0.001</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>1</repeat>
+                        <delta_t>0.006</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>9</repeat>
+                        <delta_t>0.01</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>9</repeat>
+                        <delta_t>0.1</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>39</repeat>
+                        <delta_t>1.</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>2</repeat>
+                        <delta_t>2.0</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>1</repeat>
+                        <delta_t>16.0</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>1</repeat>
+                        <delta_t>30.0</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>1</repeat>
+                        <delta_t>40.0</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>10</repeat>
+                        <delta_t>86.0</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>90</repeat>
+                        <delta_t>100.0</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>100</repeat>
+                        <delta_t>900</delta_t>
+                    </pair>
+                    <pair>
+                        <repeat>90</repeat>
+                        <delta_t>1.e4</delta_t>
+                    </pair>
+                </timesteps>
+            </time_stepping>
+        </process>
+    </add>
+
+    <add sel="/*/parameters">
+        <!-- Young's modulus and Poisson's ratio for the two materials are not
+             effective because the Biot's coefficient is one. -->
+        <parameter>
+            <name>E_b</name>
+            <type>Constant</type>
+            <value>3.17e+8</value>
+        </parameter>
+        <parameter>
+            <name>nu_b</name>
+            <type>Constant</type>
+            <value>0.35</value>
+        </parameter>
+        <parameter>
+            <name>E_rock</name>
+            <type>Constant</type>
+            <value>3.0e10</value>
+        </parameter>
+        <parameter>
+            <name>nu_rock</name>
+            <type>Constant</type>
+            <value>0.3</value>
+        </parameter>
+        <parameter>
+            <name>zero</name>
+            <type>Constant</type>
+            <value>0.</value>
+        </parameter>
+        <parameter>
+            <name>u0</name>
+            <type>Constant</type>
+            <values>0.0 0.0</values>
+        </parameter>
+    </add>
+
+    <add sel="/*/process_variables/*[2]" pos="after">
+        <process_variable>
+            <name>displacement</name>
+            <components>2</components>
+            <order>1</order>
+            <initial_condition>u0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>th_decovalex</mesh>
+                    <type>Dirichlet</type>
+                    <component>0</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+                <boundary_condition>
+                    <mesh>th_decovalex</mesh>
+                    <type>Dirichlet</type>
+                    <component>1</component>
+                    <parameter>zero</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </add>
+
+
+    <replace msel="/*/nonlinear_solvers/nonlinear_solver[name='basic_picard_T']/type/text()">
+        Newton
+    </replace>
+
+    <replace msel="/*/nonlinear_solvers/nonlinear_solver[name='basic_picard_H']/type/text()">
+        Newton
+    </replace>
+
+    <add sel="/*/nonlinear_solvers/*[2]" pos="after">
+        <nonlinear_solver>
+            <name>basic_newton_u</name>
+            <type>Newton</type>
+            <max_iter>50</max_iter>
+            <linear_solver>general_linear_solver_u</linear_solver>
+        </nonlinear_solver>
+    </add>
+
+    <add sel="/*/linear_solvers/*[2]" pos="after">
+        <linear_solver>
+            <name>general_linear_solver_u</name>
+            <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
+            <eigen>
+                <solver_type>CG</solver_type>
+                <precon_type>DIAGONAL</precon_type>
+                <max_iteration_step>10000</max_iteration_step>
+                <error_tolerance>1e-8</error_tolerance>
+                <scaling>1</scaling>
+            </eigen>
+            <petsc>
+                <prefix>sd</prefix>
+                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
+            </petsc>
+        </linear_solver>
+    </add>
+
+    <!-- The staggered THM solution is compared against the HT reference at the
+         end of the heating phase only. Relative to the base project, the T
+         absolute tolerance is loosened (5e-6 vs 8e-12) and the p absolute
+         tolerance tightened (1e-6 vs 5.0e-6); the relative tolerances are
+         unchanged. -->
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>th_decovalex_ts_40_t_18.000000.vtu</file>
+                <field>T</field>
+                <absolute_tolerance>5e-6</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>th_decovalex_ts_40_t_18.000000.vtu</file>
+                <field>p</field>
+                <absolute_tolerance>1e-6</absolute_tolerance>
+                <relative_tolerance>9.5e-13</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+
+</OpenGeoSysProjectDiff>
+
