@@ -171,6 +171,26 @@ Liquid Flow process has to be declared in the project file `prj` in the processe
 </process>
 ```
 
+### Mass lumping
+
+The storage (mass) matrix $\mathbf{M}_e$ can optionally be lumped. This can
+suppress spurious oscillations of the pressure in transient problems, e.g.
+for small time steps. For linear elements the column sums of the local mass
+matrix are put on its diagonal. For higher order elements the column sums can
+be zero or negative (e.g. at the corner nodes of serendipity elements), so the
+HRZ scheme (Hinton, Rock, Zienkiewicz 1976) is used instead: the diagonal of
+$\mathbf{M}_e$ is scaled to preserve the total element storage,
+
+$$
+M^{\mathrm{L}}_{ii} = \frac{M_{ii}}{\sum_k M_{kk}} \sum_{k,l} M_{kl}.
+$$
+
+Mass lumping is disabled by default:
+
+```xml
+<mass_lumping>true</mass_lumping>
+```
+
 ### Media properties
 
 For Liquid-Flow fluid and porous medium properties need to be specified.

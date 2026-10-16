@@ -42,6 +42,10 @@ struct LiquidFlowData final
     NumLib::ShapeMatrixCache shape_matrix_cache;
 
     MaterialPropertyLib::Variable const phase_variable;
+
+    /// If true, the storage (mass) matrix is lumped: column sums for linear
+    /// elements, HRZ lumping for higher order elements.
+    bool const apply_mass_lumping = false;
 };
 
 }  // namespace LiquidFlow

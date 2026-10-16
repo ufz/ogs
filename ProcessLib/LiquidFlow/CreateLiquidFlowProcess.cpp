@@ -136,6 +136,14 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         config.getConfigParameter<std::string>("equation_balance_type",
                                                "volume");
 
+    auto const apply_mass_lumping =
+        //! \ogs_file_param{prj__processes__process__LIQUID_FLOW__mass_lumping}
+        config.getConfigParameter<bool>("mass_lumping", false);
+    if (apply_mass_lumping)
+    {
+        INFO("LiquidFlow process uses mass lumping.");
+    }
+
     DBUG("Check the media properties of LiquidFlow process ...");
     checkMPLProperties(mesh, media_map, equation_balance_type_str == "volume");
     DBUG("Media properties verified.");
@@ -172,7 +180,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         has_gravity,
         *aperture_size_parameter,
         NumLib::ShapeMatrixCache{integration_order},
-        phase_variable};
+        phase_variable,
+        apply_mass_lumping};
 
     return std::make_unique<LiquidFlowProcess>(
         std::move(name), mesh, std::move(jacobian_assembler), parameters,
