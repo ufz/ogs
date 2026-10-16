@@ -208,6 +208,7 @@ private:
         auto const N_this = ns_and_weight.N(this_shp_fct_order);
 
         Eigen::Index left = 0;
+        std::size_t global_comp = 0;
 
         for (auto pv_ref : pv_refs)
         {
@@ -224,9 +225,11 @@ private:
                 // The assignment -= takes into account the sign convention
                 // of 1st-order in time in ODE systems in OpenGeoSys.
                 local_Jac.middleCols(left, width).noalias() -=
-                    N_this.transpose() * (dFlux[other_comp] * weight) * N_other;
+                    N_this.transpose() * (dFlux[global_comp] * weight) *
+                    N_other;
 
                 left += width;
+                ++global_comp;
             }
         }
 
