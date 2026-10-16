@@ -4,7 +4,9 @@ build mac:
     - .template-build-linux
     - .test-artifacts
   needs: [meta]
+  timeout: 3h
   variables:
+    CTEST_TIMEOUT: 90 # passing runs need ~4490 s, the default 75 min is 4500 s
     CHECK_WARNINGS: "true"
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
