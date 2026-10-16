@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="quadratic_mesh_assembly_test.prj">
+    <add sel="/*/processes/process">
+        <mass_lumping>true</mass_lumping>
+    </add>
+</OpenGeoSysProjectDiff>

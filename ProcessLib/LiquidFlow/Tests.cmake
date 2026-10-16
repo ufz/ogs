@@ -32,6 +32,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h1_1Dsteady/h1_1Dsteady.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h1_3Dhydstat/h1_3Dhydstat.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D1bt/h2_1D1bt.prj)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D1bt/h2_1D1bt_mass_lumping.xml)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D2bt/h2_1D2bt.prj)
 endif()
 
@@ -228,10 +229,13 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Utils/GMSH2OGS/quadratic_mesh_assembly_test.prj
             RUNTIME 1
     )
+    # Zero storage: HRZ lumping must reproduce the consistent-mass reference.
+    OgsTest(PROJECTFILE Utils/GMSH2OGS/quadratic_mesh_mass_lumping.xml RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/RasterParameter/CoarseRasterHomogeneous.xml RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/RasterParameter/FineRasterHomogeneous.xml RUNTIME 1)
     # fine raster and coarse raster input should produce exactly the same output
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/RasterParameter/CoarseRasterHeterogeneous.xml RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/RasterParameter/FineRasterHeterogeneous.xml RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/GasFlow/gas_flow.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/GasFlow/gas_flow_mass_lumping.xml RUNTIME 1)
 endif()

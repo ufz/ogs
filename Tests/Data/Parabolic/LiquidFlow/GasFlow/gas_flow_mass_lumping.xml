@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="gas_flow.prj">
+    <add sel="/*/processes/process">
+        <mass_lumping>true</mass_lumping>
+    </add>
+    <replace sel="/*/time_loop/output/prefix/text()">gas_flow_mass_lumping</replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>gas_flow_mass_lumping_ts_1000_t_100.000000.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-5</absolute_tolerance>
+                <relative_tolerance>5e-6</relative_tolerance>
+            </vtkdiff>
+            <!-- Lumped solution must stay close to the consistent one. -->
+            <vtkdiff>
+                <file>gas_flow_mass_lumping_ts_1000_t_100.000000.vtu</file>
+                <reference_file>gas_flow_ts_1000_t_100.000000.vtu</reference_file>
+                <field>pressure</field>
+                <absolute_tolerance>0.0</absolute_tolerance>
+                <relative_tolerance>5e-4</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
