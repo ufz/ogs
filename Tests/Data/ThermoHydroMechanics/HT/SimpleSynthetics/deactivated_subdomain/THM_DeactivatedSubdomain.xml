@@ -95,5 +95,12 @@
     <!-- THM does not output darcy_velocity. -->
     <remove sel="/*/test_definition/vtkdiff[field='darcy_velocity']"/>
     <replace msel="/*/test_definition/vtkdiff/regex/text()">Test_THM_DeactivatedSubdomain_square_1x1_quad_16_ts_.*.vtu</replace>
+    <!-- p and T (unlike p_active/T_active) still carry whatever value each
+         process leaves on currently-deactivated nodes. That padding is not
+         physically meaningful and is not guaranteed to be bit-stable across
+         builds/thread counts, so these two checks use a loose tolerance as a
+         smoke test; p_active/T_active are the authoritative, exact checks. -->
+    <replace msel="/*/test_definition/vtkdiff[field='p' or field='T']/absolute_tolerance/text()">1e-6</replace>
+    <replace msel="/*/test_definition/vtkdiff[field='p' or field='T']/relative_tolerance/text()">1e-6</replace>
 
 </OpenGeoSysProjectDiff>
