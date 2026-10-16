@@ -58,9 +58,12 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- Matches the HT test: no lumped specific
+                                 storage, only the fluid compressibility term
+                                 contributes. -->
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>1</value>
+                            <value>0</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -87,9 +90,10 @@
             </phases>
             <properties>
                 <property>
+                    <!-- Matches the HT test. -->
                     <name>thermal_longitudinal_dispersivity</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>0</value>
                 </property>
                 <property>
                     <name>thermal_transversal_dispersivity</name>
@@ -111,9 +115,11 @@
                     <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
                 <property>
+                    <!-- Zeroed to decouple the mechanics: no strain-pressure
+                         coupling, so TH behaviour should match the HT test. -->
                     <name>biot_coefficient</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>0</value>
                 </property>
             </properties>
         </medium>
@@ -148,9 +154,12 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- Matches the HT test: no lumped specific
+                                 storage, only the fluid compressibility term
+                                 contributes. -->
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>1</value>
+                            <value>0</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -177,9 +186,10 @@
             </phases>
             <properties>
                 <property>
+                    <!-- Matches the HT test. -->
                     <name>thermal_longitudinal_dispersivity</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>0</value>
                 </property>
                 <property>
                     <name>thermal_transversal_dispersivity</name>
@@ -201,9 +211,11 @@
                     <type>EffectiveThermalConductivityPorosityMixing</type>
                 </property>
                 <property>
+                    <!-- Zeroed to decouple the mechanics: no strain-pressure
+                         coupling, so TH behaviour should match the HT test. -->
                     <name>biot_coefficient</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>0</value>
                 </property>
             </properties>
         </medium>
