@@ -34,7 +34,7 @@ else() # Assuming gcc
 endif()
 configure_file(scripts/cmake/gcovr.cfg.in gcovr.cfg @ONLY)
 
-set(GCOVR_CMD uvx gcovr==8.6 CACHE STRING "" FORCE)
+set(GCOVR_CMD uvx gcovr==8.7 CACHE STRING "" FORCE)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/coverage/html)
 

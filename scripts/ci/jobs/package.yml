@@ -63,7 +63,7 @@ aggregate coverage:
       done
 
       mkdir -p coverage/public
-      uvx gcovr \
+      uvx gcovr==8.7 \
         "${args[@]}" \
         --xml coverage/cpp-coverage.xml \
         --html-details coverage/public/index.html \
