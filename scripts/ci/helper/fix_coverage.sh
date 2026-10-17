@@ -27,7 +27,7 @@ if [[ -f "notebook-coverage.xml" ]]; then
 fi
 
 mkdir -p python-html
-uvx gcovr \
+uvx gcovr==8.7 \
   ${gcovr_args} \
   --html-details python-html/coverage.html \
   --exclude '.*/ogs/config.py' \
