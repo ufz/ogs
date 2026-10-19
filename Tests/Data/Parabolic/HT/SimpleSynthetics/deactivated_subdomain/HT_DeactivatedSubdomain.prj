@@ -52,9 +52,13 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- No lumped specific storage: only the fluid
+                                 compressibility term (porosity * drho/dp / rho)
+                                 contributes, matching the THM mass balance where
+                                 (alpha - porosity) * beta_SR = 0 for biot=1. -->
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>1</value>
+                            <value>0</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -76,9 +80,11 @@
             </phases>
             <properties>
                 <property>
+                    <!-- Zeroed to match THM, which hardcodes thermal
+                         dispersivity to 0 (ThermoHydroMechanicsFEM-impl.h). -->
                     <name>thermal_longitudinal_dispersivity</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>0</value>
                 </property>
                 <property>
                     <name>thermal_transversal_dispersivity</name>
@@ -132,9 +138,13 @@
                     <type>Solid</type>
                     <properties>
                         <property>
+                            <!-- No lumped specific storage: only the fluid
+                                 compressibility term (porosity * drho/dp / rho)
+                                 contributes, matching the THM mass balance where
+                                 (alpha - porosity) * beta_SR = 0 for biot=1. -->
                             <name>storage</name>
                             <type>Constant</type>
-                            <value>1</value>
+                            <value>0</value>
                         </property>
                         <property>
                             <name>density</name>
@@ -156,9 +166,11 @@
             </phases>
             <properties>
                 <property>
+                    <!-- Zeroed to match THM, which hardcodes thermal
+                         dispersivity to 0 (ThermoHydroMechanicsFEM-impl.h). -->
                     <name>thermal_longitudinal_dispersivity</name>
                     <type>Constant</type>
-                    <value>1</value>
+                    <value>0</value>
                 </property>
                 <property>
                     <name>thermal_transversal_dispersivity</name>
