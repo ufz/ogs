@@ -25,12 +25,7 @@ void applyKnownSolutions(std::vector<Solutions> const* const known_solutions,
 
     for (auto const& bc : *known_solutions)
     {
-        for (std::size_t i = 0; i < bc.ids.size(); ++i)
-        {
-            // TODO that might have bad performance for some Vector types, e.g.,
-            // PETSc.
-            MathLib::setVector(x, bc.ids[i], bc.values[i]);
-        }
+        MathLib::setVector(x, bc.ids, bc.values);
     }
     MathLib::LinAlg::finalizeAssembly(x);
 }
