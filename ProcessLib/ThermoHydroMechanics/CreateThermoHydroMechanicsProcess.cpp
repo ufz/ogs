@@ -45,13 +45,6 @@ std::unique_ptr<Process> createThermoHydroMechanicsProcess(
     auto const* const staggered_scheme =
         std::get_if<Common::HydroMechanics::Staggered>(&coupling_scheme);
     bool const staggered = staggered_scheme != nullptr;
-    if (staggered_scheme && staggered_scheme->fixed_stress_over_time_step)
-    {
-        OGS_FATAL(
-            "The coupling scheme option fixed_stress_over_time_step is not "
-            "supported by the ThermoHydroMechanics process, which fixes the "
-            "volume stress rate over the coupling iteration only.");
-    }
 
     /// \section processvariablesthm Process Variables
 

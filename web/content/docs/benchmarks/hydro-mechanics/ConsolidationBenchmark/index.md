@@ -10,8 +10,7 @@ image = "CB.png"
 {{< data-link >}}
 
 ---
-This is an example to test the fixed stress splitting with the approach of fixed
- stress rate over time step (see the algorithms in
+This is an example to test the fixed stress splitting (see the algorithms in
  [Injection and Production in 1D Linear Poroelastic
   Medium with the Staggered Scheme]({{< relref "InjectionProduction" >}})).
 
@@ -62,12 +61,13 @@ In this example, we see that the densities can be arbitrary
 The mechanical load on the top boundary is 1000 Pa, i.e. $\sigma_0 = -1000$ Pa.
 
 In the following figures, the solutions at $t=10$ s obtained by using the staggered scheme
- with fixed stress rate over time step, the monolithic scheme, and analytic
+ with fixed-stress splitting, the monolithic scheme, and analytic
  approach are compared.
+
 {{< figure src="CB_HM_profile.png" >}}
-The figures show that for the staggered scheme
- with fixed stress rate over time step, the solutions with $dt=0.5$ s are quite
- close to the analytical ones.
+
+The figures show that the staggered solution with $dt=0.5$ s is quite close to
+ the analytical one.
 
 ## References
 
