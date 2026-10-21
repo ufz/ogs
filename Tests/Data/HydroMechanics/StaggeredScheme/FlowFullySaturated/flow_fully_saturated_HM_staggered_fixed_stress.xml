@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<!-- The preceding patch with a non-zero fixed stress stabilization parameter.
+     The artificial storage of the fixed-stress splitting then enters the
+     pressure equation and must not be mass-lumped.
+
+     Must be applied after flow_fully_saturated_HM_staggered.xml, which adds the
+     <coupling_scheme> replaced below, so this patch has no base_file of its
+     own and cannot be given as a project file on its own. -->
+<OpenGeoSysProjectDiff>
+    <replace sel="/*/processes/process/coupling_scheme/fixed_stress_stabilization_parameter/text()">0.5</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">flow_fully_saturated_HM_staggered_fixed_stress</replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>flow_fully_saturated_HM_staggered_fixed_stress_ts_1_t_1.000000.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-11</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>flow_fully_saturated_HM_staggered_fixed_stress_ts_2_t_2.000000.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-11</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>

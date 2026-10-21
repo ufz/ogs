@@ -494,6 +494,15 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
 
+    // The artificial storage of the fixed stress splitting is kept apart from
+    // the storage because it must not be mass-lumped: it cancels against the
+    // lagged pressure rate in the strain rate term of the right-hand side,
+    // which is integrated consistently. Lumping only one of the two would
+    // leave a residue at the converged coupling iteration.
+    typename ShapeMatricesTypePressure::NodalMatrixType storage_FS =
+        ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
+                                                         pressure_size);
+
     typename ShapeMatricesTypePressure::NodalMatrixType laplace =
         ShapeMatricesTypePressure::NodalMatrixType::Zero(pressure_size,
                                                          pressure_size);
@@ -600,9 +609,10 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const beta_FS =
             fixed_stress_stabilization_parameter * alpha_b * alpha_b / K_S;
 
-        storage.noalias() += rho_fr * N_p.transpose() * N_p * w *
-                             ((alpha_b - porosity) * (1.0 - alpha_b) / K_S +
-                              porosity * beta_p + beta_FS);
+        storage.noalias() +=
+            rho_fr * N_p.transpose() * N_p * w *
+            ((alpha_b - porosity) * (1.0 - alpha_b) / K_S + porosity * beta_p);
+        storage_FS.noalias() += rho_fr * N_p.transpose() * N_p * w * beta_FS;
 
         auto const& b = _process_data.specific_body_force;
 
@@ -629,9 +639,17 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         local_rhs.noalias() -= strain_rate_b * rho_fr * N_p * w;
     }
-    local_Jac.noalias() = laplace + storage / dt + add_p_derivative;
 
-    local_rhs.noalias() -= laplace * p + storage * (p - p_prev) / dt;
+    if (_process_data.mass_lumping)
+    {
+        storage = storage.colwise().sum().eval().asDiagonal();
+    }
+
+    local_Jac.noalias() =
+        laplace + (storage + storage_FS) / dt + add_p_derivative;
+
+    local_rhs.noalias() -=
+        laplace * p + (storage + storage_FS) * (p - p_prev) / dt;
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
