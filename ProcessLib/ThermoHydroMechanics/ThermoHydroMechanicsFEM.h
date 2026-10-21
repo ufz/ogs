@@ -226,17 +226,10 @@ public:
         return result;
     }
 
-    std::vector<double> getStrainRateVariable() const override
+    std::vector<double> getFixedStressSplitVariables() const override
     {
-        auto const* const staggered_scheme =
-            std::get_if<Common::HydroMechanics::Staggered>(
-                &_process_data.coupling_scheme);
-        if (!staggered_scheme)
-        {
-            return {};
-        }
-        return staggered_scheme
-            ->strain_rate_variables_per_element[_element.getID()];
+        return Common::HydroMechanics::getFixedStressSplitVariables(
+            _process_data.coupling_scheme, _element.getID());
     }
 
     std::vector<double> const& getIntPtFluidDensity(

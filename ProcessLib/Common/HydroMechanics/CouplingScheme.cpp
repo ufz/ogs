@@ -3,6 +3,7 @@
 
 #include "CouplingScheme.h"
 
+#include <algorithm>
 #include <cmath>
 
 #include "BaseLib/ConfigTree.h"
@@ -98,6 +99,54 @@ CouplingScheme parseCouplingScheme(BaseLib::ConfigTree const& config)
     }
 
     return Staggered{fixed_stress_stabilization_parameter, {}};
+}
+
+void allocateFixedStressSplitVariables(CouplingScheme& coupling_scheme,
+                                       std::size_t const n_elements)
+{
+    if (auto* const staggered = std::get_if<Staggered>(&coupling_scheme))
+    {
+        staggered->fixed_stress_split_variables_per_element.resize(n_elements);
+    }
+}
+
+void allocateFixedStressSplitVariablesOfElement(
+    CouplingScheme& coupling_scheme,
+    std::size_t const element_id,
+    unsigned const n_integration_points)
+{
+    if (auto* const staggered = std::get_if<Staggered>(&coupling_scheme))
+    {
+        staggered->fixed_stress_split_variables_per_element[element_id].resize(
+            n_integration_points, 0.0);
+    }
+}
+
+std::size_t setFixedStressSplitVariables(CouplingScheme& coupling_scheme,
+                                         std::size_t const element_id,
+                                         double const* const values)
+{
+    auto* const staggered = std::get_if<Staggered>(&coupling_scheme);
+    if (!staggered)
+    {
+        return 0;
+    }
+    auto& fixed_stress_split_variables =
+        staggered->fixed_stress_split_variables_per_element[element_id];
+    std::copy_n(values, fixed_stress_split_variables.size(),
+                fixed_stress_split_variables.begin());
+    return fixed_stress_split_variables.size();
+}
+
+std::vector<double> getFixedStressSplitVariables(
+    CouplingScheme const& coupling_scheme, std::size_t const element_id)
+{
+    auto const* const staggered = std::get_if<Staggered>(&coupling_scheme);
+    if (!staggered)
+    {
+        return {};
+    }
+    return staggered->fixed_stress_split_variables_per_element[element_id];
 }
 
 }  // namespace ProcessLib::Common::HydroMechanics

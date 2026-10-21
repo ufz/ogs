@@ -61,7 +61,7 @@ struct LocalAssemblerInterface : public ProcessLib::LocalAssemblerInterface,
 
     virtual std::vector<double> getIceVolumeFraction() const = 0;
 
-    virtual std::vector<double> getStrainRateVariable() const = 0;
+    virtual std::vector<double> getFixedStressSplitVariables() const = 0;
 
     virtual std::vector<double> const& getIntPtIceVolume(
         const double t,

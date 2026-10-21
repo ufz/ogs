@@ -281,7 +281,7 @@ public:
 
     std::vector<double> getEpsilon() const override;
 
-    std::vector<double> getStrainRateVariable() const override;
+    std::vector<double> getFixedStressSplitVariables() const override;
 
     std::vector<double> const& getIntPtDarcyVelocity(
         const double t,

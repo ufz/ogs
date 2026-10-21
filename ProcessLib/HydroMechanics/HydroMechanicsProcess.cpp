@@ -67,7 +67,8 @@ HydroMechanicsProcess<DisplacementDim>::HydroMechanicsProcess(
         _integration_point_writer.emplace_back(
             std::make_unique<MeshLib::IntegrationPointWriter>(
                 "strain_rate_variable_ip", 1, integration_order,
-                local_assemblers_, &LocalAssemblerIF::getStrainRateVariable));
+                local_assemblers_,
+                &LocalAssemblerIF::getFixedStressSplitVariables));
     }
 }
 
@@ -185,15 +186,8 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
-    if (auto* const staggered_scheme =
-            std::get_if<Common::HydroMechanics::Staggered>(
-                &process_data_.coupling_scheme))
-    {
-        // The per-integration-point storage is allocated in the local
-        // assemblers' constructors.
-        staggered_scheme->strain_rate_variables_per_element.resize(
-            mesh.getNumberOfElements());
-    }
+    Common::HydroMechanics::allocateFixedStressSplitVariables(
+        process_data_.coupling_scheme, mesh.getNumberOfElements());
 
     ProcessLib::createLocalAssemblersHM<DisplacementDim,
                                         HydroMechanicsLocalAssembler>(

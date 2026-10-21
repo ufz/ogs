@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <variant>
 #include <vector>
 
@@ -43,10 +44,36 @@ struct Staggered
     /// The HydroMechanics process stores the same split differently: it holds
     /// only \f$\dot p\f$ of the previous coupling iteration, and the
     /// volumetric strain rate is evaluated during assembly.
-    std::vector<std::vector<double>> strain_rate_variables_per_element;
+    std::vector<std::vector<double>> fixed_stress_split_variables_per_element;
 };
 
 using CouplingScheme = std::variant<Monolithic, Staggered>;
 
 CouplingScheme parseCouplingScheme(BaseLib::ConfigTree const& config);
+
+/// The functions below access
+/// Staggered::fixed_stress_split_variables_per_element and do nothing for the
+/// monolithic scheme.
+
+/// Allocates the per-element storage. The per-integration-point storage is
+/// allocated by allocateFixedStressSplitVariablesOfElement(), called from the
+/// local assemblers' constructors.
+void allocateFixedStressSplitVariables(CouplingScheme& coupling_scheme,
+                                       std::size_t n_elements);
+
+/// Allocates the storage of the given element, initialized with zeros.
+void allocateFixedStressSplitVariablesOfElement(CouplingScheme& coupling_scheme,
+                                                std::size_t element_id,
+                                                unsigned n_integration_points);
+
+/// Sets the strain rate variables of the given element from \c values, and
+/// returns the number of values read.
+std::size_t setFixedStressSplitVariables(CouplingScheme& coupling_scheme,
+                                         std::size_t element_id,
+                                         double const* values);
+
+/// Returns the strain rate variables of the given element, or an empty vector
+/// for the monolithic scheme.
+std::vector<double> getFixedStressSplitVariables(
+    CouplingScheme const& coupling_scheme, std::size_t element_id);
 }  // namespace ProcessLib::Common::HydroMechanics

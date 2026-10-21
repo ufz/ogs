@@ -89,13 +89,8 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
         _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
     }
 
-    if (auto* const staggered_scheme =
-            std::get_if<Common::HydroMechanics::Staggered>(
-                &_process_data.coupling_scheme))
-    {
-        staggered_scheme->strain_rate_variables_per_element[e.getID()].resize(
-            n_integration_points, 0.0);
-    }
+    Common::HydroMechanics::allocateFixedStressSplitVariablesOfElement(
+        _process_data.coupling_scheme, e.getID(), n_integration_points);
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -533,8 +528,9 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         _process_data.coupling_scheme);
     auto const fixed_stress_stabilization_parameter =
         staggered_scheme.fixed_stress_stabilization_parameter;
-    auto const& strain_rate_variables =
-        staggered_scheme.strain_rate_variables_per_element[_element.getID()];
+    auto const& fixed_stress_split_variables =
+        staggered_scheme
+            .fixed_stress_split_variables_per_element[_element.getID()];
 
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
@@ -629,7 +625,7 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         // Constant portion of strain rate term:
         double const strain_rate_b =
-            alpha_b * eps_v_dot - beta_FS * strain_rate_variables[ip];
+            alpha_b * eps_v_dot - beta_FS * fixed_stress_split_variables[ip];
 
         local_rhs.noalias() -= strain_rate_b * rho_fr * N_p * w;
     }
@@ -850,15 +846,15 @@ void HydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
         auto const p = local_x.template segment<pressure_size>(pressure_index);
         auto const p_prev =
             local_x_prev.template segment<pressure_size>(pressure_index);
-        auto& strain_rate_variables =
+        auto& fixed_stress_split_variables =
             staggered_scheme_ptr
-                ->strain_rate_variables_per_element[_element.getID()];
+                ->fixed_stress_split_variables_per_element[_element.getID()];
 
         for (int ip = 0; ip < n_integration_points; ip++)
         {
             auto const& N_p = _ip_data[ip].N_p;
 
-            strain_rate_variables[ip] = N_p.dot(p - p_prev) / dt;
+            fixed_stress_split_variables[ip] = N_p.dot(p - p_prev) / dt;
         }
     }
 
@@ -969,18 +965,8 @@ std::size_t HydroMechanicsLocalAssembler<
 
     if (name == "strain_rate_variable")
     {
-        auto* const staggered_scheme =
-            std::get_if<Common::HydroMechanics::Staggered>(
-                &_process_data.coupling_scheme);
-        if (!staggered_scheme)
-        {
-            return 0;
-        }
-        return ProcessLib::setIntegrationPointScalarData(
-            values,
-            staggered_scheme
-                ->strain_rate_variables_per_element[_element.getID()],
-            [](double& value) -> double& { return value; });
+        return Common::HydroMechanics::setFixedStressSplitVariables(
+            _process_data.coupling_scheme, _element.getID(), values);
     }
 
     return 0;
@@ -1024,19 +1010,12 @@ HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
           int DisplacementDim>
-std::vector<double>
-HydroMechanicsLocalAssembler<ShapeFunctionDisplacement, ShapeFunctionPressure,
-                             DisplacementDim>::getStrainRateVariable() const
+std::vector<double> HydroMechanicsLocalAssembler<
+    ShapeFunctionDisplacement, ShapeFunctionPressure,
+    DisplacementDim>::getFixedStressSplitVariables() const
 {
-    auto const* const staggered_scheme =
-        std::get_if<Common::HydroMechanics::Staggered>(
-            &_process_data.coupling_scheme);
-    if (!staggered_scheme)
-    {
-        return {};
-    }
-    return staggered_scheme
-        ->strain_rate_variables_per_element[_element.getID()];
+    return Common::HydroMechanics::getFixedStressSplitVariables(
+        _process_data.coupling_scheme, _element.getID());
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
