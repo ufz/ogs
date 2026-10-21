@@ -219,6 +219,14 @@ ThermoHydroMechanicsLocalAssembler<ShapeFunctionDisplacement,
 
         _secondary_data.N_u[ip] = shape_matrices_u[ip].N;
     }
+
+    if (auto* const staggered_scheme =
+            std::get_if<Common::HydroMechanics::Staggered>(
+                &_process_data.coupling_scheme))
+    {
+        staggered_scheme->strain_rate_variables_per_element[e.getID()].resize(
+            n_integration_points, 0.0);
+    }
 }
 
 template <typename ShapeFunctionDisplacement, typename ShapeFunctionPressure,
@@ -265,8 +273,18 @@ std::size_t ThermoHydroMechanicsLocalAssembler<
     }
     if (name == "strain_rate_variable")
     {
+        auto* const staggered_scheme =
+            std::get_if<Common::HydroMechanics::Staggered>(
+                &_process_data.coupling_scheme);
+        if (!staggered_scheme)
+        {
+            return 0;
+        }
         return ProcessLib::setIntegrationPointScalarData(
-            values, _ip_data, &IpData::strain_rate_variable);
+            values,
+            staggered_scheme
+                ->strain_rate_variables_per_element[_element.getID()],
+            [](double& value) -> double& { return value; });
     }
     if (name.starts_with("material_state_variable_"))
     {
@@ -1482,9 +1500,11 @@ void ThermoHydroMechanicsLocalAssembler<
     bool const has_frozen_liquid_phase =
         medium->hasPhase(MaterialPropertyLib::PhaseName::FrozenLiquid);
 
-    auto const staggered_scheme = std::get<Common::HydroMechanics::Staggered>(
+    auto const& staggered_scheme = std::get<Common::HydroMechanics::Staggered>(
         _process_data.coupling_scheme);
     auto const beta_FS = staggered_scheme.fixed_stress_stabilization_parameter;
+    auto const& strain_rate_variables =
+        staggered_scheme.strain_rate_variables_per_element[_element.getID()];
 
     unsigned const n_integration_points =
         _integration_method.getNumberOfPoints();
@@ -1551,7 +1571,7 @@ void ThermoHydroMechanicsLocalAssembler<
         // pressure equation, displacement part.
         double const fixed_stress_stabilization =
             cpv.modified_biot *
-            (_ip_data[ip].strain_rate_variable +
+            (strain_rate_variables[ip] +
              fixedStressThermalStrainRate(
                  beta_FS, cpv.solid_volumetric_thermal_expansion_coefficient,
                  cpv.T_dot));
@@ -1822,6 +1842,11 @@ void ThermoHydroMechanicsLocalAssembler<
         Eigen::VectorXd const& local_x, Eigen::VectorXd const& local_x_prev,
         double const t, double const dt, double const beta_FS)
 {
+    auto& strain_rate_variables =
+        std::get<Common::HydroMechanics::Staggered>(
+            _process_data.coupling_scheme)
+            .strain_rate_variables_per_element[_element.getID()];
+
     int const n_integration_points = _integration_method.getNumberOfPoints();
     for (int ip = 0; ip < n_integration_points; ip++)
     {
@@ -1843,7 +1868,7 @@ void ThermoHydroMechanicsLocalAssembler<
         auto const artificial_storage_coef = artificialStorageCoefficient(
             beta_FS, cpv.modified_biot, solid_skeleton_compressibility);
 
-        ip_data.strain_rate_variable =
+        strain_rate_variables[ip] =
             cpv.eps_v_dot - artificial_storage_coef * cpv.p_dot -
             fixedStressThermalStrainRate(
                 beta_FS, cpv.solid_volumetric_thermal_expansion_coefficient,

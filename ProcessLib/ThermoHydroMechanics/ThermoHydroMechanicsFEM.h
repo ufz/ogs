@@ -228,13 +228,15 @@ public:
 
     std::vector<double> getStrainRateVariable() const override
     {
-        std::vector<double> result;
-        result.reserve(_ip_data.size());
-        for (auto const& ip_data : _ip_data)
+        auto const* const staggered_scheme =
+            std::get_if<Common::HydroMechanics::Staggered>(
+                &_process_data.coupling_scheme);
+        if (!staggered_scheme)
         {
-            result.push_back(ip_data.strain_rate_variable);
+            return {};
         }
-        return result;
+        return staggered_scheme
+            ->strain_rate_variables_per_element[_element.getID()];
     }
 
     std::vector<double> const& getIntPtFluidDensity(

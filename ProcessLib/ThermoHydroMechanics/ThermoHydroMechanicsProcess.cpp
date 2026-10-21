@@ -202,6 +202,16 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    if (auto* const staggered_scheme =
+            std::get_if<Common::HydroMechanics::Staggered>(
+                &_process_data.coupling_scheme))
+    {
+        // The per-integration-point storage is allocated in the local
+        // assemblers' constructors.
+        staggered_scheme->strain_rate_variables_per_element.resize(
+            mesh.getNumberOfElements());
+    }
+
     ProcessLib::createLocalAssemblersHM<DisplacementDim,
                                         ThermoHydroMechanicsLocalAssembler>(
         mesh.getElements(), dof_table, local_assemblers_,
