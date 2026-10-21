@@ -4,6 +4,7 @@
 #pragma once
 
 #include <variant>
+#include <vector>
 
 namespace BaseLib
 {
@@ -24,6 +25,11 @@ struct Staggered
     /// stabilization parameter to be set. For more details see [user guide -
     /// conventions](https://www.opengeosys.org/docs/userguide/basics/conventions/#fixed-stress-split-for-hydro-mechanical-processes).
     double fixed_stress_stabilization_parameter;
+
+    /// Previous pressure rate for the fixed stress splitting approach, stored
+    /// per element (outer index: element ID) and per integration point (inner
+    /// index).
+    std::vector<std::vector<double>> strain_rate_variables_per_element;
 };
 
 using CouplingScheme = std::variant<Monolithic, Staggered>;

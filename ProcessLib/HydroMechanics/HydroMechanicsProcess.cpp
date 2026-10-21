@@ -185,6 +185,16 @@ void HydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    if (auto* const staggered_scheme =
+            std::get_if<Common::HydroMechanics::Staggered>(
+                &process_data_.coupling_scheme))
+    {
+        // The per-integration-point storage is allocated in the local
+        // assemblers' constructors.
+        staggered_scheme->strain_rate_variables_per_element.resize(
+            mesh.getNumberOfElements());
+    }
+
     ProcessLib::createLocalAssemblersHM<DisplacementDim,
                                         HydroMechanicsLocalAssembler>(
         mesh.getElements(), dof_table, local_assemblers_,

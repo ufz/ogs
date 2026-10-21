@@ -97,7 +97,7 @@ CouplingScheme parseCouplingScheme(BaseLib::ConfigTree const& config)
         }
     }
 
-    return Staggered{fixed_stress_stabilization_parameter};
+    return Staggered{fixed_stress_stabilization_parameter, {}};
 }
 
 }  // namespace ProcessLib::Common::HydroMechanics

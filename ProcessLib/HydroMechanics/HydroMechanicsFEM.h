@@ -57,11 +57,6 @@ struct IntegrationPointData final
         material_state_variables;
     double integration_weight = 0;
 
-    // previous pressure rate for the fixed stress splitting
-    // approach in the staggered scheme.
-    // TODO: disable in monolithic scheme to save memory.
-    double strain_rate_variable = 0.0;
-
     void pushBackState()
     {
         eps_prev = eps;
