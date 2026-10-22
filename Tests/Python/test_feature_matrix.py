@@ -1,6 +1,7 @@
 """Script to test functions that are used to create the feature matrix."""
 
 import pytest
+from FindFeatures import check_tag_text
 from lxml import etree
 from utils import apply_diff_to_base_xml
 
@@ -270,3 +271,18 @@ def test_empty_selector(base_xml, empty_selects):
         base_xml = apply_diff_to_base_xml(
             etree.fromstring(empty_selects[3]).getroottree(), base_xml, False
         )
+
+
+def test_check_tag_text_ignores_indentation():
+    xml = etree.fromstring("<a><b>\n    X\n  </b><b>Y</b></a>").getroottree()
+
+    entry = check_tag_text(xml, "//b", " X ")
+
+    assert entry.has_feature
+    assert len(entry.lines) == 1
+
+
+def test_check_tag_text_no_match():
+    xml = etree.fromstring("<a><b>Y</b><b/></a>").getroottree()
+
+    assert not check_tag_text(xml, "//b", "X").has_feature

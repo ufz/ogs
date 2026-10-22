@@ -244,6 +244,7 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
                 "global_process_coupling",
                 "secondary_variable",
                 "coupling_scheme",
+                "subtype",
             ]
         },
         # Add coupling scheme types for processes. Checks whether there is a coupling
@@ -765,7 +766,9 @@ def check_tag_text(
     """Checks whether the text of the element of the xml file in the location of the given xpath is equal to the text given as case argument. If True will return the sourceline along with the boolean."""
     xpath_elements = xml.xpath(xpath)
     operator_func = translate_ops(operator)
-    texts = [operator_func(x.text, case) for x in xpath_elements]
+    # Scraped and diff-patched text carries indentation; compare stripped.
+    case = case.strip()
+    texts = [operator_func((x.text or "").strip(), case) for x in xpath_elements]
 
     if xpath.split("/")[-1] in ["name", "type"]:
         return FeatureMatrixEntry(
