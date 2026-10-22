@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- cube_1e0.prj with a relative residual criterion that is checked without
+     the Dirichlet degrees of freedom (dirichlet_free_residual_check). The
+     loading is displacement controlled, i.e., the Dirichlet values change in
+     every time step, and the results must match the ones of cube_1e0.prj.
+     The test runs with Eigen and with PETSc; the tolerances are the ones of
+     cube_1e0_SNES.prj, which uses PETSc's iterative solvers as well. -->
+<OpenGeoSysProjectDiff base_file="cube_1e0.prj">
+    <remove sel="/*/time_loop/processes/process/convergence_criterion/abstol"/>
+    <replace sel="/*/time_loop/processes/process/convergence_criterion/type/text()">Residual</replace>
+    <add sel="/*/time_loop/processes/process/convergence_criterion">
+        <reltol>1e-10</reltol>
+    </add>
+    <add sel="/*/nonlinear_solvers/nonlinear_solver">
+        <dirichlet_free_residual_check>true</dirichlet_free_residual_check>
+    </add>
+    <replace sel="/*/time_loop/output/prefix/text()">cube_1e0_dirichlet_free_residual</replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>cube_1e0_dirichlet_free_residual_ts_101_t_2.550000.vtu</file>
+                <reference_file>cube_1e0_ts_101_t_2.550000.vtu</reference_file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>cube_1e0_dirichlet_free_residual_ts_101_t_2.550000.vtu</file>
+                <reference_file>cube_1e0_ts_101_t_2.550000.vtu</reference_file>
+                <field>sigma</field>
+                <absolute_tolerance>4e-13</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>cube_1e0_dirichlet_free_residual_ts_203_t_5.100000.vtu</file>
+                <reference_file>cube_1e0_ts_203_t_5.100000.vtu</reference_file>
+                <field>displacement</field>
+                <absolute_tolerance>1e-14</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>cube_1e0_dirichlet_free_residual_ts_203_t_5.100000.vtu</file>
+                <reference_file>cube_1e0_ts_203_t_5.100000.vtu</reference_file>
+                <field>sigma</field>
+                <absolute_tolerance>6e-13</absolute_tolerance>
+                <relative_tolerance>0</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
