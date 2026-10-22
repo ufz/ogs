@@ -247,17 +247,21 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                               NonlinearSolverTag::Newton>::
     applyKnownSolutionsPETScSNES(GlobalMatrix& Jac, GlobalVector& res,
-                                 GlobalVector& x) const
+                                 GlobalVector const& x,
+                                 GlobalVector& scratch) const
 {
     if (!_known_solutions)
     {
         return;
     }
 
-    // For the Newton method the values must be zero
-    std::vector<double> values(_known_solutions_ids.size(), 0);
+    // res_i = x_i - g_i is zero for an iterate fulfilling the Dirichlet BCs.
+    // The iterate itself must not be passed to applyKnownSolution(), which
+    // overwrites its third argument with the given values.
+    auto const values = ::detail::differencesToKnownSolutions(
+        _known_solutions_ids, _known_solutions_values, x);
     MathLib::applyKnownSolution(
-        Jac, res, x, _known_solutions_ids, values,
+        Jac, res, scratch, _known_solutions_ids, values,
         MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 }
 

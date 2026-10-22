@@ -115,7 +115,8 @@ public:
                                    GlobalVector& minus_delta_x) const override;
 
     void applyKnownSolutionsPETScSNES(GlobalMatrix& Jac, GlobalVector& res,
-                                      GlobalVector& x) const override;
+                                      GlobalVector const& x,
+                                      GlobalVector& scratch) const override;
 
     double getDirichletFreeResidual(GlobalVector const& x,
                                     GlobalVector const& res,

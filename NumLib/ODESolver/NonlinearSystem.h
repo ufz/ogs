@@ -116,12 +116,21 @@ public:
         GlobalMatrix& Jac, GlobalVector& res, GlobalVector const& x,
         GlobalVector& minus_delta_x) const = 0;
 
-    //! Apply known solutions to the linearized equation system
-    //! \f$ \mathit{Jac} \cdot (-\Delta x) = \mathit{res} \f$.
-    //! \pre computeKnownSolutions() must have been called before.
+    //! Apply known solutions to the residual \c res and Jacobian \c Jac at
+    //! the iterate \c x passed to PETSc SNES: the Dirichlet rows of \c Jac
+    //! become identity rows and \f$ \mathit{res}_i = x_i - g_i \f$ at the
+    //! Dirichlet DOFs. The latter vanishes if \c x fulfils the Dirichlet BCs,
+    //! but keeps a deviation from them visible to SNES, e.g., one caused by
+    //! a trust region step.
+    //!
+    //! \c x is not modified, \c scratch is overwritten at the Dirichlet DOFs.
+    //!
+    //! \pre computeKnownSolutions() must have been called before, and \c x
+    //! must be locally accessible.
     virtual void applyKnownSolutionsPETScSNES(GlobalMatrix& Jac,
                                               GlobalVector& res,
-                                              GlobalVector& x) const = 0;
+                                              GlobalVector const& x,
+                                              GlobalVector& scratch) const = 0;
 
     //! Writes \f$ P\,(\mathit{res} - J V) \f$ to \c w. \f$ J \f$ is the
     //! Jacobian assembled by the last assemble() call,

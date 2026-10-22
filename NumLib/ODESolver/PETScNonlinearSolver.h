@@ -60,6 +60,7 @@ private:
     std::size_t _petsc_x_id = 0u;
     std::size_t _petsc_jacobian_id = 0u;
     std::size_t _petsc_residual_id = 0u;
+    std::size_t _known_solutions_scratch_id = 0u;
 
     // clang-format off
     /// \copydoc NumLib::NonlinearSolver<NonlinearSolverTag::Newton>::_compensate_non_equilibrium_initial_residuum

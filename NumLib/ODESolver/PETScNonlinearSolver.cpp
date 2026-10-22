@@ -20,6 +20,9 @@ struct PetscContext
     std::vector<GlobalVector*> const& x_prev;
     GlobalVector* r;
     GlobalMatrix* J;
+    //! Receives the deviations x_i - g_i from the Dirichlet values at the
+    //! known solutions' DOFs, s.t. the iterate itself is not overwritten.
+    GlobalVector* known_solutions_scratch;
     int const process_id;
 };
 
@@ -61,7 +64,8 @@ PetscErrorCode updateResidual(SNES /*snes*/, Vec x, Vec petsc_r,
 
     context->system->getJacobian(*context->J);
     context->system->applyKnownSolutionsPETScSNES(
-        *context->J, *context->r, *context->x[context->process_id]);
+        *context->J, *context->r, *context->x[context->process_id],
+        *context->known_solutions_scratch);
 
     VecCopy(context->r->getRawVector(), petsc_r);
 
@@ -177,8 +181,19 @@ NonlinearSolverStatus PETScNonlinearSolver::solve(
     auto& x_snes = NumLib::GlobalVectorProvider::provider.getVector(
         system->getMatrixSpecifications(process_id), _petsc_x_id);
     MathLib::LinAlg::copy(*x[process_id], x_snes);  // Initial guess.
+    auto& known_solutions_scratch =
+        NumLib::GlobalVectorProvider::provider.getVector(
+            system->getMatrixSpecifications(process_id),
+            _known_solutions_scratch_id);
 
-    PetscContext petsc_context{_equation_system, x, x_prev, &r, &J, process_id};
+    PetscContext petsc_context{
+        .system = _equation_system,
+        .x = x,
+        .x_prev = x_prev,
+        .r = &r,
+        .J = &J,
+        .known_solutions_scratch = &known_solutions_scratch,
+        .process_id = process_id};
 
     DBUG("PETScNonlinearSolver: set function");
     SNESSetFunction(_snes_solver, r_snes.getRawVector(), updateResidual,
@@ -226,6 +241,8 @@ NonlinearSolverStatus PETScNonlinearSolver::solve(
     // Copy back the solution.
     MathLib::LinAlg::copy(x_snes, *x[process_id]);
 
+    NumLib::GlobalVectorProvider::provider.releaseVector(
+        known_solutions_scratch);
     NumLib::GlobalVectorProvider::provider.releaseVector(x_snes);
     NumLib::GlobalVectorProvider::provider.releaseVector(r_snes);
     NumLib::GlobalMatrixProvider::provider.releaseMatrix(J_snes);

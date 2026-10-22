@@ -21,6 +21,9 @@
 #include "NumLib/ODESolver/TimeDiscretization.h"
 #include "NumLib/ODESolver/TimeDiscretizedODESystem.h"
 #include "ODEs.h"
+#ifdef USE_PETSC
+#include "Tests/MathLib/PETScSparsityPatternUtils.h"
+#endif
 
 namespace
 {
@@ -66,7 +69,7 @@ public:
     MathLib::MatrixSpecifications getMatrixSpecifications(
         const int /*process_id*/) const override
     {
-        return {N, N, nullptr, nullptr};
+        return {N, N, nullptr, sparsity_pattern};
     }
 
     std::vector<NumLib::IndexValueVector<BCIndex>> known_solutions;
@@ -76,6 +79,8 @@ public:
         known_solutions_per_call;
     mutable std::size_t number_of_known_solutions_calls = 0;
     bool assembly_fails = false;
+    //! Required for PETSc matrices only.
+    GlobalSparsityPattern const* sparsity_pattern = nullptr;
 };
 
 //! Records the residuals the nonlinear solver checks, and is never satisfied,
@@ -437,3 +442,51 @@ TEST(NumLibDirichletResidual, DISABLED_DirichletFreeResidualCheck)
         EXPECT_NEAR(0.0, run_merits[1], 1e-14);
     }
 }
+
+#ifdef USE_PETSC
+/*! For PETSc SNES the residual at a Dirichlet DOF is the deviation of the
+ * iterate from the BC value, s.t. SNES notices if one of its steps, e.g., a
+ * trust region step, moves a Dirichlet DOF. The iterate itself must not be
+ * modified, other residual entries neither.
+ *
+ * Unlike the other tests here this one runs with PETSc only, because the
+ * SNES path is not used otherwise. It provides the sparsity pattern needed
+ * for PETSc matrices (cf. issue #1989).
+ */
+TEST(NumLibDirichletResidual, PETScSNESResidualIsDeviationFromBC)
+{
+    int const process_id = 0;
+    double const g = 2.0;
+
+    auto const sparsity_pattern =
+        PETScSparsityPatternUtils::denseBlockSparsityPattern(2, 2, 2, 0);
+    ODEWithDirichletBCs ode;
+    ode.sparsity_pattern = &sparsity_pattern;
+    ode.known_solutions = {{{0}, {g}}};
+
+    NumLib::BackwardEuler time_disc;
+    DirichletNewtonODESystem ode_sys(process_id, ode, time_disc);
+
+    auto J = MathLib::MatrixVectorTraits<GlobalMatrix>::newInstance(
+        ode.getMatrixSpecifications(process_id));
+    MathLib::setMatrix(*J, {4.0, 1.0, 1.0, 3.0});
+    MathLib::LinAlg::finalizeAssembly(*J);
+
+    // x[0] deviates from the BC value g by -0.5.
+    auto x = makeDirichletTestVector({1.5, 0.25});
+    auto res = makeDirichletTestVector({7.0, 8.0});
+    auto scratch = makeDirichletTestVector({0.0, 0.0});
+
+    ode_sys.computeKnownSolutions(x, process_id);
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+    ode_sys.applyKnownSolutionsPETScSNES(*J, res, x, scratch);
+
+    MathLib::LinAlg::setLocalAccessibleVector(res);
+    EXPECT_EQ(1.5 - g, res[0]);
+    EXPECT_EQ(8.0, res[1]);
+
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+    EXPECT_EQ(1.5, x[0]);
+    EXPECT_EQ(0.25, x[1]);
+}
+#endif
