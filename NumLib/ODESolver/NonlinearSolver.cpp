@@ -79,38 +79,6 @@ bool solvePicard(GlobalLinearSolver& linear_solver, GlobalMatrix& A,
 #endif
 }  // namespace detail
 
-namespace
-{
-/*! Runs \c assemble and reconciles a NumLib::AssemblyException thrown by it
- * across all MPI ranks.
- *
- * \return Whether the assembly succeeded on every rank.
- *
- * Do not remove the reconciliation across ranks: a rank that carried on while
- * another one aborted would block in the collective calls of the subsequent
- * linear solve and deadlock the simulation. The reconciliation itself is not
- * covered by a test: the unit tests in
- * Tests/NumLib/TestNonlinearSolverAssemblyException.cpp run on a single rank,
- * and they are disabled in PETSc builds altogether (issue #1989).
- */
-template <typename Assemble>
-bool assembledOnAllRanks(Assemble const& assemble)
-{
-    bool mpi_rank_assembly_ok = true;
-    try
-    {
-        assemble();
-    }
-    catch (AssemblyException const& e)
-    {
-        ERR("Abort nonlinear iteration. Repeating timestep. Reason: {:s}",
-            e.what());
-        mpi_rank_assembly_ok = false;
-    }
-    return !BaseLib::MPI::anyOf(!mpi_rank_assembly_ok);
-}
-}  // namespace
-
 void NonlinearSolver<NonlinearSolverTag::Picard>::
     calculateNonEquilibriumInitialResiduum(
         std::vector<GlobalVector*> const& x,
@@ -225,8 +193,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        if (!assembledOnAllRanks([&]
-                                 { sys.assemble(x_new, x_prev, process_id); }))
+        if (!assembledOnAllRanks(
+                [&] { sys.assemble(x_new, x_prev, process_id); },
+                "Abort nonlinear iteration. Repeating timestep."))
         {
             error_norms_met = false;
             break;
@@ -463,7 +432,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
     _convergence_criterion->preFirstIteration();
 
-    NewtonStepContext step_ctx{sys, x_prev, process_id};
+    NewtonStepContext step_ctx{sys, x, x_prev, process_id, _r_neq};
 
     int iteration = 1;
 #if !defined(USE_PETSC) && !defined(USE_LIS)
@@ -486,7 +455,9 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
-        if (!assembledOnAllRanks([&] { sys.assemble(x, x_prev, process_id); }))
+        if (!assembledOnAllRanks(
+                [&] { sys.assemble(x, x_prev, process_id); },
+                "Abort nonlinear iteration. Repeating timestep."))
         {
             error_norms_met = false;
             break;
@@ -508,14 +479,26 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         minus_delta_x.setZero();
 
         timer_dirichlet.start();
+        // Needs res before the Dirichlet BCs are applied to it.
+        auto& dirichlet_free_res =
+            NumLib::GlobalVectorProvider::provider.getVector(
+                res, _dirichlet_free_residual_id);
+        step_ctx.dirichlet_deviation = sys.getDirichletFreeResidual(
+            *x[process_id], res, dirichlet_free_res);
+        step_ctx.merit =
+            LinAlg::norm(dirichlet_free_res, MathLib::VecNormType::NORM2);
+
         sys.applyKnownSolutionsNewton(J, res, *x[process_id], minus_delta_x);
         time_dirichlet += timer_dirichlet.elapsed();
         INFO("[time] Applying Dirichlet BCs took {:g} s.", time_dirichlet);
 
         if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
         {
-            _convergence_criterion->checkResidual(res);
+            _convergence_criterion->checkResidual(
+                _dirichlet_free_residual_check ? dirichlet_free_res : res);
         }
+        NumLib::GlobalVectorProvider::provider.releaseVector(
+            dirichlet_free_res);
 
         BaseLib::RunTime time_linear_solver;
         time_linear_solver.start();

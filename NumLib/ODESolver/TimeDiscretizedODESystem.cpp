@@ -3,8 +3,7 @@
 
 #include "TimeDiscretizedODESystem.h"
 
-#include <range/v3/numeric/accumulate.hpp>
-#include <range/v3/view/transform.hpp>
+#include <range/v3/view/zip.hpp>
 
 #include "BaseLib/Error.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
@@ -54,6 +53,23 @@ std::shared_ptr<GlobalVector> provideVector(
                 matrix_specifications, id),
             [](GlobalVector* const x)
             { NumLib::GlobalVectorProvider::provider.releaseVector(*x); }};
+}
+
+//! \return The differences x_i - g_i between \c x and the known solutions'
+//! values g at the known solutions' ids.
+template <typename Index, typename Vector>
+std::vector<double> differencesToKnownSolutions(
+    std::vector<Index> const& ids,
+    std::vector<double> const& values,
+    Vector const& x)
+{
+    std::vector<double> differences;
+    differences.reserve(ids.size());
+    for (auto const& [id, value] : ranges::views::zip(ids, values))
+    {
+        differences.push_back(x[id] - value);
+    }
+    return differences;
 }
 }  // namespace detail
 
@@ -146,6 +162,20 @@ void TimeDiscretizedODESystem<
 {
     _known_solutions =
         _ode.getKnownSolutions(_time_disc.getCurrentTime(), x, process_id);
+
+    // Concatenate the ids and values; clear() keeps the capacity.
+    _known_solutions_ids.clear();
+    _known_solutions_values.clear();
+    if (_known_solutions)
+    {
+        for (auto const& bc : *_known_solutions)
+        {
+            _known_solutions_ids.insert(_known_solutions_ids.end(),
+                                        bc.ids.begin(), bc.ids.end());
+            _known_solutions_values.insert(_known_solutions_values.end(),
+                                           bc.values.begin(), bc.values.end());
+        }
+    }
 }
 
 void TimeDiscretizedODESystem<
@@ -153,6 +183,43 @@ void TimeDiscretizedODESystem<
     NonlinearSolverTag::Newton>::applyKnownSolutions(GlobalVector& x) const
 {
     ::detail::applyKnownSolutions(_known_solutions, x);
+}
+
+double TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                                NonlinearSolverTag::Newton>::
+    getDirichletFreeResidual(GlobalVector const& x, GlobalVector const& res,
+                             GlobalVector& w)
+{
+    auto& differences = NumLib::GlobalVectorProvider::provider.getVector(
+        res, _known_solutions_differences_id);
+
+    // V_k = x_k - g_k at the Dirichlet DOFs, zero elsewhere.
+    differences.setZero();
+    MathLib::setVector(differences, _known_solutions_ids,
+                       ::detail::differencesToKnownSolutions(
+                           _known_solutions_ids, _known_solutions_values, x));
+    MathLib::LinAlg::finalizeAssembly(differences);
+    double const max_deviation =
+        MathLib::LinAlg::norm(differences, MathLib::VecNormType::INFINITY_N);
+
+    // w = res - J V
+    if (max_deviation > 0)
+    {
+        MathLib::LinAlg::matMult(*_Jac, differences, w);
+        MathLib::LinAlg::aypx(w, -1.0, res);
+    }
+    else
+    {
+        MathLib::LinAlg::copy(res, w);
+    }
+    NumLib::GlobalVectorProvider::provider.releaseVector(differences);
+
+    // Restrict to the free DOFs.
+    MathLib::setVector(w, _known_solutions_ids,
+                       std::vector<double>(_known_solutions_ids.size(), 0.0));
+    MathLib::LinAlg::finalizeAssembly(w);
+
+    return max_deviation;
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -166,30 +233,14 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         return;
     }
 
-    using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
-    std::size_t const size = ranges::accumulate(
-        *_known_solutions | ranges::views::transform([](auto const& bc)
-                                                     { return bc.ids.size(); }),
-        0);
-    std::vector<IndexType> ids;
-    ids.reserve(size);
-    std::vector<double> values;
-    values.reserve(size);
-
-    for (auto const& bc : *_known_solutions)
-    {
-        for (std::size_t i = 0; i < bc.ids.size(); ++i)
-        {
-            auto const id = bc.ids[i];
-            ids.push_back(id);
-            // minus_delta_x will be set to the difference between the current
-            // value and the Dirichlet BC value.
-            values.push_back(x[id] - bc.values[i]);
-        }
-    }
+    // minus_delta_x will be set to the difference between the current value
+    // and the Dirichlet BC value, s.t. the Newton step imposes the BC values.
+    // After a full step it vanishes up to round-off.
+    auto const values = ::detail::differencesToKnownSolutions(
+        _known_solutions_ids, _known_solutions_values, x);
 
     MathLib::applyKnownSolution(
-        Jac, res, minus_delta_x, ids, values,
+        Jac, res, minus_delta_x, _known_solutions_ids, values,
         MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 }
 
@@ -203,17 +254,10 @@ void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
         return;
     }
 
-    using IndexType = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
-    std::vector<IndexType> ids;
-    for (auto const& bc : *_known_solutions)
-    {
-        ids.insert(end(ids), begin(bc.ids), end(bc.ids));
-    }
-
     // For the Newton method the values must be zero
-    std::vector<double> values(ids.size(), 0);
+    std::vector<double> values(_known_solutions_ids.size(), 0);
     MathLib::applyKnownSolution(
-        Jac, res, x, ids, values,
+        Jac, res, x, _known_solutions_ids, values,
         MathLib::DirichletBCApplicationMode::COMPLETE_MATRIX_UPDATE);
 }
 

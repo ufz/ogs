@@ -128,6 +128,10 @@ createNonlinearSolver(GlobalLinearSolver& linear_solver,
             DBUG("Newton solver: Tikhonov regularization lambda = {:g}",
                  tikhonov_lambda);
         }
+        solver->setDirichletFreeResidualCheck(
+            //! \ogs_file_param{prj__nonlinear_solvers__nonlinear_solver__Newton__dirichlet_free_residual_check}
+            config.getConfigParameter<bool>("dirichlet_free_residual_check",
+                                            false));
         return std::make_pair(std::move(solver), tag);
     }
 #ifdef USE_PETSC

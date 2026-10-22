@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <optional>
 #include <vector>
 
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
@@ -16,14 +17,54 @@ class NonlinearSystem;
 
 /// Context passed to the step strategy so it can evaluate the residual
 /// at trial points without owning the equation system directly.
-/// Currently unused by FixedDamping/DampingReduction; reserved for the
-/// in-progress line-search strategy, which needs to re-evaluate F(x) at
-/// trial points.
+/// Currently unused by FixedDamping/DampingReduction; reserved for
+/// globalization strategies like line search or trust region methods, which
+/// need to re-evaluate F(x) at trial points.
 struct NewtonStepContext
 {
     NonlinearSystem<NonlinearSolverTag::Newton>& sys;
+    /// Current solutions of all processes; the one being solved for is
+    /// x[process_id].
+    std::vector<GlobalVector*> const& x;
     std::vector<GlobalVector*> const& x_prev;
-    int process_id;
+    int process_id = 0;
+    /// Non-equilibrium initial residuum, or nullptr if not compensated.
+    GlobalVector const* r_neq = nullptr;
+    /// Merit value \f$ \|P\,(r - J V)\|_2 \f$ at the current iterate, i.e.,
+    /// the same quantity evaluateMerit() computes at trial points, see there.
+    /// Set by the nonlinear solver before applyStep() is called.
+    double merit = 0;
+    /// Largest deviation \f$ \|V\|_\infty \f$ of the current iterate from the
+    /// Dirichlet values, \f$ V_k = x_k - g_k \f$.
+    ///
+    /// It is nonzero, e.g., in the first iteration of a time step with changed
+    /// Dirichlet values. The Newton step then imposes the new Dirichlet values
+    /// through the right-hand side and distributes their change over the
+    /// domain (predictor). After a full step it vanishes up to round-off or the
+    /// linear solver tolerance. The merit accounts for the deviation, but
+    /// strategies may still want to treat such iterations differently, e.g.,
+    /// take the full step.
+    double dirichlet_deviation = 0;
+
+    /// Evaluates the merit \f$ \|P\,(r - J V)\|_2 \f$ at the trial point
+    /// \p x_trial for the process being solved for, see
+    /// NonlinearSystem::getDirichletFreeResidual(). Here \f$ r \f$ is the
+    /// residual at \p x_trial with the non-equilibrium initial residuum
+    /// subtracted, \f$ J \f$ the Jacobian at \p x_trial, and
+    /// \f$ V_k = x_{\mathrm{trial},k} - g_k \f$ at the Dirichlet DOFs.
+    ///
+    /// That is the residual linearized at the state fulfilling the Dirichlet
+    /// BCs, restricted to the free DOFs. It is independent of the linear
+    /// algebra backend, also for trial points violating the Dirichlet BCs.
+    ///
+    /// The Dirichlet DOFs and values stay the ones of the current iteration,
+    /// and the Jacobian used by the Newton iteration is a copy, hence not
+    /// affected. However, the equation system and the process (e.g.,
+    /// integration point states) hold the assembly at \p x_trial afterwards,
+    /// until the next iteration reassembles.
+    ///
+    /// \return std::nullopt if the assembly failed on any MPI rank.
+    std::optional<double> evaluateMerit(GlobalVector& x_trial) const;
 };
 
 /// Result returned by a step strategy's applyStep().

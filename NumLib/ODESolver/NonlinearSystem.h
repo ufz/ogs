@@ -3,13 +3,54 @@
 
 #pragma once
 
+#include <string_view>
+
+#include "BaseLib/Logging.h"
+#include "BaseLib/MPI.h"
 #include "EquationSystem.h"
 #include "MathLib/LinAlg/LinAlgEnums.h"
 #include "MathLib/LinAlg/LinearSolverBehaviour.h"
+#include "NumLib/Exceptions.h"
 #include "Types.h"
 
 namespace NumLib
 {
+/*! Runs \c assemble and reconciles a NumLib::AssemblyException thrown by it
+ * across all MPI ranks.
+ *
+ * \param assemble a callable that runs the assembly.
+ * \param failure_message logged when the assembly failed.
+ * \param log_level level at which the failure is logged; the default is the
+ * level of the Newton solver's fatal assembly abort.
+ *
+ * \return Whether the assembly succeeded on every rank.
+ *
+ * Do not remove the reconciliation across ranks: a rank that carried on while
+ * another one aborted would block in the collective calls of the subsequent
+ * linear solve and deadlock the simulation. The reconciliation itself is not
+ * covered by a test: the unit tests in
+ * Tests/NumLib/TestNonlinearSolverAssemblyException.cpp run on a single rank,
+ * and they are disabled in PETSc builds altogether (issue #1989).
+ */
+template <typename Assemble>
+bool assembledOnAllRanks(
+    Assemble const& assemble,
+    std::string_view const& failure_message,
+    spdlog::level::level_enum log_level = spdlog::level::err)
+{
+    bool mpi_rank_assembly_ok = true;
+    try
+    {
+        assemble();
+    }
+    catch (AssemblyException const& e)
+    {
+        BaseLib::console->log(log_level, "{:s} Reason: {:s}", failure_message,
+                              e.what());
+        mpi_rank_assembly_ok = false;
+    }
+    return !BaseLib::MPI::anyOf(!mpi_rank_assembly_ok);
+}
 //! \addtogroup ODESolver
 //! @{
 
@@ -81,6 +122,27 @@ public:
     virtual void applyKnownSolutionsPETScSNES(GlobalMatrix& Jac,
                                               GlobalVector& res,
                                               GlobalVector& x) const = 0;
+
+    //! Writes \f$ P\,(\mathit{res} - J V) \f$ to \c w. \f$ J \f$ is the
+    //! Jacobian assembled by the last assemble() call,
+    //! \f$ V_k = x_k - g_k \f$ at the known solutions' DOFs \f$ k \f$ and zero
+    //! elsewhere, and \f$ P \f$ zeroes the entries at the known solutions'
+    //! DOFs.
+    //!
+    //! For \c res the residual at \c x, this is the residual linearized at
+    //! the state fulfilling the Dirichlet BCs, restricted to the free DOFs:
+    //! it contains neither reaction forces nor the Dirichlet rows of the
+    //! linear system, and it is the same for all linear algebra backends.
+    //!
+    //! \pre assemble() must have been called at \c x, computeKnownSolutions()
+    //! before, and \c x must be locally accessible. \c w must have the layout
+    //! of \c res.
+    //!
+    //! \return \f$ \|V\|_\infty \f$, the largest deviation of \c x from the
+    //! Dirichlet values on all MPI ranks.
+    virtual double getDirichletFreeResidual(GlobalVector const& x,
+                                            GlobalVector const& res,
+                                            GlobalVector& w) = 0;
 
     virtual void updateConstraints(GlobalVector& /*lower*/,
                                    GlobalVector& /*upper*/,
