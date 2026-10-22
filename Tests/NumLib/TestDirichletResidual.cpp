@@ -115,13 +115,10 @@ public:
 class RecordingStepStrategy final : public NumLib::NewtonStepStrategy
 {
 public:
-    NumLib::StepResult applyStep(GlobalVector const& /*x*/,
-                                 GlobalVector const& /*minus_delta_x*/,
-                                 GlobalVector const& /*res*/,
+    NumLib::StepResult applyStep(GlobalVector const& /*minus_delta_x*/,
                                  GlobalMatrix const& /*J*/,
                                  GlobalVector& /*x_new*/,
-                                 NumLib::NewtonStepContext& ctx,
-                                 int const /*iteration*/) override
+                                 NumLib::NewtonStepContext const& ctx) override
     {
         merits.push_back(ctx.merit);
         dirichlet_deviations.push_back(ctx.dirichlet_deviation);
@@ -251,8 +248,13 @@ TEST(NumLibDirichletResidual, DISABLED_EvaluateMeritAtTrialPoint)
     // iteration of a time step.
     auto x_trial_violating = makeDirichletTestVector({1.5, 1.0});
 
-    NumLib::NewtonStepContext const ctx{ode_sys, xs, xs_prev, process_id,
-                                        nullptr};
+    // The residual of the Newton system is not used by evaluateMerit().
+    auto const res = makeDirichletTestVector({0.0, 0.0});
+    NumLib::NewtonStepContext const ctx{.sys = ode_sys,
+                                        .x = xs,
+                                        .x_prev = xs_prev,
+                                        .res = res,
+                                        .process_id = process_id};
     auto const merit = ctx.evaluateMerit(x_trial);
     ASSERT_TRUE(merit.has_value());
     EXPECT_NEAR(1.0, *merit, 1e-15);
@@ -261,8 +263,12 @@ TEST(NumLibDirichletResidual, DISABLED_EvaluateMeritAtTrialPoint)
     EXPECT_NEAR(1.0, *merit_violating, 1e-15);
 
     auto const r_neq = makeDirichletTestVector({5.0, 3.0});
-    NumLib::NewtonStepContext const ctx_r_neq{ode_sys, xs, xs_prev, process_id,
-                                              &r_neq};
+    NumLib::NewtonStepContext const ctx_r_neq{.sys = ode_sys,
+                                              .x = xs,
+                                              .x_prev = xs_prev,
+                                              .res = res,
+                                              .process_id = process_id,
+                                              .r_neq = &r_neq};
     auto const merit_r_neq = ctx_r_neq.evaluateMerit(x_trial);
     ASSERT_TRUE(merit_r_neq.has_value());
     EXPECT_NEAR(4.0, *merit_r_neq, 1e-15);
@@ -296,8 +302,12 @@ TEST(NumLibDirichletResidual, DISABLED_EvaluateMeritReportsAssemblyFailure)
 
     auto x_trial = makeDirichletTestVector({1.0, 1.0});
 
-    NumLib::NewtonStepContext const ctx{ode_sys, xs, xs_prev, process_id,
-                                        nullptr};
+    auto const res = makeDirichletTestVector({0.0, 0.0});
+    NumLib::NewtonStepContext const ctx{.sys = ode_sys,
+                                        .x = xs,
+                                        .x_prev = xs_prev,
+                                        .res = res,
+                                        .process_id = process_id};
     EXPECT_NO_THROW({ EXPECT_FALSE(ctx.evaluateMerit(x_trial).has_value()); });
 }
 

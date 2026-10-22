@@ -6,20 +6,20 @@
 #include <optional>
 #include <vector>
 
+#include "DampingPolicy.h"
 #include "MathLib/LinAlg/GlobalMatrixVectorTypes.h"
+#include "MathLib/LinAlg/LinAlg.h"
 #include "Types.h"
 
 namespace NumLib
 {
-class DampingPolicy;
 template <NonlinearSolverTag NLTag>
 class NonlinearSystem;
 
-/// Context passed to the step strategy so it can evaluate the residual
-/// at trial points without owning the equation system directly.
-/// Currently unused by FixedDamping/DampingReduction; reserved for
-/// globalization strategies like line search or trust region methods, which
-/// need to re-evaluate F(x) at trial points.
+/// State of the current Newton iteration passed to the step strategy. It
+/// gives access to the current solution and to the equation system, so that
+/// globalization strategies like line search or trust region methods can
+/// re-evaluate the merit at trial points without owning the equation system.
 struct NewtonStepContext
 {
     NonlinearSystem<NonlinearSolverTag::Newton>& sys;
@@ -27,7 +27,13 @@ struct NewtonStepContext
     /// x[process_id].
     std::vector<GlobalVector*> const& x;
     std::vector<GlobalVector*> const& x_prev;
+    /// Residual at x[process_id] after applying the Dirichlet BCs, i.e., the
+    /// right-hand side of \f$ J\,(-\Delta x) = \mathit{res} \f$. Note: the
+    /// Eigen linear solver with scaling enabled scales it in place.
+    GlobalVector const& res;
     int process_id = 0;
+    /// Current outer Newton iteration number, starting at 1.
+    int iteration = 1;
     /// Non-equilibrium initial residuum, or nullptr if not compensated.
     GlobalVector const* r_neq = nullptr;
     /// Merit value \f$ \|P\,(r - J V)\|_2 \f$ at the current iterate, i.e.,
@@ -104,24 +110,22 @@ public:
     /// initialisation).
     virtual void initialize(GlobalVector const& /*x0*/) {}
 
-    /// Given the current solution \p x, the Newton direction \p minus_delta_x,
-    /// the residual \p res, and the Jacobian \p J, compute and apply a step to
-    /// \p x_new. The strategy is free to re-evaluate F(x) internally.
+    /// Given the Newton direction \p minus_delta_x at the current solution
+    /// \f$ x \f$ = *ctx.x[ctx.process_id], compute and apply a step to
+    /// \p x_new. The strategy is free to re-evaluate the merit at trial points
+    /// via ctx.evaluateMerit().
     ///
-    /// \param[in]     x             current solution
     /// \param[in]     minus_delta_x full Newton step (J^{-1} r)
-    /// \param[in]     res           residual at x
     /// \param[in]     J             Jacobian at x (may be used for curvature)
-    /// \param[out]    x_new         accepted new solution
-    /// \param[in]     ctx           equation system context for re-evaluation
-    /// \param[in]     iteration     current outer iteration number
-    virtual StepResult applyStep(GlobalVector const& x,
-                                 GlobalVector const& minus_delta_x,
-                                 GlobalVector const& res,
+    /// \param[in,out] x_new         on input a copy of x, on output the
+    ///                              accepted new solution
+    /// \param[in]     ctx           current iteration state and equation
+    ///                              system for re-evaluation
+    virtual StepResult applyStep(GlobalVector const& minus_delta_x,
                                  GlobalMatrix const& J,
                                  GlobalVector& x_new,
-                                 NewtonStepContext& ctx,
-                                 int iteration) = 0;
+                                 NewtonStepContext const& ctx) = 0;
+
     /// Inject the damping policy from the convergence criterion.
     /// Called by NonlinearSolver::setEquationSystem() before the first solve.
     /// A null pointer means the criterion imposes no step-length constraint.
@@ -134,6 +138,26 @@ public:
 
 protected:
     DampingPolicy const* _damping_policy = nullptr;
+
+    /*! Returns the damping after applying the damping policy, if one is set,
+     * to the base damping. */
+    double applyDampingPolicy(GlobalVector const& minus_delta_x,
+                              GlobalVector const& x, double damping) const
+    {
+        if (_damping_policy == nullptr)
+        {
+            return damping;
+        }
+        return _damping_policy->apply(minus_delta_x, x, damping);
+    }
+
+    /*! Applies the step scaled by \p damping to \p x_new. */
+    static void applyDampedStep(GlobalVector& x_new,
+                                GlobalVector const& minus_delta_x,
+                                double damping)
+    {
+        MathLib::LinAlg::axpy(x_new, -damping, minus_delta_x);
+    }
 };
 
 }  // namespace NumLib

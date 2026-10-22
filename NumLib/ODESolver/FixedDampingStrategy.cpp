@@ -4,7 +4,6 @@
 #include "FixedDampingStrategy.h"
 
 #include "DampingPolicy.h"
-#include "MathLib/LinAlg/LinAlg.h"
 
 namespace NumLib
 {
@@ -12,22 +11,15 @@ FixedDampingStrategy::FixedDampingStrategy(double damping) : _damping(damping)
 {
 }
 
-StepResult FixedDampingStrategy::applyStep(GlobalVector const& x,
-                                           GlobalVector const& minus_delta_x,
-                                           GlobalVector const& /*res*/,
+StepResult FixedDampingStrategy::applyStep(GlobalVector const& minus_delta_x,
                                            GlobalMatrix const& /*J*/,
                                            GlobalVector& x_new,
-                                           NewtonStepContext& /*ctx*/,
-                                           int /*iteration*/)
+                                           NewtonStepContext const& ctx)
 {
-    double damping = _damping;
+    double const damping =
+        applyDampingPolicy(minus_delta_x, *ctx.x[ctx.process_id], _damping);
 
-    if (_damping_policy)
-    {
-        damping = _damping_policy->apply(minus_delta_x, x, _damping);
-    }
-
-    MathLib::LinAlg::axpy(x_new, -damping, minus_delta_x);
+    applyDampedStep(x_new, minus_delta_x, damping);
 
     return {.success = true, .step_length = damping, .x_new_is_set = true};
 }

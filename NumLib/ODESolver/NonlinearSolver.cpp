@@ -432,7 +432,12 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
 
     _convergence_criterion->preFirstIteration();
 
-    NewtonStepContext step_ctx{sys, x, x_prev, process_id, _r_neq};
+    NewtonStepContext step_ctx{.sys = sys,
+                               .x = x,
+                               .x_prev = x_prev,
+                               .res = res,
+                               .process_id = process_id,
+                               .r_neq = _r_neq};
 
     int iteration = 1;
 #if !defined(USE_PETSC) && !defined(USE_LIS)
@@ -452,6 +457,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         time_dirichlet += timer_dirichlet.elapsed();
 
         sys.preIteration(iteration, *x[process_id]);
+        step_ctx.iteration = iteration;
 
         BaseLib::RunTime time_assembly;
         time_assembly.start();
@@ -551,8 +557,7 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
                 &NumLib::GlobalVectorProvider::provider.getVector(
                     *x[process_id], _x_new_id);
             auto const step_result = _step_strategy->applyStep(
-                *x[process_id], minus_delta_x, res, J, *x_new[process_id],
-                step_ctx, iteration);
+                minus_delta_x, J, *x_new[process_id], step_ctx);
 
             if (step_result.step_length != 1.0)
             {

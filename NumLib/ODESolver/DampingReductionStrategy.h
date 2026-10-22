@@ -23,13 +23,10 @@ class DampingReductionStrategy final : public NewtonStepStrategy
 public:
     DampingReductionStrategy(double damping, double damping_reduction);
 
-    StepResult applyStep(GlobalVector const& x,
-                         GlobalVector const& minus_delta_x,
-                         GlobalVector const& res,
+    StepResult applyStep(GlobalVector const& minus_delta_x,
                          GlobalMatrix const& J,
                          GlobalVector& x_new,
-                         NewtonStepContext& ctx,
-                         int iteration) override;
+                         NewtonStepContext const& ctx) override;
 
 private:
     double _damping;
