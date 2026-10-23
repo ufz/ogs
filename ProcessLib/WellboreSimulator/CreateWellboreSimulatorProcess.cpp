@@ -79,7 +79,7 @@ std::unique_ptr<Process> createWellboreSimulatorProcess(
          "pressure",
          //! \ogs_file_param_special{prj__processes__process__WELLBORE_SIMULATOR__process_variables__velocity}
          "velocity",
-         //! \ogs_file_param_special{prj__processes__process__WELLBORE_SIMULATOR__process_variables__enthalpy}
+         //! \ogs_file_param_special{prj__processes__process__WELLBORE_SIMULATOR__process_variables__specific_enthalpy}
          "specific_enthalpy"});
 
     process_variables.push_back(std::move(collected_process_variables));
