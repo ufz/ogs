@@ -49,7 +49,7 @@ TEST_F(MPI_BaseLib, Allgatherv)
     std::vector<int> gathered_values(1 + 2 + 3);
 
     std::vector<int> const offsets =
-        allgatherv(std::span(send_data), gathered_values, mpi);
+        allgatherv(std::span(send_data), gathered_values, mpi, mpiType<int>());
     std::vector<int> const expected_offsets = {0, 1, 3, 6};  // last element is
                                                              // size.
     std::vector<int> const expected_gathered_values = {0, 1, 1, 2, 2, 2};
