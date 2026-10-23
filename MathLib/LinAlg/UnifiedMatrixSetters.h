@@ -7,6 +7,7 @@
 
 #include <Eigen/Core>
 #include <initializer_list>
+#include <vector>
 
 #include "MatrixVectorTraits.h"
 
@@ -24,6 +25,14 @@ void setVector(PETScVector& v, std::initializer_list<double> values);
 void setVector(PETScVector& v,
                MatrixVectorTraits<PETScVector>::Index const index,
                double const value);
+
+/// Sets the entries of \p v at \p indices to the paired \p values, overwriting
+/// any previous values.
+/// \pre `indices.size() == values.size()`, all `indices` are unique
+void setVector(
+    PETScVector& v,
+    std::vector<MatrixVectorTraits<PETScVector>::Index> const& indices,
+    std::vector<double> const& values);
 
 void setMatrix(PETScMatrix& m, Eigen::MatrixXd const& tmp);
 
@@ -49,6 +58,14 @@ void setVector(EigenVector& v, std::initializer_list<double> values);
 void setVector(EigenVector& v,
                MatrixVectorTraits<EigenVector>::Index const index,
                double const value);
+
+/// Sets the entries of \p v at \p indices to the paired \p values, overwriting
+/// any previous values.
+/// \pre `indices.size() == values.size()`, all `indices` are unique
+void setVector(
+    EigenVector& v,
+    std::vector<MatrixVectorTraits<EigenVector>::Index> const& indices,
+    std::vector<double> const& values);
 
 void setMatrix(EigenMatrix& m, std::initializer_list<double> values);
 

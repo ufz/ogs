@@ -32,6 +32,15 @@ void setVector(PETScVector& v,
     v.set(index, value);  // TODO handle negative indices
 }
 
+void setVector(
+    PETScVector& v,
+    std::vector<MatrixVectorTraits<PETScVector>::Index> const& indices,
+    std::vector<double> const& values)
+{
+    assert(indices.size() == values.size());
+    v.set(indices, values);
+}
+
 void setMatrix(PETScMatrix& m, std::initializer_list<double> values)
 {
     m.setZero();
@@ -119,6 +128,15 @@ void setVector(EigenVector& v,
                double const value)
 {
     v.getRawVector()[index] = value;
+}
+
+void setVector(
+    EigenVector& v,
+    std::vector<MatrixVectorTraits<EigenVector>::Index> const& indices,
+    std::vector<double> const& values)
+{
+    assert(indices.size() == values.size());
+    v.set(indices, values);
 }
 
 void setMatrix(EigenMatrix& m, std::initializer_list<double> values)
