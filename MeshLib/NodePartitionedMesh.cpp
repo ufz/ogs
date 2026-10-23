@@ -44,8 +44,7 @@ NodePartitionedMesh::NodePartitionedMesh(
           std::move(n_regular_high_order_nodes_at_rank)),
       _end_node_id_at_rank(
           getEndNodeIDRanks(n_global_nodes, _n_regular_base_nodes_at_rank,
-                            _n_regular_high_order_nodes_at_rank)),
-      _is_single_thread(false)
+                            _n_regular_high_order_nodes_at_rank))
 {
 }
 

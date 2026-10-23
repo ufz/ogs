@@ -25,8 +25,7 @@ public:
           _global_node_ids(mesh.getNumberOfNodes()),
           _n_global_base_nodes(mesh.computeNumberOfBaseNodes()),
           _n_global_nodes(mesh.getNumberOfNodes()),
-          _n_regular_nodes(mesh.getNumberOfNodes()),
-          _is_single_thread(true)
+          _n_regular_nodes(mesh.getNumberOfNodes())
     {
         for (std::size_t i = 0; i < _nodes.size(); i++)
         {
@@ -103,10 +102,14 @@ public:
 
     int getNumberOfPartitions() const
     {
-        return _n_regular_base_nodes_at_rank.size();
+        // The whole-mesh constructor leaves the offsets empty; otherwise they
+        // hold one entry per partition plus the trailing total.
+        if (_n_regular_base_nodes_at_rank.empty())
+        {
+            return 1;
+        }
+        return static_cast<int>(_n_regular_base_nodes_at_rank.size()) - 1;
     }
-
-    bool isForSingleThread() const { return _is_single_thread; }
 
 private:
     /// Global IDs of nodes of a partition
@@ -130,8 +133,6 @@ private:
 
     /// Gathered the end node id of each rank.
     std::vector<int> _end_node_id_at_rank;
-
-    const bool _is_single_thread;
 };
 
 }  // namespace MeshLib
