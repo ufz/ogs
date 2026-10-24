@@ -35,6 +35,7 @@ Every process must have:
 - Build with `ninja`
 - Unit tests: `Tests/{LibName}/` (Google Test), `test`-target
 - Integration tests: `Tests/Data/{ProcessName}/` (`.prj` files with reference outputs or `.xml`-patch files referencing `.prj`-files), typical test command in build directory: `ctest -LE large --output-on-failure`, full logs in [build-dir]/logs
+- Scope tests to the change: build the `testrunner` target and run `bin/testrunner --gtest_filter='<Suite>*'` for the touched libraries, plus `ctest -R <name>` for the benchmarks that exercise them. The full `ctest -LE large` takes hours; run it for changes to processes or shared infrastructure.
 - Always run ctests from release build.
 - Python-based (`.py`) notebook tests (require `release-all` preset) also based on ctest, prefixed with `nb-`
 - Check `.clang-format`, `.clang-tidy` for linting rules
