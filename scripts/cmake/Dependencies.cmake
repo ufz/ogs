@@ -73,8 +73,7 @@ if(GUIX_BUILD OR CONDA_BUILD)
 else()
     CPMFindPackage(
         NAME tclap
-        GIT_REPOSITORY https://git.code.sf.net/p/tclap/code
-        GIT_TAG 81b3d2a0c47895c22e9bb8c577f5ab521f76e5d2
+        GITHUB_REPOSITORY DAarno/tclap
         VERSION 1.4.0
         DOWNLOAD_ONLY YES SYSTEM TRUE
     )
