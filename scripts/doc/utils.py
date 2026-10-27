@@ -417,6 +417,10 @@ def process_diff_file(
     2. Add includes to the base XML
     3. Second pass: Apply changes after include resolution
 
+    If base_file is itself a diff file, the chain is followed down to the prj
+    file and all diffs are applied in each pass, starting with the innermost
+    one. Cyclic chains are rejected.
+
     Args:
         path: Path to the diff XML file
         root_dir: Optional root directory. When provided, base file paths that
@@ -429,52 +433,71 @@ def process_diff_file(
 
     Returns:
         The modified XML tree with all diff changes applied, or None if
-        the file is invalid or has no base file specified
+        the file is invalid, has no base file specified, or the chain is cyclic
     """
     xml_diff = xml_parser(path)
     if xml_diff is None:
         return None
 
-    if "base_file" not in xml_diff.getroot().attrib:
-        if fallback_bases is not None and root_dir is not None:
-            rel_path = str(path.relative_to(root_dir))
-            if rel_path not in fallback_bases:
+    # A diff file as base_file is followed until a prj file is reached; the
+    # chain is applied like `ogs base.prj -p dn.xml ... -p d1.xml`.
+    diffs = [xml_diff]
+    chain = [Path(path).resolve()]
+    while True:
+        if "base_file" not in xml_diff.getroot().attrib:
+            if fallback_bases is not None and root_dir is not None:
+                rel_path = str(path.relative_to(root_dir))
+                if rel_path not in fallback_bases:
+                    return None
+                base_file = fallback_bases[rel_path]
+            else:
                 return None
-            base_file = fallback_bases[rel_path]
         else:
-            return None
-    else:
-        base_file = xml_diff.getroot().attrib["base_file"]
+            base_file = xml_diff.getroot().attrib["base_file"]
 
-    # Reject absolute paths; relative paths with '..' are allowed within root_dir
-    if base_file.startswith("/"):
-        msg = f"Invalid base file path '{base_file}' in {xml_diff.docinfo.URL}: absolute paths are not allowed."
-        warnings.warn(msg, stacklevel=2)
-        return None
-
-    base_dir = Path(str(xml_diff.docinfo.URL)).parent  # type: ignore[arg-type]
-    base_xml_path = base_dir / base_file
-
-    # Ensure the resolved path is within root_dir (or base_dir when root_dir is not given)
-    try:
-        base_xml_path = base_xml_path.resolve()
-        boundary_dir = (
-            Path(root_dir).resolve() if root_dir is not None else base_dir.resolve()
-        )
-        if not base_xml_path.is_relative_to(boundary_dir):
-            msg = f"Base file path '{base_file}' resolves outside the {'root' if root_dir is not None else 'base'} directory."
+        # Reject absolute paths; relative paths with '..' are allowed within root_dir
+        if base_file.startswith("/"):
+            msg = f"Invalid base file path '{base_file}' in {xml_diff.docinfo.URL}: absolute paths are not allowed."
             warnings.warn(msg, stacklevel=2)
             return None
-    except (OSError, ValueError) as e:
-        msg = f"Failed to resolve base file path '{base_file}': {e}"
-        warnings.warn(msg, stacklevel=2)
-        return None
 
-    base_xml = xml_parser(base_xml_path)
-    base_xml = apply_diff_to_base_xml(xml_diff, base_xml, False)
+        base_dir = Path(path).parent
+        base_xml_path = base_dir / base_file
+
+        # Ensure the resolved path is within root_dir (or base_dir when root_dir is not given)
+        try:
+            base_xml_path = base_xml_path.resolve()
+            boundary_dir = (
+                Path(root_dir).resolve() if root_dir is not None else base_dir.resolve()
+            )
+            if not base_xml_path.is_relative_to(boundary_dir):
+                msg = f"Base file path '{base_file}' resolves outside the {'root' if root_dir is not None else 'base'} directory."
+                warnings.warn(msg, stacklevel=2)
+                return None
+        except (OSError, ValueError) as e:
+            msg = f"Failed to resolve base file path '{base_file}': {e}"
+            warnings.warn(msg, stacklevel=2)
+            return None
+
+        if base_xml_path in chain:
+            files = " -> ".join(str(p) for p in [*chain, base_xml_path])
+            msg = f"Cyclic base_file chain: {files}"
+            warnings.warn(msg, stacklevel=2)
+            return None
+
+        base_xml = xml_parser(base_xml_path)
+        if base_xml is None or base_xml.getroot().tag != "OpenGeoSysProjectDiff":
+            break
+        path, xml_diff = base_xml_path, base_xml
+        diffs.append(xml_diff)
+        chain.append(path)
+
+    for diff in reversed(diffs):
+        base_xml = apply_diff_to_base_xml(diff, base_xml, False)
     base_xml = add_includes(base_xml, root_dir=root_dir)
-    base_xml = apply_diff_to_base_xml(xml_diff, base_xml, True)
-    base_xml.docinfo.URL = xml_diff.docinfo.URL
+    for diff in reversed(diffs):
+        base_xml = apply_diff_to_base_xml(diff, base_xml, True)
+    base_xml.docinfo.URL = diffs[0].docinfo.URL
     return base_xml
 
 
