@@ -5,25 +5,30 @@
 
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/VariableType.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+
+namespace MathLib
+{
+class Curve;
+}  // namespace MathLib
 
 namespace MaterialPropertyLib
 {
 using StringOrVariable = std::variant<std::string, Variable>;
-/// Definition of a curve property, i.e., a piecewise linear property given by
-/// pairs of supporting point and value. The pairs are specified by a curve.
+/// Definition of a curve property, i.e., a property interpolating pairs of
+/// supporting point and value. The pairs and the interpolation are specified
+/// by a curve.
 /// The current implementation accepts only the double datatype defined in
 /// PropertyDataType.
 class Curve final : public Property
 {
 public:
     /// This constructor allows to specify the independent variable of the
-    /// curve and the curve itself, i.e., a piecewise linear function.
+    /// curve and the curve itself.
     Curve(std::string name, StringOrVariable const independent_variable,
-          MathLib::PiecewiseLinearInterpolation const& curve);
+          MathLib::Curve const& curve);
 
-    /// This method computes the value of a property depending linearly on
-    /// the value of the given primary variable.
+    /// This method computes the value of a property depending on the value
+    /// of the given primary variable via the curve.
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,
                            double const t, double const dt) const override;
@@ -40,6 +45,6 @@ private:
     /// The variable type that the curve property depends on.
     StringOrVariable const independent_variable_;
     /// The curve used by the property.
-    MathLib::PiecewiseLinearInterpolation const& curve_;
+    MathLib::Curve const& curve_;
 };
 }  // namespace MaterialPropertyLib

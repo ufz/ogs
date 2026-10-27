@@ -34,9 +34,7 @@ public:
         int num_threads,
         std::vector<std::string> const& variables,
         std::vector<std::string> const& expression_strings,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves);
+        std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
     /// Evaluate all value expressions at the given spatial position and time.
     ///
@@ -67,15 +65,12 @@ private:
     /// do not race on the exprtk symbol table variables.
     struct PerThreadData
     {
-        PerThreadData(
-            std::vector<std::string> const& variables,
-            bool spatial_position_is_required,
-            std::vector<std::string> const& used_curve_names,
-            std::map<
-                std::string,
-                std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-                curves,
-            std::vector<std::string> const& expression_strings);
+        PerThreadData(std::vector<std::string> const& variables,
+                      bool spatial_position_is_required,
+                      std::vector<std::string> const& used_curve_names,
+                      std::map<std::string,
+                               std::unique_ptr<MathLib::Curve>> const& curves,
+                      std::vector<std::string> const& expression_strings);
 
         PerThreadData(PerThreadData&& other);
         PerThreadData& operator=(PerThreadData&& other) noexcept = delete;

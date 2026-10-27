@@ -5,7 +5,8 @@
 
 #include <map>
 #include <utility>
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+
+#include "MathLib/Curve/Curve.h"
 #include "Parameter.h"
 #include "Utils.h"
 
@@ -15,7 +16,7 @@ template <typename T>
 struct CurveScaledParameter final : public Parameter<T>
 {
     CurveScaledParameter(std::string const& name_,
-                         MathLib::PiecewiseLinearInterpolation const& curve,
+                         MathLib::Curve const& curve,
                          std::string referenced_parameter_name)
         : Parameter<T>(name_),
           _curve(curve),
@@ -59,7 +60,7 @@ struct CurveScaledParameter final : public Parameter<T>
     }
 
 private:
-    MathLib::PiecewiseLinearInterpolation const& _curve;
+    MathLib::Curve const& _curve;
     Parameter<T> const* _parameter = nullptr;
     std::string const _referenced_parameter_name;
 };
@@ -67,8 +68,6 @@ private:
 std::unique_ptr<ParameterBase> createCurveScaledParameter(
     std::string const& name,
     BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
 }  // namespace ParameterLib

@@ -7,6 +7,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/Properties/Function.h"
+#include "MathLib/Curve/Curve.h"
 #include "MathLib/KelvinVector.h"
 #include "MathLib/VectorizedTensor.h"
 
@@ -191,12 +192,10 @@ TEST_F(MPLFunction, ScalarScalar)
     ASSERT_EQ(
         0, f_pos.dValue<double>(vars, MPL::Variable::temperature, pos, t, nan));
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
-    curves["linear_curve"] =
-        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::vector<double>{0, 4}, std::vector<double>{0, 1}, true);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
+    curves["linear_curve"] = std::make_unique<MathLib::Curve>(
+        MathLib::PiecewiseLinear{}, std::vector<double>{0, 4},
+        std::vector<double>{0, 1});
     MPL::Property const& f_curve =
         MPL::Function{"function_curve",
                       {"linear_curve(temperature)"},
@@ -249,12 +248,10 @@ TEST_F(MPLFunction, ScalarVector)
               f_pos.dValue<Eigen::Vector2d>(vars, MPL::Variable::temperature,
                                             pos, t, nan));
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
-    curves["linear_curve"] =
-        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::vector<double>{0, 4}, std::vector<double>{0, 1}, true);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
+    curves["linear_curve"] = std::make_unique<MathLib::Curve>(
+        MathLib::PiecewiseLinear{}, std::vector<double>{0, 4},
+        std::vector<double>{0, 1});
     MPL::Property const& f_curve = MPL::Function{
         "function_curve",
         {"linear_curve(temperature)", "linear_curve(temperature)^2"},
@@ -318,12 +315,10 @@ TEST_F(MPLFunction, KelvinVector2Scalar)
     ASSERT_EQ(((1 + 4) * 0.5) * 273.15 + coords[0] + coords[1] + coords[2],
               f_pos.value<double>(vars, pos, t, nan));
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
-    curves["linear_curve"] =
-        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::vector<double>{0, 5}, std::vector<double>{10, 0}, true);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
+    curves["linear_curve"] = std::make_unique<MathLib::Curve>(
+        MathLib::PiecewiseLinear{}, std::vector<double>{0, 5},
+        std::vector<double>{10, 0});
 
     MPL::Property const& f_curve = MPL::Function{
         "test_function", {"linear_curve(avg(stress))"}, {}, {}, curves};
@@ -350,12 +345,10 @@ TEST_F(MPLFunction, KelvinVector3Scalar)
     ASSERT_EQ(((1 + 6) * 0.5) * 273.15 + coords[0] + coords[1] + coords[2],
               f_pos.value<double>(vars, pos, t, nan));
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
-    curves["linear_curve"] =
-        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::vector<double>{0, 100}, std::vector<double>{0, 10}, true);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
+    curves["linear_curve"] = std::make_unique<MathLib::Curve>(
+        MathLib::PiecewiseLinear{}, std::vector<double>{0, 100},
+        std::vector<double>{0, 10});
 
     MPL::Property const& f_curve = MPL::Function{
         "test_function", {"linear_curve(avg(stress) + x)"}, {}, {}, curves};
@@ -384,12 +377,10 @@ TEST_F(MPLFunction, KelvinVector23Scalar)
                       {}};
     ASSERT_ANY_THROW(f_pos.value<double>(vars, pos, t, nan));
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
-    curves["linear_curve"] =
-        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::vector<double>{0, 100}, std::vector<double>{0, 10}, true);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
+    curves["linear_curve"] = std::make_unique<MathLib::Curve>(
+        MathLib::PiecewiseLinear{}, std::vector<double>{0, 100},
+        std::vector<double>{0, 10});
     MPL::Property const& f_curve =
         MPL::Function{"test_function",
                       {"avg(stress) * avg(total_strain) + linear_curve(x)"},
@@ -430,12 +421,10 @@ TEST_F(MPLFunction, VectorizedTensor2Scalar)
     ASSERT_EQ(((1 + 5) * 0.5) * 273.15 + coords[0] + coords[1] + coords[2],
               f_pos.value<double>(vars, pos, t, nan));
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
-    curves["linear_curve"] =
-        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::vector<double>{0, 100}, std::vector<double>{0, 10}, true);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
+    curves["linear_curve"] = std::make_unique<MathLib::Curve>(
+        MathLib::PiecewiseLinear{}, std::vector<double>{0, 100},
+        std::vector<double>{0, 10});
     MPL::Property const& f_curve =
         MPL::Function{"test_function",
                       {"avg(deformation_gradient) * linear_curve(y)"},
@@ -467,12 +456,10 @@ TEST_F(MPLFunction, VectorizedTensor3Scalar)
     ASSERT_EQ(((1 + 9) * 0.5) * 273.15 / coords[0] + coords[1] + coords[2],
               f_pos.value<double>(vars, pos, nan, nan));
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
-    curves["linear_curve"] =
-        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::vector<double>{0, 100}, std::vector<double>{0, 10}, true);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
+    curves["linear_curve"] = std::make_unique<MathLib::Curve>(
+        MathLib::PiecewiseLinear{}, std::vector<double>{0, 100},
+        std::vector<double>{0, 10});
     MPL::Property const& f_curve = MPL::Function{
         "test_function",
         {"avg(deformation_gradient) * linear_curve(temperature/x)"},
@@ -644,19 +631,17 @@ struct MPLFunctionOpenMPTest : public ::testing::Test,
 #endif
     }
 
-    static std::unique_ptr<MathLib::PiecewiseLinearInterpolation>
-    createLinearTestCurve()
+    static std::unique_ptr<MathLib::Curve> createLinearTestCurve()
     {
         std::vector<double> support_points{0.0, 1.0, 2.0};
         std::vector<double> values{0.0, 1.0, 2.0};
-        return std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::move(support_points), std::move(values));
+        return std::make_unique<MathLib::Curve>(MathLib::PiecewiseLinear{},
+                                                std::move(support_points),
+                                                std::move(values));
     }
 
     int original_max_threads = 1;
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
     ac::gtest_reporter gtest_reporter;
 };
 

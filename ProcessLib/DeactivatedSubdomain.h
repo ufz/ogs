@@ -10,7 +10,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "MeshLib/Mesh.h"
 #include "processlib_export.h"
 
@@ -34,9 +34,8 @@ namespace ProcessLib
 /// in the time loop, cf. NumLib::Time, because the current time is an
 /// accumulated sum of time step sizes and may miss the interval's end by a few
 /// units in the last place.
-bool isTimeInSupportInterval(
-    MathLib::PiecewiseLinearInterpolation const& deactivation_curve,
-    double const t);
+bool isTimeInSupportInterval(MathLib::Curve const& deactivation_curve,
+                             double const t);
 
 struct DeactivatedSubdomainMesh
 {
@@ -98,7 +97,7 @@ struct DeactivatedSubdomain
     bool isDeactivated(MeshLib::Element const& element,
                        double const time) const;
 
-    MathLib::PiecewiseLinearInterpolation time_interval;
+    MathLib::Curve time_interval;
 
     /// Line segment along which excavation progresses. Represented by start and
     /// end points.

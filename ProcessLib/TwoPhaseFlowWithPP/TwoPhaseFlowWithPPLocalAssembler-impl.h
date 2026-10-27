@@ -6,7 +6,6 @@
 #include "MaterialLib/MPL/Medium.h"
 #include "MaterialLib/MPL/Phase.h"
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/Fem/Interpolation.h"
 #include "TwoPhaseFlowWithPPProcessData.h"
 

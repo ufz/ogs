@@ -20,9 +20,7 @@ std::unique_ptr<Process> createHeatTransportBHEProcess(
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     unsigned const integration_order,
     BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     std::map<int, std::shared_ptr<MaterialPropertyLib::Medium>> const& media);
 }  // namespace HeatTransportBHE
 }  // namespace ProcessLib

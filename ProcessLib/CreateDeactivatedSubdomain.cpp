@@ -12,6 +12,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "BaseLib/Error.h"
 #include "DeactivatedSubdomain.h"
+#include "MathLib/Curve/Curve.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Mesh.h"
 #include "MeshLib/Node.h"
@@ -123,12 +124,10 @@ static DeactivatedSubdomainMesh createDeactivatedSubdomainMesh(
             std::move(outer_nodes_elements)};
 }
 
-static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
+static MathLib::Curve parseTimeIntervalOrCurve(
     std::optional<BaseLib::ConfigTree> const& time_interval_config,
     std::optional<std::string> const& curve_name,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     // Check for the error case first: only one of the configs must be used.
     if (time_interval_config && curve_name)
@@ -152,10 +151,11 @@ static MathLib::PiecewiseLinearInterpolation parseTimeIntervalOrCurve(
 
         // Using very large value for the curve's value, s.t. for any time from
         // start to end the whole subdomain is deactivated at once.
-        return {std::vector<double>({start_time, end_time}),
-                std::vector<double>({std::numeric_limits<double>::max(),
-                                     std::numeric_limits<double>::max()}),
-                false};
+        return MathLib::Curve{
+            MathLib::PiecewiseLinear{},
+            std::vector<double>({start_time, end_time}),
+            std::vector<double>({std::numeric_limits<double>::max(),
+                                 std::numeric_limits<double>::max()})};
     }
 
     // Try to find the curve.
@@ -231,9 +231,7 @@ static detail::Ball parseBall(BaseLib::ConfigTree const& config)
 DeactivatedSubdomain createDeactivatedSubdomain(
     BaseLib::ConfigTree const& config, MeshLib::Mesh const& mesh,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     auto const& time_interval_config =
         //! \ogs_file_param{prj__process_variables__process_variable__deactivated_subdomains__deactivated_subdomain__time_interval}
@@ -330,9 +328,7 @@ std::vector<DeactivatedSubdomain> createDeactivatedSubdomains(
     BaseLib::ConfigTree const& config,
     MeshLib::Mesh const& mesh,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const& parameters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     std::vector<DeactivatedSubdomain> deactivated_subdomains;
     // Deactivated subdomains
@@ -348,7 +344,8 @@ std::vector<DeactivatedSubdomain> createDeactivatedSubdomains(
         std::transform(std::begin(deactivated_subdomain_configs),
                        std::end(deactivated_subdomain_configs),
                        std::back_inserter(deactivated_subdomains),
-                       [&](auto const& config) {
+                       [&](auto const& config)
+                       {
                            return createDeactivatedSubdomain(
                                config, mesh, parameters, curves);
                        });

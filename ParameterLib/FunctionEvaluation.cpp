@@ -19,9 +19,7 @@ FunctionEvaluation::FunctionEvaluation(
     int num_threads,
     std::vector<std::string> const& variables,
     std::vector<std::string> const& expression_strings,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     auto const expression_symbol_names = collectVariables(expression_strings);
     auto const spatial_position_is_required =
@@ -42,9 +40,7 @@ static FunctionEvaluation::SymbolTable createSymbolTable(
     std::vector<std::string> const& variables,
     bool const spatial_position_is_required,
     std::vector<std::string> const& used_curve_names,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     std::map<std::string, CurveWrapper>& curve_wrappers)
 {
     auto symbol_table = createBaseSymbolTable(spatial_position_is_required);
@@ -68,9 +64,7 @@ FunctionEvaluation::PerThreadData::PerThreadData(
     std::vector<std::string> const& variables,
     bool const spatial_position_is_required,
     std::vector<std::string> const& used_curve_names,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     std::vector<std::string> const& expression_strings)
     : symbol_table(createSymbolTable(variables, spatial_position_is_required,
                                      used_curve_names, curves, curve_wrappers)),

@@ -9,15 +9,13 @@
 #include "BaseLib/ConfigTree.h"
 #include "Curve.h"
 #include "MaterialLib/MPL/VariableType.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 
 namespace MaterialPropertyLib
 {
 std::unique_ptr<Curve> createCurve(
     BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     //! \ogs_file_param{properties__property__type}
     config.checkConfigParameter("type", "Curve");

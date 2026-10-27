@@ -13,7 +13,7 @@
 
 namespace MathLib
 {
-class PiecewiseLinearInterpolation;
+class Curve;
 }  // namespace MathLib
 
 namespace MeshLib
@@ -59,9 +59,7 @@ public:
         std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
         std::vector<std::unique_ptr<ParameterLib::ParameterBase>> const&
             parameters,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves);
+        std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
     ProcessVariable(ProcessVariable&&);
 

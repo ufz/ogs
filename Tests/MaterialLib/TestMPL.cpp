@@ -7,7 +7,7 @@
 
 #include "BaseLib/ConfigTree.h"
 #include "MaterialLib/MPL/CreateMedium.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "ParameterLib/CoordinateSystem.h"
 #include "ParameterLib/Parameter.h"
 #include "Tests/TestTools.h"
@@ -23,9 +23,7 @@ std::unique_ptr<MPL::Medium> createTestMaterial(
                              BaseLib::ConfigTree::onwarning);
     auto const& config = conf.getConfigSubtree("medium");
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>> parameters;
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
 
     return MPL::createMedium(0 /*material id*/, geometry_dimension, config,
                              parameters, local_coordinate_system, curves);

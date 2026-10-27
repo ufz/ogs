@@ -14,7 +14,7 @@ class ConfigTree;
 
 namespace MathLib
 {
-class PiecewiseLinearInterpolation;
+class Curve;
 }
 
 namespace MaterialPropertyLib
@@ -26,7 +26,5 @@ namespace MaterialPropertyLib
 {
 std::unique_ptr<Function> createFunction(
     BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 }  // namespace MaterialPropertyLib

@@ -26,7 +26,7 @@
 #include "InfoLib/CMakeInfo.h"
 #include "MaterialLib/MPL/CreateMedium.h"
 #include "MaterialLib/Utils/MediaCreation.h"
-#include "MathLib/Curve/CreatePiecewiseLinearCurve.h"
+#include "MathLib/Curve/CreateCurve.h"
 #if defined(USE_LIS)
 #include "MathLib/LinAlg/EigenLis/LinearSolverOptionsParser.h"
 #elif defined(USE_PETSC)
@@ -1494,12 +1494,10 @@ void ProjectData::parseCurves(std::optional<BaseLib::ConfigTree> const& config)
     {
         //! \ogs_file_param{prj__curves__curve__name}
         auto const name = conf.getConfigParameter<std::string>("name");
-        BaseLib::insertIfKeyUniqueElseError(
-            _curves,
-            name,
-            MathLib::createPiecewiseLinearCurve<
-                MathLib::PiecewiseLinearInterpolation>(conf),
-            "The curve name is not unique.");
+        BaseLib::insertIfKeyUniqueElseError(_curves,
+                                            name,
+                                            MathLib::createCurve(conf),
+                                            "The curve name is not unique.");
     }
 }
 

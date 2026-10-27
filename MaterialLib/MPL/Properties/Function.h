@@ -9,7 +9,11 @@
 
 #include "MaterialLib/MPL/Property.h"
 #include "MaterialLib/MPL/VariableType.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+
+namespace MathLib
+{
+class Curve;
+}  // namespace MathLib
 
 namespace MaterialPropertyLib
 {
@@ -40,9 +44,7 @@ public:
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
             dvalue_string_expressions,
         std::vector<D2ValueConfig> const& d2value_string_expressions,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves);
+        std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
     PropertyDataType value(VariableArray const& variable_array,
                            ParameterLib::SpatialPosition const& pos,

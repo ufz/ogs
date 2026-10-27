@@ -11,18 +11,18 @@
 #include <vector>
 
 #include "BaseLib/Error.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "SpatialPosition.h"
 
 namespace ParameterLib
 {
 
 /// Wrapper for curve interpolation to be used with exprtk.
-/// Converts MathLib::PiecewiseLinearInterpolation to an exprtk function
+/// Converts MathLib::Curve to an exprtk function
 /// interface.
 struct CurveWrapper : public exprtk::ifunction<double>
 {
-    explicit CurveWrapper(MathLib::PiecewiseLinearInterpolation const& curve)
+    explicit CurveWrapper(MathLib::Curve const& curve)
         : exprtk::ifunction<double>(1), curve_(curve)
     {
         exprtk::disable_has_side_effects(*this);
@@ -31,7 +31,7 @@ struct CurveWrapper : public exprtk::ifunction<double>
     double operator()(double const& t) override { return curve_.getValue(t); }
 
 private:
-    MathLib::PiecewiseLinearInterpolation const& curve_;
+    MathLib::Curve const& curve_;
 };
 
 /// Cached pointers to the t, x, y, z symbol-table variables per thread.
@@ -139,9 +139,7 @@ exprtk::symbol_table<double> createBaseSymbolTable(
 void registerCurveWrappers(
     exprtk::symbol_table<double>& symbol_table,
     std::vector<std::string> const& curve_names,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     std::map<std::string, CurveWrapper>& curve_wrappers);
 
 extern template std::vector<exprtk::expression<double>>
@@ -156,8 +154,6 @@ std::vector<std::string> collectVariables(
 /// Returns the subset of \p expression_symbol_names that are keys in curves.
 std::vector<std::string> collectUsedCurveNames(
     std::vector<std::string> const& expression_symbol_names,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
 }  // namespace ParameterLib

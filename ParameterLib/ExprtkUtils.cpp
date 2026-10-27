@@ -66,9 +66,7 @@ exprtk::symbol_table<double> createBaseSymbolTable(
 void registerCurveWrappers(
     exprtk::symbol_table<double>& symbol_table,
     std::vector<std::string> const& curve_names,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     std::map<std::string, CurveWrapper>& curve_wrappers)
 {
     for (auto const& name : curve_names)
@@ -152,9 +150,7 @@ std::vector<std::string> collectVariables(
 
 std::vector<std::string> collectUsedCurveNames(
     std::vector<std::string> const& expression_symbol_names,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     std::vector<std::string> used;
     for (auto const& v : expression_symbol_names)

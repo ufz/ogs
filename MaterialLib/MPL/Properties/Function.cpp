@@ -67,9 +67,7 @@ static exprtk::symbol_table<double> createSymbolTable(
     std::vector<std::string> const& expression_symbol_names,
     bool const spatial_position_is_required,
     std::vector<std::string> const& used_curve_names,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves,
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
     VariableArray& variable_array,
     std::map<std::string, ParameterLib::CurveWrapper>& curve_wrappers)
 {
@@ -165,9 +163,7 @@ struct PerThreadData
         std::vector<std::string> const& expression_symbol_names,
         bool spatial_position_is_required,
         std::vector<std::string> const& used_curve_names,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves,
+        std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves,
         std::vector<Variable> const& variables_enum,
         std::vector<Variable>* non_scalar_out,
         std::vector<std::string> const& value_string_expressions,
@@ -365,9 +361,7 @@ struct Function::Implementation
         std::vector<std::pair<std::string, std::vector<std::string>>> const&
             dvalue_string_expressions,
         std::vector<D2ValueConfig> const& d2value_string_expressions,
-        std::map<std::string,
-                 std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-            curves);
+        std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves);
 
     /// Per-thread data; indexed by omp_get_thread_num().
     std::vector<PerThreadData> per_thread_data;
@@ -388,9 +382,7 @@ Function::Implementation<D>::Implementation(
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
         dvalue_string_expressions,
     std::vector<D2ValueConfig> const& d2value_string_expressions,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     spatial_position_is_required =
         ParameterLib::hasSpatialVariables(expression_symbol_names);
@@ -563,9 +555,7 @@ Function::Function(
     std::vector<std::pair<std::string, std::vector<std::string>>> const&
         dvalue_string_expressions,
     std::vector<D2ValueConfig> const& d2value_string_expressions,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     name_ = std::move(name);
 

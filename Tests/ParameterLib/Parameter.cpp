@@ -26,9 +26,7 @@ using namespace ParameterLib;
 std::unique_ptr<Parameter<double>> constructParameterFromString(
     std::string const& xml,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves = {})
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves = {})
 {
     auto xml_ptree = Tests::readXml(xml.c_str());
     BaseLib::ConfigTree config_tree(std::move(xml_ptree), "",
@@ -224,12 +222,10 @@ TEST_F(ParameterLibParameter, GetNodalValuesOnElement_curveScaledNode)
                                      "<field_name>NodeIDs</field_name>",
                                      meshes));
 
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>>
-        curves;
-    curves["linear_curve"] =
-        std::make_unique<MathLib::PiecewiseLinearInterpolation>(
-            std::vector<double>{0, 1}, std::vector<double>{0, 1}, true);
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> curves;
+    curves["linear_curve"] = std::make_unique<MathLib::Curve>(
+        MathLib::PiecewiseLinear{}, std::vector<double>{0, 1},
+        std::vector<double>{0, 1});
 
     auto const parameter = constructParameterFromString(
         "<name>parameter</name>"

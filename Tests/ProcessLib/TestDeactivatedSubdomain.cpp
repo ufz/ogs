@@ -6,7 +6,7 @@
 #include <cmath>
 #include <vector>
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "ProcessLib/DeactivatedSubdomain.h"
 
 // The time passed to the deactivation is accumulated from the time step sizes
@@ -18,8 +18,9 @@ TEST(ProcessLibDeactivatedSubdomain, TimeSupportIntervalToleratesRoundOff)
 {
     double const start = 32105.6977705;
     double const end = 64211.395541;
-    MathLib::PiecewiseLinearInterpolation const time_interval{
-        std::vector<double>{start, end}, std::vector<double>{0., 1.}};
+    MathLib::Curve const time_interval{MathLib::PiecewiseLinear{},
+                                       std::vector<double>{start, end},
+                                       std::vector<double>{0., 1.}};
 
     EXPECT_TRUE(ProcessLib::isTimeInSupportInterval(time_interval, start));
     EXPECT_TRUE(ProcessLib::isTimeInSupportInterval(time_interval, end));

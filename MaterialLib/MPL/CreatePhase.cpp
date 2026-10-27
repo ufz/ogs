@@ -9,7 +9,7 @@
 #include "BaseLib/ConfigTree.h"
 #include "CreateComponent.h"
 #include "CreateProperty.h"
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "ParameterLib/Parameter.h"
 #include "Phase.h"
 
@@ -20,9 +20,7 @@ std::unique_ptr<MaterialPropertyLib::Phase> createPhase(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     using namespace MaterialPropertyLib;
 
@@ -74,9 +72,7 @@ std::vector<std::unique_ptr<Phase>> createPhases(
     std::optional<BaseLib::ConfigTree> const& config,
     std::vector<std::unique_ptr<ParameterLib::ParameterBase>>& parameters,
     ParameterLib::CoordinateSystem const* const local_coordinate_system,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     if (!config)
     {

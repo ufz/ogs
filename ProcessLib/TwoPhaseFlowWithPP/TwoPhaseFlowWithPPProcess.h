@@ -6,10 +6,6 @@
 #include "ProcessLib/Process.h"
 #include "TwoPhaseFlowWithPPLocalAssembler.h"
 
-namespace MathLib
-{
-class PiecewiseLinearInterpolation;
-}
 namespace MeshLib
 {
 class Mesh;

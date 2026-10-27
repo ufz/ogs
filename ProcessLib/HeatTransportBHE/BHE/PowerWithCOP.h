@@ -5,7 +5,7 @@
 
 #include <variant>
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
+#include "MathLib/Curve/Curve.h"
 #include "ParameterLib/Parameter.h"
 
 namespace ProcessLib
@@ -17,7 +17,7 @@ namespace BHE
 struct PowerWithCOP
 {
     ParameterLib::Parameter<double> const& power_param;
-    MathLib::PiecewiseLinearInterpolation const& cop_curve;
+    MathLib::Curve const& cop_curve;
 };
 using CoolingVariant =
     std::variant<PowerWithCOP,

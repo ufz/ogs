@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 #include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "ProcessLib/Process.h"
 #include "ThermalTwoPhaseFlowWithPPLocalAssembler.h"

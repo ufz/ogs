@@ -9,9 +9,7 @@ namespace ParameterLib
 {
 std::unique_ptr<ParameterBase> createFunctionParameter(
     std::string const& name, BaseLib::ConfigTree const& config,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     //! \ogs_file_param{prj__parameters__parameter__type}
     config.checkConfigParameter("type", "Function");

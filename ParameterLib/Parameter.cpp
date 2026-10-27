@@ -22,9 +22,7 @@ std::unique_ptr<ParameterBase> createParameter(
     BaseLib::ConfigTree const& config,
     std::vector<std::unique_ptr<MeshLib::Mesh>> const& meshes,
     std::vector<GeoLib::NamedRaster> const& named_rasters,
-    std::map<std::string,
-             std::unique_ptr<MathLib::PiecewiseLinearInterpolation>> const&
-        curves)
+    std::map<std::string, std::unique_ptr<MathLib::Curve>> const& curves)
 {
     //! \ogs_file_param{prj__parameters__parameter__name}
     auto const name = config.getConfigParameter<std::string>("name");
