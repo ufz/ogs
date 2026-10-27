@@ -21,6 +21,7 @@
 #include "ParameterLib/SpatialPosition.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/CouplingScheme.h"
 
 namespace ProcessLib
 {
@@ -48,7 +49,7 @@ std::unique_ptr<Process> createHydroMechanicsProcess(
         //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(coupling_scheme && (*coupling_scheme == "staggered"));
+        useMonolithicScheme(coupling_scheme, "HYDRO_MECHANICS_WITH_LIE");
 
     /// \section processvariablesliehm Process Variables
     //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS_WITH_LIE__process_variables}

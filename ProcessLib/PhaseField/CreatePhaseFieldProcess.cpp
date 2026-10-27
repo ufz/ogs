@@ -12,6 +12,7 @@
 #include "PhaseFieldProcessData.h"
 #include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/CouplingScheme.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
@@ -38,7 +39,7 @@ std::unique_ptr<Process> createPhaseFieldProcess(
         //! \ogs_file_param{prj__processes__process__PHASE_FIELD__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(coupling_scheme && (*coupling_scheme == "staggered"));
+        useMonolithicScheme(coupling_scheme, "PHASE_FIELD");
 
     /// \section processvariablespf Process Variables
 

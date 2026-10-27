@@ -14,6 +14,7 @@
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/TH2M/ConstitutiveRelations/NoPhaseTransition.h"
 #include "ProcessLib/TH2M/ConstitutiveRelations/PhaseTransition.h"
+#include "ProcessLib/Utils/CouplingScheme.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "TH2MProcess.h"
 #include "TH2MProcessData.h"
@@ -69,7 +70,7 @@ std::unique_ptr<Process> createTH2MProcess(
         //! \ogs_file_param{prj__processes__process__TH2M__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(coupling_scheme && (*coupling_scheme == "staggered"));
+        useMonolithicScheme(coupling_scheme, "TH2M");
 
     /// \section processvariablesth2m Process Variables
 

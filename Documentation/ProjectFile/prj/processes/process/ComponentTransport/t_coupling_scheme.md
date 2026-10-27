@@ -1,2 +1,2 @@
-An optional input to select the coupling scheme. Currently, only the monolithic
-scheme is available for HYDRO_MECHANICS, and this input can be omitted.
+An optional input to select the coupling scheme: 'monolithic' or 'staggered'.
+If this input is omitted, the coupling scheme is 'monolithic' by default.
