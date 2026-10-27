@@ -263,6 +263,27 @@ std::vector<GlobalIndexType> MeshComponentMap::getGlobalIndicesByComponent(
     return pairs | ranges::views::values | ranges::to<std::vector>;
 }
 
+#ifdef USE_PETSC
+/// Ghost entries store their global index negated. Global index 0 cannot be
+/// negated and is stored as -num_global_dof instead.
+static GlobalIndexType encodeGhostGlobalIndex(
+    GlobalIndexType const global_index, std::size_t const num_global_dof)
+{
+    return global_index == 0 ? -static_cast<GlobalIndexType>(num_global_dof)
+                             : -global_index;
+}
+
+/// Inverse of encodeGhostGlobalIndex().
+static GlobalIndexType decodeGhostGlobalIndex(
+    GlobalIndexType const encoded_global_index,
+    std::size_t const num_global_dof)
+{
+    return -encoded_global_index == static_cast<GlobalIndexType>(num_global_dof)
+               ? 0
+               : -encoded_global_index;
+}
+#endif
+
 GlobalIndexType MeshComponentMap::getLocalIndex(
     Location const& l,
     int const comp_id,
@@ -289,12 +310,8 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
     // For a ghost location look up the global index in ghost indices.
     //
 
-    // A special case for a ghost location with global index equal to the size
-    // of the local vector:
     GlobalIndexType const real_global_index =
-        (-global_index == static_cast<GlobalIndexType>(_num_global_dof))
-            ? 0
-            : -global_index;
+        decodeGhostGlobalIndex(global_index, _num_global_dof);
 
     // TODO Find in ghost indices is O(n^2/2) for n being the length of
     // _ghosts_indices. Providing an inverted table would be faster.
@@ -499,13 +516,8 @@ void MeshComponentMap::createParallelMeshComponentMap(
             if (is_ghost)
             {
                 _ghosts_indices.push_back(global_index);
-                global_index = -global_index;
-                // If the ghost entry has an index of 0,
-                // its index is set to the negative value of unknowns.
-                if (global_index == 0)
-                {
-                    global_index = -_num_global_dof;
-                }
+                global_index =
+                    encodeGhostGlobalIndex(global_index, _num_global_dof);
             }
 
             _dict.insert(
