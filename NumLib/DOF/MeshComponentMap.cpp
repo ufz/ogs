@@ -79,6 +79,7 @@ MeshComponentMap::MeshComponentMap(
     if (partitioned_mesh.isForSingleThread())
     {
         createSerialMeshComponentMap(components, order);
+        _num_local_dof = _dict.size();
         return;
     }
     else
@@ -94,6 +95,7 @@ MeshComponentMap::MeshComponentMap(
     [[maybe_unused]] bool const use_taylor_hood_elements)
 {
     createSerialMeshComponentMap(components, order);
+    _num_local_dof = _dict.size();
 }
 #endif  // end of USE_PETSC
 
@@ -348,7 +350,6 @@ void MeshComponentMap::createSerialMeshComponentMap(
         }
         comp_id++;
     }
-    _num_local_dof = _dict.size();
 
     if (order == ComponentOrder::BY_LOCATION)
     {
