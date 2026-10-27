@@ -67,6 +67,12 @@ repos:
         language: system
         files: '.*\.cpp'
         stages: [pre-commit, manual]
+      - id: ascii-vtu
+        name: Check added VTU files are binary
+        entry: scripts/hooks/pre-commit-ascii-vtu.sh
+        language: system
+        files: '\.vtu$'
+        stages: [pre-commit, manual]
   - repo: https://github.com/errata-ai/vale
     rev: v3.20.0
     hooks:
