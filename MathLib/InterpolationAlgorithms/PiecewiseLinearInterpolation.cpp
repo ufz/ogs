@@ -98,6 +98,12 @@ double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 double PiecewiseLinearInterpolation::getDerivative(
     double const pnt_to_interpolate) const
 {
+    // A single support point describes a constant function.
+    if (supp_pnts_.size() < 2)
+    {
+        return 0;
+    }
+
     if (pnt_to_interpolate < supp_pnts_.front() ||
         supp_pnts_.back() < pnt_to_interpolate)
     {

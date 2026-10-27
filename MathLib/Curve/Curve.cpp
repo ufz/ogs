@@ -19,9 +19,23 @@ struct Curve::Impl
 
 Curve::Curve(PiecewiseLinear /*tag*/, std::vector<double> supporting_points,
              std::vector<double> values)
-    : impl_(std::make_unique<Impl>(PiecewiseLinearInterpolation{
-          std::move(supporting_points), std::move(values)}))
 {
+    if (supporting_points.empty() || values.empty())
+    {
+        OGS_FATAL(
+            "Creating a curve from an empty list of supporting points or "
+            "values.");
+    }
+    if (supporting_points.size() != values.size())
+    {
+        OGS_FATAL(
+            "Creating a curve from {:d} supporting points and {:d} values; "
+            "the two sizes must match.",
+            supporting_points.size(), values.size());
+    }
+
+    impl_ = std::make_unique<Impl>(PiecewiseLinearInterpolation{
+        std::move(supporting_points), std::move(values)});
 }
 
 Curve::Curve(Curve const& other)

@@ -58,6 +58,43 @@ TEST(MathLibCurve, LinearCreatedFromConfig)
     EXPECT_EQ(3.0, curve->getSupportMax());
 }
 
+TEST(MathLibCurve, SinglePointCurveIsConstant)
+{
+    auto const curve = createCurveFromXml(
+        "<curve>"
+        "   <coords> 5</coords>"
+        "   <values> 1</values>"
+        "</curve>");
+
+    EXPECT_EQ(1.0, curve->getValue(0.0));
+    EXPECT_EQ(1.0, curve->getValue(5.0));
+    EXPECT_EQ(1.0, curve->getValue(10.0));
+
+    // In particular at the support point itself, which must not read past the
+    // end of the single-element data.
+    EXPECT_EQ(0.0, curve->getDerivative(0.0));
+    EXPECT_EQ(0.0, curve->getDerivative(5.0));
+    EXPECT_EQ(0.0, curve->getDerivative(10.0));
+
+    EXPECT_EQ(5.0, curve->getSupportMin());
+    EXPECT_EQ(5.0, curve->getSupportMax());
+}
+
+TEST(MathLibCurve, EmptyOrMismatchedDataIsRejected)
+{
+    EXPECT_THROW(MathLib::Curve(MathLib::PiecewiseLinear{},
+                                std::vector<double>{}, std::vector<double>{}),
+                 std::runtime_error);
+    EXPECT_THROW(
+        MathLib::Curve(MathLib::PiecewiseLinear{}, std::vector<double>{0, 1},
+                       std::vector<double>{}),
+        std::runtime_error);
+    EXPECT_THROW(
+        MathLib::Curve(MathLib::PiecewiseLinear{}, std::vector<double>{0, 1},
+                       std::vector<double>{5}),
+        std::runtime_error);
+}
+
 TEST(MathLibCurve, CopyKeepsInterpolant)
 {
     std::vector<double> const x = {0, 1, 2.5, 3, 5, 6.5};
