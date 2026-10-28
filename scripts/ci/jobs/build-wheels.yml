@@ -31,7 +31,7 @@ build wheels win:
   tags: [windows]
   extends:
     - .vs-environment
-  timeout: 4h
+  timeout: 6h
   <<: *wheels_template
 
 publish wheels:
