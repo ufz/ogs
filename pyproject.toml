@@ -26,6 +26,7 @@ dev-all = [
   "gmsh==4.13.1.dev1; platform_system == 'Linux'",
   "gmsh>=4.12.0; platform_system != 'Linux'",
   "ogstools",
+  "glaciationBCs @ git+https://github.com/cbsilver/glaciationBCs.git@1a7feb2ce1e019e242fecd8d94d8633474042e97",
 ]
 
 [tool.uv]
@@ -84,8 +85,7 @@ markers = [
 archs = "auto64"
 build = ["cp3{11,12,13,14}-*"]
 skip = ["*musllinux*"]
-# revert to dev-all when ogstools is available for 3.14
-test-groups = "dev"
+test-groups = "dev-all"
 test-command = "pytest {project}/Tests/Python"
 build-verbosity = 1
 build-frontend = "build[uv]"
