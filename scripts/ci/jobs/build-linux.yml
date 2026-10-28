@@ -65,9 +65,16 @@ build with uv:
     - .test-artifacts
   variables:
     GIT_DEPTH: 1000
+    CTEST_BINARY_DIRECTORY: ../build/_skbuild/uv
   script:
     - rm -rf .venv ../build/_skbuild  # cleanup build dirs
-    - uv sync --group dev-all -v
+    - |
+      export CTEST_GROUP=Experimental
+      if [ "$CI_COMMIT_BRANCH" = "$CI_DEFAULT_BRANCH" ]; then
+        export CTEST_GROUP=master
+      fi
+      export CTEST_DASHBOARD_PHASE=uv-build
+      ctest -S scripts/ci/ctest-dashboard.cmake -VV
     - ln -s ../build/_skbuild build # .test-artifacts expects a directory "build"
     - |
       if [ "$BUILD_TESTS" = true ]; then
@@ -75,7 +82,8 @@ build with uv:
       fi
     - |
       if [ "$BUILD_CTEST" = true ]; then
-        uv run --no-sync ctest --test-dir ../build/_skbuild/cp* -LE large ${CTEST_ARGS}
+        export CTEST_DASHBOARD_PHASE=test
+        uv run --no-sync ctest -S scripts/ci/ctest-dashboard.cmake -VV
       fi
 
 build in devcontainer:

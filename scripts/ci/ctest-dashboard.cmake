@@ -19,6 +19,38 @@ else()
 endif()
 
 # The CI templates load the generated build environment between these phases.
+if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "uv-build")
+    if(DEFINED ENV{CTEST_GROUP} AND NOT "$ENV{CTEST_GROUP}" STREQUAL "")
+        set(_ctest_group "$ENV{CTEST_GROUP}")
+    else()
+        set(_ctest_group Experimental)
+    endif()
+
+    find_program(_uv_command uv REQUIRED)
+    # uv/scikit-build-core owns both configure and build. Capture them together
+    # as a Build result, using the same persistent directory for the test phase.
+    set(CTEST_BUILD_COMMAND
+        "\"${CMAKE_COMMAND}\" -E chdir \"${CTEST_SOURCE_DIRECTORY}\" \"${_uv_command}\" sync --group dev-all -v \"--config-setting=build-dir=${CTEST_BINARY_DIRECTORY}\" --config-setting=cmake.define.CTEST_USE_LAUNCHERS=ON"
+    )
+    ctest_start(Experimental GROUP "${_ctest_group}")
+    ctest_build(BUILD "${CTEST_BINARY_DIRECTORY}" RETURN_VALUE _build_result)
+    if(NOT "$ENV{CTEST_SUBMIT}" STREQUAL "false")
+        ctest_submit(PARTS Build RETURN_VALUE _submit_result)
+    else()
+        set(_submit_result 0)
+    endif()
+    if(_build_result)
+        message(FATAL_ERROR "uv build failed with exit code ${_build_result}.")
+    endif()
+    if(_submit_result)
+        message(
+            FATAL_ERROR
+                "Submitting uv build results failed with exit code ${_submit_result}."
+        )
+    endif()
+    return()
+endif()
+
 if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "configure")
     if(DEFINED ENV{CTEST_GROUP} AND NOT "$ENV{CTEST_GROUP}" STREQUAL "")
         set(_ctest_group "$ENV{CTEST_GROUP}")
@@ -112,9 +144,6 @@ if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "test")
             RESULT_VARIABLE _test_result
         )
     endif()
-    if(_test_result)
-        message(FATAL_ERROR "CTest test failed with exit code ${_test_result}.")
-    endif()
     if(NOT "$ENV{CTEST_SUBMIT}" STREQUAL "false")
         set(_submit_parts Test)
         set(_buildinfo_file
@@ -132,13 +161,16 @@ if("$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "test")
             )
         endif()
     endif()
+    if(_test_result)
+        message(FATAL_ERROR "CTest test failed with exit code ${_test_result}.")
+    endif()
     return()
 endif()
 
 if(NOT "$ENV{CTEST_DASHBOARD_PHASE}" STREQUAL "build")
     message(
         FATAL_ERROR
-            "CTEST_DASHBOARD_PHASE must be set to 'configure', 'build', or 'test'."
+            "CTEST_DASHBOARD_PHASE must be set to 'configure', 'build', 'uv-build', or 'test'."
     )
 endif()
 

@@ -581,6 +581,22 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             )
         endif()
     elseif(AddTest_TESTER STREQUAL "gmldiff")
+        set(PY_EXE "${Python_EXECUTABLE}")
+        if(SKBUILD)
+            # Build isolation is temporary. gmldiff only needs the standard
+            # library, so retain the base interpreter for tests run afterwards.
+            execute_process(
+                COMMAND "${Python_EXECUTABLE}" -c
+                        "import sys; print(sys._base_executable)"
+                OUTPUT_VARIABLE PY_EXE
+                OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ERROR_IS_FATAL ANY
+            )
+        endif()
+        if(WIN32)
+            file(TO_NATIVE_PATH "${PY_EXE}" PY_EXE)
+            # Dirty hack for Windows Python paths with spaces:
+            string(REPLACE "Program Files" "\"Program Files\"" PY_EXE ${PY_EXE})
+        endif()
         list(LENGTH AddTest_DIFF_DATA DiffDataLength)
         math(EXPR DiffDataLastIndex "${DiffDataLength}-1")
         foreach(DiffDataIndex RANGE 0 ${DiffDataLastIndex} 3)
@@ -591,15 +607,6 @@ Use six arguments version of AddTest with absolute and relative tolerances"
             list(GET AddTest_DIFF_DATA "${DiffDataAuxIndex}" REL_TOL)
 
             get_filename_component(FILE_EXPECTED ${GML_FILE} NAME)
-            if(WIN32)
-                file(TO_NATIVE_PATH "${Python_EXECUTABLE}" PY_EXE)
-                # Dirty hack for Windows Python paths with spaces:
-                string(REPLACE "Program Files" "\"Program Files\"" PY_EXE
-                               ${PY_EXE}
-                )
-            else()
-                set(PY_EXE ${Python_EXECUTABLE})
-            endif()
             list(
                 APPEND
                 TESTER_COMMAND
