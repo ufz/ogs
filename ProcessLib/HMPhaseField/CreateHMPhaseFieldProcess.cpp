@@ -14,6 +14,7 @@
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/CouplingScheme.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
@@ -61,7 +62,8 @@ std::unique_ptr<Process> createHMPhaseFieldProcess(
     auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__HM_PHASE_FIELD__coupling_scheme}
         config.getConfigParameter<std::string>("coupling_scheme", "staggered");
-    const bool use_monolithic_scheme = (coupling_scheme != "staggered");
+    const bool use_monolithic_scheme =
+        useMonolithicScheme(coupling_scheme, "HM_PHASE_FIELD");
 
     //! \ogs_file_param{prj__processes__process__HM_PHASE_FIELD__process_variables}
     auto const pv_config = config.getConfigSubtree("process_variables");

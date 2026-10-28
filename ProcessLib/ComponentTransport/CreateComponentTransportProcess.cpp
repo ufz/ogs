@@ -15,6 +15,7 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
+#include "ProcessLib/Utils/CouplingScheme.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
@@ -89,9 +90,9 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     auto const coupling_scheme =
         //! \ogs_file_param{prj__processes__process__ComponentTransport__coupling_scheme}
-        config.getConfigParameter<std::string>("coupling_scheme",
-                                               "monolithic_scheme");
-    const bool use_monolithic_scheme = (coupling_scheme != "staggered");
+        config.getConfigParameter<std::string>("coupling_scheme", "monolithic");
+    const bool use_monolithic_scheme =
+        useMonolithicScheme(coupling_scheme, "ComponentTransport");
 
     /// \section processvariablescomponenttransport Process Variables
 

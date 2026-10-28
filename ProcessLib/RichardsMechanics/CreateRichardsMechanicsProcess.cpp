@@ -14,6 +14,7 @@
 #include "ParameterLib/Utils.h"
 #include "ProcessLib/Common/HydroMechanics/CreateInitialStress.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/CouplingScheme.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "RichardsMechanicsProcess.h"
 #include "RichardsMechanicsProcessData.h"
@@ -69,7 +70,7 @@ std::unique_ptr<Process> createRichardsMechanicsProcess(
         //! \ogs_file_param{prj__processes__process__RICHARDS_MECHANICS__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(coupling_scheme && (*coupling_scheme == "staggered"));
+        useMonolithicScheme(coupling_scheme, "RICHARDS_MECHANICS");
 
     /// \section processvariablesrm Process Variables
 

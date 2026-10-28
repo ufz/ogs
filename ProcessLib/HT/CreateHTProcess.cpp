@@ -17,6 +17,7 @@
 #include "ProcessLib/Common/HydraulicProcess/checkVolumeBalanceEquationSetting.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
 #include "ProcessLib/SurfaceFlux/SurfaceFluxData.h"
+#include "ProcessLib/Utils/CouplingScheme.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 
 namespace ProcessLib
@@ -109,7 +110,7 @@ std::unique_ptr<Process> createHTProcess(
         //! \ogs_file_param{prj__processes__process__HT__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(coupling_scheme && (*coupling_scheme == "staggered"));
+        useMonolithicScheme(coupling_scheme, "HT");
 
     /// \section processvariablesht Process Variables
 

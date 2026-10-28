@@ -21,6 +21,7 @@
 #include "ProcessLib/Common/LiquidThermalExpansion/CheckLiquidThermalExpansivity.h"
 #include "ProcessLib/Common/ThermoOsmosis/CheckThermoOsmosisProperties.h"
 #include "ProcessLib/Output/CreateSecondaryVariables.h"
+#include "ProcessLib/Utils/CouplingScheme.h"
 #include "ProcessLib/Utils/ProcessUtils.h"
 #include "ThermoRichardsMechanicsProcess.h"
 #include "ThermoRichardsMechanicsProcessData.h"
@@ -91,7 +92,7 @@ std::unique_ptr<Process> createThermoRichardsMechanicsProcessStage2(
         //! \ogs_file_param{prj__processes__process__THERMO_RICHARDS_MECHANICS__coupling_scheme}
         config.getConfigParameterOptional<std::string>("coupling_scheme");
     const bool use_monolithic_scheme =
-        !(coupling_scheme && (*coupling_scheme == "staggered"));
+        useMonolithicScheme(coupling_scheme, "THERMO_RICHARDS_MECHANICS");
 
     /// \section processvariablestrm Process Variables
 
