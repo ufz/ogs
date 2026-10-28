@@ -126,7 +126,8 @@ void PETScVector::getGlobalVector(std::vector<PetscScalar>& u) const
     PetscCallAbort(PETSC_COMM_WORLD, VecGetArray(v_, &xp));
 
     BaseLib::MPI::Mpi mpi{PETSC_COMM_WORLD};
-    BaseLib::MPI::allgatherv(std::span(xp, size_loc_), u, mpi);
+    BaseLib::MPI::allgatherv(std::span(xp, size_loc_), u, mpi,
+                             BaseLib::MPI::mpiType<PetscScalar>());
 
     // This following line may be needed late on
     //  for a communication load balance:

@@ -177,9 +177,9 @@ std::vector<std::size_t> computeGhostBaseNodeGlobalNodeIDsOfSubDomainPartition(
     // Send ids of bulk ghost nodes belonging to the subdomain mesh to all
     // other ranks and at the same time receive from all other ranks.
     std::vector<std::size_t> ghost_node_ids_of_all_ranks;
-    std::vector<int> const offsets =
-        BaseLib::MPI::allgatherv(std::span{subdomain_node_id_to_bulk_node_id},
-                                 ghost_node_ids_of_all_ranks, mpi);
+    std::vector<int> const offsets = BaseLib::MPI::allgatherv(
+        std::span{subdomain_node_id_to_bulk_node_id},
+        ghost_node_ids_of_all_ranks, mpi, BaseLib::MPI::mpiType<std::size_t>());
 
     std::size_t const global_number_of_subdomain_node_id_to_bulk_node_id =
         offsets.back();

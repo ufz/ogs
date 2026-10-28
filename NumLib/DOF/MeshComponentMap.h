@@ -7,6 +7,11 @@
 #include "MeshLib/MeshSubset.h"
 #include "numlib_export.h"
 
+namespace BaseLib::MPI
+{
+struct Mpi;
+}
+
 namespace NumLib
 {
 /// Ordering of components in global matrix/vector.
@@ -25,8 +30,10 @@ public:
 public:
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
+    /// \param use_taylor_hood_elements Flag to indicate whether the Taylor-Hood
+    ///                                 elements are used
     MeshComponentMap(std::vector<MeshLib::MeshSubset> const& components,
-                     ComponentOrder order);
+                     ComponentOrder order, bool const use_taylor_hood_elements);
 
     /// Creates a multi-component subset of the current mesh component map.
     /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
@@ -177,9 +184,13 @@ private:
 #ifdef USE_PETSC
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
+    /// \param use_taylor_hood_elements Flag to indicate whether the Taylor-Hood
+    ///                                 elements are used
+    /// \param mpi          Mpi communicator and rank
     void createParallelMeshComponentMap(
         std::vector<MeshLib::MeshSubset> const& components,
-        ComponentOrder order);
+        ComponentOrder order, bool const use_taylor_hood_elements,
+        BaseLib::MPI::Mpi const& mpi);
 #endif
 };
 

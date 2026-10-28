@@ -52,7 +52,8 @@ public:
     /// is equal to the number of variables, i.e. every variable has a single
     /// component.
     LocalToGlobalIndexMap(std::vector<MeshLib::MeshSubset>&& mesh_subsets,
-                          NumLib::ComponentOrder const order);
+                          NumLib::ComponentOrder const order,
+                          bool const use_taylor_hood_elements = false);
 
     /// Creates a MeshComponentMap internally and stores the global indices for
     /// each mesh element of the given mesh_subsets.
@@ -61,10 +62,14 @@ public:
     /// \param vec_var_n_components  a vector of the number of variable
     /// components. The size of the vector should be equal to the number of
     /// variables. Sum of the entries should be equal to the size of the
-    /// mesh_subsets. \param order  type of ordering values in a vector
+    /// mesh_subsets.
+    /// \param order  type of ordering values in a vector
+    /// \param use_taylor_hood_elements Flag to indicate whether the Taylor-Hood
+    ///                                 elements are used
     LocalToGlobalIndexMap(std::vector<MeshLib::MeshSubset>&& mesh_subsets,
                           std::vector<int> const& vec_var_n_components,
-                          NumLib::ComponentOrder const order);
+                          NumLib::ComponentOrder const order,
+                          bool const use_taylor_hood_elements = false);
 
     /// Creates a MeshComponentMap internally and stores the global indices for
     /// the given mesh elements
@@ -73,14 +78,19 @@ public:
     /// \param vec_var_n_components  a vector of the number of variable
     /// components. The size of the vector should be equal to the number of
     /// variables. Sum of the entries should be equal to the size of the
-    /// mesh_subsets. \param vec_var_elements  a vector of active mesh elements
-    /// for each variable. \param order  type of ordering values in a vector
+    /// mesh_subsets.
+    /// \param vec_var_elements  a vector of active mesh elements for each
+    /// variable.
+    /// \param order  type of ordering values in a vector
+    /// \param use_taylor_hood_elements Flag to indicate whether the Taylor-Hood
+    ///                                 elements are used
     LocalToGlobalIndexMap(
         std::vector<MeshLib::MeshSubset>&& mesh_subsets,
         std::vector<int> const& vec_var_n_components,
         std::vector<std::vector<MeshLib::Element*> const*> const&
             vec_var_elements,
-        NumLib::ComponentOrder const order);
+        NumLib::ComponentOrder const order,
+        bool const use_taylor_hood_elements = false);
 
     /// Derive a LocalToGlobalIndexMap constrained to the mesh subset and mesh
     /// subset's elements. A new mesh component map will be constructed using

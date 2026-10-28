@@ -143,11 +143,14 @@ static void allreduceInplace(std::vector<T>& vector,
 
 /// Allgather for variable data. Returns offsets in the receive buffer.
 /// The receive buffer is resized to accommodate the gathered data.
+/// Pass \c mpiType<T>() as \c mpi_type unless \c T is a custom MPI
+/// datatype.
 template <typename T>
 static std::vector<int> allgatherv(
     std::span<T> const send_buffer,
     std::vector<std::remove_const_t<T>>& receive_buffer,
-    Mpi const& mpi)
+    Mpi const& mpi,
+    MPI_Datatype const mpi_type)
 {
     // Determine the number of elements to send
     int const size = static_cast<int>(send_buffer.size());
@@ -161,9 +164,8 @@ static std::vector<int> allgatherv(
     // Resize receive buffer to hold all gathered data
     receive_buffer.resize(offsets.back());
 
-    MPI_Allgatherv(send_buffer.data(), size, mpiType<T>(),
-                   receive_buffer.data(), sizes.data(), offsets.data(),
-                   mpiType<T>(), mpi.communicator);
+    MPI_Allgatherv(send_buffer.data(), size, mpi_type, receive_buffer.data(),
+                   sizes.data(), offsets.data(), mpi_type, mpi.communicator);
 
     return offsets;
 }

@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <spdlog/fmt/ostr.h>
+
 #include <boost/multi_index/composite_key.hpp>
 #include <boost/multi_index/member.hpp>
 #include <boost/multi_index/ordered_index.hpp>
@@ -111,3 +113,11 @@ using ComponentGlobalIndexDict = boost::multi_index::multi_index_container<
 
 }  // namespace detail
 }  // namespace NumLib
+
+namespace fmt
+{
+template <>
+struct formatter<NumLib::detail::Line> : ostream_formatter
+{
+};
+}  // namespace fmt
