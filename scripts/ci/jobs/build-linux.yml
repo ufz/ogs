@@ -57,7 +57,7 @@ build linux ubuntu perf:
     CTEST_TIMEOUT: 480
     OGS_PERFORMANCE_TESTS_ALLOWED_TO_FAIL: false
 
-build with pip:
+build with uv:
   stage: build
   tags: [shell, envinf]
   needs: [meta]
@@ -67,26 +67,16 @@ build with pip:
     GIT_DEPTH: 1000
   script:
     - rm -rf .venv ../build/_skbuild  # cleanup build dirs
-    - python -m venv .venv
-    - source .venv/bin/activate
-    - pip install --upgrade pip
-    - pip install -e . --group dev -v
+    - uv sync --group dev-all -v
     - ln -s ../build/_skbuild build # .test-artifacts expects a directory "build"
     - |
       if [ "$BUILD_TESTS" = true ]; then
-        pytest
+        uv run --no-sync pytest
       fi
     - |
       if [ "$BUILD_CTEST" = true ]; then
-        ctest --test-dir ../build/_skbuild/cp* -LE large ${CTEST_ARGS}
+        uv run --no-sync ctest --test-dir ../build/_skbuild/cp* -LE large ${CTEST_ARGS}
       fi
-
-# WIP: standalone ctest config with:
-# cd build-dir
-# fd CTestTestfile.cmake -E _deps -0 | rsync -a --files-from=- --from0 ./ /tmp/ctestfiles/
-# ctest --test-dir /tmp/ctestfiles
-#
-# although some benchmarks still have the build-dir hard-coded
 
 build in devcontainer:
   extends:
