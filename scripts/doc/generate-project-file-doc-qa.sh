@@ -9,11 +9,10 @@ if [ $# -ne 3 ]; then
     exit 1
 fi
 
-if [ -d ".venv" ]; then
-    source .venv/bin/activate
-fi
+set -e -o pipefail
 
-set -e
+# Keep documentation dependencies independent
+python=(uv run --no-project --isolated --with 'lxml>=6.0.2' --with 'pandas>=1.5' python)
 
 srcdir="$1"
 builddir="$2"
@@ -32,12 +31,12 @@ mkdir -p "$doxdir"
 
 # Gather information about documented parameters.
 "$toolsdir/get-project-params.sh" "$srcdir" \
-    | "$toolsdir/normalize-param-cache.py" >"$param_cache"
+    | "${python[@]}" "$toolsdir/normalize-param-cache.py" >"$param_cache"
 
 # Document ctest project files
 # and find out which tags and attributes are tested in which prj file and what
 # is not tested at all.
-"$toolsdir/linked-xml-file.py" "$datadir" "$docauxdir"
+"${python[@]}" "$toolsdir/linked-xml-file.py" "$datadir" "$docauxdir"
 
 # Write QA information.
 cat <<"EOF" >"$qafile"
@@ -48,7 +47,7 @@ If it is empty, there are no issues detected.
 
 EOF
 
-if "$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile"; then
+if "${python[@]}" "$check_quality_script" "$docauxdir" "$srcdir" >>"$qafile"; then
     :
 else
     stat="$?"
@@ -71,8 +70,8 @@ cat <<EOF >>"$qafile"
 */
 EOF
 
-"$toolsdir/extract-media-properties-from-ctests.py" "$datadir" "$docauxdir"
+"${python[@]}" "$toolsdir/extract-media-properties-from-ctests.py" "$datadir" "$docauxdir"
 
 # Finish parameter documentation dox files by appending auxiliary information,
 # e.g., associated ctests, data type, etc.
-"$toolsdir/append-xml-tags.py" prj "$datadir" "$docauxdir"
+"${python[@]}" "$toolsdir/append-xml-tags.py" prj "$datadir" "$docauxdir"

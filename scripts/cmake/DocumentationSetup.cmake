@@ -113,10 +113,9 @@ set(DOXYGEN_HTML_EXTRA_STYLESHEET
 
 doxygen_add_docs(doc ${PROJECT_SOURCE_DIR}/ ${PROJECT_BINARY_DIR}/DocAux/dox)
 
-if(BASH_TOOL_PATH AND Python_EXECUTABLE)
+set(_doc_use_external_tools FALSE)
+if(BASH_TOOL_PATH AND UV_TOOL_PATH)
     set(_doc_use_external_tools TRUE)
-else()
-    set(_doc_use_external_tools FALSE)
 endif()
 # TODO that will always transform all of the input files no matter if they
 # changed maybe this behaviour can be changed to on-demand processing
