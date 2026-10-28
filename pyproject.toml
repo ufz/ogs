@@ -9,7 +9,7 @@ description = "OpenGeoSys Python wheel"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
 authors = [{ email = "info@opengeosys.org" }, { name = "OpenGeoSys Community" }]
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = ["pandas"]
 
 [project.urls]
@@ -82,7 +82,7 @@ markers = [
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = ["cp3{10,11,12,13,14}-*"]
+build = ["cp3{11,12,13,14}-*"]
 skip = ["*musllinux*"]
 # revert to dev-all when ogstools is available for 3.14
 test-groups = "dev"
