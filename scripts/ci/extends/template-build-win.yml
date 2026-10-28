@@ -29,8 +29,6 @@
         echo "######################## $(Get-Date) ########################"
         $env:CTEST_BINARY_DIRECTORY = $build_directory_full
         $env:CTEST_GROUP = $ctest_group
-        if ($env:CI_PIPELINE_SOURCE -eq "pipeline") { $env:CTEST_SUBMIT = "false" }
-        else { $env:CTEST_SUBMIT = "true" }
         $env:CTEST_DASHBOARD_PHASE = "configure"
         ctest -S scripts/ci/ctest-dashboard.cmake -VV | Tee-Object -FilePath $log_file
         if ($LASTEXITCODE -ne 0) {
@@ -85,8 +83,6 @@
         $env:CTEST_BINARY_DIRECTORY = $build_directory_full
         $env:CTEST_GROUP = $ctest_group
         $env:CTEST_DASHBOARD_PHASE = "test"
-        if ($env:CI_PIPELINE_SOURCE -eq "pipeline") { $env:CTEST_SUBMIT = "false" }
-        else { $env:CTEST_SUBMIT = "true" }
         if (-Not $env:CTEST_TIMEOUT) {
           if ($env:BUILD_CTEST_LARGE -eq "true") { $env:CTEST_TIMEOUT = "90" }
           else { $env:CTEST_TIMEOUT = "60" }

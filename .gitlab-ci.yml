@@ -30,6 +30,7 @@ workflow:
     - if: $CI_PIPELINE_SOURCE == "pipeline"
       variables:
         PIPELINE_NAME: "child pipeline"
+        CTEST_SUBMIT: "false"
     - if: '$CI_MERGE_REQUEST_IID == null && $CI_PROJECT_PATH != "ogs/ogs"'
       when: never
     - if: "$CI_MERGE_REQUEST_LABELS =~ /.*(workflow::paused|ci::skip).*/"
