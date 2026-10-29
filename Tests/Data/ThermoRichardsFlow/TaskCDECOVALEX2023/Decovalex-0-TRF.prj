@@ -873,10 +873,9 @@
             </eigen>
             <petsc>
                 <parameters>
-                   -ksp_diagonal_scale -ksp_diagonal_scale_fix
                    -ksp_type gmres
-                   -ksp_gmres_restart 1000 -pc_type none
-                   -ksp_rtol 1.e-15 -ksp_atol 1.e-16
+                   -ksp_gmres_restart 1000 -pc_type ilu -pc_factor_shift_type inblocks
+                   -ksp_rtol 1.e-12 -ksp_atol 1.e-16
                    -ksp_max_it 4000
                 </parameters>
             </petsc>
