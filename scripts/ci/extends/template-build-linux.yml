@@ -57,7 +57,6 @@
         export CMAKE_ARGS
         export CTEST_BINARY_DIRECTORY="$build_dir_full"
         export CTEST_GROUP="$ctest_group"
-        if [ "${CI_PIPELINE_SOURCE}" = "pipeline" ]; then export CTEST_SUBMIT=false; else export CTEST_SUBMIT=true; fi
         export CTEST_DASHBOARD_PHASE=configure
         ctest -S scripts/ci/ctest-dashboard.cmake -VV > >(tee "$log_file")
       else
@@ -118,10 +117,6 @@
             ctest_timeout="$CTEST_TIMEOUT"
           fi
           export CTEST_TIMEOUT="$ctest_timeout"
-
-          # Don't submit on multi-project pipelines, e.g. triggered from
-          # ogstools, because they run only a subset of benchmarks.
-          if [ "${CI_PIPELINE_SOURCE}" = "pipeline" ]; then export CTEST_SUBMIT=false; else export CTEST_SUBMIT=true; fi
 
           if [[ "$CI_MERGE_REQUEST_LABELS" =~ .*unit_tests.* ]]; then
             echo "Skipping ctests because of unit_tests-label."

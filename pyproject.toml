@@ -9,8 +9,8 @@ description = "OpenGeoSys Python wheel"
 readme = "README.md"
 license = { file = "LICENSE.txt" }
 authors = [{ email = "info@opengeosys.org" }, { name = "OpenGeoSys Community" }]
-requires-python = ">=3.10"
-dependencies = ["pandas"]
+requires-python = ">=3.11"
+dependencies = []
 
 [project.urls]
 homepage = "https://opengeosys.org"
@@ -19,13 +19,14 @@ repository = "https://gitlab.opengeosys.org/ogs/ogs"
 changelog = "https://gitlab.opengeosys.org/ogs/ogs/-/blob/master/CHANGELOG.md"
 
 [dependency-groups]
-dev = ["pytest", "numpy", "lxml", "typing_extensions"]
+dev = ["pytest", "numpy", "lxml", "typing_extensions", "pandas"]
 dev-all = [
   { include-group = "dev" },
   # Use no-X11 version on Linux:
   "gmsh==4.13.1.dev1; platform_system == 'Linux'",
   "gmsh>=4.12.0; platform_system != 'Linux'",
   "ogstools",
+  "glaciationBCs @ git+https://github.com/cbsilver/glaciationBCs.git@1a7feb2ce1e019e242fecd8d94d8633474042e97",
 ]
 
 [tool.uv]
@@ -82,10 +83,9 @@ markers = [
 
 [tool.cibuildwheel]
 archs = "auto64"
-build = ["cp3{10,11,12,13,14}-*"]
+build = ["cp3{11,12,13,14}-*"]
 skip = ["*musllinux*"]
-# revert to dev-all when ogstools is available for 3.14
-test-groups = "dev"
+test-groups = "dev-all"
 test-command = "pytest {project}/Tests/Python"
 build-verbosity = 1
 build-frontend = "build[uv]"

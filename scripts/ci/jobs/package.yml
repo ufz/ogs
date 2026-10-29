@@ -4,12 +4,9 @@ aggregate ctest logs:
   script:
     - |
       out_root=build/log_summary
-      python -m venv .venv_custom_job
-      . .venv_custom_job/bin/activate
-      pip install pandas
       mkdir -p build/log_summary
       set -x
-      Applications/Python/ogs/dev/ogs_log_summary.py --snippet-out --out "$out_root" -v build/*/logs &>"$out_root/ogs_log_summary.txt"
+      uv run --no-project --with pandas Applications/Python/ogs/dev/ogs_log_summary.py --snippet-out --out "$out_root" -v build/*/logs &>"$out_root/ogs_log_summary.txt"
       #
       # summarize failed ctests
       #
