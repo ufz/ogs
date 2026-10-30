@@ -52,12 +52,12 @@ In this example, we see that the densities can be arbitrary
  non-zero values. The values of the required material parameters are given in
  the following table:
 
-| Parameter |Value  |Unit |
-|---|---|---|
-| Young's modulus  | $3\cdot 10^4$ |Pa   |
-| Poisson's ratio  | $0.2$  | -  |
-| Permeability  |$10^{-10}$  | $\text{m}^2$  |
-| Viscosity | $10^{-3}$ |Pa s|
+| Parameter        | Value         | Unit         |
+| ---------------- | ------------- | ------------ |
+| Young's modulus  | $3\cdot 10^4$ | Pa           |
+| Poisson's ratio  | $0.2$         | -            |
+| Permeability     | $10^{-10}$    | $\text{m}^2$ |
+| Viscosity        | $10^{-3}$     | Pa s         |
 
 The mechanical load on the top boundary is 1000 Pa, i.e. $\sigma_0 = -1000$ Pa.
 
