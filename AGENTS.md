@@ -45,3 +45,18 @@ Every process must have:
 
 - Doxygen C++ documentation, `doc`-target
 - Hugo-based documentation web site, `web`-target, `preview-web`-target for local preview
+
+## Commit messages
+
+Conventional commits: `type(scope): subject` — imperative, lower-case subject, no trailing period; body explains *why*.
+
+**Types**: `feat`, `fix`, `refactor`, `perf`, `test`, `docs`, `build`, `ci`, `style` (formatting only), `chore`.
+
+**Scope**: library or process abbreviation; sub-paths with `/` (`NL/TimeStepping`, `MeL/IO`, `T/THM`); several scopes with `,`. The list below is not exhaustive; extend it when needed.
+
+- Libraries: `BL` BaseLib, `MaL` MathLib, `NL` NumLib, `GL` GeoLib, `MeL` MeshLib, `MGTL` MeshGeoToolsLib, `MTL` MeshToolsLib, `MatL` MaterialLib, `MPL` MaterialLib/MPL, `ParL` ParameterLib, `CL` ChemistryLib, `PL` ProcessLib, `AppL` ApplicationsLib, `App` Applications (`App/U` Utils, `App/DE` DataExplorer, `App/IO`), `T` Tests. Not `ML` (MeshLib or MathLib) nor `HC` (HeatConduction or ComponentTransport).
+- Processes: `LF` LiquidFlow, `HT`, `CT` ComponentTransport, `RCT` RichardsComponentTransport, `RF` RichardsFlow, `RM` RichardsMechanics, `TRF` ThermoRichardsFlow, `TRM` ThermoRichardsMechanics, `SD` SmallDeformation, `LD` LargeDeformation, `HM`, `TM` ThermoMechanics, `THM`, `TH2M`, `LIE`, `BHE` HeatTransportBHE, `T2PF` TwoPhaseFlowWithPP, `TH2PP` ThermalTwoPhaseFlowWithPP, `PhF` PhaseField, `HMPhF` HMPhaseField, `SSD` SteadyStateDiffusion, `HeatConduction`, `WellboreSimulator`.
+- ProcessLib parts: `PL/BC`, `PL/ST`, `PL/DS` DeactivatedSubdomain, `PL/Output`, `PL/TimeLoop`.
+- Other: `CTest` test registration, `nb` notebooks, `py` Python, `web`, `doc` Documentation/ProjectFile (prj docs), `cmake`, `scr` scripts, `guix`, `pre-commit`, `agents` AGENTS.md and agent instructions, `wheel` Python wheels.
+
+Examples: `fix(THM): ...`, `refactor(NL/DOF): ...`, `test(T/TRM): ...`.
