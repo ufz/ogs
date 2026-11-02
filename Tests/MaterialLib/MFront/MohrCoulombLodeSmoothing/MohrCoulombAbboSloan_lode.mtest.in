@@ -1,0 +1,95 @@
+// SPDX-FileCopyrightText: Copyright (c) OpenGeoSys Community (opengeosys.org)
+// SPDX-License-Identifier: BSD-3-Clause
+
+@Description{
+A manufactured backward-Euler return at a prescribed Lode angle.
+The reference polynomial is expressed about the transition in x = sin(3 theta),
+or about the point itself for a Lode angle inside the transition angle.
+Its value, slope and curvature match cos(theta) - sin(angle)*sin(theta)/sqrt(3),
+so the reference stress pins the C2 continuation of the inner branch.
+Without the sign factor of the Lode angle the smoothed branch keeps that value
+but not its curvature, and the smoothed cases with a negative Lode angle miss
+the reference; the positive and the inner cases are controls that pass either
+way. An elastic case loads just inside the yield surface, between it and the
+smaller surface of the wrong curvature, so it also checks the elastic predictor. Isotropic elasticity and unit Hill factors allow all behaviours to use the
+same independent reference.
+};
+@ModellingHypothesis 'Tridimensional';
+@Behaviour<generic> '@_ogs_mfront_behaviour_lib@' '@lode_behaviour@';
+@MaximumNumberOfSubSteps 1;
+@ExternalStateVariable 'Temperature' 293.15;
+
+@Real 'pi' 3.141592653589793;
+@Real 'rad' 'pi/180';
+// Elastic and strength parameters, which also configure the properties below.
+@Real 'E' 150e3;
+@Real 'nu' 0.3;
+@Real 'c' 30;
+@Real 'st' 10;
+@Real 'phi_deg' 30;
+@Real 'psi_deg' 10;
+@Real 'transition_deg' @_lode_transition_angle@;
+@Real 'phi' 'phi_deg*rad';
+@Real 'psi' 'psi_deg*rad';
+@Real 'transition' 'transition_deg*rad';
+@Real 'theta' '@_lode_angle@*rad';
+// For an inner point, expand at the point itself: x-x0 = 0.
+@Real 'theta0' '@_lode_sign@*min(abs(theta),transition)';
+@Real 'x0' 'sin(3*theta0)';
+@Real 'dx0' '3*cos(3*theta0)';
+@Real 'dx' 'sin(3*theta)-x0';
+
+// Independent C2 interpolation conditions in x, for the yield criterion.
+@Real 'kf0' 'cos(theta0)-sin(phi)*sin(theta0)/sqrt(3)';
+@Real 'kf1' '(-sin(theta0)-sin(phi)*cos(theta0)/sqrt(3))/dx0';
+@Real 'kf2' '(-kf0+9*x0*kf1)/(dx0*dx0)';
+@Real 'kf' 'kf0+kf1*dx+kf2*dx*dx/2';
+// The same construction for the non-associated plastic potential.
+@Real 'kg0' 'cos(theta0)-sin(psi)*sin(theta0)/sqrt(3)';
+@Real 'kg1' '(-sin(theta0)-sin(psi)*cos(theta0)/sqrt(3))/dx0';
+@Real 'kg2' '(-kg0+9*x0*kg1)/(dx0*dx0)';
+@Real 'kg' 'kg0+kg1*dx+kg2*dx*dx/2';
+@Real 'dkg' '(kg1+kg2*dx)*3*cos(3*theta)';
+
+// Target stress on the yield surface scaled by radius_factor, with mean stress p
+// and sqrt(J2) = r.
+@Real 'p' -10;
+@Real 'radius_factor' '@_lode_radius_factor@';
+@Real 'r' 'radius_factor*sqrt((c*cos(phi)-p*sin(phi))**2-(st*sin(phi))**2)/kf';
+@Real 'ag' 'c/tan(psi)-c/tan(phi)+st';
+@Real 'rootg' 'sqrt((r*kg)**2+(ag*sin(psi))**2)';
+@Real 'd1' '2*sin(theta+2*pi/3)/sqrt(3)';
+@Real 'd2' '2*sin(theta)/sqrt(3)';
+@Real 'd3' '2*sin(theta-2*pi/3)/sqrt(3)';
+@Real 'dp1' '2*cos(theta+2*pi/3)/sqrt(3)';
+@Real 'dp2' '2*cos(theta)/sqrt(3)';
+@Real 'dp3' '2*cos(theta-2*pi/3)/sqrt(3)';
+@Real 's1' 'p+r*d1';
+@Real 's2' 'p+r*d2';
+@Real 's3' 'p+r*d3';
+// grad(G) = sin(psi)/3 + r*(KG^2*d + KG*KGprime*dprime)/(2*rootg).
+@Real 'n1' 'sin(psi)/3+r*(kg*kg*d1+kg*dkg*dp1)/(2*rootg)';
+@Real 'n2' 'sin(psi)/3+r*(kg*kg*d2+kg*dkg*dp2)/(2*rootg)';
+@Real 'n3' 'sin(psi)/3+r*(kg*kg*d3+kg*dkg*dp3)/(2*rootg)';
+@Real 'lambda' @_lode_lambda@;
+// epsilon = elastic compliance * target stress + lambda * grad(G).
+@ImposedStrain 'EXX' {0:0, 1:'((1+nu)*s1-3*nu*p)/E+lambda*n1'};
+@ImposedStrain 'EYY' {0:0, 1:'((1+nu)*s2-3*nu*p)/E+lambda*n2'};
+@ImposedStrain 'EZZ' {0:0, 1:'((1+nu)*s3-3*nu*p)/E+lambda*n3'};
+@ImposedStrain 'EXY' 0;
+@ImposedStrain 'EXZ' 0;
+@ImposedStrain 'EYZ' 0;
+@Times {0, 1};
+
+@_lode_elastic_properties@
+@MaterialProperty<function> 'Cohesion' 'c';
+@MaterialProperty<function> 'FrictionAngle' 'phi_deg';
+@MaterialProperty<function> 'DilatancyAngle' 'psi_deg';
+@MaterialProperty<function> 'TransitionAngle' 'transition_deg';
+@MaterialProperty<function> 'TensionCutOffParameter' 'st';
+@_lode_hill_properties@
+@_lode_weak_plane_properties@
+
+@Test<function> {'SXX':'s1', 'SYY':'s2', 'SZZ':'s3',
+                 'SXY':'0', 'SXZ':'0', 'SYZ':'0'} 2e-7;
+@Test<function> '@_lode_plastic_strain_variable@' 'lambda' 2e-11;
