@@ -62,7 +62,7 @@ set(_copied_mfront_lib
 add_custom_command(
     OUTPUT ${_copied_mfront_lib}
     COMMAND
-        ${CMAKE_COMMAND} -E env PATH="${TFELHOME}/bin:$ENV{PATH}"
+        ${CMAKE_COMMAND} -E env "PATH=${TFELHOME}/bin:$ENV{PATH}"
         CMAKE_POLICY_VERSION_MINIMUM="3.10" -- mfront --interface=generic
         --obuild=level0 ${_mfront_behaviour_files} # TODO: check for debug?
         --generator=cmake
