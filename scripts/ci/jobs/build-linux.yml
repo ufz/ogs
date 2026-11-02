@@ -90,16 +90,36 @@ build in devcontainer:
   extends:
     - .rules-master-manual
   stage: build
-  tags: [shell, envinf]
+  tags: [shell, envinf, podman]
   needs: [meta]
   script:
     - rm -rf ../build/devcontainer-release-all
-    - devcontainer up --workspace-folder .
-    - devcontainer exec --workspace-folder . cmake --preset release-all
-    - devcontainer exec --workspace-folder . cmake --build --preset release-all
-    - devcontainer exec --workspace-folder . cmake --build --preset release-all -t tests
+    # Podman feature builds can leave /tmp unwritable by _apt. Use /var/tmp
+    # during the build: https://github.com/devcontainers/features/issues/1480
+    - |
+      python3 - <<'PYCONFIG'
+      import json
+      import os
+      from pathlib import Path
+
+      config = json.loads(Path(".devcontainer.json").read_text())
+      job_id = os.environ["CI_JOB_ID"]
+      config_dir = Path(f".ci-devcontainer-{job_id}")
+      config_dir.mkdir(exist_ok=True)
+      dockerfile = config_dir / "Dockerfile"
+      dockerfile.write_text(f"FROM {config.pop('image')}\nENV TMPDIR=/var/tmp\n")
+      config["build"] = {"dockerfile": dockerfile.name}
+      config.setdefault("runArgs", []).append("--tmpfs=/tmp:rw,exec,nosuid,nodev,mode=1777")
+      (config_dir / "devcontainer.json").write_text(json.dumps(config))
+      PYCONFIG
+    - devcontainer up --docker-path podman --workspace-folder . --config ".ci-devcontainer-${CI_JOB_ID}/devcontainer.json"
+    - devcontainer exec --docker-path podman --workspace-folder . --config ".ci-devcontainer-${CI_JOB_ID}/devcontainer.json" cmake --preset release-all
+    - devcontainer exec --docker-path podman --workspace-folder . --config ".ci-devcontainer-${CI_JOB_ID}/devcontainer.json" cmake --build --preset release-all
+    - devcontainer exec --docker-path podman --workspace-folder . --config ".ci-devcontainer-${CI_JOB_ID}/devcontainer.json" cmake --build --preset release-all -t tests
   after_script:
-    - docker ps --filter "label=devcontainer.local_folder=$(pwd)" --quiet | xargs -r -I {} sh -c ' docker stop {} && docker rm {}'
+    - podman ps --filter "label=devcontainer.local_folder=$(pwd)" --quiet | xargs -r -I {} sh -c ' podman stop {} && podman rm {}'
+    - rm -f ".ci-devcontainer-${CI_JOB_ID}/devcontainer.json" ".ci-devcontainer-${CI_JOB_ID}/Dockerfile"
+    - rmdir ".ci-devcontainer-${CI_JOB_ID}" 2>/dev/null || true
 
 build linux clang:
   stage: build

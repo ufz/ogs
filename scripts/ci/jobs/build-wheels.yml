@@ -16,8 +16,9 @@
       - wheelhouse/
 
 build wheels linux:
-  tags: [envinf, shell, fast]
+  tags: [envinf, shell, fast, podman]
   variables:
+    CIBW_CONTAINER_ENGINE: podman
     CPM_SOURCE_CACHE: /host/cibuildwheel_cache/cpm
     CCACHE_DIR: /host/cibuildwheel_cache/ccache
     CCACHE_MAXSIZE: 15G
