@@ -158,11 +158,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>T0</name>
-            <type>Constant</type>
-            <value>300</value>
-        </parameter>
-        <parameter>
             <name>sigma0</name>
             <type>Function</type>
             <expression>0.3* 0.9* 2000 * 9.81 * y/0.7</expression>
