@@ -3,7 +3,7 @@
 import pytest
 from FindFeatures import check_tag_text
 from lxml import etree
-from utils import apply_diff_to_base_xml
+from utils import apply_diff_to_base_xml, process_diff_file
 
 
 @pytest.fixture
@@ -286,3 +286,41 @@ def test_check_tag_text_no_match():
     xml = etree.fromstring("<a><b>Y</b><b/></a>").getroottree()
 
     assert not check_tag_text(xml, "//b", "X").has_feature
+
+
+def test_process_diff_file_chained(tmp_path):
+    (tmp_path / "base.prj").write_text("<root><a>1</a></root>")
+    (tmp_path / "first.xml").write_text(
+        '<OpenGeoSysProjectDiff base_file="base.prj">'
+        '<add sel="/*"><b>2</b></add></OpenGeoSysProjectDiff>'
+    )
+    (tmp_path / "second.xml").write_text(
+        '<OpenGeoSysProjectDiff base_file="first.xml">'
+        '<replace sel="/*/b/text()">3</replace></OpenGeoSysProjectDiff>'
+    )
+    (tmp_path / "third.xml").write_text(
+        '<OpenGeoSysProjectDiff base_file="second.xml">'
+        '<add sel="/*"><c>4</c></add></OpenGeoSysProjectDiff>'
+    )
+    xml = process_diff_file(tmp_path / "second.xml", root_dir=tmp_path)
+    assert xml.xpath("/*/a/text()") == ["1"]
+    assert xml.xpath("/*/b/text()") == ["3"]
+    assert xml.xpath("/*/c") == []
+
+    xml = process_diff_file(tmp_path / "third.xml", root_dir=tmp_path)
+    assert xml.xpath("/*/a/text()") == ["1"]
+    assert xml.xpath("/*/b/text()") == ["3"]
+    assert xml.xpath("/*/c/text()") == ["4"]
+
+
+def test_process_diff_file_cyclic(tmp_path):
+    (tmp_path / "a.xml").write_text(
+        '<OpenGeoSysProjectDiff base_file="b.xml">'
+        '<add sel="/*"><b>2</b></add></OpenGeoSysProjectDiff>'
+    )
+    (tmp_path / "b.xml").write_text(
+        '<OpenGeoSysProjectDiff base_file="a.xml">'
+        '<add sel="/*"><c>3</c></add></OpenGeoSysProjectDiff>'
+    )
+    with pytest.warns(UserWarning, match="Cyclic base_file chain"):
+        assert process_diff_file(tmp_path / "a.xml", root_dir=tmp_path) is None
