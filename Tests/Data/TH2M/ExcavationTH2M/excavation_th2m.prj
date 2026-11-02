@@ -61,7 +61,7 @@
                     <norm_type>NORM2</norm_type>
                     <!-- <norm_type>INFINITY_N</norm_type> -->
                     <abstols>1.e-06 1.e-06 1.e-04 1.e-05 1.e-05</abstols>
-                    <reltols>1.e-06 2.e-05 0.0    1.e-07 1.e-07</reltols>
+                    <reltols>1.e-08 2.e-05 0.0    1.e-07 1.e-07</reltols>
                 </convergence_criterion>
                 <time_discretization>
                     <type>BackwardEuler</type>

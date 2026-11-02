@@ -119,7 +119,7 @@ a.setEntryName("TensionCutOffParameter");
         const auto sign = min(
             max(lode_el / max(abs(lode_el), local_zero_tolerance), -1.), 1.);
 
-        const auto term1 = cos_lodeT - isqrt3 * sin_phi * sin_lodeT;
+        const auto term1 = cos_lodeT - sign * isqrt3 * sin_phi * sin_lodeT;
         const auto term2 = sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT;
         const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
 
@@ -173,7 +173,7 @@ a.setEntryName("TensionCutOffParameter");
         {
             const auto sign =
                 min(max(lode / max(abs(lode), local_zero_tolerance), -1.), 1.);
-            const auto term1 = cos_lodeT - isqrt3 * sin_phi * sin_lodeT;
+            const auto term1 = cos_lodeT - sign * isqrt3 * sin_phi * sin_lodeT;
             const auto term2 = sign * sin_lodeT + isqrt3 * sin_phi * cos_lodeT;
             const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
 
@@ -202,7 +202,7 @@ a.setEntryName("TensionCutOffParameter");
         {
             const auto sign =
                 min(max(lode / max(fabs(lode), local_zero_tolerance), -1.), 1.);
-            const auto term1 = cos_lodeT - isqrt3 * sin_psi * sin_lodeT;
+            const auto term1 = cos_lodeT - sign * isqrt3 * sin_psi * sin_lodeT;
             const auto term2 = sign * sin_lodeT + isqrt3 * sin_psi * cos_lodeT;
             const auto term3 = 18. * cos_3_lodeT * cos_3_lodeT * cos_3_lodeT;
 
