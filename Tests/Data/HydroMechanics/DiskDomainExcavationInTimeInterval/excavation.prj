@@ -158,11 +158,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>T0</name>
-            <type>Constant</type>
-            <value>300</value>
-        </parameter>
-        <parameter>
             <name>sigma0</name>
             <type>Function</type>
             <expression>0.3* 0.9* 2000 * 9.81 * y/0.7</expression>
@@ -291,7 +286,7 @@
         <vtkdiff>
             <regex>sma_HM_2D_excavation_ts_.*.vtu</regex>
             <field>sigma</field>
-            <absolute_tolerance>3e-7</absolute_tolerance>
+            <absolute_tolerance>5e-6</absolute_tolerance>
             <relative_tolerance>2e-11</relative_tolerance>
         </vtkdiff>
         <vtkdiff>

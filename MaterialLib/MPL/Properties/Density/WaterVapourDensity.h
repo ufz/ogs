@@ -27,12 +27,12 @@ class Phase;
  *     \rho_{vS}=10^{-3}\, \exp({19.819-4975.9/T}).
  *   \f]
  * The specific gas constant for water vapour
- * \f$R=461.6\,\text{J}\,\text{kg}^{-1}\text{K}^{-1}\f$,
+ * \f$R=461.5\,\text{J}\,\text{kg}^{-1}\text{K}^{-1}\f$,
  * the value is calculated by \f$R_g/M_w\f$ with
- * \f$R_g= 8.3144621\,\text{J}\,\text{mol}^{-1}\text{K}^{-1}\f$,
- *  the ideal gas constant, and
- * \f$M_w=0.018016\,\text{kg}\,\text{mol}^{-1}\f$,
- *  the molar mass of water.
+ * \f$R_g= 8.31446261815324\,\text{J}\,\text{mol}^{-1}\text{K}^{-1}\f$,
+ *  \c MaterialLib::PhysicalConstant::IdealGasConstant, and
+ * \f$M_w=0.018015268\,\text{kg}\,\text{mol}^{-1}\f$,
+ *  \c MaterialLib::PhysicalConstant::MolarMass::Water.
  *
  *  The formula of this density model is presented on page 20 of
  *  \cite kimball1976comparison.
