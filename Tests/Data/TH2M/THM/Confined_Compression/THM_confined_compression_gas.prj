@@ -388,15 +388,10 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>
             </eigen>
-            <petsc>
-                <prefix>sd</prefix>
-                <parameters>-sd_ksp_type cg -sd_pc_type bjacobi -sd_ksp_rtol 1e-16 -sd_ksp_max_it 10000</parameters>
-            </petsc>
         </linear_solver>
     </linear_solvers>
     <test_definition>

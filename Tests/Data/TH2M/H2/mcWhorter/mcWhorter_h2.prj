@@ -446,23 +446,10 @@
     <linear_solvers>
         <linear_solver>
             <name>general_linear_solver</name>
-            <lis>-i bicgstab -p ilu -tol 1e-16 -maxiter 10000</lis>
             <eigen>
                 <solver_type>SparseLU</solver_type>
                 <scaling>true</scaling>
             </eigen>
-            <petsc>
-                <prefix>sd</prefix>
-                <parameters>
-                    -ksp_diagonal_scale -ksp_diagonal_scale_fix
-                    -ksp_type gmres
-                    -ksp_gmres_restart 1000
-                    -ksp_gmres_modifiedgramschmidt
-                    -pc_type none
-                    -ksp_rtol 1.e-8 -ksp_atol 1.e-8
-                    -ksp_max_it 4000
-                </parameters>
-            </petsc>
         </linear_solver>
     </linear_solvers>
     <test_definition>

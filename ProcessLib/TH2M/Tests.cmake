@@ -77,7 +77,8 @@ endif()
 if(OGS_USE_MPI)
     OgsTest(PROJECTFILE TH2M/THM/sphere/point_heatsource_mpi.xml WRAPPER mpirun
                                                                          -np 3
-            RUNTIME 58
+            RUNTIME 5
+            FEATURES petsc-mumps
     )
     OgsTest(PROJECTFILE TH2M/TH2/heatpipe/PETSc/heat_pipe_strict.prj
             WRAPPER mpirun -np 3 RUNTIME 15
