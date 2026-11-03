@@ -24,6 +24,23 @@ template <typename T>
 class TemplateClass
 {
 };
+
+struct NonPolymorphicBase
+{
+};
+
+struct NonPolymorphicDerived : NonPolymorphicBase
+{
+};
+
+struct PolymorphicBase
+{
+    virtual ~PolymorphicBase() = default;
+};
+
+struct PolymorphicDerived : PolymorphicBase
+{
+};
 }  // namespace
 
 TEST(BaseLibDemangleTypeInfo, Double)
@@ -214,4 +231,34 @@ TEST(BaseLibDemangleTypeInfo, FunctionPointer)
     EXPECT_TRUE(result.contains("*")) << result;
     EXPECT_TRUE(result.contains("double")) << result;
     EXPECT_TRUE(result.contains("int")) << result;
+}
+
+TEST(BaseLibDemangleTypeInfo, ValueOverloadStaticType)
+{
+    int const i = 0;
+    EXPECT_EQ(BaseLib::typeToString(i), BaseLib::typeToString<int>());
+}
+
+TEST(BaseLibDemangleTypeInfo, ValueOverloadDynamicType)
+{
+    PolymorphicDerived derived;
+    PolymorphicBase const& base = derived;
+    auto const result = BaseLib::typeToString(base);
+    EXPECT_TRUE(result.contains("PolymorphicDerived")) << result;
+}
+
+TEST(BaseLibDemangleTypeInfo, ValueOverloadNonPolymorphicClass)
+{
+    NonPolymorphicDerived derived;
+    NonPolymorphicBase const& base = derived;
+    EXPECT_EQ(BaseLib::typeToString(base),
+              BaseLib::typeToString<NonPolymorphicBase>());
+}
+
+TEST(BaseLibDemangleTypeInfo, ValueOverloadRvalue)
+{
+    EXPECT_EQ(BaseLib::typeToString(NonPolymorphicDerived{}),
+              BaseLib::typeToString<NonPolymorphicDerived>());
+    EXPECT_EQ(BaseLib::typeToString(PolymorphicDerived{}),
+              BaseLib::typeToString<PolymorphicDerived>());
 }
