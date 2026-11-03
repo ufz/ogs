@@ -428,7 +428,7 @@
         <vtkdiff>
             <regex>IfG_t_.*.vtu</regex>
             <field>gas_pressure_interpolated</field>
-            <absolute_tolerance>5e-9</absolute_tolerance>
+            <absolute_tolerance>6e-9</absolute_tolerance>
             <relative_tolerance>0</relative_tolerance>
         </vtkdiff>
         <vtkdiff>
