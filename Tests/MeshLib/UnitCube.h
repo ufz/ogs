@@ -104,6 +104,46 @@ inline void checkVolume(MeshLib::Mesh const& mesh)
     }
 }
 
+// Since VTK 9.7, vtkCellTypeSource generates wedges with the opposite node
+// order of what VtkMeshConverter expects, i.e., inverted prisms (negative
+// Jacobian determinant). Swap the triangle nodes of such prisms; prisms with
+// the expected node order are left untouched, so this works with any VTK
+// version.
+inline void fixPrismNodeOrder(MeshLib::Mesh& mesh)
+{
+    for (auto* const e : mesh.getElements())
+    {
+        if (e->getCellType() != MeshLib::CellType::PRISM6)
+        {
+            continue;
+        }
+
+        auto const& n0 = *e->getNode(0);
+        auto const& n1 = *e->getNode(1);
+        auto const& n2 = *e->getNode(2);
+        auto const& n3 = *e->getNode(3);
+
+        // Triple product (n1 - n0) x (n2 - n0) . (n3 - n0).
+        double const a[3] = {n1[0] - n0[0], n1[1] - n0[1], n1[2] - n0[2]};
+        double const b[3] = {n2[0] - n0[0], n2[1] - n0[1], n2[2] - n0[2]};
+        double const c[3] = {n3[0] - n0[0], n3[1] - n0[1], n3[2] - n0[2]};
+        double const triple = (a[1] * b[2] - a[2] * b[1]) * c[0] +
+                              (a[2] * b[0] - a[0] * b[2]) * c[1] +
+                              (a[0] * b[1] - a[1] * b[0]) * c[2];
+        if (triple >= 0)
+        {
+            continue;
+        }
+
+        auto* const node1 = e->getNode(1);
+        auto* const node4 = e->getNode(4);
+        e->setNode(1, e->getNode(2));
+        e->setNode(2, node1);
+        e->setNode(4, e->getNode(5));
+        e->setNode(5, node4);
+    }
+}
+
 // Creates a 1/2/3 dimensional unit cube centered at (0, 0, 0) subdivided into
 // one or more elements of the given MeshElementType.
 template <typename MeshElementType>
@@ -133,6 +173,8 @@ std::unique_ptr<MeshLib::Mesh> createUnitCube()
     std::unique_ptr<MeshLib::Mesh> ogs_grid{
         MeshLib::VtkMeshConverter::convertUnstructuredGrid(vtk_grid,
                                                            "unit_cube")};
+
+    fixPrismNodeOrder(*ogs_grid);
 
     checkCellTypes(*ogs_grid, cell_type);
     checkVolume(*ogs_grid);
