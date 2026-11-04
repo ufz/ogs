@@ -11,10 +11,18 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkXMLUnstructuredGridWriter.h>
 
+#include <cmath>
+#include <limits>
+#include <memory>
+#include <vector>
+
+#include "BaseLib/Error.h"
 #include "MeshLib/Elements/Element.h"
 #include "MeshLib/Elements/TemplateElement.h"
 #include "MeshLib/IO/VtkIO/VtkMeshConverter.h"
 #include "MeshLib/Mesh.h"
+#include "MeshLib/Utils/GetSpaceDimension.h"
+#include "MeshToolsLib/MeshEditing/ReverseNodeOrder.h"
 #include "Tests/Utils.h"
 
 inline VTKCellType toVtk(MeshLib::CellType const cell_type)
@@ -106,42 +114,23 @@ inline void checkVolume(MeshLib::Mesh const& mesh)
 
 // Since VTK 9.7, vtkCellTypeSource generates wedges with the opposite node
 // order of what VtkMeshConverter expects, i.e., inverted prisms (negative
-// Jacobian determinant). Swap the triangle nodes of such prisms; prisms with
-// the expected node order are left untouched, so this works with any VTK
-// version.
+// Jacobian determinant). Reorder the nodes of such prisms; prisms with the
+// expected node order are left untouched, so this works with any VTK version.
+// Other cell types are not passed in, so that a wrong node order of theirs is
+// not silently repaired here.
 inline void fixPrismNodeOrder(MeshLib::Mesh& mesh)
 {
+    std::vector<MeshLib::Element*> prisms;
     for (auto* const e : mesh.getElements())
     {
-        if (e->getCellType() != MeshLib::CellType::PRISM6)
+        if (e->getCellType() == MeshLib::CellType::PRISM6)
         {
-            continue;
+            prisms.push_back(e);
         }
-
-        auto const& n0 = *e->getNode(0);
-        auto const& n1 = *e->getNode(1);
-        auto const& n2 = *e->getNode(2);
-        auto const& n3 = *e->getNode(3);
-
-        // Triple product (n1 - n0) x (n2 - n0) . (n3 - n0).
-        double const a[3] = {n1[0] - n0[0], n1[1] - n0[1], n1[2] - n0[2]};
-        double const b[3] = {n2[0] - n0[0], n2[1] - n0[1], n2[2] - n0[2]};
-        double const c[3] = {n3[0] - n0[0], n3[1] - n0[1], n3[2] - n0[2]};
-        double const triple = (a[1] * b[2] - a[2] * b[1]) * c[0] +
-                              (a[2] * b[0] - a[0] * b[2]) * c[1] +
-                              (a[0] * b[1] - a[1] * b[0]) * c[2];
-        if (triple >= 0)
-        {
-            continue;
-        }
-
-        auto* const node1 = e->getNode(1);
-        auto* const node4 = e->getNode(4);
-        e->setNode(1, e->getNode(2));
-        e->setNode(2, node1);
-        e->setNode(4, e->getNode(5));
-        e->setNode(5, node4);
     }
+    MeshToolsLib::reverseNodeOrder(prisms,
+                                   MeshLib::getSpaceDimension(mesh.getNodes()),
+                                   false /* forced */, true /* volume_check */);
 }
 
 // Creates a 1/2/3 dimensional unit cube centered at (0, 0, 0) subdivided into
