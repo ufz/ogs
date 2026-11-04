@@ -337,15 +337,15 @@ void ConfigTree::checkKeyname(std::string const& key) const
     {
         error("Search for empty key.");
     }
-    else if (key_chars_start.find(key.front()) == std::string::npos)
+    if (key_chars_start.find(key.front()) == std::string::npos)
     {
         error("Key <" + key + "> starts with an illegal character.");
     }
-    else if (key.find_first_not_of(key_chars, 1) != std::string::npos)
+    if (key.find_first_not_of(key_chars, 1) != std::string::npos)
     {
         error("Key <" + key + "> contains illegal characters.");
     }
-    else if (key.find("__") != std::string::npos)
+    if (key.find("__") != std::string::npos)
     {
         // This is illegal because we use parameter names to generate doxygen
         // page names. Thereby "__" acts as a separator character. Choosing
