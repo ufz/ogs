@@ -167,7 +167,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     // Point data arrays
     vtkDataArray* pointDoubleArray =
         output->GetPointData()->GetScalars("PointDoubleProperty");
-    ASSERT_EQ(pointDoubleArray->GetSize(), mesh->getNumberOfNodes());
+    ASSERT_EQ(pointDoubleArray->GetNumberOfValues(), mesh->getNumberOfNodes());
     ASSERT_EQ(pointDoubleArray->GetComponent(0, 0), 1.0);
     double* range = pointDoubleArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
@@ -175,7 +175,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
 
     vtkDataArray* pointIntArray =
         output->GetPointData()->GetScalars("PointIntProperty");
-    ASSERT_EQ(pointIntArray->GetSize(), mesh->getNumberOfNodes());
+    ASSERT_EQ(pointIntArray->GetNumberOfValues(), mesh->getNumberOfNodes());
     ASSERT_EQ(pointIntArray->GetComponent(0, 0), 1.0);
     range = pointIntArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
@@ -183,7 +183,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
 
     vtkDataArray* pointUnsignedArray =
         output->GetPointData()->GetScalars("PointUnsignedProperty");
-    ASSERT_EQ(pointUnsignedArray->GetSize(), mesh->getNumberOfNodes());
+    ASSERT_EQ(pointUnsignedArray->GetNumberOfValues(),
+              mesh->getNumberOfNodes());
     ASSERT_EQ(pointUnsignedArray->GetComponent(0, 0), 1.0);
     range = pointUnsignedArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
@@ -192,7 +193,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     // Cell data arrays
     vtkDataArray* cellDoubleArray =
         output->GetCellData()->GetScalars("CellDoubleProperty");
-    ASSERT_EQ(cellDoubleArray->GetSize(), mesh->getNumberOfElements());
+    ASSERT_EQ(cellDoubleArray->GetNumberOfValues(),
+              mesh->getNumberOfElements());
     ASSERT_EQ(cellDoubleArray->GetComponent(0, 0), 1.0);
     range = cellDoubleArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
@@ -200,7 +202,7 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
 
     vtkDataArray* cellIntArray =
         output->GetCellData()->GetScalars("CellIntProperty");
-    ASSERT_EQ(cellIntArray->GetSize(), mesh->getNumberOfElements());
+    ASSERT_EQ(cellIntArray->GetNumberOfValues(), mesh->getNumberOfElements());
     ASSERT_EQ(cellIntArray->GetComponent(0, 0), 1.0);
     range = cellIntArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
@@ -208,7 +210,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
 
     vtkDataArray* cellUnsignedArray =
         output->GetCellData()->GetScalars("CellUnsignedProperty");
-    ASSERT_EQ(cellUnsignedArray->GetSize(), mesh->getNumberOfElements());
+    ASSERT_EQ(cellUnsignedArray->GetNumberOfValues(),
+              mesh->getNumberOfElements());
     ASSERT_EQ(cellUnsignedArray->GetComponent(0, 0), 1.0);
     range = cellUnsignedArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
@@ -217,7 +220,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
     // Field data arrays
     vtkDataArray* fieldDoubleArray = vtkDataArray::SafeDownCast(
         output->GetFieldData()->GetAbstractArray("FieldDoubleProperty"));
-    ASSERT_EQ(fieldDoubleArray->GetSize(), mesh->getNumberOfElements() * 2);
+    ASSERT_EQ(fieldDoubleArray->GetNumberOfValues(),
+              mesh->getNumberOfElements() * 2);
     ASSERT_EQ(fieldDoubleArray->GetComponent(0, 0), 1.0);
     range = fieldDoubleArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
@@ -225,7 +229,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
 
     vtkDataArray* fieldIntArray = vtkDataArray::SafeDownCast(
         output->GetFieldData()->GetAbstractArray("FieldIntProperty"));
-    ASSERT_EQ(fieldIntArray->GetSize(), mesh->getNumberOfElements() * 2);
+    ASSERT_EQ(fieldIntArray->GetNumberOfValues(),
+              mesh->getNumberOfElements() * 2);
     ASSERT_EQ(fieldIntArray->GetComponent(0, 0), 1.0);
     range = fieldIntArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
@@ -233,7 +238,8 @@ TEST_F(InSituMesh, DISABLED_MappedMeshSourceRoundtrip)
 
     vtkDataArray* fieldUnsignedArray = vtkDataArray::SafeDownCast(
         output->GetFieldData()->GetAbstractArray("FieldUnsignedProperty"));
-    ASSERT_EQ(fieldUnsignedArray->GetSize(), mesh->getNumberOfElements() * 2);
+    ASSERT_EQ(fieldUnsignedArray->GetNumberOfValues(),
+              mesh->getNumberOfElements() * 2);
     ASSERT_EQ(fieldUnsignedArray->GetComponent(0, 0), 1.0);
     range = fieldUnsignedArray->GetRange(0);
     ASSERT_EQ(range[0], 1.0);
