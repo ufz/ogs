@@ -136,20 +136,20 @@ where the element matrices depend on the chosen equation balance type as follows
 
 #### Element mass matrix
 
-|  | Volume balance (default) | Mass balance |
-|---|---|---|
+| | Volume balance (default) | Mass balance |
+| --- | --- | --- |
 | $\mathbf{M}_e$ | $\displaystyle\int_{\Omega^e} \mathbf{N}^T \beta_s \mathbf{N} \, d\Omega$ | $\displaystyle\int_{\Omega^e} \mathbf{N}^T \!\left(\rho_w \beta_s + n_e \frac{\partial \rho_w}{\partial p_w}\right)\! \mathbf{N} \, d\Omega$ |
 
 #### Element conductance matrix
 
-|  | Volume balance (default) | Mass balance |
-|---|---|---|
+| | Volume balance (default) | Mass balance |
+| --- | --- | --- |
 | $\mathbf{K}_e$ | $\displaystyle\int_{\Omega^e} (\nabla \mathbf{N})^T \frac{\mathbf{K_0}}{\mu} (\nabla \mathbf{N}) \, d\Omega$ | $\displaystyle\int_{\Omega^e} (\nabla \mathbf{N})^T \frac{\rho_w \mathbf{K_0}}{\mu} (\nabla \mathbf{N}) \, d\Omega$ |
 
 #### Element load vector
 
-|  | Volume balance (default) | Mass balance |
-|---|---|---|
+| | Volume balance (default) | Mass balance |
+| --- | --- | --- |
 | $\mathbf{b}_e$ | $\displaystyle\int_{\Omega^e} (\nabla \mathbf{N})^T \frac{\mathbf{K_0}}{\mu} \rho_w \mathbf{g} \, d\Omega$ | $\displaystyle\int_{\Omega^e} (\nabla \mathbf{N})^T \frac{\rho_w^2 \mathbf{K_0}}{\mu} \mathbf{g} \, d\Omega$ |
 
 ## OGS project `prj` file
@@ -169,6 +169,26 @@ Liquid Flow process has to be declared in the project file `prj` in the processe
     </secondary_variables>
     <specific_body_force>0.0 0.0</specific_body_force>
 </process>
+```
+
+### Mass lumping
+
+The storage (mass) matrix $\mathbf{M}_e$ can optionally be lumped. This can
+suppress spurious oscillations of the pressure in transient problems, e.g.
+for small time steps. For linear elements the column sums of the local mass
+matrix are put on its diagonal. For higher order elements the column sums can
+be zero or negative (e.g. at the corner nodes of serendipity elements), so the
+HRZ scheme (Hinton, Rock, Zienkiewicz 1976) is used instead: the diagonal of
+$\mathbf{M}_e$ is scaled to preserve the total element storage,
+
+$$
+M^{\mathrm{L}}_{ii} = \frac{M_{ii}}{\sum_k M_{kk}} \sum_{k,l} M_{kl}.
+$$
+
+Mass lumping is disabled by default:
+
+```xml
+<mass_lumping>true</mass_lumping>
 ```
 
 ### Media properties

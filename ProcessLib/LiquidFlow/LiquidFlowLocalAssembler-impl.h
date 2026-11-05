@@ -206,6 +206,29 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
             fluid_density, projected_body_force_vector,
             _process_data.has_gravity);
     }
+
+    if (_process_data.apply_mass_lumping)
+    {
+        if constexpr (ShapeFunction::ORDER < 2)
+        {
+            local_M = local_M.colwise().sum().eval().asDiagonal();
+        }
+        else
+        {
+            // HRZ lumping (Hinton, Rock, Zienkiewicz 1976). Row sums of
+            // higher order elements can be zero or negative (e.g. at the
+            // corner nodes of serendipity elements). Instead, scale the
+            // positive diagonal of the consistent matrix to the total
+            // element mass.
+            auto const diagonal = local_M.diagonal().eval();
+            double const diagonal_sum = diagonal.sum();
+            if (diagonal_sum != 0.0)
+            {
+                local_M =
+                    (local_M.sum() / diagonal_sum * diagonal).asDiagonal();
+            }
+        }
+    }
 }
 
 template <typename ShapeFunction, int GlobalDim>
