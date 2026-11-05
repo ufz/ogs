@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <concepts>
+#include <type_traits>
 
 #include "Algorithm.h"
 #include "DemangleTypeInfo.h"
@@ -263,8 +264,7 @@ void allRanksThrowOrNone([[maybe_unused]] std::exception_ptr const& exception,
                     "An exception was thrown on this MPI rank, but it's not "
                     "derived from {}, but rather of type {}",
                     BaseLib::typeToString<Exception>(),
-                    BaseLib::demangle(
-                        typeid(e).name() /* demangle the runtime type of e */));
+                    BaseLib::typeToString(e));
                 throw;
             }
             catch (...)

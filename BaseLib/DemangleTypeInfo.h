@@ -4,7 +4,6 @@
 #pragma once
 
 #include <string>
-#include <type_traits>
 #include <typeinfo>
 
 namespace BaseLib
@@ -34,10 +33,14 @@ std::string typeToString()
 
 /// Template overload for type deduction from values:
 ///   typeToString(some_value)
-/// This allows demangling without explicit decltype() in the call.
+/// For non-polymorphic types this equals typeToString<decltype(some_value)>()
+/// up to cv-qualifiers and references. For polymorphic types the dynamic type
+/// is returned instead, e.g.
+/// typeToString(*base_ptr) yields the derived type name; base_ptr must not be
+/// null.
 template <typename T>
-std::string typeToString(T&& /* not needed */)
+std::string typeToString(T&& value)
 {
-    return demangle(typeid(std::remove_cvref_t<T>).name());
+    return demangle(typeid(value).name());
 }
 }  // namespace BaseLib
