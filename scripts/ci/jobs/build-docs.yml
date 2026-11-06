@@ -1,7 +1,7 @@
 build docs:
   stage: build
   needs: [meta]
-  tags: [shell, envinf]
+  tags: [shell, envinf, podman]
   timeout: 30 minutes
   variables:
     DOX_WARNINGS_THRESHOLD: 8
@@ -22,8 +22,8 @@ build docs:
     # cpp-dependencies
     - NUM_CYCLES=`cpp-dependencies --stats|grep cycles|cut -d " " -f 2`
     - echo "num_cycles $NUM_CYCLES" > metrics.txt
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
-    - docker run --rm -v $PWD/..:/work registry.opengeosys.org/ogs/ogs/cpp-dependencies cpp-dependencies --dir ogs --graph build/docs/cpp-dependencies.dot
+    - echo "$CI_REGISTRY_PASSWORD" | podman login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
+    - podman run --rm -v $PWD/..:/work registry.opengeosys.org/ogs/ogs/cpp-dependencies cpp-dependencies --dir ogs --graph build/docs/cpp-dependencies.dot
     - dot -Tsvg build/cpp-dependencies.dot -o build/cpp-dependencies.svg
     # lizard, default code complexity number (15), function line length 100, max arguments 10
     - uvx --with jinja2 lizard==1.19.0 -l cpp -w -t 1 --length 100 --arguments 10 > lizard.txt || true
