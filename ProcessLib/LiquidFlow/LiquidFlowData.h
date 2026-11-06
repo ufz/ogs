@@ -22,32 +22,30 @@ struct LiquidFlowData final
     /// the Neumann boundary condition is m/s. Otherwise, the unit of the
     /// Neumann boundary condition is kg/m^3*m/s = kg/m^2/s. By default, it is
     /// set to `volume`.
-    bool const is_volume_balance_equation_type = true;
+    bool const is_volume_balance_equation_type;
 
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
 
     /// A vector of the rotation matrices for all elements.
     std::vector<Eigen::MatrixXd> const element_rotation_matrices;
 
-    int const mesh_space_dimension = 0;
+    int const mesh_space_dimension;
 
     Eigen::VectorXd const specific_body_force;
-    bool const has_gravity = true;
+    bool const has_gravity;
 
     /// It stores aperture size, which is the thickness of 2D element or the
     /// cross section area of 1D element. For 3D element, the value is set to 1.
-    /// Always set (non-null) by createLiquidFlowProcess().
-    ParameterLib::Parameter<double> const* const aperture_size = nullptr;
+    ParameterLib::Parameter<double> const& aperture_size;
 
     /// caches for each mesh element type the shape matrix
     NumLib::ShapeMatrixCache shape_matrix_cache;
 
-    MaterialPropertyLib::Variable const phase_variable =
-        MaterialPropertyLib::Variable::liquid_phase_pressure;
+    MaterialPropertyLib::Variable const phase_variable;
 
     /// If true, the storage (mass) matrix is lumped: column sums for linear
     /// elements, HRZ lumping for higher order elements.
-    bool const apply_mass_lumping = false;
+    bool const apply_mass_lumping;
 };
 
 }  // namespace LiquidFlow
