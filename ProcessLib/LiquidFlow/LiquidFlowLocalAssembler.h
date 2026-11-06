@@ -105,7 +105,7 @@ public:
             double const aperture_size =
                 (_element.getDimension() == 3u)
                     ? 1.0
-                    : (*_process_data.aperture_size)(0.0, pos)[0];
+                    : _process_data.aperture_size(0.0, pos)[0];
 
             _ip_data.emplace_back(
                 shape_matrices[ip].dNdx,

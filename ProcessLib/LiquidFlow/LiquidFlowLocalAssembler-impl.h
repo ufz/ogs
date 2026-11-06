@@ -219,7 +219,9 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
             // higher order elements can be zero or negative (e.g. at the
             // corner nodes of serendipity elements). Instead, scale the
             // positive diagonal of the consistent matrix to the total
-            // element mass.
+            // element mass. A zero mass matrix, e.g. for zero storage in a
+            // steady-state problem, has no mass to distribute, so lumping is
+            // skipped instead of dividing by zero.
             auto const diagonal = local_M.diagonal().eval();
             double const diagonal_sum = diagonal.sum();
             if (diagonal_sum != 0.0)

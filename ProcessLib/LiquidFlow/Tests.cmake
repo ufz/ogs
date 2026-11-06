@@ -229,7 +229,9 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Utils/GMSH2OGS/quadratic_mesh_assembly_test.prj
             RUNTIME 1
     )
-    # Zero storage: HRZ lumping must reproduce the consistent-mass reference.
+    # Zero storage: the mass matrix is zero, so mass lumping must leave it
+    # unchanged instead of dividing by zero. Applying the HRZ scaling itself
+    # is covered by GasFlow/gas_flow_mass_lumping.xml.
     OgsTest(PROJECTFILE Utils/GMSH2OGS/quadratic_mesh_mass_lumping.xml RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/RasterParameter/CoarseRasterHomogeneous.xml RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/RasterParameter/FineRasterHomogeneous.xml RUNTIME 1)

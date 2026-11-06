@@ -178,7 +178,7 @@ std::unique_ptr<Process> createLiquidFlowProcess(
         mesh_space_dimension,
         std::move(specific_body_force),
         has_gravity,
-        aperture_size_parameter,
+        *aperture_size_parameter,
         NumLib::ShapeMatrixCache{integration_order},
         phase_variable,
         apply_mass_lumping};
