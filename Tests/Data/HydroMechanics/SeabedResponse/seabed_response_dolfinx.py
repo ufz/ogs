@@ -430,5 +430,5 @@ if __name__ == "__main__":
 
     output_dir = Path(args.result_folder)
     output_dir.mkdir(parents=True, exist_ok=True)
-    print(f"DOCKER: {output_dir}")
+    print(f"Output directory: {output_dir}")
     run_dolfinx_simulation(output_dir)
