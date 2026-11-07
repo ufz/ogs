@@ -29,7 +29,7 @@ if(OGS_INCLUDE_WHAT_YOU_USE)
     find_program(INCLUDE_WHAT_YOU_USE_TOOL_PATH include-what-you-use REQUIRED)
 endif()
 
-find_program(DOCKER_TOOL_PATH docker)
+find_program(PODMAN_TOOL_PATH podman)
 
 # ##############################################################################
 # Find libraries

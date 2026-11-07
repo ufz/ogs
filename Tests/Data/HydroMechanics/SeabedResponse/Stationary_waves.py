@@ -814,7 +814,7 @@ for idx_1 in (0, 1):
 with (out_dir / "seabed_response_dolfinx.log").open("w") as log_file:
     subprocess.run(
         [
-            "docker",
+            "podman",
             "run",
             "-i",
             "--rm",
@@ -826,7 +826,7 @@ with (out_dir / "seabed_response_dolfinx.log").open("w") as log_file:
             f"{out_dir}:/root/results",
             "-w",
             "/root/shared",
-            "dolfinx/dolfinx:v0.10.0",
+            "docker.io/dolfinx/dolfinx:v0.10.0",
             "seabed_response_dolfinx.py",
             "--result-folder",
             "/root/results",
