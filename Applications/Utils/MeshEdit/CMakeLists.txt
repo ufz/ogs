@@ -62,5 +62,3 @@ target_link_libraries(MapGeometryToMeshSurface MeshGeoToolsLib)
 target_link_libraries(MeshMapping ApplicationsFileIO)
 target_link_libraries(ResetPropertiesInPolygonalRegion ApplicationsFileIO)
 target_link_libraries(ipDataToPointCloud NumLib)
-# Instead of linking mkl here, link it PUBLIC in MathLib?
-target_link_libraries(NodeReordering NumLib $<$<BOOL:${OGS_USE_MKL}>:MKL::MKL>)
