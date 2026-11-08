@@ -516,9 +516,9 @@ int main(int argc, char* argv[])
     TCLAP::CmdLine cmd(
         "Reorders mesh nodes in elements to make old or incorrectly ordered "
         "meshes compatible with OGS6.\n"
-        "Three options are available:\n"
-        "Method 0: Reversing order of nodes and checking again for all "
-        "elements.\n"
+        "Four options are available:\n"
+        "Method 0: As Method 1, but additionally verifying the Jacobian "
+        "determinant of the reordered elements.\n"
         "Method 1: Reversing order of nodes unless it's perceived correct by "
         "OGS6 standards. This is the default selection.\n"
         "Method 2: Fixing node ordering issues between VTK and OGS6 (only "
@@ -535,9 +535,9 @@ int main(int argc, char* argv[])
     TCLAP::SwitchArg no_volume_check_arg(
         "", "no_volume_check",
         "By default the volumes of original and reordered elements are "
-        "compared if they are numerically equal, i.e., relative volume "
-        "difference is smaller than a threshold. This switch disables the "
-        "volume comparison.");
+        "compared if they are numerically equal, i.e., if the absolute "
+        "difference or the relative volume difference is at most 100 machine "
+        "epsilons. This switch disables the volume comparison.");
     cmd.add(no_volume_check_arg);
 
     std::vector<int> method_ids{0, 1, 2, 3};
@@ -577,7 +577,9 @@ int main(int argc, char* argv[])
 
         if (forced)
         {
-            INFO("Method 0: Reversing order of nodes will be checked again.");
+            INFO(
+                "Method 0: The Jacobian determinant of the reordered elements "
+                "is checked again.");
         }
         INFO(
             "Method: Reversing order of nodes unless it is considered correct "
