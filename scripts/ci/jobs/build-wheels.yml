@@ -16,13 +16,14 @@
       - wheelhouse/
 
 build wheels linux:
+  <<: *wheels_template
   tags: [envinf, shell, fast, podman]
   variables:
+    GIT_DEPTH: 1000
     CIBW_CONTAINER_ENGINE: podman
     CPM_SOURCE_CACHE: /host/cibuildwheel_cache/cpm
     CCACHE_DIR: /host/cibuildwheel_cache/ccache
     CCACHE_MAXSIZE: 15G
-  <<: *wheels_template
 
 build wheels mac:
   tags: [mac, arm64]
