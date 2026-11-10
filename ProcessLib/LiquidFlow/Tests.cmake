@@ -41,6 +41,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D1bt/h2_1D1bt_mass_lumping.xml)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep1D/pressure_step_1D.prj RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep1D/pressure_step_1D_mass_lumping.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep1D/pressure_step_1D_quadratic_mass_lumping.xml RUNTIME 1)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D2bt/h2_1D2bt.prj)
 endif()
 
