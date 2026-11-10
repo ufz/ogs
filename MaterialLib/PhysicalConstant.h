@@ -99,7 +99,7 @@ namespace MolarMass
  *   (the formulation tabulates this value). The primary metrology source
  *   and the uncertainty of this value are the IUPAC standard atomic weights,
  *   "Table of Standard Atomic Weights 2013" (as for \c N2 and \c O2 below),
- *   http://www.ciaaw.org/pubs/TSAW2013_xls.xls: its intervals for hydrogen
+ *   https://www.ciaaw.org/pubs/TSAW2013_xls.xls: its intervals for hydrogen
  *   [1.00784, 1.00811] and oxygen [15.99903, 15.99977] g/mol bound the
  *   molar mass of H<sub>2</sub>O to [18.01471, 18.01599] g/mol.
  */
