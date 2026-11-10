@@ -229,6 +229,13 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/Selke2D/selke2dheterogenousrobin.py RUNTIME 140)
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/BlockingConductingFracture/BlockingConductingFracture.py RUNTIME 9)
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/roughFracture/roughFracture_benchmark.py RUNTIME 600)
+    NotebookTest(
+        NOTEBOOKFILE Parabolic/LiquidFlow/Verification/PressureStepMassLumping/pressure_step_mass_lumping.py
+        RUNTIME 10
+        BINDER_ADDITIONAL_PATHS
+            Parabolic/LiquidFlow/Verification/PressureStep1D
+            Parabolic/LiquidFlow/Verification/PressureStep2D
+    )
     # inclined mesh
     OgsTest(
         PROJECTFILE
