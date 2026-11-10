@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<VTKFile type="UnstructuredGrid" version="0.1" byte_order="LittleEndian" header_type="UInt32" compressor="vtkZLibDataCompressor">
+  <UnstructuredGrid>
+    <Piece NumberOfPoints="16" NumberOfCells="9">
+      <PointData>
+      </PointData>
+      <CellData>
+        <DataArray type="UInt32" Name="MaterialIDs" format="binary" RangeMin="0" RangeMax="0">
+          AQAAAACAAAAkAAAACwAAAA==eF5jYCAMAAAkAAE=
+        </DataArray>
+      </CellData>
+      <Points>
+        <DataArray type="Float64" Name="Points" NumberOfComponents="3" format="binary" RangeMin="0" RangeMax="1.4142135623730951">
+          AQAAAACAAACAAQAAZgAAAA==eF5jYMAO/ENB4Ko9ungEWPwphjgEfMAhzsDAIwgCF+0nzQSBk/Yw89HFYeaji8PMxy7OwCAMFn9oPxcsfhNuPro4zHx0cZj52MUZGGaB+S/tjcHgMdx8dHGY+ejiMPPRxQHoJmrV
+          <InformationKey name="L2_NORM_RANGE" location="vtkDataArray" length="2">
+            <Value index="0">
+              0
+            </Value>
+            <Value index="1">
+              1.4142135624
+            </Value>
+          </InformationKey>
+        </DataArray>
+      </Points>
+      <Cells>
+        <DataArray type="Int64" Name="connectivity" format="binary" RangeMin="0" RangeMax="15">
+          AQAAAACAAAAgAQAARQAAAA==eF5djDkOwCAAw6AXbenx/98yEC/OYsmyUspcDfdwk1/CQx1+DZs6fuiv8JSnv9Xh+e3q+KF/w0ee/lOH5/dXNwBz+AEP
+        </DataArray>
+        <DataArray type="Int64" Name="offsets" format="binary" RangeMin="4" RangeMax="36">
+          AQAAAACAAABIAAAAIAAAAA==eF5jYYAADijNA6UFoLQIlJaA0jJQWgFKq0BpABToALU=
+        </DataArray>
+        <DataArray type="UInt8" Name="types" format="binary" RangeMin="9" RangeMax="9">
+          AQAAAACAAAAJAAAACwAAAA==eF7j5IQCAAGeAFI=
+        </DataArray>
+      </Cells>
+    </Piece>
+  </UnstructuredGrid>
+</VTKFile>

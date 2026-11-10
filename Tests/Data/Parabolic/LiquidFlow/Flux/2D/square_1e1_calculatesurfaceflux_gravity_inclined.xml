@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="square_1e1_calculatesurfaceflux.prj">
+    <!-- The unit square rotated about the x-axis, (x, y, 0) -> (x, 0.8 y,
+         0.6 y), with gravity in -z, i.e. inclined to the element plane.
+         Hydrostatic along the slope, linear in x: p = 1e7 - 9e6 x - rho g z
+         with rho g = 78.68 * 9.81 = 771.8508. The surface flux on the lower
+         and upper edge vanishes, on left and right it is k/mu * 9e6. -->
+    <replace sel="/*/meshes/mesh[1]/text()">square_1x1_quad_1e1_inclined.vtu</replace>
+    <replace sel="/*/meshes/mesh[2]/text()">square_1x1_quad_1e1_inclined_complete_surface.vtu</replace>
+    <remove sel="/*/meshes/mesh[4]"/>
+    <remove sel="/*/meshes/mesh[3]"/>
+    <replace sel="/*/processes/process/calculatesurfaceflux/mesh/text()">square_1x1_quad_1e1_inclined_complete_surface</replace>
+    <replace sel="/*/processes/process/specific_body_force/text()">0.0 0.0 -9.81</replace>
+    <!-- The element is inclined to g, so the in-plane part of the pressure
+         gradient matches rho times the body force only after the projection
+         has removed the out-of-plane part of g. The yz coupling of the
+         permeability tensor turns the out-of-plane residual of an unprojected
+         g into a flux component across the lower and upper edge, so that flux
+         does not vanish without the projection. -->
+    <replace sel='/*/media/medium/properties/property[name="permeability"]/value/text()'>9.2e-12 0 0 0 9.2e-12 4.6e-12 0 4.6e-12 9.2e-12</replace>
+    <replace sel='/*/parameters/parameter[name="p0"]/type/text()'>Function</replace>
+    <remove sel='/*/parameters/parameter[name="p0"]/value'/>
+    <add sel='/*/parameters/parameter[name="p0"]'>
+        <expression>1e7 - 9e6 * x - 771.8508 * z</expression>
+    </add>
+    <replace sel='/*/process_variables/process_variable/boundary_conditions/boundary_condition[mesh="square_1x1_quad_1e1_left"]/parameter/text()'>p0</replace>
+    <remove sel='/*/process_variables/process_variable/boundary_conditions/boundary_condition[mesh="square_1x1_quad_1e1_right"]'/>
+    <!-- p0 is the exact solution, so it is prescribed on the whole boundary. -->
+    <replace sel='/*/process_variables/process_variable/boundary_conditions/boundary_condition/mesh[text()="square_1x1_quad_1e1_left"]/text()'>square_1x1_quad_1e1_inclined_complete_surface</replace>
+    <replace sel="/*/time_loop/output/meshes/mesh[1]/text()">square_1x1_quad_1e1_inclined</replace>
+    <replace sel="/*/time_loop/output/meshes/mesh[2]/text()">square_1x1_quad_1e1_inclined_complete_surface</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">LF_square_1e1_surfaceflux_gravity_{:meshname}</replace>
+    <remove sel="/*/test_definition"/>
+    <add sel="/*">
+        <test_definition>
+            <vtkdiff>
+                <file>LF_square_1e1_surfaceflux_gravity_square_1x1_quad_1e1_inclined_complete_surface_ts_2_t_0.864000.vtu</file>
+                <field>specific_flux</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>LF_square_1e1_surfaceflux_gravity_square_1x1_quad_1e1_inclined_ts_2_t_0.864000.vtu</file>
+                <field>pressure</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+            <vtkdiff>
+                <file>LF_square_1e1_surfaceflux_gravity_square_1x1_quad_1e1_inclined_ts_2_t_0.864000.vtu</file>
+                <field>v</field>
+                <absolute_tolerance>1e-7</absolute_tolerance>
+                <relative_tolerance>1e-13</relative_tolerance>
+            </vtkdiff>
+        </test_definition>
+    </add>
+</OpenGeoSysProjectDiff>
