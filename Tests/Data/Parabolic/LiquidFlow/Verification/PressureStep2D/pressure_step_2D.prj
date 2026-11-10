@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+    2D variant of ../PressureStep1D/pressure_step_1D.prj: pressure step
+    (shock) entering a rectangle, x in [0, 1] m, y in [0, 0.02] m, discretised
+    by 100 x 2 square elements of size h = 0.01 m.
+    At t = 0 the pressure on the left edge (x = 0) jumps from 0 to 1 MPa and
+    stays constant; all other edges are impermeable (natural boundary
+    condition). The solution does not depend on y and equals the 1D one:
+    p(x, t) = p_0 erfc(x / (2 sqrt(D t))) with D = 1 m^2/s.
+    The consistent mass matrix yields non-physical, sign-alternating
+    pressures ahead of the front (about -2.4e5 Pa after the first step, as
+    in 1D), which the lumped mass matrix avoids.
+    Apart from the meshes, the body force, the output prefix and the test
+    definition, this file equals the 1D project; keep both in sync.
+    The liquid density does not enter the equations (volume balance, no body
+    force); it is only set because the assembler requires a positive value.
+-->
+<OpenGeoSysProject>
+    <meshes>
+        <mesh>rectangle.vtu</mesh>
+        <mesh>rectangle_left.vtu</mesh>
+    </meshes>
+    <processes>
+        <process>
+            <name>LiquidFlow</name>
+            <type>LIQUID_FLOW</type>
+            <integration_order>2</integration_order>
+            <process_variables>
+                <process_variable>pressure</process_variable>
+            </process_variables>
+            <specific_body_force>0 0</specific_body_force>
+        </process>
+    </processes>
+    <media>
+        <medium id="0">
+            <phases>
+                <phase>
+                    <type>AqueousLiquid</type>
+                    <properties>
+                        <property>
+                            <name>viscosity</name>
+                            <type>Constant</type>
+                            <value>1e-3</value>
+                        </property>
+                        <property>
+                            <name>density</name>
+                            <type>Constant</type>
+                            <value>1e3</value>
+                        </property>
+                    </properties>
+                </phase>
+            </phases>
+            <properties>
+                <property>
+                    <name>permeability</name>
+                    <type>Constant</type>
+                    <value>1e-12</value>
+                </property>
+                <property>
+                    <name>reference_temperature</name>
+                    <type>Constant</type>
+                    <value>293.15</value>
+                </property>
+                <property>
+                    <name>porosity</name>
+                    <type>Constant</type>
+                    <value>0.2</value>
+                </property>
+                <property>
+                    <name>storage</name>
+                    <type>Constant</type>
+                    <value>1e-9</value>
+                </property>
+            </properties>
+        </medium>
+    </media>
+    <time_loop>
+        <processes>
+            <process ref="LiquidFlow">
+                <nonlinear_solver>basic_picard</nonlinear_solver>
+                <convergence_criterion>
+                    <type>DeltaX</type>
+                    <norm_type>NORM2</norm_type>
+                    <abstol>1e-6</abstol>
+                </convergence_criterion>
+                <time_discretization>
+                    <type>BackwardEuler</type>
+                </time_discretization>
+                <time_stepping>
+                    <type>FixedTimeStepping</type>
+                    <t_initial>0</t_initial>
+                    <t_end>0.01</t_end>
+                    <timesteps>
+                        <pair>
+                            <repeat>10</repeat>
+                            <delta_t>1e-6</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>99</repeat>
+                            <delta_t>1e-5</delta_t>
+                        </pair>
+                        <pair>
+                            <repeat>90</repeat>
+                            <delta_t>1e-4</delta_t>
+                        </pair>
+                    </timesteps>
+                </time_stepping>
+            </process>
+        </processes>
+        <output>
+            <type>VTK</type>
+            <prefix>pressure_step_2D</prefix>
+            <fixed_output_times>1e-6</fixed_output_times>
+            <variables>
+                <variable>pressure</variable>
+            </variables>
+        </output>
+    </time_loop>
+    <parameters>
+        <parameter>
+            <name>p0</name>
+            <type>Constant</type>
+            <value>0</value>
+        </parameter>
+        <parameter>
+            <name>p_left</name>
+            <type>Constant</type>
+            <value>1e6</value>
+        </parameter>
+    </parameters>
+    <process_variables>
+        <process_variable>
+            <name>pressure</name>
+            <components>1</components>
+            <order>1</order>
+            <initial_condition>p0</initial_condition>
+            <boundary_conditions>
+                <boundary_condition>
+                    <mesh>rectangle_left</mesh>
+                    <type>Dirichlet</type>
+                    <parameter>p_left</parameter>
+                </boundary_condition>
+            </boundary_conditions>
+        </process_variable>
+    </process_variables>
+    <nonlinear_solvers>
+        <nonlinear_solver>
+            <name>basic_picard</name>
+            <type>Picard</type>
+            <max_iter>10</max_iter>
+            <linear_solver>general_linear_solver</linear_solver>
+        </nonlinear_solver>
+    </nonlinear_solvers>
+    <linear_solvers>
+        <linear_solver>
+            <name>general_linear_solver</name>
+            <eigen>
+                <solver_type>SparseLU</solver_type>
+                <scaling>true</scaling>
+            </eigen>
+        </linear_solver>
+    </linear_solvers>
+    <test_definition>
+        <vtkdiff>
+            <file>pressure_step_2D_ts_1_t_0.000001.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-4</absolute_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
+        </vtkdiff>
+        <vtkdiff>
+            <file>pressure_step_2D_ts_199_t_0.010000.vtu</file>
+            <field>pressure</field>
+            <absolute_tolerance>1e-4</absolute_tolerance>
+            <relative_tolerance>1e-12</relative_tolerance>
+        </vtkdiff>
+    </test_definition>
+</OpenGeoSysProject>
