@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="pressure_step_2D.prj">
+    <!--
+        Quadratic serendipity elements (Quad8) with HRZ mass lumping. The
+        consistent mass matrix of Quad8 has negative row sums for the corner
+        nodes, so row-sum lumping would yield negative masses; HRZ scaling of
+        the diagonal keeps them positive. Unlike for Line3 in 1D, the HRZ
+        lumped matrix differs from the row-sum lumped one, so this test
+        checks the HRZ scaling itself.
+        Lumping does not make the scheme monotone: negative pressures (about
+        -3.7e4 Pa) appear ahead of the front after the first step, and the
+        solution varies along y because corner and mid-side nodes receive
+        different masses.
+    -->
+    <replace sel="/*/meshes/mesh[1]/text()">rectangle_quadratic.vtu</replace>
+    <replace sel="/*/meshes/mesh[2]/text()">rectangle_quadratic_left.vtu</replace>
+    <replace sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition/mesh/text()">rectangle_quadratic_left</replace>
+    <replace sel="/*/processes/process/integration_order/text()">3</replace>
+    <replace sel="/*/process_variables/process_variable/order/text()">2</replace>
+    <add sel="/*/processes/process">
+        <mass_lumping>true</mass_lumping>
+    </add>
+    <replace sel="/*/time_loop/output/prefix/text()">pressure_step_2D_quadratic_mass_lumping</replace>
+    <replace sel="/*/test_definition/vtkdiff[1]/file/text()">pressure_step_2D_quadratic_mass_lumping_ts_1_t_0.000001.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[2]/file/text()">pressure_step_2D_quadratic_mass_lumping_ts_199_t_0.010000.vtu</replace>
+</OpenGeoSysProjectDiff>
