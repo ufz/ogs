@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<OpenGeoSysProjectDiff base_file="pressure_step_2D.prj">
+    <!--
+        Quadratic elements with the consistent mass matrix; comparison
+        baseline for pressure_step_2D_quadratic_mass_lumping.xml.
+    -->
+    <replace sel="/*/meshes/mesh[1]/text()">rectangle_quadratic.vtu</replace>
+    <replace sel="/*/meshes/mesh[2]/text()">rectangle_quadratic_left.vtu</replace>
+    <replace sel="/*/process_variables/process_variable/boundary_conditions/boundary_condition/mesh/text()">rectangle_quadratic_left</replace>
+    <replace sel="/*/processes/process/integration_order/text()">3</replace>
+    <replace sel="/*/process_variables/process_variable/order/text()">2</replace>
+    <replace sel="/*/time_loop/output/prefix/text()">pressure_step_2D_quadratic</replace>
+    <replace sel="/*/test_definition/vtkdiff[1]/file/text()">pressure_step_2D_quadratic_ts_1_t_0.000001.vtu</replace>
+    <replace sel="/*/test_definition/vtkdiff[2]/file/text()">pressure_step_2D_quadratic_ts_199_t_0.010000.vtu</replace>
+</OpenGeoSysProjectDiff>
