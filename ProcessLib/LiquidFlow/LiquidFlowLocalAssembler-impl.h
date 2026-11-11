@@ -219,9 +219,15 @@ void LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::
             // higher order elements can be zero or negative (e.g. at the
             // corner nodes of serendipity elements). Instead, scale the
             // positive diagonal of the consistent matrix to the total
-            // element mass. A zero mass matrix, e.g. for zero storage in a
-            // steady-state problem, has no mass to distribute, so lumping is
-            // skipped instead of dividing by zero.
+            // element mass.
+            // HRZ differs from row-sum lumping only where row sums are not
+            // proportional to the diagonal: for serendipity elements (Quad8,
+            // Hex20) and quadratic simplices (Tri6 with zero, Tet10 with
+            // negative corner row sums). For Lagrange tensor-product elements
+            // (Line3, Quad9) both give the same matrix.
+            // A zero mass matrix, e.g. for zero storage in a steady-state
+            // problem, has no mass to distribute, so lumping is skipped
+            // instead of dividing by zero.
             auto const diagonal = local_M.diagonal().eval();
             double const diagonal_sum = diagonal.sum();
             if (diagonal_sum != 0.0)
