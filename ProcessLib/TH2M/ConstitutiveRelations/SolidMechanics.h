@@ -48,11 +48,6 @@ struct SolidMechanicsModel
         SolidMechanicsDataStateless<DisplacementDim>& out,
         EquivalentPlasticStrainData& equivalent_plastic_strain) const;
 
-    auto getInternalVariables() const
-    {
-        return solid_material_.getInternalVariables();
-    }
-
 private:
     SolidConstitutiveRelation<DisplacementDim> const& solid_material_;
 };

@@ -44,11 +44,6 @@ struct SolidMechanicsModel
               SolidMechanicsDataStateless<DisplacementDim>& current_stateless,
               FreeEnergyDensityData& free_energy_density_data) const;
 
-    auto getInternalVariables() const
-    {
-        return solid_material_.getInternalVariables();
-    }
-
     static SolidMechanicsModel create(
         SolidConstitutiveRelation<DisplacementDim> const& solid_material)
     {
