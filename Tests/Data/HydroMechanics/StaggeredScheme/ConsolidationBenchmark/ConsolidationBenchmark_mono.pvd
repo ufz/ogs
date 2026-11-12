@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1" byte_order="LittleEndian" compressor="vtkZLibDataCompressor">
+  <Collection>
+    <DataSet timestep="0" group="" part="0" file="ConsolidationBenchmark_mono_ts_0_t_0.000000.vtu"/>
+    <DataSet timestep="2" group="" part="0" file="ConsolidationBenchmark_mono_ts_2_t_2.000000.vtu"/>
+    <DataSet timestep="4" group="" part="0" file="ConsolidationBenchmark_mono_ts_4_t_4.000000.vtu"/>
+    <DataSet timestep="6" group="" part="0" file="ConsolidationBenchmark_mono_ts_6_t_6.000000.vtu"/>
+    <DataSet timestep="8" group="" part="0" file="ConsolidationBenchmark_mono_ts_8_t_8.000000.vtu"/>
+    <DataSet timestep="10" group="" part="0" file="ConsolidationBenchmark_mono_ts_10_t_10.000000.vtu"/>
+  </Collection>
+</VTKFile>
