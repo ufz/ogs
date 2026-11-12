@@ -123,6 +123,10 @@ Eigen::Vector3d LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getFlux(
     Eigen::Vector3d flux(0.0, 0.0, 0.0);
     flux.head<GlobalDim>() = intrinsic_permeability / viscosity * driving_force;
 
+    if (!_process_data.is_volume_balance_equation_type)
+    {
+        flux *= fluid_density;
+    }
     return flux;
 }
 

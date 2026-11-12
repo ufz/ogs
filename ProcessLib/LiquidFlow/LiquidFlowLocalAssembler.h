@@ -131,7 +131,9 @@ public:
     /// \f$\mathbf{g}\f$ [m/s^2]. The \f$\rho \mathbf{g}\f$ term is added only
     /// when a non-zero \c specific_body_force is configured, and
     /// \f$\mathbf{g}\f$ is projected onto the element for lower-dimensional
-    /// elements.
+    /// elements. For the mass balance equation type
+    /// the mass flux \f$\rho \mathbf{q}\f$ in kg/(m^2 s) is returned,
+    /// consistent with the assembly.
     Eigen::Vector3d getFlux(MathLib::Point3d const& p_local_coords,
                             double const t,
                             std::vector<double> const& local_x) const override;
