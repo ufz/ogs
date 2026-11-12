@@ -228,6 +228,14 @@
             </eigen>
         </linear_solver>
     </linear_solvers>
+    <!-- vtkdiff checks of the CTest: its output at t = 6 s and at the end
+         time against the committed reference results. The tolerance values
+         are those of the former CTest before this benchmark became a
+         notebook; a recent run reproduces the references to 3.2e-12 Pa
+         (pressure), 3.5e-17 m (displacement), 3.8e-11 Pa (sigma),
+         1.1e-15 (epsilon, dimensionless) and 2.7e-18 m/s (velocity). The
+         end-time strain keeps the former 1e-14, an order of magnitude above
+         the measured difference. -->
     <test_definition>
         <vtkdiff>
             <file>ConsolidationBenchmark_mono_ts_6_t_6.000000.vtu</file>
