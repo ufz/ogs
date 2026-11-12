@@ -209,7 +209,7 @@ the volumetric  non-elastic strain rate.
 
 ### Fixed stress rate over coupling iteration
 
-As the first option, we consider to fix the volumetric total stress rate over coupling iteration.
+We consider to fix the volumetric total stress rate over coupling iteration.
  This means
 $$
     \dot{\sigma}_v^{n, k} = \dot{\sigma}_v^{n, k-1},
@@ -261,39 +261,6 @@ $$
 \beta_\mathrm{FS}=\gamma\dfrac{\alpha^2}{K_\mathrm{b}},
 $$
 where $\gamma$ is treated as an input parameter.
-
-### Fixed stress rate over time step
-
-We  assume that the volumetric stress rate of the current time step is the same as
- that of the previous time step:
-
-$$
-  \dot{\sigma}_v^{n} = \dot{\sigma}_v^{n-1}.
-$$
-
-That means the current volumetric strain rate is approximated as
-
-$$
-\dot{\varepsilon_v}^{n} \approx  \dot{\epsilon}_v^{n-1} +
-\dfrac{ \alpha}{K_b}   (\dot {p}^{n}-\dot {p}^{n-1}).
-$$
-
-Consequently, and similarly to the fixed stress over coupling iteration,
-the mass balance equation at time step $n$ becomes
-
-$$
-\varrho_\mathrm{f}(S +\beta_\mathrm{FS} ) {\dot p}^{n}-
-\frac{k}{\mu}\nabla \left(\varrho_\mathrm{f}\left(\nabla p^{n}-
- \varrho_\mathrm{f} \mathbf{g}  \right) \right) +
-  \varrho_\mathrm{f} \left(\alpha {\dot\varepsilon_v}^{n-1}-
- \beta_\mathrm{FS} {\dot p}^{n-1}\right)= 0.
-$$
-
-In that sense, only one coupling iteration is needed, and the solution accuracy
- is dependent on the time step size. The approach of a fixed stress rate over
- the time step enables the staggered scheme to efficiently solve more HM
- problems, especially those with small strain change, e.g. hydro-mechanical
- modeling of reservoirs.
 
 ## References
 

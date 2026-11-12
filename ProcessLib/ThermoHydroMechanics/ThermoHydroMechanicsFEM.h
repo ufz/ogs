@@ -226,15 +226,10 @@ public:
         return result;
     }
 
-    std::vector<double> getStrainRateVariable() const override
+    std::vector<double> getFixedStressSplitVariables() const override
     {
-        std::vector<double> result;
-        result.reserve(_ip_data.size());
-        for (auto const& ip_data : _ip_data)
-        {
-            result.push_back(ip_data.strain_rate_variable);
-        }
-        return result;
+        return Common::HydroMechanics::getFixedStressSplitVariables(
+            _process_data.coupling_scheme, _element.getID());
     }
 
     std::vector<double> const& getIntPtFluidDensity(

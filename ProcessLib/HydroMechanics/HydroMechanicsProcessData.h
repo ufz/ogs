@@ -46,7 +46,10 @@ struct HydroMechanicsProcessData
     /// A vector of displacement dimension's length.
     Eigen::Matrix<double, DisplacementDim, 1> const specific_body_force;
 
-    /// If set mass lumping will be applied to the pressure equation.
+    /// If set mass lumping will be applied to the pressure equation. It takes
+    /// effect in the monolithic and in the staggered coupling scheme. In the
+    /// staggered scheme only the physical storage is lumped, the artificial
+    /// storage of the fixed stress splitting is not.
     bool const mass_lumping = false;
 
     Common::HydroMechanics::CouplingScheme coupling_scheme;

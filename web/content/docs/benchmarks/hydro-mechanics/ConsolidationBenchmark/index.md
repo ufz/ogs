@@ -10,8 +10,7 @@ image = "CB.png"
 {{< data-link >}}
 
 ---
-This is an example to test the fixed stress splitting with the approach of fixed
- stress rate over time step (see the algorithms in
+This is an example to test the fixed stress splitting (see the algorithms in
  [Injection and Production in 1D Linear Poroelastic
   Medium with the Staggered Scheme]({{< relref "InjectionProduction" >}})).
 
@@ -52,22 +51,23 @@ In this example, we see that the densities can be arbitrary
  non-zero values. The values of the required material parameters are given in
  the following table:
 
-| Parameter |Value  |Unit |
-|---|---|---|
-| Young's modulus  | $3\cdot 10^4$ |Pa   |
-| Poisson's ratio  | $0.2$  | -  |
-| Permeability  |$10^{-10}$  | $\text{m}^2$  |
-| Viscosity | $10^{-3}$ |Pa s|
+| Parameter        | Value         | Unit         |
+| ---------------- | ------------- | ------------ |
+| Young's modulus  | $3\cdot 10^4$ | Pa           |
+| Poisson's ratio  | $0.2$         | -            |
+| Permeability     | $10^{-10}$    | $\text{m}^2$ |
+| Viscosity        | $10^{-3}$     | Pa s         |
 
 The mechanical load on the top boundary is 1000 Pa, i.e. $\sigma_0 = -1000$ Pa.
 
 In the following figures, the solutions at $t=10$ s obtained by using the staggered scheme
- with fixed stress rate over time step, the monolithic scheme, and analytic
+ with fixed-stress splitting, the monolithic scheme, and analytic
  approach are compared.
+
 {{< figure src="CB_HM_profile.png" >}}
-The figures show that for the staggered scheme
- with fixed stress rate over time step, the solutions with $dt=0.5$ s are quite
- close to the analytical ones.
+
+The figures show that the staggered solution with $dt=0.5$ s is quite close to
+ the analytical one.
 
 ## References
 

@@ -3,6 +3,7 @@
 
 #include "CouplingScheme.h"
 
+#include <algorithm>
 #include <cmath>
 
 #include "BaseLib/ConfigTree.h"
@@ -20,6 +21,26 @@ CouplingScheme parseCouplingScheme(BaseLib::ConfigTree const& config)
     if (!coupling_scheme_config)
     {
         return Monolithic{};
+    }
+
+    // Compatibility guard: rejects project files still using the removed key;
+    // delete the guard once old project files have migrated.
+    // Also checked for the monolithic scheme, which returns below.
+    {
+        std::string const removed_key = "fixed_stress_over_time_step";
+        if (
+            //! \ogs_file_special
+            coupling_scheme_config->getConfigParameterOptional<bool>(
+                removed_key))
+        {
+            OGS_FATAL(
+                "The coupling scheme parameter <{:s}> is removed; delete it. "
+                "The staggered scheme always fixes the volumetric stress rate "
+                "over the coupling iteration, and "
+                "<fixed_stress_stabilization_parameter> adjusts its "
+                "splitting.",
+                removed_key);
+        }
     }
 
     auto const coupling_scheme_type =
@@ -77,13 +98,55 @@ CouplingScheme parseCouplingScheme(BaseLib::ConfigTree const& config)
         }
     }
 
-    bool const fixed_stress_over_time_step =
-        //! \ogs_file_param{prj__processes__process__HYDRO_MECHANICS__coupling_scheme__fixed_stress_over_time_step}
-        coupling_scheme_config->getConfigParameter<bool>(
-            "fixed_stress_over_time_step", false);
+    return Staggered{fixed_stress_stabilization_parameter, {}};
+}
 
-    return Staggered{fixed_stress_stabilization_parameter,
-                     fixed_stress_over_time_step};
+void allocateFixedStressSplitVariables(CouplingScheme& coupling_scheme,
+                                       std::size_t const n_elements)
+{
+    if (auto* const staggered = std::get_if<Staggered>(&coupling_scheme))
+    {
+        staggered->fixed_stress_split_variables_per_element.resize(n_elements);
+    }
+}
+
+void allocateFixedStressSplitVariablesOfElement(
+    CouplingScheme& coupling_scheme,
+    std::size_t const element_id,
+    unsigned const n_integration_points)
+{
+    if (auto* const staggered = std::get_if<Staggered>(&coupling_scheme))
+    {
+        staggered->fixed_stress_split_variables_per_element[element_id].resize(
+            n_integration_points, 0.0);
+    }
+}
+
+std::size_t setFixedStressSplitVariables(CouplingScheme& coupling_scheme,
+                                         std::size_t const element_id,
+                                         double const* const values)
+{
+    auto* const staggered = std::get_if<Staggered>(&coupling_scheme);
+    if (!staggered)
+    {
+        return 0;
+    }
+    auto& fixed_stress_split_variables =
+        staggered->fixed_stress_split_variables_per_element[element_id];
+    std::copy_n(values, fixed_stress_split_variables.size(),
+                fixed_stress_split_variables.begin());
+    return fixed_stress_split_variables.size();
+}
+
+std::vector<double> getFixedStressSplitVariables(
+    CouplingScheme const& coupling_scheme, std::size_t const element_id)
+{
+    auto const* const staggered = std::get_if<Staggered>(&coupling_scheme);
+    if (!staggered)
+    {
+        return {};
+    }
+    return staggered->fixed_stress_split_variables_per_element[element_id];
 }
 
 }  // namespace ProcessLib::Common::HydroMechanics

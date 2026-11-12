@@ -50,17 +50,6 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE HydroMechanics/Principal_Stress/Tube/tube.prj)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/ConsolidationBenchmark/consolidation_benchmark.prj RUNTIME 2)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/ConsolidationBenchmark/consolidation_benchmark_mono.prj RUNTIME 1)
-    # fixed_stress_over_time_step variant of the ConsolidationBenchmark;
-    # converges to a different discrete solution and therefore records its own
-    # reference results (tolerance values as the base benchmark).
-    OgsTest(
-        PROJECTFILE
-            HydroMechanics/StaggeredScheme/ConsolidationBenchmarkFixedStressOverTimeStep/consolidation_benchmark_over_time_step.xml
-        EXECUTABLE_ARGS
-            -m
-            ${Data_SOURCE_DIR}/HydroMechanics/StaggeredScheme/ConsolidationBenchmark
-        RUNTIME 2
-    )
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1D.prj)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1DMono.prj)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1DMono_python.prj)
@@ -70,6 +59,20 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     endif()
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/InjectionProduction1D/InjectionProduction1D_python.prj)
     OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/MandelCryer/MandelCryerStaggered.prj RUNTIME 16)
+    # Test the staggered scheme with mass lumping for the flow equation. The
+    # test patches the Richards benchmark
+    # Parabolic/Richards/flow_fully_saturated.prj.
+    OgsTest(PROJECTFILE HydroMechanics/StaggeredScheme/FlowFullySaturated/flow_fully_saturated_HM_staggered.xml)
+    # The same test with a non-zero stabilization parameter, so that the
+    # artificial storage enters the pressure equation.
+    OgsTest(
+        PROJECTFILE
+            HydroMechanics/StaggeredScheme/FlowFullySaturated/flow_fully_saturated.prj
+        PATCH_FILES
+            flow_fully_saturated_HM_staggered.xml
+            flow_fully_saturated_HM_staggered_fixed_stress.xml
+        NAME_SUFFIX fixed_stress
+    )
     OgsTest(PROJECTFILE HydroMechanics/StrainDependentPermeability/gas_loading.prj RUNTIME 12)
     OgsTest(PROJECTFILE HydroMechanics/TotalInitialStress/total_initial_stress_HM.prj RUNTIME 1)
     OgsTest(PROJECTFILE HydroMechanics/TotalInitialStress/total_initial_stress_HM_staggered.xml RUNTIME 1)

@@ -111,18 +111,6 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj
         RUNTIME 1
     )
-    # Rejected coupling scheme options must abort with the fatal message.
-    OgsTest(
-        PROJECTFILE
-            ThermoHydroMechanics/RejectedCouplingSchemeOptions/fixed_stress_over_time_step.xml
-        EXECUTABLE_ARGS
-            -m
-            ${Data_SOURCE_DIR}/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
-        NO_TEST_DEFINITION
-        PROPERTIES
-            PASS_REGULAR_EXPRESSION
-            "fixed_stress_over_time_step is not supported by the ThermoHydroMechanics process"
-    )
     OgsTest(
         PROJECTFILE
             ThermoHydroMechanics/RejectedCouplingSchemeOptions/missing_coupling_scheme_type.xml
@@ -133,6 +121,30 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROPERTIES
             PASS_REGULAR_EXPRESSION
             "coupling scheme configuration is missing its <type> element"
+    )
+    # Removed coupling scheme options must abort with a fatal message that
+    # names the replacement.
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/RejectedCouplingSchemeOptions/fixed_stress_over_time_step.xml
+        EXECUTABLE_ARGS
+            -m
+            ${Data_SOURCE_DIR}/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
+        NO_TEST_DEFINITION
+        PROPERTIES
+            PASS_REGULAR_EXPRESSION
+            "<fixed_stress_over_time_step> is removed"
+    )
+    OgsTest(
+        PROJECTFILE
+            ThermoHydroMechanics/RejectedCouplingSchemeOptions/fixed_stress_over_time_step_monolithic.xml
+        EXECUTABLE_ARGS
+            -m
+            ${Data_SOURCE_DIR}/ThermoHydroMechanics/Linear/HeatTransportInStationaryFlow
+        NO_TEST_DEFINITION
+        PROPERTIES
+            PASS_REGULAR_EXPRESSION
+            "delete it. The staggered scheme always fixes the volumetric"
     )
     # Out-of-range stabilization parameters must warn about the range.
     OgsTest(

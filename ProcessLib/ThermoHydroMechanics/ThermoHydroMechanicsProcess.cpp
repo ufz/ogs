@@ -81,10 +81,12 @@ ThermoHydroMechanicsProcess<DisplacementDim>::ThermoHydroMechanicsProcess(
 
     if (!_use_monolithic_scheme)
     {
-        _integration_point_writer.emplace_back(std::make_unique<
-                                               MeshLib::IntegrationPointWriter>(
-            "strain_rate_variable_ip", 1, integration_order, local_assemblers_,
-            &LocalAssemblerInterface<DisplacementDim>::getStrainRateVariable));
+        _integration_point_writer.emplace_back(
+            std::make_unique<MeshLib::IntegrationPointWriter>(
+                "strain_rate_variable_ip", 1, integration_order,
+                local_assemblers_,
+                &LocalAssemblerInterface<
+                    DisplacementDim>::getFixedStressSplitVariables));
     }
 }
 
@@ -202,6 +204,9 @@ void ThermoHydroMechanicsProcess<DisplacementDim>::initializeConcreteProcess(
     MeshLib::Mesh const& mesh,
     unsigned const integration_order)
 {
+    Common::HydroMechanics::allocateFixedStressSplitVariables(
+        _process_data.coupling_scheme, mesh.getNumberOfElements());
+
     ProcessLib::createLocalAssemblersHM<DisplacementDim,
                                         ThermoHydroMechanicsLocalAssembler>(
         mesh.getElements(), dof_table, local_assemblers_,
