@@ -6,6 +6,7 @@
 #include <range/v3/numeric/accumulate.hpp>
 #include <range/v3/view/transform.hpp>
 
+#include "BaseLib/Error.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
 #include "NumLib/DOF/GlobalMatrixProviders.h"
@@ -62,12 +63,35 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Newton>::
     TimeDiscretizedODESystem(const int process_id, ODE& ode,
                              TimeDisc& time_discretization)
-    : _ode(ode),
+    : _process_id(process_id),
+      _ode(ode),
       _time_disc(time_discretization),
       _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
       _Jac(::detail::provideMatrix(_ode.getMatrixSpecifications(process_id))),
       _b(::detail::provideVector(_ode.getMatrixSpecifications(process_id)))
 {
+}
+
+TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                         NonlinearSolverTag::Newton>::
+    TimeDiscretizedODESystem(const int process_id, ODE& ode,
+                             TimeDisc& time_discretization,
+                             TimeDiscretizedODESystem const& storage_owner)
+    : _process_id(process_id),
+      _ode(ode),
+      _time_disc(time_discretization),
+      _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
+      _Jac(storage_owner._Jac),
+      _b(storage_owner._b)
+{
+    if (_ode.getMatrixSpecifications(_process_id) !=
+        storage_owner._ode.getMatrixSpecifications(storage_owner._process_id))
+    {
+        OGS_FATAL(
+            "Process {} cannot share the equation system storage of process "
+            "{}: their matrix specifications differ.",
+            _process_id, storage_owner._process_id);
+    }
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -197,13 +221,37 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Picard>::
     TimeDiscretizedODESystem(const int process_id, ODE& ode,
                              TimeDisc& time_discretization)
-    : _ode(ode),
+    : _process_id(process_id),
+      _ode(ode),
       _time_disc(time_discretization),
       _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
       _M(::detail::provideMatrix(ode.getMatrixSpecifications(process_id))),
       _K(::detail::provideMatrix(ode.getMatrixSpecifications(process_id))),
       _b(::detail::provideVector(ode.getMatrixSpecifications(process_id)))
 {
+}
+
+TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                         NonlinearSolverTag::Picard>::
+    TimeDiscretizedODESystem(const int process_id, ODE& ode,
+                             TimeDisc& time_discretization,
+                             TimeDiscretizedODESystem const& storage_owner)
+    : _process_id(process_id),
+      _ode(ode),
+      _time_disc(time_discretization),
+      _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
+      _M(storage_owner._M),
+      _K(storage_owner._K),
+      _b(storage_owner._b)
+{
+    if (_ode.getMatrixSpecifications(_process_id) !=
+        storage_owner._ode.getMatrixSpecifications(storage_owner._process_id))
+    {
+        OGS_FATAL(
+            "Process {} cannot share the equation system storage of process "
+            "{}: their matrix specifications differ.",
+            _process_id, storage_owner._process_id);
+    }
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
