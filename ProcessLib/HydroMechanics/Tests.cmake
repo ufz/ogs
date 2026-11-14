@@ -4,6 +4,11 @@
 if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/MandelCryer/mandelcryer.py
                  RUNTIME 21)
+    # The notebook analyses the pre-computed output of the two
+    # ConsolidationBenchmark OgsTests below (run interactively, it runs the
+    # simulations itself).
+    NotebookTest(NOTEBOOKFILE HydroMechanics/StaggeredScheme/ConsolidationBenchmark/consolidation_benchmark.py
+                 RUNTIME 12)
     NotebookTest(NOTEBOOKFILE HydroMechanics/NodalSourceTerm/Nodal-source-test.py RUNTIME 5)
     NotebookTest(NOTEBOOKFILE HydroMechanics/FailureIndexDependentPermeability/permeability-in-EDZ.py RUNTIME 5)
     OgsTest(PROJECTFILE HydroMechanics/A2/A2.prj RUNTIME 6)
