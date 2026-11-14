@@ -73,8 +73,6 @@ public:
     explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
                                       TimeDisc& time_discretization);
 
-    ~TimeDiscretizedODESystem() override;
-
     void assemble(std::vector<GlobalVector*> const& x_new_timestep,
                   std::vector<GlobalVector*> const& x_prev,
                   int const process_id) override;
@@ -152,11 +150,8 @@ private:
     std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
         nullptr;  //!< stores precomputed values for known solutions
 
-    GlobalMatrix* _Jac;  //!< the Jacobian of the residual
-    GlobalVector* _b;    //!< Matrix \f$ b \f$.
-
-    std::size_t _Jac_id = 0u;  //!< ID of the \c _Jac matrix.
-    std::size_t _b_id = 0u;    //!< ID of the \c _b vector.
+    std::shared_ptr<GlobalMatrix> _Jac;  //!< the Jacobian of the residual
+    std::shared_ptr<GlobalVector> _b;    //!< Vector \f$ b \f$.
 };
 
 /*! Time discretized first order implicit quasi-linear ODE;
@@ -186,8 +181,6 @@ public:
     //! Constructs a new instance.
     explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
                                       TimeDisc& time_discretization);
-
-    ~TimeDiscretizedODESystem() override;
 
     void assemble(std::vector<GlobalVector*> const& x_new_timestep,
                   std::vector<GlobalVector*> const& x_prev,
@@ -283,13 +276,9 @@ private:
     std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
         nullptr;  //!< stores precomputed values for known solutions
 
-    GlobalMatrix* _M;  //!< Matrix \f$ M \f$.
-    GlobalMatrix* _K;  //!< Matrix \f$ K \f$.
-    GlobalVector* _b;  //!< Matrix \f$ b \f$.
-
-    std::size_t _M_id = 0u;  //!< ID of the \c _M matrix.
-    std::size_t _K_id = 0u;  //!< ID of the \c _K matrix.
-    std::size_t _b_id = 0u;  //!< ID of the \c _b vector.
+    std::shared_ptr<GlobalMatrix> _M;  //!< Matrix \f$ M \f$.
+    std::shared_ptr<GlobalMatrix> _K;  //!< Matrix \f$ K \f$.
+    std::shared_ptr<GlobalVector> _b;  //!< Vector \f$ b \f$.
 };
 
 //! @}

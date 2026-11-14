@@ -8,6 +8,7 @@
 
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
+#include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "NumLib/Exceptions.h"
 #include "NumLib/IndexValueVector.h"
 
@@ -29,6 +30,30 @@ void applyKnownSolutions(std::vector<Solutions> const* const known_solutions,
     }
     MathLib::LinAlg::finalizeAssembly(x);
 }
+
+//! Acquires a global matrix from the provider, which takes it back when the
+//! last owner releases it.
+std::shared_ptr<GlobalMatrix> provideMatrix(
+    MathLib::MatrixSpecifications const& matrix_specifications)
+{
+    std::size_t id = 0u;
+    return {&NumLib::GlobalMatrixProvider::provider.getMatrix(
+                matrix_specifications, id),
+            [](GlobalMatrix* const A)
+            { NumLib::GlobalMatrixProvider::provider.releaseMatrix(*A); }};
+}
+
+//! Acquires a global vector from the provider, which takes it back when the
+//! last owner releases it.
+std::shared_ptr<GlobalVector> provideVector(
+    MathLib::MatrixSpecifications const& matrix_specifications)
+{
+    std::size_t id = 0u;
+    return {&NumLib::GlobalVectorProvider::provider.getVector(
+                matrix_specifications, id),
+            [](GlobalVector* const x)
+            { NumLib::GlobalVectorProvider::provider.releaseVector(*x); }};
+}
 }  // namespace detail
 
 namespace NumLib
@@ -39,20 +64,10 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                              TimeDisc& time_discretization)
     : _ode(ode),
       _time_disc(time_discretization),
-      _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
+      _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
+      _Jac(::detail::provideMatrix(_ode.getMatrixSpecifications(process_id))),
+      _b(::detail::provideVector(_ode.getMatrixSpecifications(process_id)))
 {
-    _Jac = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(process_id), _Jac_id);
-    _b = &NumLib::GlobalVectorProvider::provider.getVector(
-        _ode.getMatrixSpecifications(process_id), _b_id);
-}
-
-TimeDiscretizedODESystem<
-    ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Newton>::~TimeDiscretizedODESystem()
-{
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_Jac);
-    NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -184,23 +199,11 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                              TimeDisc& time_discretization)
     : _ode(ode),
       _time_disc(time_discretization),
-      _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
+      _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
+      _M(::detail::provideMatrix(ode.getMatrixSpecifications(process_id))),
+      _K(::detail::provideMatrix(ode.getMatrixSpecifications(process_id))),
+      _b(::detail::provideVector(ode.getMatrixSpecifications(process_id)))
 {
-    _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        ode.getMatrixSpecifications(process_id), _M_id);
-    _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        ode.getMatrixSpecifications(process_id), _K_id);
-    _b = &NumLib::GlobalVectorProvider::provider.getVector(
-        ode.getMatrixSpecifications(process_id), _b_id);
-}
-
-TimeDiscretizedODESystem<
-    ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Picard>::~TimeDiscretizedODESystem()
-{
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
-    NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
