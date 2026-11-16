@@ -10,7 +10,7 @@
       when: manual
       allow_failure: true
   script:
-    - uvx cibuildwheel
+    - uv run --no-project python scripts/ci/build_wheels.py
   artifacts:
     paths:
       - wheelhouse/
