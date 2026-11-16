@@ -19,5 +19,6 @@ exclude = [
   "upload\\.wikimedia\\.org",
   "geo\\.verruijt\\.net",
   "publications\\.rwth-aachen\\.de/record/211523/files/4415\\.pdf",
+  "TSAW2013_xls\\.xls",
 ]
 exclude_path = ["public/releases/", "public/docs/featurematrix/bundle/"]
