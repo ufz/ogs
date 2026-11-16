@@ -6,8 +6,10 @@
 #include <range/v3/numeric/accumulate.hpp>
 #include <range/v3/view/transform.hpp>
 
+#include "BaseLib/Error.h"
 #include "MathLib/LinAlg/ApplyKnownSolution.h"
 #include "MathLib/LinAlg/UnifiedMatrixSetters.h"
+#include "NumLib/DOF/GlobalMatrixProviders.h"
 #include "NumLib/Exceptions.h"
 #include "NumLib/IndexValueVector.h"
 
@@ -29,6 +31,30 @@ void applyKnownSolutions(std::vector<Solutions> const* const known_solutions,
     }
     MathLib::LinAlg::finalizeAssembly(x);
 }
+
+//! Acquires a global matrix from the provider, which takes it back when the
+//! last owner releases it.
+std::shared_ptr<GlobalMatrix> provideMatrix(
+    MathLib::MatrixSpecifications const& matrix_specifications)
+{
+    std::size_t id = 0u;
+    return {&NumLib::GlobalMatrixProvider::provider.getMatrix(
+                matrix_specifications, id),
+            [](GlobalMatrix* const A)
+            { NumLib::GlobalMatrixProvider::provider.releaseMatrix(*A); }};
+}
+
+//! Acquires a global vector from the provider, which takes it back when the
+//! last owner releases it.
+std::shared_ptr<GlobalVector> provideVector(
+    MathLib::MatrixSpecifications const& matrix_specifications)
+{
+    std::size_t id = 0u;
+    return {&NumLib::GlobalVectorProvider::provider.getVector(
+                matrix_specifications, id),
+            [](GlobalVector* const x)
+            { NumLib::GlobalVectorProvider::provider.releaseVector(*x); }};
+}
 }  // namespace detail
 
 namespace NumLib
@@ -37,22 +63,35 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Newton>::
     TimeDiscretizedODESystem(const int process_id, ODE& ode,
                              TimeDisc& time_discretization)
-    : _ode(ode),
+    : _process_id(process_id),
+      _ode(ode),
       _time_disc(time_discretization),
-      _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
+      _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
+      _Jac(::detail::provideMatrix(_ode.getMatrixSpecifications(process_id))),
+      _b(::detail::provideVector(_ode.getMatrixSpecifications(process_id)))
 {
-    _Jac = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        _ode.getMatrixSpecifications(process_id), _Jac_id);
-    _b = &NumLib::GlobalVectorProvider::provider.getVector(
-        _ode.getMatrixSpecifications(process_id), _b_id);
 }
 
-TimeDiscretizedODESystem<
-    ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Newton>::~TimeDiscretizedODESystem()
+TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                         NonlinearSolverTag::Newton>::
+    TimeDiscretizedODESystem(const int process_id, ODE& ode,
+                             TimeDisc& time_discretization,
+                             TimeDiscretizedODESystem const& storage_owner)
+    : _process_id(process_id),
+      _ode(ode),
+      _time_disc(time_discretization),
+      _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
+      _Jac(storage_owner._Jac),
+      _b(storage_owner._b)
 {
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_Jac);
-    NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
+    if (_ode.getMatrixSpecifications(_process_id) !=
+        storage_owner._ode.getMatrixSpecifications(storage_owner._process_id))
+    {
+        OGS_FATAL(
+            "Process {} cannot share the equation system storage of process "
+            "{}: their matrix specifications differ.",
+            _process_id, storage_owner._process_id);
+    }
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
@@ -182,25 +221,37 @@ TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
                          NonlinearSolverTag::Picard>::
     TimeDiscretizedODESystem(const int process_id, ODE& ode,
                              TimeDisc& time_discretization)
-    : _ode(ode),
+    : _process_id(process_id),
+      _ode(ode),
       _time_disc(time_discretization),
-      _mat_trans(createMatrixTranslator<ODETag>(time_discretization))
+      _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
+      _M(::detail::provideMatrix(ode.getMatrixSpecifications(process_id))),
+      _K(::detail::provideMatrix(ode.getMatrixSpecifications(process_id))),
+      _b(::detail::provideVector(ode.getMatrixSpecifications(process_id)))
 {
-    _M = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        ode.getMatrixSpecifications(process_id), _M_id);
-    _K = &NumLib::GlobalMatrixProvider::provider.getMatrix(
-        ode.getMatrixSpecifications(process_id), _K_id);
-    _b = &NumLib::GlobalVectorProvider::provider.getVector(
-        ode.getMatrixSpecifications(process_id), _b_id);
 }
 
-TimeDiscretizedODESystem<
-    ODESystemTag::FirstOrderImplicitQuasilinear,
-    NonlinearSolverTag::Picard>::~TimeDiscretizedODESystem()
+TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
+                         NonlinearSolverTag::Picard>::
+    TimeDiscretizedODESystem(const int process_id, ODE& ode,
+                             TimeDisc& time_discretization,
+                             TimeDiscretizedODESystem const& storage_owner)
+    : _process_id(process_id),
+      _ode(ode),
+      _time_disc(time_discretization),
+      _mat_trans(createMatrixTranslator<ODETag>(time_discretization)),
+      _M(storage_owner._M),
+      _K(storage_owner._K),
+      _b(storage_owner._b)
 {
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_M);
-    NumLib::GlobalMatrixProvider::provider.releaseMatrix(*_K);
-    NumLib::GlobalVectorProvider::provider.releaseVector(*_b);
+    if (_ode.getMatrixSpecifications(_process_id) !=
+        storage_owner._ode.getMatrixSpecifications(storage_owner._process_id))
+    {
+        OGS_FATAL(
+            "Process {} cannot share the equation system storage of process "
+            "{}: their matrix specifications differ.",
+            _process_id, storage_owner._process_id);
+    }
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,

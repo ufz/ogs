@@ -21,6 +21,10 @@ struct MatrixSpecifications
     {
     }
 
+    //! Equal specifications have the same sizes and the very same ghost
+    //! indices and sparsity pattern objects.
+    bool operator==(MatrixSpecifications const&) const = default;
+
     std::size_t const nrows;
     std::size_t const ncols;
     std::vector<GlobalIndexType> const* const ghost_indices;

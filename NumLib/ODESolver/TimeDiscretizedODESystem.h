@@ -73,7 +73,13 @@ public:
     explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
                                       TimeDisc& time_discretization);
 
-    ~TimeDiscretizedODESystem() override;
+    //! Constructs a new instance that assembles into the global matrix and
+    //! vector of \c storage_owner instead of allocating its own ones.
+    //! The matrix specifications of \c storage_owner must equal those of
+    //! \c process_id.
+    TimeDiscretizedODESystem(const int process_id, ODE& ode,
+                             TimeDisc& time_discretization,
+                             TimeDiscretizedODESystem const& storage_owner);
 
     void assemble(std::vector<GlobalVector*> const& x_new_timestep,
                   std::vector<GlobalVector*> const& x_prev,
@@ -142,8 +148,9 @@ public:
     }
 
 private:
-    ODE& _ode;             //!< ode the ODE being wrapped
-    TimeDisc& _time_disc;  //!< the time discretization to being used
+    int const _process_id;  //!< process id of the wrapped equation
+    ODE& _ode;              //!< ode the ODE being wrapped
+    TimeDisc& _time_disc;   //!< the time discretization to being used
 
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
@@ -152,11 +159,12 @@ private:
     std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
         nullptr;  //!< stores precomputed values for known solutions
 
-    GlobalMatrix* _Jac;  //!< the Jacobian of the residual
-    GlobalVector* _b;    //!< Matrix \f$ b \f$.
-
-    std::size_t _Jac_id = 0u;  //!< ID of the \c _Jac matrix.
-    std::size_t _b_id = 0u;    //!< ID of the \c _b vector.
+    // The storage is shared with other instances of the same matrix
+    // specifications, see the storage_owner constructor. That is valid,
+    // because each instance overwrites it in assemble() and consumes it before
+    // the next instance assembles.
+    std::shared_ptr<GlobalMatrix> _Jac;  //!< the Jacobian of the residual
+    std::shared_ptr<GlobalVector> _b;    //!< Vector \f$ b \f$.
 };
 
 /*! Time discretized first order implicit quasi-linear ODE;
@@ -187,7 +195,13 @@ public:
     explicit TimeDiscretizedODESystem(const int process_id, ODE& ode,
                                       TimeDisc& time_discretization);
 
-    ~TimeDiscretizedODESystem() override;
+    //! Constructs a new instance that assembles into the global matrices and
+    //! vector of \c storage_owner instead of allocating its own ones.
+    //! The matrix specifications of \c storage_owner must equal those of
+    //! \c process_id.
+    TimeDiscretizedODESystem(const int process_id, ODE& ode,
+                             TimeDisc& time_discretization,
+                             TimeDiscretizedODESystem const& storage_owner);
 
     void assemble(std::vector<GlobalVector*> const& x_new_timestep,
                   std::vector<GlobalVector*> const& x_prev,
@@ -273,8 +287,9 @@ public:
     }
 
 private:
-    ODE& _ode;             //!< ode the ODE being wrapped
-    TimeDisc& _time_disc;  //!< the time discretization to being used
+    int const _process_id;  //!< process id of the wrapped equation
+    ODE& _ode;              //!< ode the ODE being wrapped
+    TimeDisc& _time_disc;   //!< the time discretization to being used
 
     //! the object used to compute the matrix/vector for the nonlinear solver
     std::unique_ptr<MatTrans> _mat_trans;
@@ -283,13 +298,13 @@ private:
     std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
         nullptr;  //!< stores precomputed values for known solutions
 
-    GlobalMatrix* _M;  //!< Matrix \f$ M \f$.
-    GlobalMatrix* _K;  //!< Matrix \f$ K \f$.
-    GlobalVector* _b;  //!< Matrix \f$ b \f$.
-
-    std::size_t _M_id = 0u;  //!< ID of the \c _M matrix.
-    std::size_t _K_id = 0u;  //!< ID of the \c _K matrix.
-    std::size_t _b_id = 0u;  //!< ID of the \c _b vector.
+    // The storage is shared with other instances of the same matrix
+    // specifications, see the storage_owner constructor. That is valid,
+    // because each instance overwrites it in assemble() and consumes it before
+    // the next instance assembles.
+    std::shared_ptr<GlobalMatrix> _M;  //!< Matrix \f$ M \f$.
+    std::shared_ptr<GlobalMatrix> _K;  //!< Matrix \f$ K \f$.
+    std::shared_ptr<GlobalVector> _b;  //!< Vector \f$ b \f$.
 };
 
 //! @}
