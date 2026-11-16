@@ -122,6 +122,8 @@ public:
                                     GlobalVector const& res,
                                     GlobalVector& w) override;
 
+    void projectToFreeDofs(GlobalVector& v) const override;
+
     void updateConstraints(GlobalVector& lower, GlobalVector& upper,
                            int const process_id) override
     {

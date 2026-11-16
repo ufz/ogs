@@ -182,11 +182,18 @@ private:
     /// it contains neither the reaction forces nor the arbitrarily scaled
     /// Dirichlet rows, and it is the same for all linear algebra backends. In
     /// an iteration where the Dirichlet values changed it still contains the
-    /// out-of-balance forces caused by the change, s.t. the check cannot be
-    /// satisfied before the BCs are imposed.
+    /// out-of-balance forces caused by the change.
+    ///
+    /// The linearization is exact up to \f$ O(\|V\|^2) \f$ only. Hence, if
+    /// \f$ V \neq 0 \f$, the criterion must also be satisfied by
+    /// \f$ P\,\mathit{res} \f$, the free part of the residual at the current
+    /// iterate. Both together bound \f$ P J V \f$, s.t. the check cannot be
+    /// satisfied before the BCs are imposed, also for nonlinear problems.
     bool _dirichlet_free_residual_check = false;
     std::size_t _dirichlet_free_residual_id =
         0u;  //!< ID of the Dirichlet-free residual vector.
+    std::size_t _free_residual_id =
+        0u;  //!< ID of the vector \f$ P\,\mathit{res} \f$.
 };
 
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration

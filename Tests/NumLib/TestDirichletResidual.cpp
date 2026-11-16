@@ -16,6 +16,8 @@
 #include "NumLib/IndexValueVector.h"
 #include "NumLib/NumericsConfig.h"
 #include "NumLib/ODESolver/ConvergenceCriterion.h"
+#include "NumLib/ODESolver/ConvergenceCriterionResidual.h"
+#include "NumLib/ODESolver/FixedDampingStrategy.h"
 #include "NumLib/ODESolver/NewtonStepStrategy.h"
 #include "NumLib/ODESolver/NonlinearSolver.h"
 #include "NumLib/ODESolver/TimeDiscretization.h"
@@ -380,6 +382,8 @@ TEST(NumLibDirichletResidual, DISABLED_DeviationAfterChangedSetOfDirichletDofs)
  * ODE1 with backward Euler, dt = 1, x0 = x_prev = (1, 0), g = 2 at DOF 0:
  * res = (x - x_prev) + K x = (0, -1), J = I + K = [[1, 1], [-1, 1]],
  * V = (-1, 0), hence res - J V = (1, -2) and the checked vector is (0, -2).
+ * Since V != 0, the free part of the residual, P res = (0, -1), is checked
+ * before it.
  * The default check sees Eigen's residual after applying the BCs instead,
  * (c v, res_1 - J_10 v) = (-1, -2) with c = J_00 = 1.
  * After the full step x = (2, 2) fulfils the BC, and the checked vector is
@@ -433,12 +437,16 @@ TEST(NumLibDirichletResidual, DISABLED_DirichletFreeResidualCheck)
         return std::move(convergence_criterion.residuals);
     };
 
+    // Iteration 1: P res and P (res - J V); iteration 2: V = 0, only the
+    // latter.
     auto const dirichlet_free = checked_residuals(true);
-    ASSERT_EQ(maxiter, static_cast<int>(dirichlet_free.size()));
+    ASSERT_EQ(maxiter + 1, static_cast<int>(dirichlet_free.size()));
     EXPECT_EQ(0.0, dirichlet_free[0][0]);
-    EXPECT_NEAR(-2.0, dirichlet_free[0][1], 1e-14);
+    EXPECT_NEAR(-1.0, dirichlet_free[0][1], 1e-14);
     EXPECT_EQ(0.0, dirichlet_free[1][0]);
-    EXPECT_NEAR(0.0, dirichlet_free[1][1], 1e-14);
+    EXPECT_NEAR(-2.0, dirichlet_free[1][1], 1e-14);
+    EXPECT_EQ(0.0, dirichlet_free[2][0]);
+    EXPECT_NEAR(0.0, dirichlet_free[2][1], 1e-14);
 
     auto const with_dirichlet_rows = checked_residuals(false);
     ASSERT_EQ(maxiter, static_cast<int>(with_dirichlet_rows.size()));
@@ -451,6 +459,103 @@ TEST(NumLibDirichletResidual, DISABLED_DirichletFreeResidualCheck)
         EXPECT_NEAR(2.0, run_merits[0], 1e-14);
         EXPECT_NEAR(0.0, run_merits[1], 1e-14);
     }
+}
+
+/*! A nonlinear ODE whose Dirichlet-free residual P (r - J V) vanishes in the
+ * first iteration although the Dirichlet BC is violated, because the
+ * linearization error is O(|V|^2).
+ *
+ * x = (v, u), the BC fixes v = 0 at DOF 0, and r = (v, u + u v^2), hence
+ * J = [[1, 0], [2 u v, 1 + v^2]]. The solution is (0, 0). For x0 = (1, 1):
+ * V = (1, 0) and r_1 - J_10 V_0 = 2 - 2 = 0, while the residual at the state
+ * fulfilling the BC, (0, 1), is r_1 = 1.
+ */
+namespace
+{
+class ODEWithDirichletBCLinearizationError final : public ODE1
+{
+public:
+    std::vector<NumLib::IndexValueVector<BCIndex>> const* getKnownSolutions(
+        double const /*t*/, GlobalVector const& /*x*/,
+        int const /*process_id*/) const override
+    {
+        return &known_solutions;
+    }
+
+    void assembleWithJacobian(const double /*t*/, double const /*dt*/,
+                              std::vector<GlobalVector*> const& x_curr,
+                              std::vector<GlobalVector*> const& /*x_prev*/,
+                              int const process_id, GlobalVector& b,
+                              GlobalMatrix& Jac) override
+    {
+        auto const& x = *x_curr[process_id];
+        MathLib::LinAlg::setLocalAccessibleVector(x);
+        double const v = x[0];
+        double const u = x[1];
+        // b = -r
+        MathLib::setVector(b, {-v, -(u + u * v * v)});
+        MathLib::setMatrix(Jac, {1.0, 0.0, 2 * u * v, 1 + v * v});
+    }
+
+    bool isLinear() const override { return false; }
+
+    std::vector<NumLib::IndexValueVector<BCIndex>> const known_solutions{
+        {{0}, {0.0}}};
+};
+}  // namespace
+
+/*! The Dirichlet-free residual check must not report convergence in an
+ * iteration in which the Dirichlet BC is violated only because the
+ * linearized residual P (r - J V) happens to vanish there. Otherwise the
+ * solver stops at x = (0, 1) with the residual r_1 = 1.
+ */
+#ifndef USE_PETSC
+TEST(NumLibDirichletResidual, DirichletFreeResidualCheckLinearizationError)
+#else
+TEST(NumLibDirichletResidual,
+     DISABLED_DirichletFreeResidualCheckLinearizationError)
+#endif
+{
+    int const process_id = 0;
+    int const maxiter = 10;
+
+    ODEWithDirichletBCLinearizationError ode;
+    NumLib::BackwardEuler time_disc;
+    NumLib::TimeDiscretizedODESystem<
+        ODEWithDirichletBCLinearizationError::ODETag,
+        NumLib::NonlinearSolverTag::Newton>
+        ode_sys(process_id, ode, time_disc);
+
+    auto linear_solver = createLinearSolver();
+    NumLib::ConvergenceCriterionResidual convergence_criterion(
+        1e-10, std::nullopt, MathLib::VecNormType::NORM2);
+    NumLib::NonlinearSolver<NumLib::NonlinearSolverTag::Newton>
+        nonlinear_solver(*linear_solver, maxiter,
+                         std::make_unique<NumLib::FixedDampingStrategy>(1.0));
+    nonlinear_solver.setDirichletFreeResidualCheck(true);
+    nonlinear_solver.setEquationSystem(ode_sys, convergence_criterion);
+
+    auto const x0 = makeDirichletTestVector({1.0, 1.0});
+    std::vector<GlobalVector*> xs{
+        &NumLib::GlobalVectorProvider::provider.getVector(x0)};
+    std::vector<GlobalVector*> xs_prev{
+        &NumLib::GlobalVectorProvider::provider.getVector(x0)};
+
+    time_disc.setInitialState(0.0);
+    time_disc.nextTimestep(1.0, 1.0);
+
+    auto const status =
+        nonlinear_solver.solve(xs, xs_prev, nullptr, process_id);
+
+    EXPECT_TRUE(status.error_norms_met);
+    EXPECT_LT(1, status.number_iterations);
+    auto const& x = *xs.front();
+    MathLib::LinAlg::setLocalAccessibleVector(x);
+    EXPECT_EQ(0.0, x[0]);
+    EXPECT_NEAR(0.0, x[1], 1e-10);
+
+    NumLib::GlobalVectorProvider::provider.releaseVector(*xs.front());
+    NumLib::GlobalVectorProvider::provider.releaseVector(*xs_prev.front());
 }
 
 #ifdef USE_PETSC

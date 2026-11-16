@@ -494,12 +494,34 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Newton>::solve(
         step_ctx.merit =
             LinAlg::norm(dirichlet_free_res, MathLib::VecNormType::NORM2);
 
+        bool const check_residual =
+            !sys.isLinear() && _convergence_criterion->hasResidualCheck();
+        // P (res - J V) is the residual at the state fulfilling the Dirichlet
+        // BCs up to O(|V|^2) only. If x violates the BCs, the free part P res
+        // of the residual at x itself must satisfy the criterion, too. Both
+        // together bound P J V, hence the BC violation.
+        GlobalVector* free_res = nullptr;
+        if (check_residual && _dirichlet_free_residual_check &&
+            step_ctx.dirichlet_deviation > 0)
+        {
+            free_res = &NumLib::GlobalVectorProvider::provider.getVector(
+                res, _free_residual_id);
+            sys.projectToFreeDofs(*free_res);
+        }
+
         sys.applyKnownSolutionsNewton(J, res, *x[process_id], minus_delta_x);
         time_dirichlet += timer_dirichlet.elapsed();
         INFO("[time] Applying Dirichlet BCs took {:g} s.", time_dirichlet);
 
-        if (!sys.isLinear() && _convergence_criterion->hasResidualCheck())
+        if (check_residual)
         {
+            if (free_res != nullptr)
+            {
+                // Checked first, s.t. |r0| of relative criteria refers to
+                // P (res - J V) checked below.
+                _convergence_criterion->checkResidual(*free_res);
+                NumLib::GlobalVectorProvider::provider.releaseVector(*free_res);
+            }
             _convergence_criterion->checkResidual(
                 _dirichlet_free_residual_check ? dirichlet_free_res : res);
         }

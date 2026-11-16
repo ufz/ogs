@@ -153,6 +153,12 @@ public:
                                             GlobalVector const& res,
                                             GlobalVector& w) = 0;
 
+    //! Sets the entries of \c v at the known solutions' DOFs to zero, i.e.,
+    //! applies the projection \f$ P \f$ to the free DOFs.
+    //!
+    //! \pre computeKnownSolutions() must have been called before.
+    virtual void projectToFreeDofs(GlobalVector& v) const = 0;
+
     virtual void updateConstraints(GlobalVector& /*lower*/,
                                    GlobalVector& /*upper*/,
                                    int /*process_id*/) = 0;

@@ -214,12 +214,18 @@ double TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,
     }
     NumLib::GlobalVectorProvider::provider.releaseVector(differences);
 
-    // Restrict to the free DOFs.
-    MathLib::setVector(w, _known_solutions_ids,
-                       std::vector<double>(_known_solutions_ids.size(), 0.0));
-    MathLib::LinAlg::finalizeAssembly(w);
+    projectToFreeDofs(w);
 
     return max_deviation;
+}
+
+void TimeDiscretizedODESystem<
+    ODESystemTag::FirstOrderImplicitQuasilinear,
+    NonlinearSolverTag::Newton>::projectToFreeDofs(GlobalVector& v) const
+{
+    MathLib::setVector(v, _known_solutions_ids,
+                       std::vector<double>(_known_solutions_ids.size(), 0.0));
+    MathLib::LinAlg::finalizeAssembly(v);
 }
 
 void TimeDiscretizedODESystem<ODESystemTag::FirstOrderImplicitQuasilinear,

@@ -12,7 +12,14 @@ the Dirichlet rows of the linear system, whose scaling is arbitrary and
 differs between the linear algebra backends. In an iteration in which the
 Dirichlet values changed, e.g., the first one of a time step, the checked
 residual still contains the out-of-balance forces caused by that change.
-Therefore, it cannot be satisfied before the Dirichlet BCs are imposed.
+
+The linearization is exact only up to terms of order \f$ \|V\|^2 \f$; for a
+nonlinear problem \f$ P\,(r - J V) \f$ may vanish although the Dirichlet BCs
+are violated. Therefore, if \f$ V \neq 0 \f$, the convergence criterion must
+also be satisfied by \f$ P\,r \f$, the residual at the current solution
+restricted to the free degrees of freedom. Both together bound
+\f$ P J V \f$, s.t. the check cannot be satisfied before the Dirichlet BCs are
+imposed.
 
 Relative residual tolerances refer to a different \f$ |r_0| \f$ than with the
 default setting.
