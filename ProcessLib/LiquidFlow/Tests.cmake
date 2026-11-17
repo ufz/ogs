@@ -99,6 +99,7 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/2D/square_1e1_calculatesurfaceflux_gravity.xml)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/2D/square_1e1_calculatesurfaceflux_gravity_inclined.xml)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/2D/square_1e1_calculatesurfaceflux_gravity_mass.xml)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Flux/2D/column_calculatesurfaceflux_gravity_density_mass.prj)
 endif()
 
 if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
