@@ -5,13 +5,13 @@ Environment for notebook-based tests is defined in this directory's `pyproject.t
 3 dependency groups which select the used `ogs` wheel:
 
 - `ogs-local`: Builds OGS locally from source
-- `ogs-master` Downloads latest OGS wheel from master branch (requires `--upgrade-package ogs`-parameter)
+- `ogs-master` Downloads latest OGS wheel from master branch (requires `--upgrade-package ogs --prerelease=allow`-parameters)
 - `ogs-pypi` Downloads latest OGS release from PyPI
 
 ```bash
 uv run --group ogs-local pytest
 
-uv run --group ogs-master --upgrade-package ogs pytest
+uv run --group ogs-master --upgrade-package ogs --prerelease=allow pytest
 uv run --group ogs-pypi pytest
 
 uv run --group ogs-local Notebooks/testrunner.py --out /tmp Mechanics/Linear/SimpleMechanics.py

@@ -2596,7 +2596,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 ogs-local = [{ name = "ogs", directory = "../../" }]
-ogs-master = [{ name = "ogs", specifier = ">=6.5.6.dev0", index = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple", conflict = { package = "ogs-test-environment", group = "ogs-master" } }]
+ogs-master = [{ name = "ogs", index = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple", conflict = { package = "ogs-test-environment", group = "ogs-master" } }]
 ogs-pypi = [{ name = "ogs" }]
 
 [[package]]
