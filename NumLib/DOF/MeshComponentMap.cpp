@@ -549,20 +549,15 @@ static GlobalIndexType globalIndexOfGhostNodeOnOwner(
         gni.comp_id);
 }
 
-/// Gathers the numbers of entries each rank sends to each rank.
-///
-/// Returns a flat mpi.size x mpi.size matrix in row-major order: the entry
-/// [s * mpi.size + r] is the number of entries rank s sends to rank r. Row s
-/// holds the send counts of rank s, column r the receive counts of rank r.
-static std::vector<std::size_t> gatherGhostNodeSizes(
-    GhostNodeInfosByRank const& to_each_rank, BaseLib::MPI::Mpi const& mpi)
+/// Exchanges the numbers of entries each rank sends to each rank. Returns
+/// the receive counts: entry r is the number of entries rank r sends here.
+static std::vector<int> exchangeGhostNodeSizes(
+    std::vector<int> const& send_counts, BaseLib::MPI::Mpi const& mpi)
 {
-    std::vector<std::size_t> const rank_sizes =
-        to_each_rank |
-        ranges::views::transform([](auto const& v) { return v.size(); }) |
-        ranges::to<std::vector>;
-
-    return BaseLib::MPI::allgather(rank_sizes, mpi);
+    std::vector<int> receive_counts(mpi.size);
+    MPI_Alltoall(send_counts.data(), 1, MPI_INT, receive_counts.data(), 1,
+                 MPI_INT, mpi.communicator);
+    return receive_counts;
 }
 
 // Custom MPI_Datatype for std::pair<GhostNodeInfo, GlobalIndexType>.
@@ -607,9 +602,13 @@ static GhostNodeInfosByRank exchangeGhostInfoPointToPoint(
 {
     auto const pair_mpi_type = createMpiDatatypeForPair();
 
-    // Send/receive counts of all ranks, see gatherGhostNodeSizes().
-    std::vector<std::size_t> const counts =
-        gatherGhostNodeSizes(to_each_rank, mpi);
+    std::vector<int> const send_counts =
+        to_each_rank |
+        ranges::views::transform([](auto const& v)
+                                 { return static_cast<int>(v.size()); }) |
+        ranges::to<std::vector>;
+    std::vector<int> const receive_counts =
+        exchangeGhostNodeSizes(send_counts, mpi);
 
     GhostNodeInfosByRank from_each_rank(mpi.size);
 
@@ -620,28 +619,25 @@ static GhostNodeInfosByRank exchangeGhostInfoPointToPoint(
     // Send data
     for (int dest_rank = 0; dest_rank < mpi.size; ++dest_rank)
     {
-        std::size_t const send_count = counts[mpi.rank * mpi.size + dest_rank];
-        if (send_count > 0)
+        if (send_counts[dest_rank] > 0)
         {  // Only send if there is data to send
             requests.push_back(MPI_Request());
-            MPI_Isend(to_each_rank[dest_rank].data(),
-                      static_cast<int>(send_count), pair_mpi_type.get(),
-                      dest_rank, 0, mpi.communicator, &requests.back());
+            MPI_Isend(to_each_rank[dest_rank].data(), send_counts[dest_rank],
+                      pair_mpi_type.get(), dest_rank, 0, mpi.communicator,
+                      &requests.back());
         }
     }
 
     // Receive data
     for (int src_rank = 0; src_rank < mpi.size; ++src_rank)
     {
-        std::size_t const receive_count =
-            counts[src_rank * mpi.size + mpi.rank];
-        from_each_rank[src_rank].resize(receive_count);
-        if (receive_count > 0)
+        from_each_rank[src_rank].resize(receive_counts[src_rank]);
+        if (receive_counts[src_rank] > 0)
         {  // Only receive if there is data to receive
             requests.push_back(MPI_Request());
-            MPI_Irecv(from_each_rank[src_rank].data(),
-                      static_cast<int>(receive_count), pair_mpi_type.get(),
-                      src_rank, 0, mpi.communicator, &requests.back());
+            MPI_Irecv(from_each_rank[src_rank].data(), receive_counts[src_rank],
+                      pair_mpi_type.get(), src_rank, 0, mpi.communicator,
+                      &requests.back());
         }
     }
 
