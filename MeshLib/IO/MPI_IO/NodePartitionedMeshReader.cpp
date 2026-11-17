@@ -402,7 +402,7 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
     std::vector<std::size_t> const gathered_n_regular_base_nodes =
         BaseLib::MPI::allgather(_mesh_info.number_of_regular_base_nodes, mpi_);
 
-    std::vector<std::size_t> n_regular_base_nodes_at_rank =
+    std::vector<std::size_t> const n_regular_base_nodes_at_rank =
         BaseLib::sizesToOffsets(gathered_n_regular_base_nodes);
 
     std::size_t const n_regular_high_order_nodes =
@@ -411,15 +411,14 @@ MeshLib::NodePartitionedMesh* NodePartitionedMeshReader::newMesh(
     std::vector<std::size_t> const gathered_n_regular_high_order_nodes =
         BaseLib::MPI::allgather(n_regular_high_order_nodes, mpi_);
 
-    std::vector<std::size_t> n_regular_high_order_nodes_at_rank =
+    std::vector<std::size_t> const n_regular_high_order_nodes_at_rank =
         BaseLib::sizesToOffsets(gathered_n_regular_high_order_nodes);
 
     return new MeshLib::NodePartitionedMesh(
         mesh_name, mesh_nodes, glb_node_ids, mesh_elems, properties,
         _mesh_info.number_of_global_base_nodes,
         _mesh_info.number_of_global_nodes, _mesh_info.number_of_regular_nodes,
-        std::move(n_regular_base_nodes_at_rank),
-        std::move(n_regular_high_order_nodes_at_rank));
+        n_regular_base_nodes_at_rank, n_regular_high_order_nodes_at_rank);
 }
 
 void NodePartitionedMeshReader::setNodes(

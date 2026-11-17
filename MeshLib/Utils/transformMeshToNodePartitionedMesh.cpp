@@ -332,9 +332,9 @@ std::unique_ptr<NodePartitionedMesh> transformMeshToNodePartitionedMesh(
 
     unsigned long const number_of_global_nodes =
         getNumberOfGlobalNodes(subdomain_mesh);
-    auto numbers_of_regular_base_nodes_at_rank =
+    auto const numbers_of_regular_base_nodes_at_rank =
         computeNumberOfRegularBaseNodesAtRank(subdomain_mesh);
-    auto numbers_of_regular_higher_order_nodes_at_rank =
+    auto const numbers_of_regular_higher_order_nodes_at_rank =
         computeNumberOfRegularHigherOrderNodesAtRank(subdomain_mesh);
 
     auto const number_of_regular_nodes =
@@ -348,8 +348,8 @@ std::unique_ptr<NodePartitionedMesh> transformMeshToNodePartitionedMesh(
         subdomain_mesh->getName(), nodes, subdomain_global_node_ids, elements,
         subdomain_mesh->getProperties(), number_of_global_base_nodes,
         number_of_global_nodes, number_of_regular_nodes,
-        std::move(numbers_of_regular_base_nodes_at_rank),
-        std::move(numbers_of_regular_higher_order_nodes_at_rank));
+        numbers_of_regular_base_nodes_at_rank,
+        numbers_of_regular_higher_order_nodes_at_rank);
 }
 
 }  // namespace MeshLib

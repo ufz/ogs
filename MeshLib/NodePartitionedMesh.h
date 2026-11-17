@@ -61,8 +61,8 @@ public:
         const std::size_t n_global_base_nodes,
         const std::size_t n_global_nodes,
         const std::size_t n_regular_nodes,
-        std::vector<std::size_t>&& n_regular_base_nodes_at_rank,
-        std::vector<std::size_t>&& n_regular_high_order_nodes_at_rank);
+        std::vector<std::size_t> const& n_regular_base_nodes_at_rank,
+        std::vector<std::size_t> const& n_regular_high_order_nodes_at_rank);
 
     /// Get the number of nodes of the global mesh for linear elements.
     std::size_t getNumberOfGlobalBaseNodes() const
@@ -83,17 +83,6 @@ public:
     /// Check whether a node with ID of node_id is a ghost node
     bool isGhostNode(const std::size_t node_id) const;
 
-    std::size_t getNumberOfRegularBaseNodesAtRank(int const partition_id) const
-    {
-        return _n_regular_base_nodes_at_rank[partition_id];
-    }
-
-    std::size_t getNumberOfRegularHighOrderNodesAtRank(
-        int const partition_id) const
-    {
-        return _n_regular_high_order_nodes_at_rank[partition_id];
-    }
-
     // TODO I guess that is a simplified version of computeSparsityPattern()
     /// Get the maximum number of connected nodes to node.
     std::size_t getMaximumNConnectedNodesToNode() const;
@@ -102,13 +91,13 @@ public:
 
     int getNumberOfPartitions() const
     {
-        // The whole-mesh constructor leaves the offsets empty; otherwise they
-        // hold one entry per partition plus the trailing total.
-        if (_n_regular_base_nodes_at_rank.empty())
+        // The whole-mesh constructor leaves the end node ids empty; otherwise
+        // they hold one entry per partition plus the trailing total.
+        if (_end_node_id_at_rank.empty())
         {
             return 1;
         }
-        return static_cast<int>(_n_regular_base_nodes_at_rank.size()) - 1;
+        return static_cast<int>(_end_node_id_at_rank.size()) - 1;
     }
 
 private:
@@ -123,13 +112,6 @@ private:
 
     /// Number of the all regular nodes.
     std::size_t _n_regular_nodes;
-
-    /// Gathered numbers of the regular nodes for linear interpolations of all
-    /// partitions.
-    std::vector<std::size_t> _n_regular_base_nodes_at_rank;
-
-    /// Gathered numbers of the all regular high order nodes of all partitions.
-    std::vector<std::size_t> _n_regular_high_order_nodes_at_rank;
 
     /// Gathered the end node id of each rank.
     std::vector<int> _end_node_id_at_rank;
