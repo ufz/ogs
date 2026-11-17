@@ -202,7 +202,7 @@ def plot_results_errors(var: ot.variables.Scalar, ref_vals: np.ndarray):
 # ## Gas density evolution
 
 # %%
-rho_g = ot.variables.Scalar("gas_density", r"kg/$m^3$", r"kg/$m^3$")
+rho_g = ot.variables.Scalar("gas_density", "kg/m^3")
 plot_results_errors(rho_g, gas_density(ms.timevalues))
 
 # %% [markdown]
