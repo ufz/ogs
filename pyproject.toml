@@ -104,6 +104,7 @@ before-all = "dnf install -y epel-release && dnf install -y ccache"
 before-build = "pipx uninstall patchelf || true; pipx install 'patchelf<0.17'"
 environment-pass = [
   "SETUPTOOLS_SCM_LOCAL_SCHEME",
+  "SETUPTOOLS_SCM_PRETEND_VERSION_FOR_OGS",
   "CPM_SOURCE_CACHE",
   "CCACHE_DIR",
   "CCACHE_MAXSIZE",
