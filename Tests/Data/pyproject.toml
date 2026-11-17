@@ -36,12 +36,12 @@ dependencies = [
 
 # Usage:
 # uv run --group ogs-local pytest
-# uv run --group ogs-master --upgrade-package ogs pytest
+# uv run --group ogs-master --upgrade-package ogs --prerelease=allow pytest
 # uv run --group ogs-pypi --upgrade-package ogs pytest
 # --upgrade-package uses latest, ignoring version in lockfile
 [dependency-groups]
 ogs-local = ["ogs"]
-ogs-master = ["ogs>=6.5.6.dev0"] # Bump after release!
+ogs-master = ["ogs"] # needs --prerelease=allow for master wheels
 ogs-pypi = ["ogs"]
 
 [tool.uv]

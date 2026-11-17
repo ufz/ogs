@@ -166,7 +166,7 @@ display(Image(filename="./sketch_molar_flux_calculation.jpg", width=100))
 # Additionally, we compute the molar flux profiles at $t$ = 10$^3$, 10$^4$, 10$^5$, and 10$^6$ years. The implementation of molar flux output can be viewed <a href="https://gitlab.opengeosys.org/ogs/ogs/-/merge_requests/4006">at this link</a>.
 
 # %%
-HTO_flux_var = ot.variables.Scalar("HTOFlux", "mol/m$^2$/s")
+HTO_flux_var = ot.variables.Scalar("HTOFlux", "mol/m^2/s")
 fig = plot_results(ms_MLD, HTO_flux_var)
 fig.axes[0].set_yscale("log")
 

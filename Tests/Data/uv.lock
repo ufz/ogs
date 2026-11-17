@@ -2426,26 +2426,25 @@ resolution-markers = [
     "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'linux' and sys_platform != 'win32'",
 ]
-dependencies = [
-    { name = "pandas" },
-]
 
 [package.metadata]
-requires-dist = [{ name = "pandas" }]
 
 [package.metadata.requires-dev]
 dev = [
     { name = "lxml" },
     { name = "numpy" },
+    { name = "pandas" },
     { name = "pytest" },
     { name = "typing-extensions" },
 ]
 dev-all = [
+    { name = "glaciationbcs", git = "https://github.com/cbsilver/glaciationBCs.git?rev=1a7feb2ce1e019e242fecd8d94d8633474042e97" },
     { name = "gmsh", marker = "sys_platform != 'linux'", specifier = ">=4.12.0" },
     { name = "gmsh", marker = "sys_platform == 'linux'", specifier = "==4.13.1.dev1", index = "https://gmsh.info/python-packages-dev-nox" },
     { name = "lxml" },
     { name = "numpy" },
     { name = "ogstools" },
+    { name = "pandas" },
     { name = "pytest" },
     { name = "typing-extensions" },
 ]
@@ -2488,7 +2487,7 @@ wheels = [
 
 [[package]]
 name = "ogs"
-version = "6.5.7"
+version = "6.5.9"
 source = { registry = "https://pypi.org/simple" }
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'linux'",
@@ -2511,20 +2510,20 @@ resolution-markers = [
 dependencies = [
     { name = "pandas" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/84/d8/b9cc007b4f3d73da030d55e5f026ac5782689f4ff6615b76bbb37f0c3671/ogs-6.5.7.tar.gz", hash = "sha256:6eb4375381edb4347eaa8b62bf14d82ba1a4381d4e4ffdda36e0f7246b7462e7", size = 3166764, upload-time = "2026-01-31T14:01:50.072Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/8d/929a883186178cda4405ff6b6a737b9da1cb4f3c0d59e3584f3456b4d7b9/ogs-6.5.9.tar.gz", hash = "sha256:764d011239d40f098675e53a95bf5723620f5d5b5ddc27980d7c067c2cabe809", size = 3800564, upload-time = "2026-09-18T11:41:03.642Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6d/12/f9f417744da03a946a6f9c36ea44a7ce60681ab77ef80149717a55c1b106/ogs-6.5.7-cp311-cp311-macosx_12_0_arm64.whl", hash = "sha256:aa317b6a080e47cc6eac97948bd07f77c191a82226450daaf17e303a474234ae", size = 42035444, upload-time = "2026-01-31T14:00:41.528Z" },
-    { url = "https://files.pythonhosted.org/packages/03/0d/de7328825a22a5a15a318d8d0b7229e944e75bdb2e85460c6baa0953c7a3/ogs-6.5.7-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:c16184d1be3070892bc0dd6998e3d55c3e503a8b8f32f310849a0e8f1ef0af20", size = 66721935, upload-time = "2026-01-31T14:00:47.326Z" },
-    { url = "https://files.pythonhosted.org/packages/ad/40/ff656069be15748e78205c247b10e0a31598fa38e7ca9d1a5f71cf15a49e/ogs-6.5.7-cp311-cp311-win_amd64.whl", hash = "sha256:ab3eb7b62015f3175d63685142da4f620df6d8de112d9cc1d250fcdf6650389e", size = 52250950, upload-time = "2026-01-31T14:00:52.491Z" },
-    { url = "https://files.pythonhosted.org/packages/99/a3/8595be6bea9a82c6015822f0d402c58af2d31dea6dd39dcf22934d484514/ogs-6.5.7-cp312-cp312-macosx_12_0_arm64.whl", hash = "sha256:33ba5fdd118fcbcdfd74cf39c2b8fcc09478b397560336b50a0072245fb2b238", size = 42028097, upload-time = "2026-01-31T14:00:57.803Z" },
-    { url = "https://files.pythonhosted.org/packages/23/2b/b0134751b33bb161eecfdd529a0c2085a6adee1ccea4035a0d9314ba52a4/ogs-6.5.7-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:6179e50c26471aee138d55164a0aff33bf87d30842e9bf65a488f5107c95d735", size = 66728609, upload-time = "2026-01-31T14:01:03.139Z" },
-    { url = "https://files.pythonhosted.org/packages/ca/f2/bb2ec6957f1f8a95a6df54c3b9bd72c2a0588f68882d573eae3ebab02402/ogs-6.5.7-cp312-cp312-win_amd64.whl", hash = "sha256:e467e018fbf3e52db6cf2ec4456a169d3ac507b1f4f0165298730ee9e249ded8", size = 52515410, upload-time = "2026-01-31T14:01:09.086Z" },
-    { url = "https://files.pythonhosted.org/packages/7d/2d/a4e4b31745c05ab19e28d8c7d1112b6edc5dc00a055b4d15b2b6b2ea97b6/ogs-6.5.7-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:f65ed5fb8b8a1ae1d02991bca0f2d49b761091f34962c7b26afdbbf666c9a6d7", size = 42028355, upload-time = "2026-01-31T14:01:13.961Z" },
-    { url = "https://files.pythonhosted.org/packages/00/0a/20388b53e95505d5024bcd53bfa272467807afa39f2000c93bbeaaea0892/ogs-6.5.7-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:31dc549b02029630dc8511f9fcc2e5034603ca9365ebe7865fc8c8e625af2b40", size = 66728148, upload-time = "2026-01-31T14:01:19.78Z" },
-    { url = "https://files.pythonhosted.org/packages/ba/a4/4fc1dc117f0eb05dfb63d6cb9d58386e21bd10b746f0eb98038b86ab0b94/ogs-6.5.7-cp313-cp313-win_amd64.whl", hash = "sha256:3d3b802e49f93f620c6e41efb36eb48194d421c66faa79c36ee04528d7004389", size = 52449159, upload-time = "2026-01-31T14:01:30.732Z" },
-    { url = "https://files.pythonhosted.org/packages/f0/23/6ff9049cd3a9b76e148a45d475b63eba689f786e0f60e56d28a501ecf334/ogs-6.5.7-cp314-cp314-macosx_12_0_arm64.whl", hash = "sha256:1269f9d858d802cd13aa254db38cc4fe023cc9991d884f15ad96839d6407136e", size = 42030058, upload-time = "2026-01-31T14:01:35.994Z" },
-    { url = "https://files.pythonhosted.org/packages/00/6d/71265ca6be04d5bbe34ec6f3a967aa49024201122524dc25385f26657538/ogs-6.5.7-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:28aa90e8bc12d4de293b921a7c5ac780ac740a053c693658e6a40d979688ceb9", size = 66728993, upload-time = "2026-01-31T14:01:41.451Z" },
-    { url = "https://files.pythonhosted.org/packages/7d/93/a06028a2c51bf97a26555310fb446ddc971597a78278151ea4f0523a1795/ogs-6.5.7-cp314-cp314-win_amd64.whl", hash = "sha256:4bd9bbfe2c1f4f34d8b1920b86d0e68b88bfc9cae95cdaf26a850502c18f5936", size = 53831439, upload-time = "2026-01-31T14:01:46.742Z" },
+    { url = "https://files.pythonhosted.org/packages/5d/85/e259a5033db5558f6731892d42b96f349d4d11266aeb62d642f2e7465d44/ogs-6.5.9-cp311-cp311-macosx_26_0_arm64.whl", hash = "sha256:f7121ccd22376fe23360ca853ae845d014e9976f1fd933d4d061ee43c939c07b", size = 42893123, upload-time = "2026-09-18T06:22:04.944Z" },
+    { url = "https://files.pythonhosted.org/packages/34/35/bcd18a11b81c9fda4c754aef4f297184e0e9f17ed5985e5073e10f47b57d/ogs-6.5.9-cp311-cp311-manylinux_2_28_x86_64.whl", hash = "sha256:6005657f26ada6438302fe11094adbd0caf4dcb3901f1926d9edaf4b10a1a4f0", size = 50475350, upload-time = "2026-09-18T06:19:08.341Z" },
+    { url = "https://files.pythonhosted.org/packages/60/3c/147bae98e91291c378a76acec8f6fa1f519fe21d8605f997d925866b0dbc/ogs-6.5.9-cp311-cp311-win_amd64.whl", hash = "sha256:1afcdf35822dcde2e62a10e1fe4d39735cb855f6df8dfcb2cf7741c07b1adefe", size = 77560475, upload-time = "2026-09-18T11:33:41.393Z" },
+    { url = "https://files.pythonhosted.org/packages/d7/3d/a3a56f105f11df83136a377fd40bba390a09fe6a119071471285cd308873/ogs-6.5.9-cp312-cp312-macosx_26_0_arm64.whl", hash = "sha256:25f0ac24fdc5d84caac0eda0afff000dd8ddd4e3165c0cf76ee8e1843bd64b94", size = 42887556, upload-time = "2026-09-18T06:22:14.752Z" },
+    { url = "https://files.pythonhosted.org/packages/e4/bc/76d8b199b5d9775ca0cc35a10e71ea11a548ab3a932c8c8b847159726383/ogs-6.5.9-cp312-cp312-manylinux_2_28_x86_64.whl", hash = "sha256:af15000bac0a61f71ac0540c0afb827b3c68bc6f1e6e6201a25de61dc5e52fe9", size = 50481386, upload-time = "2026-09-18T06:19:18.404Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/2e/6be602fa513e75e22934788bd9fb853304379a1592fa15efa787463e8299/ogs-6.5.9-cp312-cp312-win_amd64.whl", hash = "sha256:74c30850205e53681205928df92d44c29bfe3b04a255dbd725eb14b0024b0b39", size = 77821437, upload-time = "2026-09-18T11:33:50.562Z" },
+    { url = "https://files.pythonhosted.org/packages/1c/6f/e1fe0ed53075ed93cfb3c80f5674d38cbe317d519b6133745c8295258c28/ogs-6.5.9-cp313-cp313-macosx_26_0_arm64.whl", hash = "sha256:3ecf3697f0be9951cef648d8ef7c1fddf54ddc300e77745e733f81131324e6af", size = 42888084, upload-time = "2026-09-18T06:22:23.625Z" },
+    { url = "https://files.pythonhosted.org/packages/17/56/2093c6bb35fcdc7116354b6792ee92ac467fb54c189095d1d54f80a96fe8/ogs-6.5.9-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:5b420af87209161b84d2be6bcd4a4162979ae7616e3b6d90d6cd57c329b28865", size = 50480860, upload-time = "2026-09-18T06:19:28.895Z" },
+    { url = "https://files.pythonhosted.org/packages/6a/88/147ebc8bb980a7fcca5e72ac8e5281f0d369433772069cca11ba4c7ea605/ogs-6.5.9-cp313-cp313-win_amd64.whl", hash = "sha256:aa99dab96e7fb996e069dfd91855f0f7cf6cebeb99e779fc107f87fe0ca7cfc7", size = 77792889, upload-time = "2026-09-18T11:33:59.738Z" },
+    { url = "https://files.pythonhosted.org/packages/7c/0e/7c501b1d1f082e931a681aafc6686999abdb871933f7757e749b62c8e12c/ogs-6.5.9-cp314-cp314-macosx_26_0_arm64.whl", hash = "sha256:4f376f787d954f51c15e4df4960a231e14f725fc1cd79cacd102cdc46de41405", size = 42889810, upload-time = "2026-09-18T06:22:34.077Z" },
+    { url = "https://files.pythonhosted.org/packages/75/58/1bb24efd05ddaf5dbd957cded4b4613d3d63ff3a7aa3399d83e16a2e0a27/ogs-6.5.9-cp314-cp314-manylinux_2_28_x86_64.whl", hash = "sha256:dddd3067b581c0a218c26465bac1c9b3a8c8451258eefa6439bb17f6928b504e", size = 50481795, upload-time = "2026-09-18T06:19:39.532Z" },
+    { url = "https://files.pythonhosted.org/packages/db/6b/819754bfcd6f3270db0c81d0a9c1ebb2c1bb97500c1efe3e08bd346b416f/ogs-6.5.9-cp314-cp314-win_amd64.whl", hash = "sha256:f5feb7dd0e2849b34536d063ddd36fa0c519624ff27a16509a88829937c2c95d", size = 79454799, upload-time = "2026-09-18T11:34:09.519Z" },
 ]
 
 [[package]]
@@ -2565,7 +2564,7 @@ ogs-master = [
     { name = "ogs", version = "6.5.7", source = { registry = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple" } },
 ]
 ogs-pypi = [
-    { name = "ogs", version = "6.5.7", source = { registry = "https://pypi.org/simple" } },
+    { name = "ogs", version = "6.5.9", source = { registry = "https://pypi.org/simple" } },
 ]
 
 [package.metadata]
@@ -2597,7 +2596,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 ogs-local = [{ name = "ogs", directory = "../../" }]
-ogs-master = [{ name = "ogs", specifier = ">=6.5.6.dev0", index = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple", conflict = { package = "ogs-test-environment", group = "ogs-master" } }]
+ogs-master = [{ name = "ogs", index = "https://gitlab.opengeosys.org/api/v4/projects/120/packages/pypi/simple", conflict = { package = "ogs-test-environment", group = "ogs-master" } }]
 ogs-pypi = [{ name = "ogs" }]
 
 [[package]]

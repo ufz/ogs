@@ -9,7 +9,7 @@ test linux wheel via notebooks:
       - OGS_GROUP: ogs-local
         UV_ARGS: ""
       - OGS_GROUP: ogs-master
-        UV_ARGS: "--upgrade-package ogs"
+        UV_ARGS: "--upgrade-package ogs --prerelease=allow"
       # maintenance test upgrading all dependencies
       - OGS_GROUP: [ogs-local, ogs-master, ogs-pypi]
         UV_ARGS: "--upgrade"
