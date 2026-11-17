@@ -115,7 +115,14 @@ public:
                                    GlobalVector& minus_delta_x) const override;
 
     void applyKnownSolutionsPETScSNES(GlobalMatrix& Jac, GlobalVector& res,
-                                      GlobalVector& x) const override;
+                                      GlobalVector const& x,
+                                      GlobalVector& scratch) const override;
+
+    double getDirichletFreeResidual(GlobalVector const& x,
+                                    GlobalVector const& res,
+                                    GlobalVector& w) override;
+
+    void projectToFreeDofs(GlobalVector& v) const override;
 
     void updateConstraints(GlobalVector& lower, GlobalVector& upper,
                            int const process_id) override
@@ -158,6 +165,14 @@ private:
     using Index = MathLib::MatrixVectorTraits<GlobalMatrix>::Index;
     std::vector<NumLib::IndexValueVector<Index>> const* _known_solutions =
         nullptr;  //!< stores precomputed values for known solutions
+
+    //! Ids of all known solutions concatenated in the order of
+    //! \c _known_solutions.
+    std::vector<Index> _known_solutions_ids;
+    //! Values of all known solutions in the order of \c _known_solutions_ids.
+    std::vector<double> _known_solutions_values;
+    //! ID of the vector \f$ V \f$ used by getDirichletFreeResidual().
+    std::size_t _known_solutions_differences_id = 0u;
 
     // The storage is shared with other instances of the same matrix
     // specifications, see the storage_owner constructor. That is valid,

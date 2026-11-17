@@ -134,6 +134,12 @@ public:
         _tikhonov_starting_iteration = starting_iteration;
     }
 
+    //! \copydoc _dirichlet_free_residual_check
+    void setDirichletFreeResidualCheck(bool const value)
+    {
+        _dirichlet_free_residual_check = value;
+    }
+
 private:
     GlobalLinearSolver& _linear_solver;
     System* _equation_system = nullptr;
@@ -167,6 +173,27 @@ private:
     double _tikhonov_lambda = 0.0;  //!< Tikhonov regularization parameter.
     int _tikhonov_starting_iteration =
         0;  //!< Starting iteration for Tikhonov regularization.
+
+    /// If set, the residual check uses \f$ P\,(\mathit{res} - J V) \f$
+    /// instead of the residual after applying the Dirichlet BCs. Here
+    /// \f$ V_k = x_k - g_k \f$ at the Dirichlet DOFs and zero elsewhere, and
+    /// \f$ P \f$ zeroes the Dirichlet entries. That is the linearized residual
+    /// at the state fulfilling the Dirichlet BCs, restricted to the free DOFs:
+    /// it contains neither the reaction forces nor the arbitrarily scaled
+    /// Dirichlet rows, and it is the same for all linear algebra backends. In
+    /// an iteration where the Dirichlet values changed it still contains the
+    /// out-of-balance forces caused by the change.
+    ///
+    /// The linearization is exact up to \f$ O(\|V\|^2) \f$ only. Hence, if
+    /// \f$ V \neq 0 \f$, the criterion must also be satisfied by
+    /// \f$ P\,\mathit{res} \f$, the free part of the residual at the current
+    /// iterate. Both together bound \f$ P J V \f$, s.t. the check cannot be
+    /// satisfied before the BCs are imposed, also for nonlinear problems.
+    bool _dirichlet_free_residual_check = false;
+    std::size_t _dirichlet_free_residual_id =
+        0u;  //!< ID of the Dirichlet-free residual vector.
+    std::size_t _free_residual_id =
+        0u;  //!< ID of the vector \f$ P\,\mathit{res} \f$.
 };
 
 /*! Find a solution to a nonlinear equation using the Picard fixpoint iteration
