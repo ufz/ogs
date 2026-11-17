@@ -57,10 +57,11 @@ std::unique_ptr<MeshLib::NodePartitionedMesh> createPartitionedLineMesh(
         std::vector<std::size_t>{0, 2, 4, 6},
         std::vector<std::size_t>{0, 0, 0, 0});
 }
+}  // namespace
 
 /// The d.o.f. of a node is numbered by its owning rank in node order, so its
 /// global index is the node's position, on the owning rank and as a ghost.
-void checkGlobalIndicesArePositions(bool const reversed_global_ids)
+TEST(MPI_MeshComponentMapParallel, GlobalIdsInPartitionBlockLayout)
 {
     BaseLib::MPI::Mpi const mpi;
     if (mpi.size != 3)
@@ -68,7 +69,7 @@ void checkGlobalIndicesArePositions(bool const reversed_global_ids)
         GTEST_SKIP() << "Test requires exactly 3 MPI ranks";
     }
 
-    auto const mesh = createPartitionedLineMesh(mpi.rank, reversed_global_ids);
+    auto const mesh = createPartitionedLineMesh(mpi.rank, false);
     std::vector<MeshLib::MeshSubset> const components{
         {*mesh, mesh->getNodes()}};
     NumLib::MeshComponentMap const map(components,
@@ -90,16 +91,23 @@ void checkGlobalIndicesArePositions(bool const reversed_global_ids)
     EXPECT_THAT(map.getGhostIndices(),
                 ::testing::ElementsAreArray(expected_ghost_indices));
 }
-}  // namespace
 
-TEST(MPI_MeshComponentMapParallel, GlobalIdsInPartitionBlockLayout)
-{
-    checkGlobalIndicesArePositions(false);
-}
-
+/// The owner of a ghost node cannot be derived from its global node id, which
+/// is rejected on all ranks.
 TEST(MPI_MeshComponentMapParallel, GlobalIdsNotInPartitionBlockLayout)
 {
-    checkGlobalIndicesArePositions(true);
+    BaseLib::MPI::Mpi const mpi;
+    if (mpi.size != 3)
+    {
+        GTEST_SKIP() << "Test requires exactly 3 MPI ranks";
+    }
+
+    auto const mesh = createPartitionedLineMesh(mpi.rank, true);
+    std::vector<MeshLib::MeshSubset> const components{
+        {*mesh, mesh->getNodes()}};
+    EXPECT_THROW(NumLib::MeshComponentMap(components,
+                                          NumLib::ComponentOrder::BY_LOCATION),
+                 std::runtime_error);
 }
 
 #endif  // USE_PETSC

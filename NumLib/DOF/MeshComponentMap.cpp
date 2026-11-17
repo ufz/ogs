@@ -505,7 +505,8 @@ static std::unordered_map<std::size_t, std::size_t> globalToLocalRegularNodeIds(
 
 /// Whether on all ranks the global node ids of the regular nodes follow the
 /// partition block layout, i.e. getPartitionID() names the owning rank. Not
-/// the case for subdomain meshes, see transformMeshToNodePartitionedMesh().
+/// the case for subdomain meshes, e.g. the other meshes partitioned by
+/// partmesh, see also transformMeshToNodePartitionedMesh().
 static bool ownerFollowsFromGlobalNodeId(
     MeshLib::NodePartitionedMesh const& mesh, BaseLib::MPI::Mpi const& mpi)
 {
@@ -528,9 +529,6 @@ static bool ownerFollowsFromGlobalNodeId(
 /// here or outside the component's mesh subset (e.g. a base-node-only
 /// component and a non-base node), so the requesting rank can name the d.o.f.
 /// that failed to resolve instead of silently keeping the placeholder.
-///
-/// The global node ids of subdomain meshes do not follow the partition block
-/// layout, hence the lookup in global_to_local.
 static GlobalIndexType globalIndexOfGhostNodeOnOwner(
     NumLib::detail::ComponentGlobalIndexDict const& dict,
     MeshLib::NodePartitionedMesh const& mesh,
@@ -688,31 +686,27 @@ void MeshComponentMap::createParallelMeshComponentMap(
 
     auto const ghost_node_info = getGhostNodeInfo(_dict, component_meshes);
 
-    std::vector<bool> const owner_from_global_node_id =
-        component_meshes |
-        ranges::views::transform(
-            [&](auto const* mesh)
-            { return ownerFollowsFromGlobalNodeId(*mesh, mpi); }) |
-        ranges::to<std::vector>;
+    // The owner of a ghost node is derived from its global node id. The result
+    // of the check is the same on all ranks, so all ranks fail together.
+    for (auto const* mesh : component_meshes)
+    {
+        if (!ownerFollowsFromGlobalNodeId(*mesh, mpi))
+        {
+            OGS_FATAL(
+                "The global node ids of the mesh '{}' do not follow the "
+                "partition layout. A d.o.f. table can only be built on a "
+                "partitioned bulk mesh; for its subdomain meshes derive it "
+                "with deriveBoundaryConstrainedMap().",
+                mesh->getName());
+        }
+    }
 
     // Query/answer round 1: route every ghost query to the rank owning the
     // node instead of replicating all ranks' ghost lists everywhere, and
-    // answer the queries routed here. If the owner is unknown, all other
-    // ranks are asked.
+    // answer the queries routed here.
     GhostNodeInfosByRank queries(mpi.size);
     for (auto const& gni : ghost_node_info)
     {
-        if (!owner_from_global_node_id[gni.comp_id])
-        {
-            for (int rank = 0; rank < mpi.size; ++rank)
-            {
-                if (rank != mpi.rank)
-                {
-                    queries[rank].emplace_back(gni, 0);
-                }
-            }
-            continue;
-        }
         std::size_t const owner =
             component_meshes[gni.comp_id]->getPartitionID(gni.global_node_id);
         if (owner < static_cast<std::size_t>(mpi.size))
@@ -737,14 +731,6 @@ void MeshComponentMap::createParallelMeshComponentMap(
             global_index =
                 globalIndexOfGhostNodeOnOwner(_dict, mesh, it->second, gni);
         }
-        // Queries sent to all ranks are answered by the owner only.
-        std::erase_if(
-            answers_for_rank,
-            [&](auto const& answer)
-            {
-                return !owner_from_global_node_id[answer.first.comp_id] &&
-                       answer.second == MeshComponentMap::nop;
-            });
     }
 
     // Query/answer round 2: the answers for this rank's ghost nodes.
