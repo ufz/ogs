@@ -17,11 +17,25 @@ namespace LiquidFlow
 struct LiquidFlowData final
 {
     /// This indicates whether the governing equation is a volume balance or a
-    /// mass balance. Its value can be `volume` or `mass`. If it is set to
-    /// `volume`, note that the phase density must be constant, and the unit of
-    /// the Neumann boundary condition is m/s. Otherwise, the unit of the
-    /// Neumann boundary condition is kg/m^3*m/s = kg/m^2/s. By default, it is
+    /// mass balance. Its value can be `volume` or `mass`. By default, it is
     /// set to `volume`.
+    ///
+    /// The choice sets the unit of the boundary and surface fluxes:
+    ///
+    /// - `volume`: the phase density must be constant. The Neumann boundary
+    ///   condition, the surface flux of \c calculatesurfaceflux and the flux
+    ///   compared against the threshold of a \c ConstraintDirichlet boundary
+    ///   condition are the volumetric (Darcy) flux
+    ///   \f$\mathbf{q}\cdot\mathbf{n}\f$ in m/s. The nodal residual output
+    ///   is named \c VolumetricFlowRate.
+    /// - `mass`: the phase density may depend on pressure.
+    ///   The Neumann boundary condition, the surface flux and the
+    ///   \c ConstraintDirichlet flux are the mass flux
+    ///   \f$\rho\,\mathbf{q}\cdot\mathbf{n}\f$ in kg/m^3*m/s = kg/m^2/s.
+    ///   The nodal residual output is named \c MassFlowRate.
+    ///
+    /// The secondary variable Darcy velocity \c v is the volumetric flux in
+    /// m/s for both types.
     bool const is_volume_balance_equation_type;
 
     MaterialPropertyLib::MaterialSpatialDistributionMap media_map;
