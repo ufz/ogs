@@ -160,11 +160,6 @@ More details are provided in the attached pdf-file.
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>flux_in</name>
-            <type>Constant</type>
-            <value>1e-2</value>
-        </parameter>
     </parameters>
     <process_variables>
         <process_variable>
@@ -223,20 +218,6 @@ More details are provided in the attached pdf-file.
                     <component>0</component>
                     <bc_object>bc_p_D</bc_object>
                 </boundary_condition>
-                <!--boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
-                    <type>Neumann</type>
-                    <component>0</component>
-                    <parameter>flux_in</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
-                    <type>Dirichlet</type>
-                    <component>0</component>
-                    <parameter>pressure0</parameter>
-                </boundary_condition-->
             </boundary_conditions>
         </process_variable>
     </process_variables>

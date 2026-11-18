@@ -195,41 +195,7 @@
             <type>Constant</type>
             <value>0.4</value>
         </parameter>
-        <parameter>
-            <name>rho_sr</name>
-            <type>Group</type>
-            <group_id_property>MaterialIDs</group_id_property>
-            <index_values>
-                <index>0</index>
-                <value>2650</value>
-            </index_values>
-            <index_values>
-                <index>1</index>
-                <value>2650</value>
-            </index_values>
-            <index_values>
-                <index>2</index>
-                <value>2650</value>
-            </index_values>
-            <!--type>Constant</type>
-            <value>2650</value-->
-        </parameter>
-        <parameter>
-            <name>rho_fr</name>
-            <type>Constant</type>
-            <value>1e3</value>
-        </parameter>
-        <parameter>
-            <name>mu</name>
-            <type>Constant</type>
-            <value>1e-3</value>
-        </parameter>
         <!-- Fracture properties -->
-        <parameter>
-            <name>f_thickness</name>
-            <type>Constant</type>
-            <value>1.0</value>
-        </parameter>
         <parameter>
             <name>aperture0</name>
             <type>Constant</type>
@@ -244,16 +210,6 @@
             <name>Ks</name>
             <type>Constant</type>
             <value>4e9</value>
-        </parameter>
-        <parameter>
-            <name>effective_stress0</name>
-            <type>Constant</type>
-        <values>0.e6 0.e6 0.e6 0</values>
-        </parameter>
-        <parameter>
-            <name>fracture_effective_stress0</name>
-            <type>Constant</type>
-            <values>0 0 0.0</values>
         </parameter>
         <!-- initial values -->
         <parameter>

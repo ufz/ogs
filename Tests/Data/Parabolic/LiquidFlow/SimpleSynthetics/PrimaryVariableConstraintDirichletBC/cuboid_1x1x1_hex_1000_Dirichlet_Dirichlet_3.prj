@@ -122,21 +122,6 @@
             <value>1</value>
         </parameter>
         <parameter>
-            <name>constant_porosity_parameter</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>kappa1</name>
-            <type>Constant</type>
-            <values>9.2e-12 0 0 0 9.2e-12 0 0 0 9.2e-12</values>
-        </parameter>
-        <parameter>
-            <name>p_spatial</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>zero</name>
             <type>Constant</type>
             <value>0.0</value>

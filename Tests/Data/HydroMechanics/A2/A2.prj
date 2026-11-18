@@ -258,16 +258,6 @@
             <values>4e6</values>
         </parameter>
         <parameter>
-            <name>temperature0</name>
-            <type>Constant</type>
-            <values>298.15</values>
-        </parameter>
-        <parameter>
-            <name>temperature_outside</name>
-            <type>Constant</type>
-            <values>298.15</values>
-        </parameter>
-        <parameter>
             <name>pressure_tunnel</name>
             <type>Constant</type>
             <values>1e5</values>

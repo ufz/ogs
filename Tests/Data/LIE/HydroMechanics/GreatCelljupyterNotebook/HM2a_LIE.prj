@@ -388,11 +388,6 @@
             <value>0.4</value>
         </parameter>
         <parameter>
-            <name>f_thickness</name>
-            <type>Constant</type>
-            <value>1.0</value>
-        </parameter>
-        <parameter>
             <name>aperture0</name>
             <type>Constant</type>
             <value> 1.0e-5</value>
@@ -447,11 +442,6 @@
             <name>pressure_ic</name>
             <type>Constant</type>
             <value>0.1e6</value>
-        </parameter>
-        <parameter>
-            <name>one</name>
-            <type>Constant</type>
-            <value>1</value>
         </parameter>
         <parameter>
             <name>zero</name>

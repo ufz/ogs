@@ -205,11 +205,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>p_Dirichlet_left</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>p_Dirichlet_right</name>
             <type>Constant</type>
             <value>0</value>
@@ -262,12 +257,6 @@
             <order>1</order>
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
-                <!--boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>left</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_left</parameter>
-                </boundary_condition-->
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>p3</geometry>

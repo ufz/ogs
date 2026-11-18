@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
+    <!-- Mesh and geometry are read from the parent directory (-m in Tests.cmake) -->
+    <!-- ogs-inspect-disable-file OGS001 -->
     <mesh>square_1x1_quad_1e1.vtu</mesh>
     <geometry>square_1x1.gml</geometry>
     <processes>

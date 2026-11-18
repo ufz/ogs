@@ -122,11 +122,6 @@
             <value>4.62962e-05</value>
         </parameter>
         <parameter>
-            <name>constant_porosity_parameter</name>
-            <type>Constant</type>
-            <value>1.0</value>
-        </parameter>
-        <parameter>
             <name>kappa1</name>
             <type>Constant</type>
             <values>0.00185 0. 0. 0.00185</values>

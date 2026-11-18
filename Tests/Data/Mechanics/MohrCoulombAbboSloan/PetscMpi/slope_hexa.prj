@@ -178,17 +178,6 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
-        <parameter>
-            <name>top_load</name>
-            <type>CurveScaled</type>
-            <curve>top_load_ramp</curve>
-            <parameter>top_load0</parameter>
-        </parameter>
-        <parameter>
-            <name>top_load0</name>
-            <type>Constant</type>
-            <value>-30000</value>
-        </parameter>
     </parameters>
     <curves>
         <curve>
@@ -210,11 +199,6 @@
             <name>density_ramp</name>
             <coords>0 1</coords>
             <values>0 1</values>
-        </curve>
-        <curve>
-            <name>top_load_ramp</name>
-            <coords>0 1 2</coords>
-            <values>0 0 0</values>
         </curve>
     </curves>
     <process_variables>

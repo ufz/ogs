@@ -159,11 +159,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>p_Dirichlet_left</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>p_Dirichlet_right</name>
             <type>Constant</type>
             <value>0</value>
@@ -187,11 +182,6 @@
             <name>kappa1</name>
             <type>Constant</type>
             <values>1.239e-7 0 0 1.239e-7</values>
-        </parameter>
-        <parameter>
-            <name>kappa2</name>
-            <type>Constant</type>
-            <values>1e-3 0 0 1e-3</values>
         </parameter>
     </parameters>
     <process_variables>
@@ -221,12 +211,6 @@
             <order>1</order>
             <initial_condition>p0</initial_condition>
             <boundary_conditions>
-                <!--boundary_condition>
-                    <geometrical_set>geometry</geometrical_set>
-                    <geometry>left</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>p_Dirichlet_left</parameter>
-                </boundary_condition-->
                 <boundary_condition>
                     <geometrical_set>geometry</geometrical_set>
                     <geometry>p3</geometry>

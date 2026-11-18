@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!--units: kg, m, s, K and derived units: N, Pa=N/m², Da=m² -->
+<!--units: kg, m, s, K and derived units: N, Pa=N/m2, Da=m2 -->
 <!--DESCRIPTION: 
         * simple ground model
         * hydrostatic conditions
@@ -88,7 +88,7 @@
               <property>
                     <name>permeability</name>
                     <type>Constant</type>
-                    <value>1.25e-9</value> <!--m²-->
+                    <value>1.25e-9</value> <!--m2-->
                 </property>
                 <property>
                     <name>reference_temperature</name>
@@ -113,7 +113,7 @@
         <parameter>
             <name>DensitySolid</name>
             <type>Constant</type>
-            <value>3000</value> <!--kg/m³-->
+            <value>3000</value> <!--kg/m3-->
         </parameter>
         <parameter>
             <name>ViscosityWater</name>
@@ -123,16 +123,11 @@
         <parameter>
             <name>DensityWater</name>
             <type>Constant</type>
-            <value>1000</value> <!--kg/m³-->
+            <value>1000</value> <!--kg/m3-->
         </parameter>
         <!-- Initial and boundary values -->
         <parameter>
             <name>AmbientPressure</name>
-            <type>Constant</type>
-            <values>0</values>
-        </parameter>
-        <parameter>
-            <name>InitialPressureZero</name>
             <type>Constant</type>
             <values>0</values>
         </parameter>
@@ -165,11 +160,6 @@
             <name>NormalStressProfile</name> <!--total stress!-->
             <type>Function</type>
             <expression>0.4 / (1-0.4) * ( (0.2-1.0)*1000 + (1.0-0.2)*3000 ) * 9.81*y + 1000 * 9.81*y</expression>
-        </parameter>
-        <parameter>
-            <name>InitialEffectiveStressZero</name>
-            <type>Constant</type>
-            <values>0 0 0 0</values>
         </parameter>
         <parameter>
             <name>InitialEffectiveStressField</name> <!--effective stress!-->

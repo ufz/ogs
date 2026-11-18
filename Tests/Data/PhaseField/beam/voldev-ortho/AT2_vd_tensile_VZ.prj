@@ -206,11 +206,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>Dirichlet_spatial</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>dirichlet_right_time</name>
             <type>CurveScaled</type>
             <curve>dirichlet_time</curve>

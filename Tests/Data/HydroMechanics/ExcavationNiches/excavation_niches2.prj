@@ -208,19 +208,9 @@
             <values>4e6</values>
         </parameter>
         <parameter>
-            <name>pressure_tunnel</name>
-            <type>Constant</type>
-            <values>1e5</values>
-        </parameter>
-        <parameter>
             <name>pressure_outside</name>
             <type>Constant</type>
             <values>4e6</values>
-        </parameter>
-        <parameter>
-            <name>load_top</name>
-            <type>Constant</type>
-            <values>-12e6</values>
         </parameter>
         <parameter>
             <name>dirichlet0</name>

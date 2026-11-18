@@ -599,11 +599,6 @@
             <value>24e6</value>
         </parameter>
         <parameter>
-            <name>ShearModuliClay</name>
-            <type>Constant</type>
-            <values>3.5e9 3.5e9 3.5e9</values>
-        </parameter>
-        <parameter>
             <name>PoissonsRatiosClay</name>
             <type>Constant</type>
             <!--xy yz xz-->
@@ -620,19 +615,6 @@
             <value>0.2</value>
         </parameter>
         <parameter>
-            <mesh>Decovalex-0-simplified-plain-with-p0-plain</mesh>
-            <name>Initial_stress</name>
-            <type>Constant</type>
-            <!--2D xx yy zz xy or 3D xx yy zz xy yz xz
-            negative for compressive stress-->
-            <values>-6.5e6 -2.5e6 -4.5e6 0</values>
-        </parameter>
-        <parameter>
-            <name>displacement_ic</name>
-            <type>Constant</type>
-            <values>0 0</values>
-        </parameter>
-        <parameter>
             <name>pressure_ic</name>
             <type>MeshNode</type>
             <field_name>p0</field_name>
@@ -641,11 +623,6 @@
             <name>temperature_ic</name>
             <type>Constant</type>
             <values>288.15</values>
-        </parameter>
-        <parameter>
-            <name>dirichlet</name>
-            <type>Constant</type>
-            <values>0</values>
         </parameter>
         <parameter>
             <name>heater</name>

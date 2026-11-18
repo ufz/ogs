@@ -115,11 +115,6 @@
             <values>0 0</values>
         </parameter>
         <parameter>
-            <name>Dirichlet_left</name>
-            <type>Constant</type>
-            <value>0.</value>
-        </parameter>
-        <parameter>
             <name>Zero</name>
             <type>Constant</type>
             <value>0.</value>
@@ -134,12 +129,6 @@
             <type>CurveScaled</type>
             <curve>top_load_ramp</curve>
             <parameter>maximum_top_pressure</parameter>
-        </parameter>
-        <parameter>
-            <mesh>soil_column_right</mesh>
-            <name>side_load</name>
-            <type>Function</type>
-            <expression>-0.8*2200.0*9.81*(100.0-y)</expression>
         </parameter>
     </parameters>
     <curves>

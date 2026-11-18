@@ -148,16 +148,6 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>k</name>
-            <type>Constant</type>
-            <values>1.e-14</values>
-        </parameter>
-        <parameter>
-            <name>phi</name>
-            <type>Constant</type>
-            <value>1.0</value>
-        </parameter>
-        <parameter>
             <name>initial_pressure</name>
             <type>Constant</type>
             <value> 0.0 </value>

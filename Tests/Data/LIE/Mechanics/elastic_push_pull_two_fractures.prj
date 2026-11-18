@@ -113,21 +113,6 @@
             <value>20e9</value>
         </parameter>
         <parameter>
-            <name>friction_angle</name>
-            <type>Constant</type>
-            <value>22</value>
-        </parameter>
-        <parameter>
-            <name>dilatancy_angle</name>
-            <type>Constant</type>
-            <value>10</value>
-        </parameter>
-        <parameter>
-            <name>cohesion</name>
-            <type>Constant</type>
-            <value>1e3</value>
-        </parameter>
-        <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0</values>

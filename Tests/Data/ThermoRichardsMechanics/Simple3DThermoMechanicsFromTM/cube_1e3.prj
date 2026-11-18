@@ -178,26 +178,6 @@
             <value>0.27</value>
         </parameter>
         <parameter>
-            <name>rho_sr</name>
-            <type>Constant</type>
-            <value>2200</value>
-        </parameter>
-        <parameter>
-            <name>alpha</name>
-            <type>Constant</type>
-            <value>6e-6</value>
-        </parameter>
-        <parameter>
-            <name>cs</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
-            <name>lambda</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>p0</name>
             <type>Constant</type>
             <value>0.0</value>

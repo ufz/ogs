@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <OpenGeoSysProject>
+    <!-- PhreeqcKernel is currently disabled in OGS; this file is not run as a test -->
+    <!-- ogs-inspect-disable-file OGS000 -->
     <mesh>1d_isofrac.vtu</mesh>
     <geometry>1d_isofrac.gml</geometry>
     <processes>

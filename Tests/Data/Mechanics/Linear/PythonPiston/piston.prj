@@ -98,11 +98,6 @@
             <type>Constant</type>
             <values>0 0</values>
         </parameter>
-        <parameter>
-            <name>zero</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
     </parameters>
     <process_variables>
         <process_variable>

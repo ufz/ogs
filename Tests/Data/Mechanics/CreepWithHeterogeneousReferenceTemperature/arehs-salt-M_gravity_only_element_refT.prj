@@ -195,56 +195,6 @@
             <value>0.3</value>
         </parameter>
         <parameter>
-            <name>Cohesion_Deckgebirge</name>
-            <type>Constant</type>
-            <value>10e5</value>
-        </parameter>
-        <parameter>
-            <name>FrictionAngle_Deckgebirge</name>
-            <type>Constant</type>
-            <value>35.0</value>
-        </parameter>
-        <parameter>
-            <name>DilatancyAngle_Deckgebirge</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>TransitionAngle_Deckgebirge</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>TensionCutOffParameter_Deckgebirge</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>Cohesion_Nebengebirge</name>
-            <type>Constant</type>
-            <value>10e6</value>
-        </parameter>
-        <parameter>
-            <name>FrictionAngle_Nebengebirge</name>
-            <type>Constant</type>
-            <value>15.0</value>
-        </parameter>
-        <parameter>
-            <name>DilatancyAngle_Nebengebirge</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>TransitionAngle_Nebengebirge</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>TensionCutOffParameter_Nebengebirge</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>A</name>
             <type>Constant</type>
             <!--A = 0.18/d = 0.18/86400.0/s = 2.0833333333333e-06 -->
@@ -275,11 +225,6 @@
             <name>zero</name>
             <type>Constant</type>
             <value>0.</value>
-        </parameter>
-        <parameter>
-            <name>ice_load</name>
-            <type>Constant</type>
-            <value>-9.006e+6</value>
         </parameter>
     </parameters>
     <process_variables>

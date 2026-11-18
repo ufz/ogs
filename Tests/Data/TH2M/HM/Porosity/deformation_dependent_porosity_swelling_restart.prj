@@ -290,16 +290,6 @@
         </parameter>
         <!-- Model parameters -->
         <parameter>
-            <name>displacement0</name>
-            <type>Constant</type>
-            <values>0 0</values>
-        </parameter>
-        <parameter>
-            <name>p0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
             <name>dirichlet0</name>
             <type>Constant</type>
             <values>0</values>
@@ -325,11 +315,6 @@
             <type>CurveScaled</type>
             <curve>displacement</curve>
             <parameter>maximum_displacement</parameter>
-        </parameter>
-        <parameter>
-            <name>temperature0</name>
-            <type>Constant</type>
-            <value>293.15</value>
         </parameter>
         <parameter>
             <name>gas_pressure</name>
@@ -402,30 +387,6 @@
             <order>1</order>
             <initial_condition>temperature_restart</initial_condition>
             <boundary_conditions>
-                <!--boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>top</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>temperature0</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>right</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>temperature0</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>bottom</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>temperature0</parameter>
-                </boundary_condition>
-                <boundary_condition>
-                    <geometrical_set>square_1x1_geometry</geometrical_set>
-                    <geometry>left</geometry>
-                    <type>Dirichlet</type>
-                    <parameter>temperature0</parameter>
-                </boundary_condition-->
             </boundary_conditions>
         </process_variable>
         <process_variable>

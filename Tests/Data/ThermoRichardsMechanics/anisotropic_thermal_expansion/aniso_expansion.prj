@@ -209,6 +209,8 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
+        <!-- used by the aniso_expansion_expansivity_matrix*.xml patches -->
+        <!-- ogs-inspect-disable OGS011 -->
         <parameter>
             <name>expansivity_tensor</name>
             <type>Constant</type>

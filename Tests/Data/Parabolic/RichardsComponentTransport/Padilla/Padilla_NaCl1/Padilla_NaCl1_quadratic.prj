@@ -183,11 +183,6 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>rho_fluid</name>
-            <type>Constant</type>
-            <value>1000</value>
-        </parameter>
-        <parameter>
             <name>decay_rate</name>
             <type>Constant</type>
             <value>0.0</value>
@@ -221,11 +216,6 @@
             <name>p0_mesh</name>
             <type>MeshNode</type>
             <field_name>pressure</field_name>
-        </parameter>
-        <parameter>
-            <name>p0</name>
-            <type>Constant</type>
-            <value>0</value>
         </parameter>
         <parameter>
             <name>p_bottom_NaCl1</name>
@@ -289,12 +279,6 @@
             <name>basic_picard</name>
             <type>Picard</type>
             <max_iter>100</max_iter>
-            <linear_solver>general_linear_solver</linear_solver>
-        </nonlinear_solver>
-        <nonlinear_solver>
-            <name>basic_newton</name>
-            <type>Newton</type>
-            <max_iter>50</max_iter>
             <linear_solver>general_linear_solver</linear_solver>
         </nonlinear_solver>
     </nonlinear_solvers>

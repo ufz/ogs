@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='ISO-8859-1'?>
 <OpenGeoSysProject>
+    <!-- Template: the mcwt geometry is added by mcWhorter_interactive.py -->
+    <!-- ogs-inspect-disable-file OGS000, OGS001 -->
     <mesh>mesh_line.vtu</mesh>
     <parameters>
         <parameter>
@@ -17,16 +19,6 @@
             <type>Constant</type>
             <value>293.15</value>
         </parameter>
-        <parameter>
-            <name>constant_porosity_parameter</name>
-            <type>Constant</type>
-            <value>0.3</value>
-        </parameter>
-        <parameter>
-            <name>kappa1</name>
-            <type>Constant</type>
-            <values>1.0e-10</values>
-        </parameter>
         <!-- Parameter for Variations-->
         <parameter>
             <name>phi</name>
@@ -39,16 +31,6 @@
             <value>1e-10</value>
         </parameter>
         <parameter>
-            <name>Swr</name>
-            <type>Constant</type>
-            <value>0.02</value>
-        </parameter>
-        <parameter>
-            <name>Snr</name>
-            <type>Constant</type>
-            <value>0.001</value>
-        </parameter>
-        <parameter>
             <name>mun</name>
             <type>Constant</type>
             <value>0.001</value>
@@ -57,16 +39,6 @@
             <name>muw</name>
             <type>Constant</type>
             <value>0.001</value>
-        </parameter>
-        <parameter>
-            <name>Pe</name>
-            <type>Constant</type>
-            <value>5000.0</value>
-        </parameter>
-        <parameter>
-            <name>lambda_</name>
-            <type>Constant</type>
-            <value>3.0</value>
         </parameter>
         <parameter>
             <name>pci</name>

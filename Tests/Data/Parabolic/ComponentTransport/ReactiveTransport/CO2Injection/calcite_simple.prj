@@ -228,11 +228,6 @@
             <value>1</value>
         </parameter>
         <parameter>
-            <name>retardation</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>decay</name>
             <type>Constant</type>
             <value>0</value>
@@ -257,17 +252,6 @@
             <name>c0_ca</name>
             <type>Constant</type>
             <value>0</value>
-        </parameter>
-        <parameter>
-            <name>c_H</name>
-            <type>Constant</type>
-            <!--pH=6-->
-            <value>1e-6</value>
-        </parameter>
-        <parameter>
-            <name>c_Productd</name>
-            <type>Constant</type>
-            <value>0.00</value>
         </parameter>
     </parameters>
     <process_variables>

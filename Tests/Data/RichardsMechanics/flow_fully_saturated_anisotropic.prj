@@ -171,11 +171,6 @@
         </parameter>
         <!-- Model parameters -->
         <parameter>
-            <name>mu</name>
-            <type>Constant</type>
-            <value>1e-9</value>
-        </parameter>
-        <parameter>
             <name>displacement0</name>
             <type>Constant</type>
             <values>0 0</values>

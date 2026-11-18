@@ -158,16 +158,6 @@ https://www.opengeosys.org/docs/benchmarks/hydro-mechanics/hm-unconfined-compres
             <type>Constant</type>
             <values>0</values>
         </parameter>
-        <parameter>
-            <name>dirichlet0</name>
-            <type>Constant</type>
-            <value>0</value>
-        </parameter>
-        <parameter>
-            <name>displacementTop</name>
-            <type>Constant</type>
-            <value>-0.05</value>
-        </parameter>
     </parameters>
     <process_variables>
         <process_variable>

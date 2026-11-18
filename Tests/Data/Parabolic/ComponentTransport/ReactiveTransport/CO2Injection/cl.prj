@@ -608,11 +608,6 @@
             <value>0.15</value>
         </parameter>
         <parameter>
-            <name>retardation</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>decay</name>
             <type>Constant</type>
             <value>0</value>

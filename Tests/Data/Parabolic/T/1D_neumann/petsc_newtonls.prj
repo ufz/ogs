@@ -121,7 +121,7 @@
     <nonlinear_solvers>
         <nonlinear_solver>
             <name>nonlinear_solver</name>
-            <type>PetscSNES</type>
+            <type>PETScSNES</type>
             <max_iter>10</max_iter>
             <linear_solver>linear_solver</linear_solver>
         </nonlinear_solver>

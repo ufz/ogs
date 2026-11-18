@@ -158,11 +158,6 @@
             <type>Constant</type>
             <values>0</values>
         </parameter>
-        <parameter>
-            <name>influx</name>
-            <type>Constant</type>
-            <values>0</values>
-        </parameter>
     </parameters>
     <process_variables>
         <process_variable>

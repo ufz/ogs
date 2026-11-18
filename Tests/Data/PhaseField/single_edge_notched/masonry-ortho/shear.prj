@@ -206,21 +206,10 @@
             <value>1e-06</value>
         </parameter>
         <parameter>
-            <name>dirichlet_bottom</name>
-            <type>Constant</type>
-            <value>-1.0e-6</value>
-        </parameter>
-        <parameter>
             <name>dirichlet_top_time</name>
             <type>CurveScaled</type>
             <curve>dirichlet_time</curve>
             <parameter>dirichlet_top</parameter>
-        </parameter>
-        <parameter>
-            <name>dirichlet_bottom_time</name>
-            <type>CurveScaled</type>
-            <curve>dirichlet_time</curve>
-            <parameter>dirichlet_bottom</parameter>
         </parameter>
     </parameters>
     <curves>

@@ -133,11 +133,6 @@
             <value>100000</value>
         </parameter>
         <parameter>
-            <name>q_left</name>
-            <type>Constant</type>
-            <value>3e-6</value>
-        </parameter>
-        <parameter>
             <name>kappa1_frac</name>
             <type>MeshElement</type>
             <field_name>permeability_cubic</field_name>

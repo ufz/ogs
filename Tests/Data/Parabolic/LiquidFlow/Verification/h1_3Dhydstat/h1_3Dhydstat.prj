@@ -226,46 +226,6 @@
     </time_loop>
     <parameters>
         <parameter>
-            <name>k0</name>
-            <type>Constant</type>
-            <values>1.e-14</values>
-        </parameter>
-        <parameter>
-            <name>phi0</name>
-            <type>Constant</type>
-            <value>0.1</value>
-        </parameter>
-        <parameter>
-            <name>k1</name>
-            <type>Constant</type>
-            <values>1.e-13</values>
-        </parameter>
-        <parameter>
-            <name>phi1</name>
-            <type>Constant</type>
-            <value>0.2</value>
-        </parameter>
-        <parameter>
-            <name>k2</name>
-            <type>Constant</type>
-            <values>1.e-12</values>
-        </parameter>
-        <parameter>
-            <name>phi2</name>
-            <type>Constant</type>
-            <value>0.3</value>
-        </parameter>
-        <parameter>
-            <name>k3</name>
-            <type>Constant</type>
-            <values>1.e-11</values>
-        </parameter>
-        <parameter>
-            <name>phi3</name>
-            <type>Constant</type>
-            <value>0.4</value>
-        </parameter>
-        <parameter>
             <name>initial_pressure</name>
             <type>Constant</type>
             <value>1.5e+5</value>

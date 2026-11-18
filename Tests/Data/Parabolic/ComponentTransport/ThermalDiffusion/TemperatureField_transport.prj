@@ -183,11 +183,15 @@
             <type>Constant</type>
             <value>0</value>
         </parameter>
+        <!-- used by TemperatureDependentDiffusion/reference_diffusion -->
+        <!-- ogs-inspect-disable OGS011 -->
         <parameter>
             <name>Dm0</name>
             <type>Constant</type>
             <value>2e-11</value>
         </parameter>
+        <!-- used by process/temperature_field -->
+        <!-- ogs-inspect-disable OGS011 -->
         <parameter>
             <name>T</name>
             <type>MeshNode</type>

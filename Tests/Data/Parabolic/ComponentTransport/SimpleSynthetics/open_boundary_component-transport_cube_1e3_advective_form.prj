@@ -165,11 +165,6 @@
             <value>0</value>
         </parameter>
         <parameter>
-            <name>c_boundary_permeability</name>
-            <type>Constant</type>
-            <value>1</value>
-        </parameter>
-        <parameter>
             <name>c_Dirichlet_left</name>
             <type>Constant</type>
             <value>0</value>

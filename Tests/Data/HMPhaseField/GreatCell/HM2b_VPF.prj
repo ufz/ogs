@@ -1431,12 +1431,6 @@
             <linear_solver>linear_solver_d</linear_solver>
         </nonlinear_solver>
         <nonlinear_solver>
-            <name>basic_newton_d</name>
-            <type>Newton</type>
-            <max_iter>50</max_iter>
-            <linear_solver>linear_solver_d</linear_solver>
-        </nonlinear_solver>
-        <nonlinear_solver>
             <name>basic_newton_u</name>
             <type>Newton</type>
             <max_iter>159</max_iter>

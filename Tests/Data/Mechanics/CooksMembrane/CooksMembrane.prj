@@ -103,11 +103,6 @@
             <value>0.</value>
         </parameter>
         <parameter>
-            <name>Dirichlet_bottom</name>
-            <type>Constant</type>
-            <value>0.</value>
-        </parameter>
-        <parameter>
             <name>F</name>
             <type>Constant</type>
             <!-- F = 100/16 N/mm -->
