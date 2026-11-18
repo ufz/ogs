@@ -96,8 +96,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim,
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all__meshsubsets_single_component),
             // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION,
-            process_data_.use_TaylorHood_elements);
+            NumLib::ComponentOrder::BY_LOCATION);
 
     // For temperature, which is the first variable.
     std::vector<MeshLib::MeshSubset> all__meshsubsets{*mesh_subset_base_nodes_};
@@ -117,8 +116,7 @@ void ThermoRichardsMechanicsProcess<DisplacementDim,
     _local_to_global_index_map =
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all__meshsubsets), vec_n_components,
-            NumLib::ComponentOrder::BY_LOCATION,
-            process_data_.use_TaylorHood_elements);
+            NumLib::ComponentOrder::BY_LOCATION);
     assert(_local_to_global_index_map);
 }
 

@@ -30,10 +30,8 @@ public:
 public:
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
-    /// \param use_taylor_hood_elements Flag to indicate whether the Taylor-Hood
-    ///                                 elements are used
     MeshComponentMap(std::vector<MeshLib::MeshSubset> const& components,
-                     ComponentOrder order, bool const use_taylor_hood_elements);
+                     ComponentOrder order);
 
     /// Creates a multi-component subset of the current mesh component map.
     /// The order (BY_LOCATION/BY_COMPONENT) of components is the same as of the
@@ -175,22 +173,24 @@ private:
     /// Global ID for ghost entries
     std::vector<GlobalIndexType> _ghosts_indices;
 
-    /// \param components   a vector of components
-    /// \param order        type of ordering values in a vector
+    /// Inserts one entry per component node.
+    ///
+    /// \param components     a vector of components
+    /// \param order          type of ordering values in a vector
+    /// \param number_entries if false, every entry is inserted as
+    ///                       unassigned_ghost_index; the parallel path numbers
+    ///                       its entries in a single pass afterwards.
     void createSerialMeshComponentMap(
         std::vector<MeshLib::MeshSubset> const& components,
-        ComponentOrder order);
+        ComponentOrder order, bool number_entries = true);
 
 #ifdef USE_PETSC
     /// \param components   a vector of components
     /// \param order        type of ordering values in a vector
-    /// \param use_taylor_hood_elements Flag to indicate whether the Taylor-Hood
-    ///                                 elements are used
     /// \param mpi          Mpi communicator and rank
     void createParallelMeshComponentMap(
         std::vector<MeshLib::MeshSubset> const& components,
-        ComponentOrder order, bool const use_taylor_hood_elements,
-        BaseLib::MPI::Mpi const& mpi);
+        ComponentOrder order, BaseLib::MPI::Mpi const& mpi);
 #endif
 };
 

@@ -5,6 +5,7 @@
 
 #include <vector>
 
+#include "NumLib/DOF/LocalToGlobalIndexMap.h"
 #include "SurfaceFluxLocalAssembler.h"
 
 namespace ProcessLib
@@ -14,11 +15,11 @@ class SurfaceFlux final
 public:
     /// Constructs an object that is able to compute a balance.
     /// @param boundary_mesh The integration boundary mesh.
-    /// @param bulk_property_number_of_components The number of components the
-    /// variable has.
+    /// @param bulk_dof_table The d.o.f. table of the bulk process; the
+    /// d.o.f. table for the boundary mesh is derived from it.
     /// @param integration_order Integration order used in local assembly.
     SurfaceFlux(MeshLib::Mesh& boundary_mesh,
-                std::size_t bulk_property_number_of_components,
+                NumLib::LocalToGlobalIndexMap const& bulk_dof_table,
                 unsigned const integration_order);
 
     /// Executes for each element of the mesh the local integration procedure.

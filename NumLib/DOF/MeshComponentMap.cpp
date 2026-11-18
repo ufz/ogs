@@ -3,6 +3,8 @@
 
 #include "MeshComponentMap.h"
 
+#include <cstddef>
+#include <limits>
 #include <numeric>
 #include <range/v3/algorithm/count_if.hpp>
 #include <range/v3/range/conversion.hpp>
@@ -10,6 +12,7 @@
 #include <range/v3/view/map.hpp>
 #include <range/v3/view/subrange.hpp>
 #include <range/v3/view/transform.hpp>
+#include <unordered_map>
 
 #include "BaseLib/Error.h"
 #include "BaseLib/MPI.h"
@@ -35,6 +38,19 @@ MeshLib::NodePartitionedMesh const& partitionedMesh(
                   c.getMesh().getName());
     }
     return *mesh;
+}
+
+/// Partitioned meshes of all components in component order.
+std::vector<MeshLib::NodePartitionedMesh const*> partitionedMeshes(
+    std::vector<MeshLib::MeshSubset> const& components)
+{
+    std::vector<MeshLib::NodePartitionedMesh const*> meshes;
+    meshes.reserve(components.size());
+    for (auto const& c : components)
+    {
+        meshes.push_back(&partitionedMesh(c));
+    }
+    return meshes;
 }
 }  // namespace
 #endif
@@ -69,30 +85,14 @@ using namespace detail;
 
 #ifdef USE_PETSC
 MeshComponentMap::MeshComponentMap(
-    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
-    bool const use_taylor_hood_elements)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
-    // Use PETSc with single thread
-    const MeshLib::NodePartitionedMesh& partitioned_mesh =
-        static_cast<const MeshLib::NodePartitionedMesh&>(
-            components[0].getMesh());
-    if (partitioned_mesh.isForSingleThread())
-    {
-        createSerialMeshComponentMap(components, order);
-        _num_local_dof = _dict.size();
-        return;
-    }
-    else
-    {
-        BaseLib::MPI::Mpi const mpi;
-        createParallelMeshComponentMap(components, order,
-                                       use_taylor_hood_elements, mpi);
-    }
+    BaseLib::MPI::Mpi const mpi;
+    createParallelMeshComponentMap(components, order, mpi);
 }
 #else
 MeshComponentMap::MeshComponentMap(
-    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
-    [[maybe_unused]] bool const use_taylor_hood_elements)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
 {
     createSerialMeshComponentMap(components, order);
     _num_local_dof = _dict.size();
@@ -332,8 +332,15 @@ GlobalIndexType MeshComponentMap::getLocalIndex(
 #endif
 }
 
+/// Global index of an entry before it is numbered. Never a valid global index
+/// and never produced by encodeGhostGlobalIndex() below, so an unfilled ghost
+/// entry cannot be mistaken for a filled one. Decoding it yields nop.
+static GlobalIndexType constexpr unassigned_ghost_index =
+    -std::numeric_limits<GlobalIndexType>::max();
+
 void MeshComponentMap::createSerialMeshComponentMap(
-    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order)
+    std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
+    bool const number_entries)
 {
     // construct dict (and here we number global_index by component type)
     GlobalIndexType global_index = 0;
@@ -346,9 +353,15 @@ void MeshComponentMap::createSerialMeshComponentMap(
         {
             _dict.insert(
                 Line(Location(mesh_id, MeshLib::MeshItemType::Node, node_id),
-                     comp_id, global_index++));
+                     comp_id,
+                     number_entries ? global_index++ : unassigned_ghost_index));
         }
         comp_id++;
+    }
+
+    if (!number_entries)
+    {
+        return;  // the parallel path numbers all entries in a single pass
     }
 
     if (order == ComponentOrder::BY_LOCATION)
@@ -358,66 +371,40 @@ void MeshComponentMap::createSerialMeshComponentMap(
 }
 
 #ifdef USE_PETSC
-
-GlobalIndexType getGlobalIndexWithTaylorHoodElement(
-    MeshLib::NodePartitionedMesh const& partitioned_mesh,
-    std::size_t const global_node_id,
-    int const number_of_components_at_base_node,
-    int const number_of_components_at_high_order_node,
-    int const component_id_at_base_node,
-    int const component_id_at_high_order_node,
-    bool const is_base_node)
+/// Numbers the regular (non-ghost) entries [offset, offset + count) in
+/// ByLocation order. Ghost entries keep `unassigned_ghost_index` and get their
+/// real index from the exchange below.
+///
+/// The single pass (instead of the serial numbering plus compacting) is
+/// needed because the BY_LOCATION renumbering counts ghost entries, too, and
+/// would run past this rank's reserved block into the next rank's.
+static void numberRegularEntriesByLocation(
+    NumLib::detail::ComponentGlobalIndexDict& dict,
+    std::vector<MeshLib::NodePartitionedMesh const*> const& component_meshes,
+    std::size_t const offset)
 {
-    int const partition_id = partitioned_mesh.getPartitionID(global_node_id);
-
-    auto const n_total_active_base_nodes_before_this_rank =
-        partitioned_mesh.getNumberOfRegularBaseNodesAtRank(partition_id);
-
-    auto const n_total_active_high_order_nodes_before_this_rank =
-        partitioned_mesh.getNumberOfRegularHighOrderNodesAtRank(partition_id);
-
-    auto const node_id_offset =
-        n_total_active_base_nodes_before_this_rank +
-        n_total_active_high_order_nodes_before_this_rank;
-
-    auto const index_offset = n_total_active_base_nodes_before_this_rank *
-                                  number_of_components_at_base_node +
-                              n_total_active_high_order_nodes_before_this_rank *
-                                  number_of_components_at_high_order_node;
-
-    if (is_base_node)
+    GlobalIndexType global_index = offset;
+    auto& by_location = dict.get<ByLocation>();
+    for (auto itr_mesh_item = by_location.begin();
+         itr_mesh_item != by_location.end();
+         ++itr_mesh_item)
     {
-        return static_cast<GlobalIndexType>(
-                   index_offset + (global_node_id - node_id_offset) *
-                                      number_of_components_at_base_node) +
-               component_id_at_base_node;
+        if (itr_mesh_item->location.item_type != MeshLib::MeshItemType::Node)
+        {
+            OGS_FATAL(
+                "numberRegularEntriesByLocation: expected a Node location, "
+                "got item_type {}.",
+                static_cast<int>(itr_mesh_item->location.item_type));
+        }
+        if (component_meshes[itr_mesh_item->comp_id]->isGhostNode(
+                itr_mesh_item->location.item_id))
+        {
+            continue;  // ghost entry, filled in by the exchange below
+        }
+        Line l = *itr_mesh_item;  // a copy for later modification
+        l.global_index = global_index++;
+        by_location.replace(itr_mesh_item, l);
     }
-
-    int const n_active_base_nodes_of_this_partition =
-        partitioned_mesh.getNumberOfRegularBaseNodesAtRank(partition_id + 1) -
-        n_total_active_base_nodes_before_this_rank;
-
-    /*
-        The global indices of components are numbered as what depicted below by
-        assuming that the base node has three components and the high order node
-        has two components:
-
-        Partition     |       0       |      1       |   ...
-                      --------------------------------
-        Regular nodes | Base | higher | Base | higher|   ...
-                      --------------------------------
-                  c0  x      x         x      x          ...
-                  c1  x      x         x      x          ...
-                  c2  x                x                 ...
-    */
-    return static_cast<GlobalIndexType>(
-               index_offset +
-               n_active_base_nodes_of_this_partition *
-                   number_of_components_at_base_node +
-               (global_node_id - node_id_offset -
-                n_active_base_nodes_of_this_partition) *
-                   number_of_components_at_high_order_node) +
-           component_id_at_high_order_node;
 }
 
 static std::vector<std::size_t> numberOfRegularNodesPerComponent(
@@ -443,9 +430,225 @@ static std::vector<std::size_t> numberOfRegularNodesPerComponent(
            ranges::to<std::vector>;
 }
 
+/// Owns a committed MPI datatype and frees it at the end of its lifetime.
+class CommittedMpiDatatype
+{
+public:
+    explicit CommittedMpiDatatype(MPI_Datatype const type) : type_{type}
+    {
+        MPI_Type_commit(&type_);
+    }
+
+    CommittedMpiDatatype(CommittedMpiDatatype const&) = delete;
+    CommittedMpiDatatype& operator=(CommittedMpiDatatype const&) = delete;
+    CommittedMpiDatatype(CommittedMpiDatatype&&) = delete;
+    CommittedMpiDatatype& operator=(CommittedMpiDatatype&&) = delete;
+
+    ~CommittedMpiDatatype() { MPI_Type_free(&type_); }
+
+    MPI_Datatype get() const { return type_; }
+
+private:
+    MPI_Datatype type_;
+};
+
+struct GhostNodeInfo
+{
+    std::size_t node_id;
+    std::size_t global_node_id;
+    int comp_id;
+};
+
+/// (GhostNodeInfo, global index) pairs grouped by the rank they are for.
+using GhostNodeInfosByRank =
+    std::vector<std::vector<std::pair<GhostNodeInfo, GlobalIndexType>>>;
+
+static std::vector<GhostNodeInfo> getGhostNodeInfo(
+    NumLib::detail::ComponentGlobalIndexDict const& dict,
+    std::vector<MeshLib::NodePartitionedMesh const*> const& component_meshes)
+{
+    std::vector<GhostNodeInfo> ids;
+    for (Line const& l : dict.get<ByLocation>())
+    {
+        if (l.location.item_type != MeshLib::MeshItemType::Node)
+        {
+            OGS_FATAL(
+                "getGhostNodeInfo: expected a Node location, got item_type "
+                "{}.",
+                static_cast<int>(l.location.item_type));
+        }
+        auto const& mesh = *component_meshes[l.comp_id];
+        if (mesh.isGhostNode(l.location.item_id))
+        {
+            ids.emplace_back(l.location.item_id,
+                             mesh.getGlobalNodeID(l.location.item_id),
+                             l.comp_id);
+        }
+    }
+    return ids;
+}
+
+/// Mapping of global node ids to local node ids of the regular nodes of a
+/// partitioned mesh.
+static std::unordered_map<std::size_t, std::size_t> globalToLocalRegularNodeIds(
+    MeshLib::NodePartitionedMesh const& mesh)
+{
+    std::unordered_map<std::size_t, std::size_t> global_to_local;
+    global_to_local.reserve(mesh.getNumberOfRegularNodes());
+    for (std::size_t node_id = 0; node_id < mesh.getNumberOfRegularNodes();
+         ++node_id)
+    {
+        global_to_local.emplace(mesh.getGlobalNodeID(node_id), node_id);
+    }
+    return global_to_local;
+}
+
+/// Whether on all ranks the global node ids of the regular nodes follow the
+/// partition block layout, i.e. getPartitionID() names the owning rank. Not
+/// the case for subdomain meshes, e.g. the other meshes partitioned by
+/// partmesh, see also transformMeshToNodePartitionedMesh().
+static bool ownerFollowsFromGlobalNodeId(
+    MeshLib::NodePartitionedMesh const& mesh, BaseLib::MPI::Mpi const& mpi)
+{
+    bool follows = true;
+    for (std::size_t node_id = 0; node_id < mesh.getNumberOfRegularNodes();
+         ++node_id)
+    {
+        if (mesh.getPartitionID(mesh.getGlobalNodeID(node_id)) !=
+            static_cast<std::size_t>(mpi.rank))
+        {
+            follows = false;
+            break;
+        }
+    }
+    return BaseLib::MPI::allOf(follows, mpi);
+}
+
+/// Answers a ghost node query on the rank owning the node: the global index
+/// of the queried entry here. Returns nop if the node is not a regular node
+/// here or outside the component's mesh subset (e.g. a base-node-only
+/// component and a non-base node), so the requesting rank can name the d.o.f.
+/// that failed to resolve instead of silently keeping the placeholder.
+static GlobalIndexType globalIndexOfGhostNodeOnOwner(
+    NumLib::detail::ComponentGlobalIndexDict const& dict,
+    MeshLib::NodePartitionedMesh const& mesh,
+    std::unordered_map<std::size_t, std::size_t> const& global_to_local,
+    GhostNodeInfo const& gni)
+{
+    auto const it = global_to_local.find(gni.global_node_id);
+    if (it == global_to_local.end())
+    {
+        return MeshComponentMap::nop;
+    }
+    return getGlobalIndex(
+        dict,
+        MeshLib::Location{mesh.getID(), MeshLib::MeshItemType::Node,
+                          it->second},
+        gni.comp_id);
+}
+
+/// Exchanges the numbers of entries each rank sends to each rank. Returns
+/// the receive counts: entry r is the number of entries rank r sends here.
+static std::vector<int> exchangeGhostNodeSizes(
+    std::vector<int> const& send_counts, BaseLib::MPI::Mpi const& mpi)
+{
+    std::vector<int> receive_counts(mpi.size);
+    MPI_Alltoall(send_counts.data(), 1, MPI_INT, receive_counts.data(), 1,
+                 MPI_INT, mpi.communicator);
+    return receive_counts;
+}
+
+// Custom MPI_Datatype for std::pair<GhostNodeInfo, GlobalIndexType>.
+static CommittedMpiDatatype createMpiDatatypeForPair()
+{
+    constexpr int nitems = 4;
+    std::array<int, nitems> const block_lengths = {1, 1, 1, 1};
+
+    using GhostNodeInfoPair = std::pair<GhostNodeInfo, GlobalIndexType>;
+    MPI_Aint const ghost_node_info_offset = offsetof(GhostNodeInfoPair, first);
+    std::array<MPI_Aint, nitems> const offsets = {
+        ghost_node_info_offset + offsetof(GhostNodeInfo, node_id),
+        ghost_node_info_offset + offsetof(GhostNodeInfo, global_node_id),
+        ghost_node_info_offset + offsetof(GhostNodeInfo, comp_id),
+        offsetof(GhostNodeInfoPair, second)};
+
+    // MPIU_INT matches PetscInt (also with --with-64-bit-indices), for which
+    // BaseLib::MPI::mpiType() has no mapping.
+    static_assert(std::is_same_v<GlobalIndexType, PetscInt>);
+    std::array<MPI_Datatype, nitems> const types = {
+        BaseLib::MPI::mpiType<std::size_t>(),
+        BaseLib::MPI::mpiType<std::size_t>(), MPI_INT, MPIU_INT};
+
+    MPI_Datatype struct_mpi_type;
+    MPI_Type_create_struct(nitems, block_lengths.data(), offsets.data(),
+                           types.data(), &struct_mpi_type);
+    // The struct type's extent may lack the trailing padding of the pair (e.g.
+    // for a 32-bit PetscInt), which would misplace all array elements after
+    // the first one. Set the extent to the pair's size explicitly.
+    MPI_Datatype pair_mpi_type;
+    MPI_Type_create_resized(struct_mpi_type, 0, sizeof(GhostNodeInfoPair),
+                            &pair_mpi_type);
+    MPI_Type_free(&struct_mpi_type);
+    return CommittedMpiDatatype{pair_mpi_type};
+}
+
+/// Sparse all-to-all (MPI_Isend/MPI_Irecv) of (GhostNodeInfo, global index)
+/// pairs: sends to_each_rank[r] to rank r and returns the pairs received from
+/// each rank (result[r] came from rank r).
+static GhostNodeInfosByRank exchangeGhostInfoPointToPoint(
+    GhostNodeInfosByRank const& to_each_rank, BaseLib::MPI::Mpi const& mpi)
+{
+    auto const pair_mpi_type = createMpiDatatypeForPair();
+
+    std::vector<int> const send_counts =
+        to_each_rank |
+        ranges::views::transform([](auto const& v)
+                                 { return static_cast<int>(v.size()); }) |
+        ranges::to<std::vector>;
+    std::vector<int> const receive_counts =
+        exchangeGhostNodeSizes(send_counts, mpi);
+
+    GhostNodeInfosByRank from_each_rank(mpi.size);
+
+    // Non-blocking communication using MPI_Isend and MPI_Irecv. The grouped
+    // vectors are contiguous, so no extra linearization is needed.
+    std::vector<MPI_Request> requests;
+
+    // Send data
+    for (int dest_rank = 0; dest_rank < mpi.size; ++dest_rank)
+    {
+        if (send_counts[dest_rank] > 0)
+        {  // Only send if there is data to send
+            requests.push_back(MPI_Request());
+            MPI_Isend(to_each_rank[dest_rank].data(), send_counts[dest_rank],
+                      pair_mpi_type.get(), dest_rank, 0, mpi.communicator,
+                      &requests.back());
+        }
+    }
+
+    // Receive data
+    for (int src_rank = 0; src_rank < mpi.size; ++src_rank)
+    {
+        from_each_rank[src_rank].resize(receive_counts[src_rank]);
+        if (receive_counts[src_rank] > 0)
+        {  // Only receive if there is data to receive
+            requests.push_back(MPI_Request());
+            MPI_Irecv(from_each_rank[src_rank].data(), receive_counts[src_rank],
+                      pair_mpi_type.get(), src_rank, 0, mpi.communicator,
+                      &requests.back());
+        }
+    }
+
+    // Wait for all communications to complete
+    MPI_Waitall(static_cast<int>(requests.size()), requests.data(),
+                MPI_STATUSES_IGNORE);
+
+    return from_each_rank;
+}
+
 void MeshComponentMap::createParallelMeshComponentMap(
     std::vector<MeshLib::MeshSubset> const& components, ComponentOrder order,
-    bool const use_taylor_hood_elements, BaseLib::MPI::Mpi const& mpi)
+    BaseLib::MPI::Mpi const& mpi)
 {
     if (order != ComponentOrder::BY_LOCATION)
     {
@@ -457,81 +660,163 @@ void MeshComponentMap::createParallelMeshComponentMap(
             "the order type of ComponentOrder::BY_LOCATION");
     }
 
-    std::vector<std::size_t> number_of_regular_nodes_per_component =
+    std::vector<std::size_t> const number_of_regular_nodes_per_component =
         numberOfRegularNodesPerComponent(components);
     _num_local_dof = std::reduce(number_of_regular_nodes_per_component.begin(),
                                  number_of_regular_nodes_per_component.end());
 
-    // Sum up number of component's regular nodes over all ranks to get global
-    // number of regular nodes per component.
-    BaseLib::MPI::allreduceInplace(number_of_regular_nodes_per_component,
-                                   MPI_SUM, mpi);
+    auto const num_local_dofs_per_rank =
+        BaseLib::MPI::allgather(_num_local_dof, mpi);
+    _num_global_dof = std::reduce(num_local_dofs_per_rank.begin(),
+                                  num_local_dofs_per_rank.end());
 
-    _num_global_dof = std::reduce(number_of_regular_nodes_per_component.begin(),
-                                  number_of_regular_nodes_per_component.end());
+    std::vector<std::size_t> global_offsets(num_local_dofs_per_rank.size(), 0);
+    std::partial_sum(num_local_dofs_per_rank.begin(),
+                     num_local_dofs_per_rank.end() - 1,
+                     global_offsets.begin() + 1);
 
-    //
-    // get the number of components at higher order nodes
-    //
-    int components_at_high_order_nodes = 0;
-    for (auto const& c : components)
+    auto const component_meshes = partitionedMeshes(components);
+
+    // Insert entries only, without numbering them here:
+    // numberRegularEntriesByLocation() owns the numbering and would replace
+    // the insert-time numbering again.
+    createSerialMeshComponentMap(components, order, false);
+    numberRegularEntriesByLocation(_dict, component_meshes,
+                                   global_offsets[mpi.rank]);
+
+    auto const ghost_node_info = getGhostNodeInfo(_dict, component_meshes);
+
+    // The owner of a ghost node is derived from its global node id. The result
+    // of the check is the same on all ranks, so all ranks fail together.
+    for (auto const* mesh : component_meshes)
     {
-        if (partitionedMesh(c).getNumberOfNodes() == c.getNodes().size())
+        if (!ownerFollowsFromGlobalNodeId(*mesh, mpi))
         {
-            components_at_high_order_nodes++;
+            OGS_FATAL(
+                "The global node ids of the mesh '{}' do not follow the "
+                "partition layout. A d.o.f. table can only be built on a "
+                "partitioned bulk mesh; for its subdomain meshes derive it "
+                "with deriveBoundaryConstrainedMap().",
+                mesh->getName());
         }
     }
 
-    // construct dict (and here we number global_index by component type)
-    //
-    int const n_components = components.size();
-
-    int comp_id = 0;
-    int comp_id_at_high_order_node = 0;
-    for (auto const& c : components)
+    // Query/answer round 1: route every ghost query to the rank owning the
+    // node instead of replicating all ranks' ghost lists everywhere, and
+    // answer the queries routed here.
+    GhostNodeInfosByRank queries(mpi.size);
+    for (auto const& gni : ghost_node_info)
     {
-        auto const& partitioned_mesh = partitionedMesh(c);
-        std::size_t const mesh_id = c.getMeshID();
-        const auto& sub_mesh_nodes = c.getNodes();
-
-        // mesh items are ordered first by node, cell, ....
-        for (std::size_t j = 0; j < sub_mesh_nodes.size(); j++)
+        std::size_t const owner =
+            component_meshes[gni.comp_id]->getPartitionID(gni.global_node_id);
+        if (owner < static_cast<std::size_t>(mpi.size))
+        {  // ids owned by no rank cannot be answered and are reported below
+            queries[owner].emplace_back(gni, 0);
+        }
+    }
+    GhostNodeInfosByRank answers = exchangeGhostInfoPointToPoint(queries, mpi);
+    std::unordered_map<MeshLib::NodePartitionedMesh const*,
+                       std::unordered_map<std::size_t, std::size_t>>
+        global_to_local_node_ids;
+    for (auto& answers_for_rank : answers)
+    {
+        for (auto& [gni, global_index] : answers_for_rank)
         {
-            const auto node_id = sub_mesh_nodes[j]->getID();
-            const bool is_base_node =
-                MeshLib::isBaseNode(*sub_mesh_nodes[j],
-                                    partitioned_mesh.getElementsConnectedToNode(
-                                        *sub_mesh_nodes[j]));
-
-            const auto global_node_id =
-                partitioned_mesh.getGlobalNodeID(node_id);
-            GlobalIndexType global_index =
-                (!use_taylor_hood_elements)
-                    ? static_cast<GlobalIndexType>(
-                          n_components * global_node_id + comp_id)
-                    : getGlobalIndexWithTaylorHoodElement(
-                          partitioned_mesh, global_node_id, n_components,
-                          components_at_high_order_nodes, comp_id,
-                          comp_id_at_high_order_node, is_base_node);
-            const bool is_ghost = partitioned_mesh.isGhostNode(node_id);
-            if (is_ghost)
+            auto const& mesh = *component_meshes[gni.comp_id];
+            auto [it, inserted] = global_to_local_node_ids.try_emplace(&mesh);
+            if (inserted)
             {
-                _ghosts_indices.push_back(global_index);
-                global_index =
-                    encodeGhostGlobalIndex(global_index, _num_global_dof);
+                it->second = globalToLocalRegularNodeIds(mesh);
             }
-
-            _dict.insert(
-                Line(Location(mesh_id, MeshLib::MeshItemType::Node, node_id),
-                     comp_id, global_index));
+            global_index =
+                globalIndexOfGhostNodeOnOwner(_dict, mesh, it->second, gni);
         }
+    }
 
-        if (partitioned_mesh.getNumberOfNodes() == c.getNodes().size())
+    // Query/answer round 2: the answers for this rank's ghost nodes.
+    auto const receive_data = exchangeGhostInfoPointToPoint(answers, mpi);
+
+    // Every local ghost entry must get exactly one answer back from its owning
+    // rank. Checked before the answers are applied, so a missing answer is
+    // reported as an exchange failure instead of leaving an unfilled entry.
+    std::size_t num_received = 0;
+    for (auto const& from_rank : receive_data)
+    {
+        num_received += from_rank.size();
+    }
+    std::exception_ptr local_error;
+    if (num_received != ghost_node_info.size())
+    {
+        local_error = std::make_exception_ptr(std::runtime_error(fmt::format(
+            "Ghost node global index exchange incomplete on rank {}: {} local "
+            "ghost entries but {} answers received from the owning ranks. At "
+            "least one ghost node's owning rank could not be determined.",
+            mpi.rank, ghost_node_info.size(), num_received)));
+    }
+
+    // Replace the unassigned placeholders of the ghost entries (see
+    // createSerialMeshComponentMap()) with the negated global indices received
+    // from the owning ranks. The checks below are rank-local, but a rank-local
+    // OGS_FATAL would leave the other ranks waiting at their next collective
+    // call instead of failing the run. The failure is therefore gathered into
+    // local_error and re-thrown consistently on every rank by
+    // allRanksThrowOrNone().
+    auto& index_by_loc_and_comp = _dict.get<ByLocationAndComponent>();
+    for (auto const& [gni, gi] : receive_data | ranges::views::join)
+    {
+        if (local_error)
         {
-            comp_id_at_high_order_node++;
+            break;
+        }
+        auto const& c = components[gni.comp_id];
+
+        if (gi == MeshComponentMap::nop)
+        {
+            local_error = std::make_exception_ptr(std::runtime_error(
+                fmt::format("Ghost d.o.f. resolution failed on rank {}: node "
+                            "{:d} of mesh '{:s}', component {:d} is a ghost "
+                            "here, but its owning rank has no global index "
+                            "for it.",
+                            mpi.rank,
+                            gni.node_id,
+                            c.getMesh().getName(),
+                            gni.comp_id)));
+            break;
         }
 
-        comp_id++;
+        std::size_t const mesh_id = c.getMeshID();
+        Line const query_line{
+            Location(mesh_id, MeshLib::MeshItemType::Node, gni.node_id),
+            gni.comp_id, 0};
+        auto it = index_by_loc_and_comp.find(query_line);
+
+        if (it == index_by_loc_and_comp.end())
+        {
+            local_error = std::make_exception_ptr(std::runtime_error(
+                fmt::format("Impossible. The entry must have been "
+                            "enumerated before. Could not find {}",
+                            query_line)));
+            break;
+        }
+        index_by_loc_and_comp.modify(
+            it,
+            [&](Line& line)
+            {
+                line.global_index = encodeGhostGlobalIndex(gi, _num_global_dof);
+            });
+    }
+    BaseLib::MPI::allRanksThrowOrNone<std::runtime_error>(local_error);
+
+    // Rebuild _ghosts_indices in ByLocation order (ascending local node id) to
+    // match the mesh property layout expected by bulk copyValues().
+    for (auto const& line : _dict.get<ByLocation>())
+    {
+        if (line.global_index >= 0)
+        {
+            continue;
+        }
+        _ghosts_indices.push_back(
+            decodeGhostGlobalIndex(line.global_index, _num_global_dof));
     }
 }
 #endif

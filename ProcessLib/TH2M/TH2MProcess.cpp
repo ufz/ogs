@@ -100,8 +100,7 @@ void TH2MProcess<DisplacementDim>::constructDofTable()
         std::make_unique<NumLib::LocalToGlobalIndexMap>(
             std::move(all_mesh_subsets_single_component),
             // by location order is needed for output
-            NumLib::ComponentOrder::BY_LOCATION,
-            _process_data.use_TaylorHood_elements);
+            NumLib::ComponentOrder::BY_LOCATION);
 
     if (_use_monolithic_scheme)
     {
@@ -130,8 +129,7 @@ void TH2MProcess<DisplacementDim>::constructDofTable()
         _local_to_global_index_map =
             std::make_unique<NumLib::LocalToGlobalIndexMap>(
                 std::move(all_mesh_subsets), vec_n_components,
-                NumLib::ComponentOrder::BY_LOCATION,
-                _process_data.use_TaylorHood_elements);
+                NumLib::ComponentOrder::BY_LOCATION);
         assert(_local_to_global_index_map);
     }
     else

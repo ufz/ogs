@@ -129,12 +129,13 @@ void parseOverwriteMeshData(
 
             // Genuine multi-rank PETSc partition: each rank holds only a local
             // mesh slice. Material-id selection and node writes not implemented
-            // there. Single-thread wrapper (serial / 1 rank) covers whole mesh,
-            // so allowed.
+            // there. A single partition (serial / 1 rank) covers the whole
+            // mesh, so it is allowed.
             auto const* const partitioned_mesh =
                 dynamic_cast<MeshLib::NodePartitionedMesh const*>(&mesh);
             bool const is_partition =
-                partitioned_mesh && !partitioned_mesh->isForSingleThread();
+                partitioned_mesh &&
+                partitioned_mesh->getNumberOfPartitions() > 1;
 
             if (is_partition && mesh_item_type == MeshLib::MeshItemType::Node)
             {

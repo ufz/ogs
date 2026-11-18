@@ -97,21 +97,18 @@ void LocalToGlobalIndexMap::findGlobalIndices(
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubset>&& mesh_subsets,
-    NumLib::ComponentOrder const order,
-    bool const use_taylor_hood_elements)
+    NumLib::ComponentOrder const order)
     : LocalToGlobalIndexMap(std::move(mesh_subsets),
-                            std::vector<int>(mesh_subsets.size(), 1), order,
-                            use_taylor_hood_elements)
+                            std::vector<int>(mesh_subsets.size(), 1), order)
 {
 }
 
 LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubset>&& mesh_subsets,
     std::vector<int> const& vec_var_n_components,
-    NumLib::ComponentOrder const order,
-    bool const use_taylor_hood_elements)
+    NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
-      _mesh_component_map(_mesh_subsets, order, use_taylor_hood_elements),
+      _mesh_component_map(_mesh_subsets, order),
       _variable_component_offsets(BaseLib::sizesToOffsets(vec_var_n_components))
 {
     // For each element of that MeshSubset save a line of global indices.
@@ -140,10 +137,9 @@ LocalToGlobalIndexMap::LocalToGlobalIndexMap(
     std::vector<MeshLib::MeshSubset>&& mesh_subsets,
     std::vector<int> const& vec_var_n_components,
     std::vector<std::vector<MeshLib::Element*> const*> const& vec_var_elements,
-    NumLib::ComponentOrder const order,
-    bool const use_taylor_hood_elements)
+    NumLib::ComponentOrder const order)
     : _mesh_subsets(std::move(mesh_subsets)),
-      _mesh_component_map(_mesh_subsets, order, use_taylor_hood_elements),
+      _mesh_component_map(_mesh_subsets, order),
       _variable_component_offsets(BaseLib::sizesToOffsets(vec_var_n_components))
 {
     assert(vec_var_n_components.size() == vec_var_elements.size());

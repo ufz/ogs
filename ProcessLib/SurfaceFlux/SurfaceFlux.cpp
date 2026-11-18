@@ -10,26 +10,18 @@
 namespace ProcessLib
 {
 SurfaceFlux::SurfaceFlux(MeshLib::Mesh& boundary_mesh,
-                         std::size_t bulk_property_number_of_components,
+                         NumLib::LocalToGlobalIndexMap const& bulk_dof_table,
                          unsigned const integration_order)
 {
     DBUG("Create local balance assemblers.");
     // Populate the vector of local assemblers.
     _local_assemblers.resize(boundary_mesh.getElements().size());
 
-    // needed to create dof table
-    auto mesh_subset_all_nodes = std::make_unique<MeshLib::MeshSubset>(
-        boundary_mesh, boundary_mesh.getNodes());
-
-    // Collect the mesh subsets in a vector.
-    std::vector<MeshLib::MeshSubset> all_mesh_subsets;
-    std::generate_n(std::back_inserter(all_mesh_subsets),
-                    bulk_property_number_of_components,
-                    [&]() { return *mesh_subset_all_nodes; });
-
-    // needed for creation of local assemblers
-    auto dof_table = std::make_unique<NumLib::LocalToGlobalIndexMap const>(
-        std::move(all_mesh_subsets), NumLib::ComponentOrder::BY_LOCATION);
+    // Needed for the creation of the local assemblers. Derived from the bulk
+    // d.o.f. table, which requires no communication in parallel runs, unlike
+    // numbering the boundary mesh d.o.f. anew.
+    auto const dof_table = bulk_dof_table.deriveBoundaryConstrainedMap(
+        MeshLib::MeshSubset{boundary_mesh, boundary_mesh.getNodes()});
 
     auto const bulk_element_ids =
         boundary_mesh.getProperties().template getPropertyVector<std::size_t>(
