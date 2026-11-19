@@ -67,6 +67,13 @@ PiecewiseLinearInterpolation::PiecewiseLinearInterpolation(
 
 double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 {
+    // All comparisons are false for NaN, so the search below would give the
+    // interval index -1.
+    if (std::isnan(pnt_to_interpolate))
+    {
+        return pnt_to_interpolate;
+    }
+
     // search interval that has the point inside
     if (pnt_to_interpolate <= supp_pnts_.front())
     {
@@ -98,6 +105,13 @@ double PiecewiseLinearInterpolation::getValue(double pnt_to_interpolate) const
 double PiecewiseLinearInterpolation::getDerivative(
     double const pnt_to_interpolate) const
 {
+    // All comparisons are false for NaN, so the search below would give the
+    // interval index 0 and read before the first value.
+    if (std::isnan(pnt_to_interpolate))
+    {
+        return pnt_to_interpolate;
+    }
+
     // A single support point describes a constant function.
     if (supp_pnts_.size() < 2)
     {
