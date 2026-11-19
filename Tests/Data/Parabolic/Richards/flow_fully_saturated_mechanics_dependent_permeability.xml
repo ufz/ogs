@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<OpenGeoSysProjectDiff base_file="flow_fully_saturated.prj">
+    <remove sel="/*/media/medium/properties/property/name[text()=&quot;permeability&quot;]/.."/>
+    <add sel="/*/media/medium/properties">
+        <property>
+            <name>permeability</name>
+            <type>StrainDependentPermeability</type>
+            <initial_permeability>k0_mechanics_dependent</initial_permeability>
+            <b1>4000.0</b1>
+            <b2>300.0</b2>
+            <b3>50.0</b3>
+            <minimum_permeability>1.e-20</minimum_permeability>
+            <maximum_permeability>1.e-12</maximum_permeability>
+        </property>
+    </add>
+    <add sel="/*/parameters">
+        <parameter>
+            <name>k0_mechanics_dependent</name>
+            <type>Constant</type>
+            <value>1e-12</value>
+        </parameter>
+    </add>
+</OpenGeoSysProjectDiff>

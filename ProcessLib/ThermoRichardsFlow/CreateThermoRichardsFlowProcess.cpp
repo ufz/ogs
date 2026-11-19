@@ -10,6 +10,7 @@
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/MaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Medium.h"
+#include "MaterialLib/MPL/Utils/CheckNoMechanicsDependentPermeability.h"
 #include "MaterialLib/SolidModels/CreateConstitutiveRelation.h"
 #include "MaterialLib/SolidModels/MechanicsBase.h"
 #include "ParameterLib/Utils.h"
@@ -151,6 +152,8 @@ std::unique_ptr<Process> createThermoRichardsFlowProcess(
         "Check the media properties of ThermoRichardsFlow process "
         "...");
     checkMPLProperties(media);
+    MaterialPropertyLib::checkNoMechanicsDependentPermeability(
+        media_map, "THERMO_RICHARDS_FLOW");
     DBUG("Media properties verified.");
 
     bool const mass_lumping =

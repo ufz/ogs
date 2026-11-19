@@ -27,6 +27,12 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         RUNTIME 1
     )
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/IsothermalFluidFlow.prj)
+    OgsTest(
+        PROJECTFILE Parabolic/HT/SimpleSynthetics/IsothermalFluidFlow_mechanics_dependent_permeability.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "depends on the stress or the strain. The HT process does not solve the deformation equation"
+        RUNTIME 1
+    )
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/PressureDiffusionTemperatureDiffusion.prj)
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/IsothermalFluidFlowWithGravity.prj)
     OgsTest(PROJECTFILE Parabolic/HT/SimpleSynthetics/PressureParabolicTemperatureParabolic.prj)

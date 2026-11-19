@@ -8,6 +8,7 @@
 #include "HTProcessData.h"
 #include "MaterialLib/MPL/CheckMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Utils/CheckNoMechanicsDependentPermeability.h"
 #include "MeshLib/IO/readMeshFromFile.h"
 #include "MeshLib/Utils/GetElementRotationMatrices.h"
 #include "MeshLib/Utils/GetSpaceDimension.h"
@@ -186,6 +187,7 @@ std::unique_ptr<Process> createHTProcess(
 
     DBUG("Check the media properties of HT process ...");
     checkMPLProperties(mesh, media_map);
+    MaterialPropertyLib::checkNoMechanicsDependentPermeability(media_map, "HT");
     DBUG("Media properties verified.");
 
     auto stabilizer = NumLib::createNumericalStabilization(mesh, config);

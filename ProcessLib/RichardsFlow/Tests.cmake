@@ -4,6 +4,12 @@ if (NOT (OGS_USE_MPI OR OGS_USE_LIS))
         OgsTest(PROJECTFILE RichardsMechanics/RichardsFlow_2d_richardsflow.prj RUNTIME 2)
     endif()
     OgsTest(PROJECTFILE Parabolic/Richards/flow_fully_saturated.prj)
+    OgsTest(
+        PROJECTFILE Parabolic/Richards/flow_fully_saturated_mechanics_dependent_permeability.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "depends on the stress or the strain. The RICHARDS_FLOW process does not solve the deformation equation"
+        RUNTIME 1
+    )
 endif()
 
 if(NOT (OGS_USE_PETSC OR OGS_USE_LIS))

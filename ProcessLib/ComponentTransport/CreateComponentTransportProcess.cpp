@@ -9,6 +9,7 @@
 #include "CreateLookupTable.h"
 #include "LookupTable.h"
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
+#include "MaterialLib/MPL/Utils/CheckNoMechanicsDependentPermeability.h"
 #include "MeshLib/Utils/GetElementRotationMatrices.h"
 #include "MeshLib/Utils/GetSpaceDimension.h"
 #include "NumLib/NumericalStability/CreateNumericalStabilization.h"
@@ -265,6 +266,8 @@ std::unique_ptr<Process> createComponentTransportProcess(
 
     DBUG("Check the media properties of ComponentTransport process ...");
     checkMPLProperties(mesh, media_map);
+    MaterialPropertyLib::checkNoMechanicsDependentPermeability(
+        media_map, "ComponentTransport");
     DBUG("Media properties verified.");
 
     auto stabilizer = NumLib::createNumericalStabilization(mesh, config);

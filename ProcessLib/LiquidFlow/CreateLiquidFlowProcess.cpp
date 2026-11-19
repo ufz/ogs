@@ -11,6 +11,7 @@
 #include "MaterialLib/MPL/CreateMaterialSpatialDistributionMap.h"
 #include "MaterialLib/MPL/Properties/Constant.h"
 #include "MaterialLib/MPL/Utils/CheckMPLPhasesForSinglePhaseFlow.h"
+#include "MaterialLib/MPL/Utils/CheckNoMechanicsDependentPermeability.h"
 #include "MeshLib/Utils/GetElementRotationMatrices.h"
 #include "MeshLib/Utils/GetSpaceDimension.h"
 #include "ParameterLib/Utils.h"
@@ -146,6 +147,8 @@ std::unique_ptr<Process> createLiquidFlowProcess(
 
     DBUG("Check the media properties of LiquidFlow process ...");
     checkMPLProperties(mesh, media_map, equation_balance_type_str == "volume");
+    MaterialPropertyLib::checkNoMechanicsDependentPermeability(media_map,
+                                                               "LIQUID_FLOW");
     DBUG("Media properties verified.");
 
     auto const* aperture_size_parameter = &ParameterLib::findParameter<double>(

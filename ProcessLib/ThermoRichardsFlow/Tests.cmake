@@ -2,6 +2,12 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE ThermoRichardsFlow/HT/SimpleSynthetics/PressureDiffusionTemperatureDiffusion.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsFlow/HT/HeatTransportInStationaryFlow/HeatTransportInStationaryFlow.prj RUNTIME 2)
     OgsTest(PROJECTFILE ThermoRichardsFlow/RichardsFlow2D/RichardsFlow_2d_small.prj RUNTIME 9)
+    OgsTest(
+        PROJECTFILE ThermoRichardsFlow/RichardsFlow2D/RichardsFlow_2d_small_mechanics_dependent_permeability.xml
+        PROPERTIES
+        PASS_REGULAR_EXPRESSION "depends on the stress or the strain. The THERMO_RICHARDS_FLOW process does not solve the deformation equation"
+        RUNTIME 1
+    )
     OgsTest(PROJECTFILE ThermoRichardsFlow/RichardsFlow2D/RichardsFlow_2d_small_Picard.prj RUNTIME 6)
     OgsTest(PROJECTFILE ThermoRichardsFlow/RichardsFlow2D/RichardsFlow_2d_compare_ogs5.prj RUNTIME 1)
     OgsTest(PROJECTFILE ThermoRichardsFlow/SimplifiedMechanics/TRuni_saturated.prj RUNTIME 1)
