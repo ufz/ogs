@@ -31,6 +31,45 @@ def petsc_enabled():
     return value in {"1", "true", "yes", "on"}
 
 
+def remove_directory_symlink_cycles(root):
+    """Remove output symlinks that lead to directory cycles; return their paths."""
+    root = root.resolve()
+    visited = set()
+    cycles = []
+
+    def walk(directory, ancestors, output_link=None):
+        stat = directory.stat()
+        identity = (stat.st_dev, stat.st_ino)
+        if identity in ancestors:
+            if output_link is None:
+                message = f"Directory cycle without an output symlink: {directory}"
+                raise RuntimeError(message)
+            output_link.unlink()
+            cycles.append(output_link)
+            return
+        if identity in visited:
+            return
+        ancestors.add(identity)
+        try:
+            with os.scandir(directory) as entries:
+                for entry in entries:
+                    if not entry.is_dir(follow_symlinks=True):
+                        continue
+                    path = Path(entry.path)
+                    link = output_link
+                    if entry.is_symlink() and link is None:
+                        link = path
+                    walk(path, ancestors, link)
+                    if link is not None and not link.exists():
+                        break
+        finally:
+            ancestors.remove(identity)
+        visited.add(identity)
+
+    walk(root, set())
+    return cycles
+
+
 def get_website_output_path(notebook, exec_notebook_file):
     if "Tests/Data" not in str(exec_notebook_file):
         return None
@@ -249,7 +288,12 @@ for notebook_file in args.notebooks:
             check=False,
         )
 
-        if run.returncode == 0:
+        cycles = remove_directory_symlink_cycles(notebook_output_path)
+        if cycles:
+            print(
+                f"[Failed] {notebook_file}: removed cyclic directory symlinks: {cycles}"
+            )
+        if run.returncode == 0 and not cycles:
             print(f"[Passed]  {notebook_file}")
         else:
             print(f"[Failed] {notebook_file}.\n\n{run.stdout}\n\n{run.stderr}")
@@ -287,6 +331,13 @@ for notebook_file in args.notebooks:
             notebook_success = False
         end = timer()
         print(f"[End]  {notebook_filename}")
+
+        cycles = remove_directory_symlink_cycles(notebook_output_path)
+        if cycles:
+            print(
+                f"[Failed] {notebook_filename}: removed cyclic directory symlinks: {cycles}"
+            )
+            notebook_success = False
 
         # Write new notebook
         with convert_notebook_file.open(mode="w", encoding="utf-8") as f:
