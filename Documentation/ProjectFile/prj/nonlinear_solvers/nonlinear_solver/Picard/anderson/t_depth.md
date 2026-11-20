@@ -21,9 +21,11 @@ The convergence criterion is checked on the (damped) step before the mixing.
 
 If the stored steps do not determine the weights uniquely, e.g. for duplicate
 steps, the oldest steps are left out of the mixture. If the mixture does not
-reduce the residual, or needs very large weights, the iteration falls back to
-the plain Picard step and says so with an `info` message, so the acceleration
-degrades gracefully instead of amplifying rounding error.
+reduce the residual, needs very large weights, or is a long extrapolation to a
+numerically zero predicted residual (a secant step of many step lengths, which
+is not trusted for a nonlinear map), the iteration falls back to the plain
+Picard step and says so with an `info` message, so the acceleration degrades
+gracefully instead of amplifying rounding error.
 
 The value must be non-negative. Anderson acceleration is not compatible with
 linear equation systems (a single Picard step already yields the exact

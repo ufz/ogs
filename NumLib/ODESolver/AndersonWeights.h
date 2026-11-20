@@ -37,15 +37,16 @@ namespace detail
  * -# it predicts a smaller residual norm than the plain step it would replace,
  *    and
  * -# its weights stay bounded, which rules out the mixtures of near-identical
- *    iterates whose value is pure cancellation error.
+ *    iterates whose value is pure cancellation error, and
+ * -# if it predicts a numerically zero residual, its weights stay below a
+ *    tighter bound: such a mixture is exact for a map that is affine on the
+ *    span of the steps, but for a nonlinear map a long secant extrapolation.
+ *    Modest weights are accepted.
  *
  * Otherwise \f$ \theta = (0,\dots,0,1) \f$ is returned, i.e. unit weight on the
  * newest stored step, which reproduces the plain (damped) Picard update. The
  * same fallback applies when all stored residuals vanish. Acceleration thus
  * degrades to plain Picard instead of amplifying rounding error.
- *
- * A predicted residual of zero with bounded weights is accepted: for linearly
- * dependent steps it is the exact solution of an affine map on their span.
  *
  * \note This is an implementation detail of \c AndersonAcceleration, declared
  * in a separate header so that it stays out of the public class header while

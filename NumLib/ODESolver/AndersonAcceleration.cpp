@@ -168,15 +168,28 @@ Eigen::VectorXd computeAndersonWeights(Eigen::MatrixXd G)
     //     cases that slip past it.
     constexpr double max_weight = 1e2;
 
-    // A numerically zero predicted residual is accepted: it is the exact
-    // solution for a map that is affine on the span of the steps (e.g.
-    // collinear steps f_1 = c f_0 of a map with gain c). Convergence is
-    // checked on the unmixed step (see NonlinearSolver), so a rejected
-    // mixture costs an iteration, not correctness.
+    // (c) A numerically zero predicted residual is exact only for a map that
+    //     is affine on the span of the steps; otherwise it is a secant
+    //     extrapolation of length ~|theta| steps (f_1 = 1.02 f_0 gives
+    //     theta = (51, -50)). Accept it only for |theta| <= 10. "Zero" is
+    //     relative to the rounding error of theta^T G theta, which grows like
+    //     eps ||theta||_1^2 max G_ii; sqrt(eps) gives a wide margin.
+    constexpr double max_exact_extrapolation_weight = 1e1;
+    double const theta_l1 = theta.lpNorm<1>();
+    double const used_scale = G.diagonal().tail(number_of_steps).maxCoeff();
+    double const numerically_zero_2 =
+        std::sqrt(std::numeric_limits<double>::epsilon()) * theta_l1 *
+        theta_l1 * used_scale;
+    bool const long_exact_extrapolation =
+        mixed_residual_norm_2 <= numerically_zero_2 &&
+        theta.cwiseAbs().maxCoeff() > max_exact_extrapolation_weight;
+
+    // Convergence is checked on the unmixed step (see NonlinearSolver), so a
+    // rejected mixture costs an iteration, not correctness.
     //
     // Negated comparison, so that a NaN norm takes the fallback as well.
     if (!(mixed_residual_norm_2 < newest_step_norm_2) ||
-        theta.cwiseAbs().maxCoeff() > max_weight)
+        theta.cwiseAbs().maxCoeff() > max_weight || long_exact_extrapolation)
     {
         // A fallback silently changes the iterate the solver would otherwise
         // take, so it is reported at INFO level rather than hidden in DBUG.

@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <Eigen/Core>
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -116,6 +117,17 @@ std::vector<AndersonWeightsCase> exactWeightsCases()
                          gramOf(F), Eigen::Vector2d(2.0, -1.0), 1e-12});
     }
     {
+        // f_1 = 1.02 f_0: the exact secant extrapolation needs
+        // theta = [51, -50], within max_weight, but a jump of about 50 step
+        // lengths, which is not trusted for a nonlinear map. Expect the
+        // fallback.
+        Eigen::MatrixXd F(2, 2);
+        F << 1.0, 1.02,  //
+            0.0, 0.0;
+        cases.push_back({"NearlyEqualCollinearStepsFallBackToNewestStep",
+                         gramOf(F), Eigen::Vector2d(0.0, 1.0), 0.0});
+    }
+    {
         // Three steps that span a plane only, as for a fixed-point map acting
         // on two degrees of freedom (e.g. the nodes at a saturation front).
         // The model residual can be zeroed exactly, with the unique weights
@@ -198,6 +210,32 @@ INSTANTIATE_TEST_SUITE_P(
     [](::testing::TestParamInfo<AndersonWeightsCase> const& info)
     { return info.param.name; });
 }  // namespace
+
+TEST(NumLibAndersonAcceleration,
+     NearlyEqualCollinearStepsWithRoundedGramFallBackToNewestStep)
+{
+    // As NearlyEqualCollinearStepsFallBackToNewestStep, but with long vectors
+    // whose Gram matrix carries rounding errors: the predicted residual of
+    // theta = [51, -50] is then a rounding residue of either sign rather than
+    // exactly zero, and the long extrapolation must still be rejected.
+    for (int const n : {10, 100, 5000})
+    {
+        for (int phase = 0; phase < 20; ++phase)
+        {
+            Eigen::MatrixXd F(n, 2);
+            for (int i = 0; i < n; ++i)
+            {
+                F(i, 0) = std::sin(0.7 * i + 0.1 * phase + 0.3);
+                F(i, 1) = 1.02 * F(i, 0);
+            }
+            Eigen::VectorXd const theta =
+                NumLib::detail::computeAndersonWeights(gramOf(F));
+            ASSERT_EQ(theta.size(), 2);
+            EXPECT_EQ(theta(0), 0.0) << "n = " << n << ", phase = " << phase;
+            EXPECT_EQ(theta(1), 1.0) << "n = " << n << ", phase = " << phase;
+        }
+    }
+}
 
 TEST(NumLibAndersonAcceleration, WeightsSumToOne)
 {
