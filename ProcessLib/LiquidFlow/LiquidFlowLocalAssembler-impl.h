@@ -9,7 +9,6 @@
 #include "MaterialLib/MPL/Utils/FormEigenTensor.h"
 #include "MaterialLib/MPL/Utils/GetFluidDensityAndViscosity.h"
 #include "MaterialLib/MPL/VariableType.h"
-#include "NumLib/Fem/Interpolation.h"
 
 namespace ProcessLib
 {
@@ -79,32 +78,55 @@ Eigen::Vector3d LiquidFlowLocalAssembler<ShapeFunction, GlobalDim>::getFlux(
                                                 false /*is_axially_symmetric*/,
                                                 std::array{p_local_coords})[0];
 
-    // create pos object to access the correct media property
-    ParameterLib::SpatialPosition pos;
-    pos.setElementID(_element.getID());
+    ParameterLib::SpatialPosition const pos{
+        std::nullopt, _element.getID(),
+        MathLib::Point3d(
+            NumLib::interpolateCoordinates<ShapeFunction, ShapeMatricesType>(
+                _element, shape_matrices.N))};
 
     auto const& medium = *_process_data.media_map.getMedium(_element.getID());
     auto const& fluid_phase = fluidPhase(medium);
 
     MaterialPropertyLib::VariableArray vars;
+    auto& phase_pressure = medium.hasPhase(MaterialPropertyLib::PhaseName::Gas)
+                               ? vars.gas_phase_pressure
+                               : vars.liquid_phase_pressure;
 
-    double pressure = 0.0;
-    NumLib::shapeFunctionInterpolate(local_x, shape_matrices.N, pressure);
-    vars.liquid_phase_pressure = pressure;
+    auto const local_p =
+        MathLib::toVector<NodalVectorType>(local_x, local_x.size());
+    phase_pressure = shape_matrices.N.dot(local_p);
+
+    vars.temperature =
+        medium[MaterialPropertyLib::PropertyType::reference_temperature]
+            .template value<double>(vars, pos, t, dt);
+
+    auto const [fluid_density, viscosity] =
+        MaterialPropertyLib::getFluidDensityAndViscosity(t, dt, pos,
+                                                         fluid_phase, vars);
 
     GlobalDimMatrixType const intrinsic_permeability =
         MaterialPropertyLib::formEigenTensor<GlobalDim>(
             medium[MaterialPropertyLib::PropertyType::permeability].value(
                 vars, pos, t, dt));
-    auto const viscosity =
-        fluid_phase[MaterialPropertyLib::PropertyType::viscosity]
-            .template value<double>(vars, pos, t, dt);
+
+    GlobalDimVectorType driving_force = -shape_matrices.dNdx * local_p;
+    if (_process_data.has_gravity)
+    {
+        GlobalDimVectorType const projected_body_force_vector =
+            _process_data.element_rotation_matrices[_element.getID()] *
+            _process_data.element_rotation_matrices[_element.getID()]
+                .transpose() *
+            _process_data.specific_body_force;
+        driving_force += fluid_density * projected_body_force_vector;
+    }
 
     Eigen::Vector3d flux(0.0, 0.0, 0.0);
-    flux.head<GlobalDim>() =
-        -intrinsic_permeability / viscosity * shape_matrices.dNdx *
-        Eigen::Map<const NodalVectorType>(local_x.data(), local_x.size());
+    flux.head<GlobalDim>() = intrinsic_permeability / viscosity * driving_force;
 
+    if (!_process_data.is_volume_balance_equation_type)
+    {
+        flux *= fluid_density;
+    }
     return flux;
 }
 

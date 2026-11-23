@@ -122,8 +122,18 @@ public:
                   std::vector<double>& local_K_data,
                   std::vector<double>& local_b_data) override;
 
-    /// Computes the flux in the point \c p_local_coords that is given in local
-    /// coordinates using the values from \c local_x.
+    /// Computes the Darcy flux \f$ \mathbf{q} = -\frac{\mathbf{k}}{\mu}
+    /// (\nabla p - \rho \mathbf{g}) \f$ in m/s at the point \c
+    /// p_local_coords given in local coordinates, using the values from \c
+    /// local_x, with the intrinsic permeability tensor \f$\mathbf{k}\f$
+    /// [m^2], the viscosity \f$\mu\f$ [Pa s], the pressure \f$p\f$ [Pa], the
+    /// fluid density \f$\rho\f$ [kg/m^3] and the specific body force
+    /// \f$\mathbf{g}\f$ [m/s^2]. The \f$\rho \mathbf{g}\f$ term is added only
+    /// when a non-zero \c specific_body_force is configured, and
+    /// \f$\mathbf{g}\f$ is projected onto the element for lower-dimensional
+    /// elements. For the mass balance equation type
+    /// the mass flux \f$\rho \mathbf{q}\f$ in kg/(m^2 s) is returned,
+    /// consistent with the assembly.
     Eigen::Vector3d getFlux(MathLib::Point3d const& p_local_coords,
                             double const t,
                             std::vector<double> const& local_x) const override;
