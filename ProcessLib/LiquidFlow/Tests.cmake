@@ -39,6 +39,14 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h1_3Dhydstat/h1_3Dhydstat.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D1bt/h2_1D1bt.prj)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D1bt/h2_1D1bt_mass_lumping.xml)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep1D/pressure_step_1D.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep1D/pressure_step_1D_mass_lumping.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep1D/pressure_step_1D_quadratic.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep1D/pressure_step_1D_quadratic_mass_lumping.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep2D/pressure_step_2D.prj RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep2D/pressure_step_2D_mass_lumping.xml RUNTIME 1)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep2D/pressure_step_2D_quadratic.xml RUNTIME 3)
+    OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/PressureStep2D/pressure_step_2D_quadratic_mass_lumping.xml RUNTIME 3)
     OgsTest(PROJECTFILE Parabolic/LiquidFlow/Verification/h2_1D2bt/h2_1D2bt.prj)
 endif()
 
@@ -221,6 +229,13 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/Selke2D/selke2dheterogenousrobin.py RUNTIME 140)
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/BlockingConductingFracture/BlockingConductingFracture.py RUNTIME 9)
     NotebookTest(NOTEBOOKFILE Parabolic/LiquidFlow/roughFracture/roughFracture_benchmark.py RUNTIME 600)
+    NotebookTest(
+        NOTEBOOKFILE Parabolic/LiquidFlow/Verification/PressureStepMassLumping/pressure_step_mass_lumping.py
+        RUNTIME 10
+        BINDER_ADDITIONAL_PATHS
+            Parabolic/LiquidFlow/Verification/PressureStep1D
+            Parabolic/LiquidFlow/Verification/PressureStep2D
+    )
     # inclined mesh
     OgsTest(
         PROJECTFILE
