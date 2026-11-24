@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "BaseLib/ConfigTree.h"
-#include "BaseLib/Error.h"
 #include "BaseLib/FileTools.h"
 
 namespace MathLib
@@ -47,17 +46,6 @@ PiecewiseLinearCurveConfig parsePiecewiseLinearCurveConfig(
         y =
             //! \ogs_file_param{prj__curves__curve__values}
             config.getConfigParameter<std::vector<double>>("values");
-    }
-
-    if (x.empty() || y.empty())
-    {
-        OGS_FATAL("The given coordinates or values vector is empty.");
-    }
-    if (x.size() != y.size())
-    {
-        OGS_FATAL(
-            "The given coordinates and values vector sizes are "
-            "different.");
     }
 
     return {std::move(x), std::move(y)};

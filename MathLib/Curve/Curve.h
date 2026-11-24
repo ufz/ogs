@@ -4,6 +4,7 @@
 #pragma once
 
 #include <memory>
+#include <string_view>
 #include <vector>
 
 namespace MathLib
@@ -24,11 +25,16 @@ class Curve final
 public:
     /// Creates a curve interpolating the given supporting points piecewise
     /// linearly.
-    /// \param supporting_points  the supporting points \f$x_j\f$, assumed to
-    ///     be pairwise different
+    /// \param supporting_points  the supporting points \f$x_j\f$, pairwise
+    ///     different, not necessarily sorted; duplicates, an empty vector or a
+    ///     size mismatch with \c values are a fatal error
     /// \param values  the values \f$y_j\f$ at the supporting points
     Curve(PiecewiseLinear /*tag*/, std::vector<double> supporting_points,
           std::vector<double> values);
+
+    /// As above; the \c curve_name is used in error messages.
+    Curve(PiecewiseLinear /*tag*/, std::string_view curve_name,
+          std::vector<double> supporting_points, std::vector<double> values);
 
     Curve(Curve const& other);
     Curve(Curve&& other) noexcept;

@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <stdexcept>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -20,7 +21,7 @@ std::unique_ptr<MathLib::Curve> createCurveFromXml(char const xml[])
     auto ptree = Tests::readXml(xml);
     BaseLib::ConfigTree conf(std::move(ptree), "", BaseLib::ConfigTree::onerror,
                              BaseLib::ConfigTree::onwarning);
-    return MathLib::createCurve(conf.getConfigSubtree("curve"));
+    return MathLib::createCurve("test", conf.getConfigSubtree("curve"));
 }
 
 void expectSameInterpolant(MathLib::Curve const& expected,
@@ -131,4 +132,23 @@ TEST(MathLibCurve, CopyOfMovedFromCurveIsDiagnosed)
     EXPECT_THROW(target = curve, std::runtime_error);
     // The failed assignment leaves the target unchanged.
     EXPECT_EQ(1.0, target.getValue(1.0));
+}
+
+TEST(MathLibCurve, LinearInputErrorNamesTheCurve)
+{
+    try
+    {
+        createCurveFromXml(
+            "<curve>"
+            "   <coords> 0 1 1</coords>"
+            "   <values> 0 1 2</values>"
+            "</curve>");
+        FAIL() << "Equal supporting points were accepted.";
+    }
+    catch (std::runtime_error const& e)
+    {
+        EXPECT_NE(std::string_view{e.what()}.find("curve 'test'"),
+                  std::string_view::npos)
+            << e.what();
+    }
 }

@@ -8,10 +8,11 @@
 
 namespace MathLib
 {
-std::unique_ptr<Curve> createCurve(BaseLib::ConfigTree const& config)
+std::unique_ptr<Curve> createCurve(std::string_view const name,
+                                   BaseLib::ConfigTree const& config)
 {
     auto [xs, ys] = parsePiecewiseLinearCurveConfig(config);
-    return std::make_unique<Curve>(PiecewiseLinear{}, std::move(xs),
+    return std::make_unique<Curve>(PiecewiseLinear{}, name, std::move(xs),
                                    std::move(ys));
 }
 }  // namespace MathLib
