@@ -1,4 +1,28 @@
+# cmake-lint: disable=C0103,C0111
+
 file(MAKE_DIRECTORY ${WORKING_DIRECTORY})
+
+function(resolve_test_tool_from_path variable_name)
+    if(NOT DEFINED ENV{${variable_name}})
+        return()
+    endif()
+
+    set(tool "$ENV{${variable_name}}")
+    if(NOT IS_ABSOLUTE "${tool}" AND NOT EXISTS "${tool}")
+        find_program(tool_path NAMES "${tool}" NO_CACHE)
+        if(NOT tool_path)
+            message(
+                FATAL_ERROR "${variable_name}='${tool}' was not found in PATH."
+            )
+        endif()
+        set(ENV{${variable_name}} "${tool_path}")
+    endif()
+endfunction()
+
+# OGS checks these values as file paths instead of resolving command names via
+# PATH. Resolve Guix-provided tool names while inheriting the test's PATH.
+resolve_test_tool_from_path(VTKDIFF_EXE)
+resolve_test_tool_from_path(XDMFDIFF_EXE)
 
 # IMPORTANT: multiple arguments in a single variable have to be in list notation
 # (;) and have to be quoted when passed

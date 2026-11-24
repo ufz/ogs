@@ -177,15 +177,31 @@ macro(_ogs_add_test TEST_NAME)
         "Is test '${TEST_NAME}' expected to succeed? → ${TEST_COMMAND_IS_EXPECTED_TO_SUCCEED}"
     )
 
-    set(_ogs_exe $<TARGET_FILE:ogs>)
+    if(OGS_TEST_USE_PATH)
+        set(_ogs_exe ogs)
+    elseif(OGS_TEST_EXECUTABLE)
+        set(_ogs_exe "${OGS_TEST_EXECUTABLE}")
+    else()
+        set(_ogs_exe $<TARGET_FILE:ogs>)
+    endif()
     if(OGS_BUILD_WHEEL)
         # When testing the installed wheel assume executable is in PATH from
         # venv.
         set(_ogs_exe ogs)
     endif()
-    set(_diff_tool_environment VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>)
+    if(OGS_TEST_USE_PATH)
+        set(_diff_tool_environment VTKDIFF_EXE=vtkdiff)
+    else()
+        set(_diff_tool_environment VTKDIFF_EXE=$<TARGET_FILE:vtkdiff>)
+    endif()
     if(TARGET xdmfdiff)
-        list(APPEND _diff_tool_environment XDMFDIFF_EXE=$<TARGET_FILE:xdmfdiff>)
+        if(OGS_TEST_USE_PATH)
+            list(APPEND _diff_tool_environment XDMFDIFF_EXE=xdmfdiff)
+        else()
+            list(APPEND _diff_tool_environment
+                 XDMFDIFF_EXE=$<TARGET_FILE:xdmfdiff>
+            )
+        endif()
     endif()
 
     add_test(

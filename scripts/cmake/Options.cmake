@@ -7,6 +7,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(OGS_BUILD_WHEEL "Build Python wheels of OGS" OFF)
 option(BUILD_SHARED_LIBS "Create shared libraries?" ON)
 option(OGS_BUILD_CLI "Should the OGS simulator be built?" ON)
+set(OGS_TEST_EXECUTABLE
+    ""
+    CACHE
+        FILEPATH
+        "External OGS executable to use in simulator tests instead of the built executable."
+)
+option(
+    OGS_TEST_USE_PATH
+    "Use project application executables from PATH in CTest instead of build targets."
+    OFF
+)
 set(CMAKE_LIBRARY_SEARCH_PATH ""
     CACHE PATH
           "Additional library installation path, e.g. /opt/local or C:/libs"
