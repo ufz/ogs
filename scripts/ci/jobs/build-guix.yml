@@ -51,7 +51,7 @@ build guix serial ctests:
       if [ "${CI_COMMIT_BRANCH}" = "${CI_DEFAULT_BRANCH}" ]; then export CTEST_GROUP=master; fi
       if [ "${CI_PIPELINE_SOURCE}" = "pipeline" ]; then export CTEST_SUBMIT=false; else export CTEST_SUBMIT=true; fi
       export CTEST_ARGS="--output-on-failure -j ${CTEST_PARALLEL_LEVEL}"
-      guix time-machine -C scripts/guix/channels.scm -- shell -m scripts/guix/manifest-serial.scm -- ctest -S scripts/ci/ctest-dashboard.cmake -VV
+      guix time-machine -C scripts/guix/channels.scm -- shell --rebuild-cache -m scripts/guix/manifest-serial.scm -- ctest -S scripts/ci/ctest-dashboard.cmake -VV
 
 deploy container:
   stage: build

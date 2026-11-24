@@ -34,6 +34,10 @@ ctest -LE large -j 16
 To run ctests in Guix, set `OGS_TEST_USE_PATH` to `ON`. CTest then resolves
 project executables from the Guix shell's `PATH`.
 
+`guix shell` caches the profile of a manifest file and reuses it until the
+manifest file changes, so source changes would not rebuild OGS;
+`--rebuild-cache` forces the rebuild.
+
 Usage:
 
 ```bash
@@ -43,7 +47,7 @@ cmake --preset release -DOGS_TEST_USE_PATH=ON \
 
 # Run CTest against the same build directory, within the Guix environment.
 guix time-machine -C scripts/guix/channels.scm -- \
-  shell -m scripts/guix/manifest-serial.scm cmake -- \
+  shell --rebuild-cache -m scripts/guix/manifest-serial.scm cmake -- \
   ctest --test-dir ../build/guix-test -LE large --output-on-failure -j 8
 ```
 
