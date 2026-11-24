@@ -26,10 +26,14 @@ build guix:
     - |
       SCIENCE_CHANNELS_ARG=""
       LOAD_ARG="-L scripts/guix/packages"
+      UNSAFE_ARG=""
+      if guix time-machine --help | grep -q -- --unsafe-channel-evaluation; then
+        UNSAFE_ARG="--unsafe-channel-evaluation"
+      fi
       if [[ "$GUIX_MANIFEST" =~ .*-mkl\.scm ]]; then
         SCIENCE_CHANNELS_ARG="-science";
       fi
-    - guix time-machine --unsafe-channel-evaluation -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- build -m scripts/guix/${GUIX_MANIFEST} ${LOAD_ARG}
+    - guix time-machine ${UNSAFE_ARG} -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- build -m scripts/guix/${GUIX_MANIFEST} ${LOAD_ARG}
 
 build guix serial ctests:
   stage: build
@@ -72,6 +76,10 @@ deploy container:
     - |
       SCIENCE_CHANNELS_ARG=""
       LOAD_ARG="-L scripts/guix/packages"
+      UNSAFE_ARG=""
+      if guix time-machine --help | grep -q -- --unsafe-channel-evaluation; then
+        UNSAFE_ARG="--unsafe-channel-evaluation"
+      fi
       GUIX_PACKAGE=""
       if [[ $GUIX_MANIFEST =~ ^manifest-([^.]+)\.scm$ ]]; then
         GUIX_PACKAGE="ogs-${BASH_REMATCH[1]}"
@@ -80,7 +88,7 @@ deploy container:
         SCIENCE_CHANNELS_ARG="-science";
       fi
     - mcli alias set s3-ufz https://vip.s3.ufz.de $S3_UFZ_PUBLIC_ACCESS_KEY $S3_UFZ_PUBLIC_SECRET_KEY
-    - image=$( guix time-machine --unsafe-channel-evaluation -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- pack -RR --format=squashfs -m scripts/guix/${GUIX_MANIFEST} ${LOAD_ARG} | tee | tail -1 )
+    - image=$( guix time-machine ${UNSAFE_ARG} -C scripts/guix/channels${SCIENCE_CHANNELS_ARG}.scm -- pack -RR --format=squashfs -m scripts/guix/${GUIX_MANIFEST} ${LOAD_ARG} | tee | tail -1 )
     - echo "Image (${GUIX_PACKAGE}) $image"
     - mcli cp $image s3-ufz/ogs/public/container/ogs/master/${GUIX_PACKAGE}.squashfs
     # Copy petsc image to eve as well
