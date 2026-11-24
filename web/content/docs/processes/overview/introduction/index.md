@@ -26,21 +26,21 @@ Coupled THMC processes form the core of OpenGeoSys's function as a multi-physics
 The overview is organised according to the fundamental processes of the THMC concept. Triple-coupled THM processes are differentiated by various flow processes. We also provide an elliptic equation solver for steady-state / equilibrium processes. The short process descriptions are organised as follows: introduction and key features; model equations; process specification in the prj project file; and main parameters. Workflows for model setup and links to the benchmark gallery will help you start and customise your own OGS simulations.
 
 - Thermal processes
-  - [Heat transport]({{% relref "../heat-conduction/HeatConduction" %}})
+  - [Heat transport]({{< relref "/docs/processes/heat-conduction/HeatConduction" >}})
   - Borehole heat exchanger
 - Hydraulic processes
-  - [Groundwater flow]({{% relref "../liquid-flow/LiquidFlow" %}})
+  - [Groundwater flow]({{< relref "/docs/processes/liquid-flow/LiquidFlow" >}})
   - Gas flow
-  - [Richards flow]({{% relref "../richards-flow/RichardsFlow" %}})
-  - [Multiphase flow]({{% relref "../multiphase/Multiphase_Flow_Overview" %}})
+  - [Richards flow]({{< relref "/docs/processes/richards-flow/RichardsFlow" >}})
+  - [Multiphase flow]({{< relref "/docs/processes/multiphase/Multiphase_Flow_Overview" >}})
 - Mechanical processes
-  - [Small deformations]({{% relref "../small-deformation/SmallDeformation" %}})
-  - [Large deformations]({{% relref "../large-deformation/f-bar" %}})
+  - [Small deformations]({{< relref "/docs/processes/small-deformation/SmallDeformation" >}})
+  - [Large deformations]({{< relref "/docs/processes/large-deformation/f-bar" >}})
 - Chemical processes
-  - [Component transport]({{% relref "../component-transport/hydro-component" %}})
+  - [Component transport]({{< relref "/docs/processes/component-transport/hydro-component" >}})
   - Reactive transport
 - THM processes
-  - [THM: Thermo-Hydro-Mechanics]({{% relref "../thermal-processes/THM" %}})
-  - [TRM: Thermo-Richards-Mechanics]({{% relref "../thermal-processes/TRM" %}})
+  - [THM: Thermo-Hydro-Mechanics]({{< relref "/docs/processes/thermal-processes/THM" >}})
+  - [TRM: Thermo-Richards-Mechanics]({{< relref "/docs/processes/thermal-processes/TRM" >}})
   - TH2M: Two-phase flow in THM
-- [Steady-state: Elliptic equation]({{% relref "../steady-state-diffusion/SteadyStateDiffusion" %}})
+- [Steady-state: Elliptic equation]({{< relref "/docs/processes/steady-state-diffusion/SteadyStateDiffusion" >}})
