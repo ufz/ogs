@@ -111,7 +111,7 @@ private:
                                NumLib::TimeStep const& ts_current) const;
 
     /// This vector stores the number of iterations to which the respective
-    /// multiplier coefficient will be applied.
+    /// multiplier coefficient will be applied; strictly increasing.
     const std::vector<int> _iter_times_vector;
     /// This vector stores the multiplier coefficients.
     const std::vector<double> _multiplier_vector;

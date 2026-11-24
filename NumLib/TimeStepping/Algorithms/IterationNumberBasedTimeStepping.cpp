@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <functional>
 #include <limits>
 #include <utility>
 
@@ -44,10 +45,14 @@ IterationNumberBasedTimeStepping::IterationNumberBasedTimeStepping(
             "Vector of iteration numbers must be of the same size as the "
             "vector of multipliers.");
     }
-    if (!std::is_sorted(std::begin(_iter_times_vector),
-                        std::end(_iter_times_vector)))
+    // The interpolations in findMultiplier() reject equal supporting points;
+    // checking here reports that at input instead of after the first step.
+    if (std::adjacent_find(std::begin(_iter_times_vector),
+                           std::end(_iter_times_vector),
+                           std::greater_equal<>{}) !=
+        std::end(_iter_times_vector))
     {
-        OGS_FATAL("Vector of iteration numbers must be sorted.");
+        OGS_FATAL("Vector of iteration numbers must be strictly increasing.");
     }
 }
 

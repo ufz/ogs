@@ -45,6 +45,19 @@ TEST(NumLib,
         std::runtime_error);
 }
 
+TEST(NumLib, TimeSteppingIterationNumberBasedConstructor_equalIterationNumbers)
+{
+    std::vector<int> nonlinear_iteration_numbers = {1, 2, 2, 3};
+    std::vector<double> multipliers = {2.0, 1.0, 0.5, 0.25};
+    NumLib::MultiplyerInterpolationType const multiplier_interpolation_type =
+        NumLib::MultiplyerInterpolationType::PiecewiseConstant;
+    EXPECT_THROW(
+        NumLib::IterationNumberBasedTimeStepping alg(
+            1, 31, 1, 10, 1, multiplier_interpolation_type,
+            std::move(nonlinear_iteration_numbers), std::move(multipliers), {}),
+        std::runtime_error);
+}
+
 TEST(NumLib,
      TimeSteppingIterationNumberBasedConstructor_inputVectorSizeMismatch)
 {
