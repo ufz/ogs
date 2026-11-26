@@ -145,27 +145,16 @@ Eigen::VectorXd computeAndersonWeights(Eigen::MatrixXd G)
 
     // Unique weights may still be useless; validate them.
     //
-    // (a) Descent: the mixture only earns its place if the residual norm it
-    //     predicts is smaller than that of the plain step it would replace.
-    //     Both norms are read off the same normalized G (divided by g_scale
-    //     above), so the shared 1/g_scale factor cancels and the comparison is
-    //     exactly the one on the unscaled residuals.
+    // (a) Descent: the mixture must predict a smaller residual than the plain
+    //     step. Both are read off the same normalised G, so the comparison is
+    //     the one on the unscaled residuals.
     double const mixed_residual_norm_2 = theta.dot(G * theta);
     double const newest_step_norm_2 = G(history_size - 1, history_size - 1);
 
-    // (b) No long lever arms: weights far outside [0, 1] mean the mixed
-    //     iterate is a difference of near-identical vectors, i.e. dominated by
-    //     cancellation. Healthy histories stay at |theta| ~ 1, whereas steps
-    //     that agree to k digits produce weights of magnitude 10^k.
-    //
-    //     The threshold is a heuristic, not a derived bound. A weight of
-    //     magnitude 10^k sacrifices about k of the ~16 significant decimal
-    //     digits of a double to cancellation; capping at 10^2 admits the
-    //     modest lever arms of genuinely useful mixing (empirically |theta| up
-    //     to ~10) while rejecting the 10^3-and-up weights that signal a
-    //     degenerate history. It is deliberately loose: the descent test (a)
-    //     is the primary guard, and this one only catches the cancellation
-    //     cases that slip past it.
+    // (b) No long lever arms: steps that agree to k digits give weights
+    //     ~10^k, and the mixture loses about k digits to cancellation. The cap
+    //     of 10^2 is a loose heuristic: useful mixing needs |theta| up to ~10,
+    //     and the descent test (a) is the primary guard.
     constexpr double max_weight = 1e2;
 
     // (c) A numerically zero predicted residual is exact only for a map that
