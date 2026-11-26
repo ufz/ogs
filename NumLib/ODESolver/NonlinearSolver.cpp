@@ -286,7 +286,39 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
             //   f_i = beta*(g(x_i) - x_i) (the difference x_new - x_old after
             //   the beta relaxation above); inert when anderson_depth < 2, in
             //   which case only the beta relaxation applies.
-            anderson.accelerate(*x[process_id], x_new_process);
+            bool const mix = anderson.isActive();
+            if (mix && !_convergence_criterion->isSatisfied())
+            {
+                anderson.accelerate(*x[process_id], x_new_process);
+            }
+            else if (mix)
+            {
+                // Converged on the damped step. Accept the mixture only if it
+                // is within tolerance of that step, so that a mixture
+                // reproducing an older iterate is never taken as the solution.
+                GlobalVector x_mixed(x_new_process);
+                anderson.accelerate(*x[process_id], x_mixed);
+                GlobalVector minus_delta_x(x_new_process);
+                LinAlg::axpy(minus_delta_x, -1.0,
+                             x_mixed);  // minus_delta_x = x_new - x_mixed
+                INFO(
+                    "Picard: converged; checking the Anderson mixture against "
+                    "the converged step.");
+                _convergence_criterion->checkDeltaX(minus_delta_x, x_mixed);
+                if (_convergence_criterion->isSatisfied())
+                {
+                    LinAlg::copy(x_mixed, x_new_process);
+                }
+                else
+                {
+                    INFO(
+                        "Picard: the Anderson mixture is not within the "
+                        "tolerance of the converged step; the converged step "
+                        "is accepted.");
+                    // Only the check on the mixture failed.
+                    _convergence_criterion->reset();
+                }
+            }
 
             if (postIterationCallback)
             {
@@ -315,7 +347,10 @@ NonlinearSolverStatus NonlinearSolver<NonlinearSolverTag::Picard>::solve(
                     LinAlg::copy(
                         *x[process_id],
                         x_new_process);  // throw the iteration result away
-                    anderson.dropLastStep();
+                    if (mix)
+                    {
+                        anderson.dropLastStep();
+                    }
                     continue;
             }
         }

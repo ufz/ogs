@@ -18,6 +18,12 @@ A warning is emitted in that case; omit the `anderson` subtree to disable the
 acceleration explicitly.
 
 The convergence criterion is checked on the (damped) step before the mixing.
+Once it is met, the mixture is still formed, but it is accepted only if it lies
+within the tolerance of the converged step (checked with the same convergence
+criterion); otherwise the converged step itself is accepted. This prevents a
+mixture that reproduces an older iterate from being taken as the solution. With
+residual-based convergence criteria, which do not check the solution increment,
+the mixture is accepted unchecked.
 
 If the stored steps do not determine the weights uniquely, e.g. for duplicate
 steps, the oldest steps are left out of the mixture. If the mixture does not
