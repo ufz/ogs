@@ -247,6 +247,20 @@ def get_feature_dict(path: Path, xml_files: list[Path]) -> dict:
                 "subtype",
             ]
         },
+        # Add curve interpolation types. A curve without an <interpolation> tag is
+        # interpolated linearly.
+        "Curve interpolation: linear": lambda xml: check_tag_is_present(
+            xml,
+            ".//curves/curve[not(interpolation) or normalize-space(interpolation)='linear']",
+        ),
+        "Curve interpolation: pchip": lambda xml: check_tag_text(
+            xml, ".//curves/curve/interpolation", "pchip"
+        ),
+        # Add optional end slopes of PCHIP curves.
+        "Curve: end slope": lambda xml: check_tag_is_present(
+            xml,
+            ".//curves/curve/left_end_slope | .//curves/curve/right_end_slope",
+        ),
         # Add coupling scheme types for processes. Checks whether there is a coupling
         # scheme type present. The possible types are extracted by scanning all .prj
         # files, since coupling scheme types are not documented as individual c_*.md
