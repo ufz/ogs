@@ -11,3 +11,4 @@ build mac:
     CMAKE_PRESET: release-all
     CMAKE_ARGS: >-
       -DOGS_BUILD_HDF5=ON
+    PYTHONWARNINGS: "ignore:matplotlib is using the non-interactive backend:UserWarning"

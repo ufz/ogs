@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 #if !defined(_WIN32) && !defined(__APPLE__)
-#include <cfenv>
+#include "FEnv.h"
 
 class DisableFPE
 {

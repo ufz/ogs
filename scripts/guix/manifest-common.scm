@@ -3,6 +3,9 @@
              (guix utils)
              (gnu packages maths))
 
+(define gcc-toolchain-15
+  (specification->package "gcc-toolchain@15.2.0"))
+
 (define metis-int64
   (package
     (inherit metis)
@@ -25,8 +28,14 @@
     (propagated-inputs (modify-inputs (package-propagated-inputs pkg)
                          (replace "metis" metis-int64)))))
 
+(define (package-with-gcc-toolchain-15 pkg)
+  (package
+    (inherit pkg)
+    (native-inputs (modify-inputs (package-native-inputs pkg)
+                    (append gcc-toolchain-15)))))
+
 (define (manifest-runtime-packages package)
-  (list (package-with-metis-int64 package)
+  (list (package-with-metis-int64 (package-with-gcc-toolchain-15 package))
         (specification->package "python-wrapper")
         (specification->package "vtkdiff")
         (specification->package "which")

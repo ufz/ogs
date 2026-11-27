@@ -21,7 +21,7 @@
 #include <xmmintrin.h>
 #endif  // __SSE__
 #else
-#include <cfenv>
+#include "BaseLib/FEnv.h"
 #endif  // __APPLE__
 #endif  // _WIN32
 
