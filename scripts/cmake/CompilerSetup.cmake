@@ -70,8 +70,13 @@ if(COMPILER_IS_GCC OR COMPILER_IS_CLANG OR CMAKE_CXX_COMPILER_ID STREQUAL
     endif()
 
     if(COMPILER_IS_GCC)
-        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${ogs.minimum_version.gcc})
-            message(FATAL_ERROR "Aborting: GCC ${ogs.minimum_version.gcc} is \
+        set(_ogs_minimum_gcc ${ogs.minimum_version.gcc})
+        # The manylinux 2.28 image currently provides GCC 14.2.
+        if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND OGS_BUILD_WHEEL)
+            set(_ogs_minimum_gcc 14.2.0)
+        endif()
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS ${_ogs_minimum_gcc})
+            message(FATAL_ERROR "Aborting: GCC ${_ogs_minimum_gcc} is \
                     required! Found version ${CMAKE_CXX_COMPILER_VERSION}."
             )
         endif()
