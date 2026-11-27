@@ -4,6 +4,7 @@
 #pragma once
 
 #include <memory>
+#include <string_view>
 
 namespace BaseLib
 {
@@ -14,7 +15,10 @@ namespace MathLib
 {
 class Curve;
 
-/// Creates a curve from the `<curve>` subtree.
+/// Creates a piecewise linear or a PCHIP curve from the `<curve>` subtree
+/// depending on the `interpolation` tag.
+/// \param name Name of the curve, used in error messages.
 /// \param config ConfigTree object having the tag `<curve>`.
-std::unique_ptr<Curve> createCurve(BaseLib::ConfigTree const& config);
+std::unique_ptr<Curve> createCurve(std::string_view name,
+                                   BaseLib::ConfigTree const& config);
 }  // namespace MathLib

@@ -1497,7 +1497,7 @@ void ProjectData::parseCurves(std::optional<BaseLib::ConfigTree> const& config)
         auto const name = conf.getConfigParameter<std::string>("name");
         BaseLib::insertIfKeyUniqueElseError(_curves,
                                             name,
-                                            MathLib::createCurve(conf),
+                                            MathLib::createCurve(name, conf),
                                             "The curve name is not unique.");
     }
 }

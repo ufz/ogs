@@ -1,0 +1,1 @@
+Slope of the curve at the last (largest) supporting point. Only for the interpolation `pchip`; by default the slope of the last interval is used. The slope must have the sign of the slope of the last interval and at most three times its magnitude (0 if the last two values are equal). See also `left_end_slope`.

@@ -8,34 +8,38 @@
 #include <variant>
 
 #include "BaseLib/Error.h"
+#include "MathLib/InterpolationAlgorithms/PchipInterpolation.h"
 #include "MathLib/InterpolationAlgorithms/PiecewiseLinearInterpolation.h"
 
 namespace MathLib
 {
 struct Curve::Impl
 {
-    std::variant<PiecewiseLinearInterpolation> interpolation;
+    std::variant<PiecewiseLinearInterpolation, PchipInterpolation>
+        interpolation;
 };
 
 Curve::Curve(PiecewiseLinear /*tag*/, std::vector<double> supporting_points,
              std::vector<double> values)
 {
-    if (supporting_points.empty() || values.empty())
-    {
-        OGS_FATAL(
-            "Creating a curve from an empty list of supporting points or "
-            "values.");
-    }
-    if (supporting_points.size() != values.size())
-    {
-        OGS_FATAL(
-            "Creating a curve from {:d} supporting points and {:d} values; "
-            "the two sizes must match.",
-            supporting_points.size(), values.size());
-    }
-
     impl_ = std::make_unique<Impl>(PiecewiseLinearInterpolation{
         std::move(supporting_points), std::move(values)});
+}
+
+Curve::Curve(PiecewiseLinear /*tag*/, std::string_view const curve_name,
+             std::vector<double> supporting_points, std::vector<double> values)
+{
+    impl_ = std::make_unique<Impl>(PiecewiseLinearInterpolation{
+        std::move(supporting_points), std::move(values), false,
+        fmt::format("piecewise linear curve '{:s}'", curve_name)});
+}
+
+Curve::Curve(Pchip pchip, std::string_view const curve_name,
+             std::vector<double> supporting_points, std::vector<double> values)
+{
+    impl_ = std::make_unique<Impl>(PchipInterpolation{
+        curve_name, std::move(supporting_points), std::move(values),
+        pchip.left_end_slope, pchip.right_end_slope});
 }
 
 Curve::Curve(Curve const& other)

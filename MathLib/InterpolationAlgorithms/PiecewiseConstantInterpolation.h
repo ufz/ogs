@@ -3,10 +3,7 @@
 
 #pragma once
 
-#include <algorithm>
 #include <vector>
-
-#include "BaseLib/Logging.h"
 
 namespace MathLib
 {
@@ -14,7 +11,6 @@ namespace MathLib
  * This class implements a one dimensional piecewise constant interpolation
  * algorithm.
  */
-template <typename T = double>
 class PiecewiseConstantInterpolation
 {
 public:
@@ -27,31 +23,21 @@ public:
      * It is assumed that \f$x_j\f$ corresponds to \f$y_j\f$ for all \f$j \in
      * [0, n]\f$.
      *
-     * Furthermore, it is assumed that the supporting points are sorted, i.e.
-     * \f$x_0 < x_1 < \dots < x_n\f$.
+     * The supporting points need not be sorted but must be pairwise different
+     * and at least one must be given; otherwise it is a fatal error, see
+     * sortAndCheckSupportingPoints().
      * @param supporting_points vector of supporting points
      * @param values_at_supp_pnts vector of values at the supporting points
-     * one can set the switch to true
      */
-    PiecewiseConstantInterpolation(
-        std::vector<T> const& supporting_points,
-        std::vector<double> const& values_at_supp_pnts)
-        : supp_pnts_(supporting_points),
-          values_at_supp_pnts_(values_at_supp_pnts)
-    {
-        if (supp_pnts_.size() != values_at_supp_pnts_.size())
-        {
-            OGS_FATAL(
-                "Inconsistent data given to PiecewiseConstantInterpolation, "
-                "number of given supporting points is {}, number of given "
-                "values is {}.",
-                supp_pnts_.size(), values_at_supp_pnts_.size());
-        }
-        if (supp_pnts_.empty())
-        {
-            ERR("PiecewiseConstantInterpolation: passed empty vector.");
-        }
-    }
+    PiecewiseConstantInterpolation(std::vector<double> supporting_points,
+                                   std::vector<double>
+                                       values_at_supp_pnts);
+
+    /// \copydoc PiecewiseConstantInterpolation(std::vector<double>,
+    /// std::vector<double>)
+    PiecewiseConstantInterpolation(std::vector<int> const& supporting_points,
+                                   std::vector<double>
+                                       values_at_supp_pnts);
 
     /**
      * \brief Calculates the interpolation value.
@@ -65,29 +51,10 @@ public:
      * \f$y_{\max}\f$ is returned.
      * @return The interpolated value.
      */
-    double value(double const pnt_to_interpolate) const
-    {
-        if (pnt_to_interpolate <= supp_pnts_.front())
-        {
-            return values_at_supp_pnts_.front();
-        }
-
-        if (supp_pnts_.back() <= pnt_to_interpolate)
-        {
-            return values_at_supp_pnts_.back();
-        }
-
-        auto const& it(std::upper_bound(supp_pnts_.begin(), supp_pnts_.end(),
-                                        pnt_to_interpolate));
-        // Here access the iterator it without checking is okay since the
-        // corner cases are checked above.
-        auto const interval_idx = std::distance(supp_pnts_.begin(), it) - 1;
-
-        return values_at_supp_pnts_[interval_idx];
-    }
+    double value(double pnt_to_interpolate) const;
 
 private:
-    std::vector<T> const& supp_pnts_;
-    std::vector<double> const& values_at_supp_pnts_;
+    std::vector<double> supp_pnts_;
+    std::vector<double> values_at_supp_pnts_;
 };
 }  // end namespace MathLib

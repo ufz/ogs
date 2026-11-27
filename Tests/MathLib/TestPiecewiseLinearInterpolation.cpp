@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 
 // stl
+#include <cmath>
 #include <limits>
+#include <vector>
 
 // google test
 #include <gtest/gtest.h>
@@ -155,4 +157,19 @@ TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationDerivative)
     // Extrapolation
     ASSERT_NEAR(0, interpolation.getDerivative(1001),
                 std::numeric_limits<double>::epsilon());
+}
+
+TEST(MathLibInterpolationAlgorithms, PiecewiseLinearInterpolationNanArgument)
+{
+    // All range checks are false for NaN; without the guard the interval
+    // search reads out of bounds.
+    double const nan = std::numeric_limits<double>::quiet_NaN();
+    for (auto const& supp_pnts :
+         {std::vector<double>{1}, std::vector<double>{1, 2, 3, 4, 5}})
+    {
+        MathLib::PiecewiseLinearInterpolation const interpolation{
+            supp_pnts, std::vector<double>(supp_pnts.size(), 1.)};
+        EXPECT_TRUE(std::isnan(interpolation.getValue(nan)));
+        EXPECT_TRUE(std::isnan(interpolation.getDerivative(nan)));
+    }
 }
