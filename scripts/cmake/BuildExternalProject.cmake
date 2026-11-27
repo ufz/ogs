@@ -59,6 +59,11 @@ function(BuildExternalProject target)
     message(STATUS "┌─ BuildExternalProject ${target}")
     list(APPEND CMAKE_MESSAGE_INDENT "│    ")
 
+    # CACHE_KEY contributes to the cache identity without being forwarded to
+    # ExternalProject_Add(). Use it for dependencies discovered by the caller.
+    cmake_parse_arguments(PARSE_ARGV 1 _cache "" "CACHE_KEY" "")
+    set(ARGN ${_cache_UNPARSED_ARGUMENTS})
+
     list(FIND ARGN SKIP_FIND _skip_find_index)
     if(NOT ${_skip_find_index} EQUAL -1)
         set(SKIP_FIND TRUE)
@@ -66,7 +71,11 @@ function(BuildExternalProject target)
     endif()
     string(REPLACE ";" " " ARGN_STRING "${ARGN}")
 
-    BuildExternalProject_set_build_dir(${target} ${ARGN_STRING})
+    set(_cache_identity "${ARGN_STRING}")
+    if(DEFINED _cache_CACHE_KEY)
+        string(APPEND _cache_identity " ${_cache_CACHE_KEY}")
+    endif()
+    BuildExternalProject_set_build_dir(${target} "${_cache_identity}")
 
     if(NOT SKIP_FIND)
         BuildExternalProject_find_package(${target} "")
