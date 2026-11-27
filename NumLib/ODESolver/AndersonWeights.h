@@ -30,17 +30,18 @@ namespace detail
  * \f$ \theta = G^{-1}\mathbf{1} / (\mathbf{1}^T G^{-1}\mathbf{1}) \f$.
  *
  * Linearly dependent (or nearly dependent) residuals are the classical failure
- * mode of Anderson acceleration. The computed mixture is therefore accepted
- * only if
+ * mode of Anderson acceleration. While the differences
+ * \f$ f_i - f_{\rm newest} \f$ are linearly dependent, i.e. the minimiser is
+ * not unique, the oldest residuals are dropped (given zero weight). The
+ * computed mixture is accepted only if
  * -# it predicts a smaller residual norm than the plain step it would replace,
- *    which rules out the arbitrary minimizer that a degenerate history admits,
  *    and
  * -# its weights stay bounded, which rules out the mixtures of near-identical
  *    iterates whose value is pure cancellation error, and
- * -# its predicted residual is not numerically zero while every stored step
- *    still has a non-negligible norm, which rules out the collinear steps of
- *    differing magnitude whose exact cancellation needs only modest weights
- *    and therefore escapes the two tests above.
+ * -# if it predicts a numerically zero residual, its weights stay below a
+ *    tighter bound: such a mixture is exact for a map that is affine on the
+ *    span of the steps, but for a nonlinear map a long secant extrapolation.
+ *    Modest weights are accepted.
  *
  * Otherwise \f$ \theta = (0,\dots,0,1) \f$ is returned, i.e. unit weight on the
  * newest stored step, which reproduces the plain (damped) Picard update. The

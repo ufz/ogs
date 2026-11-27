@@ -7,14 +7,14 @@ if(NOT (OGS_USE_MPI OR OGS_USE_LIS))
         PROJECTFILE Parabolic/T/PicardDamping/damped_039.xml
         RUNTIME 1
     )
-    # Anderson acceleration alone falls into the same exact period-2 Picard
-    # limit cycle as undamped.prj: no depth-limited history-based mixing can
-    # escape an exact period-2 orbit (consecutive residuals are exactly
-    # anti-parallel by construction), so this never converges either.
+    # Anderson acceleration escapes the period-2 Picard limit cycle of
+    # undamped.prj (33 iterations). The problem acts on a single degree of
+    # freedom, so the stored steps are collinear and the mixing is a secant
+    # extrapolation. With damping (anderson_acceleration_damped_039.xml) it
+    # takes 31 iterations, damping alone (damped_039.xml) 16.
     OgsTest(
         PROJECTFILE Parabolic/T/PicardDamping/anderson_acceleration.xml
         RUNTIME 1
-        PROPERTIES WILL_FAIL true
     )
     OgsTest(
         PROJECTFILE Parabolic/T/PicardDamping/anderson_acceleration_damped_039.xml

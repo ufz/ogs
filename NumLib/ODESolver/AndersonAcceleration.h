@@ -63,6 +63,9 @@ public:
     //! recording is deliberately not undone (see implementation).
     void dropLastStep();
 
+    //! Whether the instance mixes at all, i.e. \c depth >= \c min_mixing_depth.
+    bool isActive() const { return _depth >= min_mixing_depth; }
+
 private:
     //! One entry of the history: the iterate \c x it was taken from and the
     //! (possibly damped) step \f$ f = \beta(g(x) - x) \f$ leading away from it.
