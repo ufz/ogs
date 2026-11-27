@@ -52,9 +52,9 @@ sdist.include = ["web/data/versions.json"]
 # Needs to be set to the version for which libomp (installed by homebrew) was build.
 # Both env variable configurations required (one for build, one for delocate phase).
 [tool.scikit-build.env]
-MACOSX_DEPLOYMENT_TARGET = { env = "MACOSX_DEPLOYMENT_TARGET", default = "26.0" }
+MACOSX_DEPLOYMENT_TARGET = { env = "MACOSX_DEPLOYMENT_TARGET", default = "27.2" }
 [tool.cibuildwheel.macos]
-environment = { MACOSX_DEPLOYMENT_TARGET="26.0" }
+environment = { MACOSX_DEPLOYMENT_TARGET="27.2" }
 
 [[tool.dynamic-metadata]]
 provider = "scikit_build_core.metadata.setuptools_scm"
