@@ -702,6 +702,13 @@ AddTest(
     DIFF_DATA output0.asc
 )
 
+# vtkCellLocator in VTK >= 9.7 assigns voxel centres lying on faces of the
+# non-planar wedges differently; VTK < 9.7 needs the _vtk96 reference.
+if(VTK_VERSION VERSION_LESS 9.7)
+    set(_vtu2grid_reference AmmerSubsurfaceGrid_vtk96.vtu)
+else()
+    set(_vtu2grid_reference AmmerSubsurfaceGrid.vtu)
+endif()
 AddTest(
     NAME Vtu2Grid_Test
     PATH FileIO/
@@ -710,7 +717,7 @@ AddTest(
     EXECUTABLE_ARGS -i AmmerSubsurfaceCoarse.vtu -o ${Data_BINARY_DIR}/FileIO/AmmerGridOutput.vtu -x 200 -y 200 -z 20
     TESTER vtkdiff
     DIFF_DATA
-    AmmerSubsurfaceGrid.vtu AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
+    ${_vtu2grid_reference} AmmerGridOutput.vtu MaterialIDs MaterialIDs 0 0
 )
 
 AddTest(
